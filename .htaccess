@@ -1,0 +1,21 @@
+RewriteEngine On
+
+# 1. Bảo mật: Chặn truy cập trực tiếp vào các file nhạy cảm
+<FilesMatch "\.(php|ini|env|log|htaccess)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# 2. Cho phép truy cập index.php và các tài nguyên tĩnh
+<Files "index.php">
+    Order allow,deny
+    Allow from all
+</Files>
+
+# 3. Giữ lại quy tắc Thumb (Legacy)
+RewriteRule ^thumb_([0-9]+)x([0-9]+)_([0-9]+)/(.*)$ thumb.php?w=$1&h=$2&zc=$3&q=95&src=http://%{HTTP_HOST}/$4 [L]
+
+# 4. Front Controller: Điều hướng mọi request không phải là file/thư mục thật về index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]

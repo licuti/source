@@ -1,0 +1,22 @@
+# Environment Variables
+.env
+.env.backup
+.env.testing
+
+# Local Development
+scratch/
+.system_generated/
+.idea/
+.vscode/
+*.log
+*.sqlite
+.DS_Store
+
+# User Uploads (If any)
+storage/
+img_data/
+assets/images/uploads/
+
+# Dependency Folders (if composer is added later)
+vendor/
+node_modules/
