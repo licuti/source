@@ -28,6 +28,12 @@ class Response {
         foreach ($this->headers as $name => $value) {
             header("$name: $value");
         }
+        
+        // Dọn dẹp output buffer (tránh các thẻ HTML hoặc khoảng trắng vô tình lọt vào JSON)
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        
         echo $this->content;
     }
 }

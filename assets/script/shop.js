@@ -390,14 +390,22 @@ function add_to_cart(type){
         url: url_ajax,
         data: $('#form-cart').serialize(),
     }).done(function(response) {
-        var res = typeof response === 'object' ? response : JSON.parse(response);
-        if(type === 0){
-            swal({ title: 'Success', text: res.message || 'Thêm vào giỏ hàng thành công', icon: 'success', button: false, timer: 2000 })
-            .then(() => { if (res.success) $(".header-cart-count").html(res.count); });
-        } else if(type === 1){
-            swal({ title: 'Đã thêm vào giỏ hàng', text: 'Thêm thành công! Thanh toán ngay!', icon: 'success', button: false, timer: 2000 })
-            .then(() => { window.location = (typeof URLPATH !== 'undefined' ? URLPATH : '') + "gio-hang.html"; });
+        try {
+            var res = typeof response === 'object' ? response : JSON.parse(response);
+            if(type === 0){
+                swal({ title: 'Success', text: res.message || 'Thêm vào giỏ hàng thành công', icon: 'success', button: false, timer: 2000 })
+                .then(() => { if (res.success) $(".header-cart-count").html(res.count); });
+            } else if(type === 1){
+                swal({ title: 'Đã thêm vào giỏ hàng', text: 'Thêm thành công! Thanh toán ngay!', icon: 'success', button: false, timer: 2000 })
+                .then(() => { window.location = (typeof URLPATH !== 'undefined' ? URLPATH : '') + "gio-hang.html"; });
+            }
+        } catch(e) {
+            console.error("JSON parse error: ", e, response);
+            swal({ title: 'Lỗi', text: 'Dữ liệu phản hồi bị lỗi.', icon: 'error', button: 'Đóng' });
         }
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        console.error("AJAX Error: ", textStatus, errorThrown);
+        swal({ title: 'Lỗi', text: 'Có lỗi xảy ra, vui lòng thử lại.', icon: 'error', button: 'Đóng' });
     });
     if(event) event.preventDefault();
 }

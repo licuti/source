@@ -6,23 +6,23 @@
 if (!function_exists('env')) {
     function env($key, $default = null) {
         if (array_key_exists($key, $_ENV)) {
-            return $_ENV[$key];
+            $val = $_ENV[$key];
+        } elseif (array_key_exists($key, $_SERVER)) {
+            $val = $_SERVER[$key];
+        } else {
+            $val = getenv($key);
+            if ($val === false) return $default;
         }
-        if (array_key_exists($key, $_SERVER)) {
-            return $_SERVER[$key];
-        }
-        $val = getenv($key);
-        if ($val === false) return $default;
-        
+
         // Loại bỏ nháy kép nếu có
-        $val = trim($val);
+        $val = trim((string)$val);
         if (preg_match('/^"(.*)"$/', $val, $matches)) {
             $val = $matches[1];
         } elseif (preg_match("/^'(.*)'$/", $val, $matches)) {
             $val = $matches[1];
         }
-        
-        // Hỗ trợ các giá trị boolean
+
+        // Normalize boolean / null / empty strings
         switch (strtolower($val)) {
             case 'true':
             case '(true)':
@@ -37,7 +37,7 @@ if (!function_exists('env')) {
             case '(null)':
                 return null;
         }
-        
+
         return $val;
     }
 }

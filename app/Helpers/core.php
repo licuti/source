@@ -6,6 +6,34 @@
  * ============================================================
  */
 
+if (!function_exists('calculateVAT')) {
+    function calculateVAT($amount, $rate, $type = 1) {
+        $amount = (float)$amount;
+        $rate = (float)$rate;
+        $type = (int)$type;
+        
+        $vat_amount = 0;
+        $total = $amount;
+
+        if ($rate > 0 && $type > 0) {
+            if ($type == 1) {
+                // Exclusive (Giá chưa bao gồm VAT -> cộng thêm)
+                $vat_amount = $amount * ($rate / 100);
+                $total = $amount + $vat_amount;
+            } else if ($type == 2) {
+                // Inclusive (Giá đã bao gồm VAT -> trích xuất)
+                $total = $amount;
+                $vat_amount = $amount - ($amount / (1 + $rate / 100));
+            }
+        }
+
+        return [
+            'amount' => $vat_amount,
+            'total' => $total
+        ];
+    }
+}
+
 if (!function_exists('config')) {
     /**
      * Quản lý cấu hình hệ thống (Getter & Setter)

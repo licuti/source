@@ -21,26 +21,28 @@ use App\Controllers\PageController;
 /**
  * 1. Trang chủ
  */
-$router->get('/', [HomeController::class, 'index']);
+$router->get('/', [HomeController::class, 'index'])->name('home');
 
 /**
  * 2. Tìm kiếm
  */
-$router->get('/search', [SearchController::class, 'index']);
+$router->get('/search', [SearchController::class, 'index'])->name('search');
 
 /**
  * 3. Liên hệ
  */
-$router->get('/lien-he',  [ContactController::class, 'index']);
+$router->get('/lien-he',  [ContactController::class, 'index'])->name('contact.index');
 $router->get('/contact',  [ContactController::class, 'index']);
-$router->post('/lien-he', [ContactController::class, 'store']);
+$router->post('/lien-he', [ContactController::class, 'store'])->name('contact.store');
 $router->post('/contact', [ContactController::class, 'store']);
 
 /**
  * 4. Giỏ hàng & Thanh toán
  */
-$router->get('/gio-hang',   [CartController::class,     'index']);
-$router->get('/thanh-toan', [CheckoutController::class, 'index']);
+$router->get('/gio-hang',   [CartController::class,     'index'])->name('cart.index');
+$router->get('/thanh-toan', [CheckoutController::class, 'index'])->name('checkout.index');
+$router->post('/thanh-toan', [CheckoutController::class, 'store'])->name('checkout.store');
+
 
 /**
  * 5. Xác thực (Auth)

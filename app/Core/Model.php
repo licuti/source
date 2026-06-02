@@ -25,6 +25,12 @@ class Model implements \JsonSerializable {
     // ── Dữ liệu Instance ──────────────────────────────────
     public $attributes = [];
 
+    /**
+     * Lưu trữ các quan hệ (relations) đã được eager-loaded.
+     * Tách biệt khỏi $attributes để toArray() luôn chính xác.
+     */
+    protected array $relations = [];
+
     // ── Mass Assignment & Serialization ──────────────────────
     /** Các cột được phép mass assign. Rỗng = cho phép tất cả */
     protected array $fillable = [];
@@ -86,14 +92,19 @@ class Model implements \JsonSerializable {
     }
 
     public function __get($key) {
-        // Accessors: getXxxAttribute()
+        // 1. Kiểm tra relations trước (eager-loaded data)
+        if (array_key_exists($key, $this->relations)) {
+            return $this->relations[$key];
+        }
+
+        // 2. Accessors: getXxxAttribute()
         $accessor = 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $key))) . 'Attribute';
         if (method_exists($this, $accessor)) {
             return $this->$accessor($this->attributes[$key] ?? null);
         }
 
+        // 3. Lấy giá trị từ attributes, áp dụng casts nếu có
         $val = $this->attributes[$key] ?? null;
-        // Ép kiểu qua $casts
         if ($val !== null && isset($this->casts[$key])) {
             return $this->castValue($val, $this->casts[$key]);
         }
@@ -111,7 +122,40 @@ class Model implements \JsonSerializable {
     }
 
     public function __isset($key) {
-        return isset($this->attributes[$key]);
+        return array_key_exists($key, $this->relations) || isset($this->attributes[$key]);
+    }
+
+    // ============================================================
+    //  RELATIONS MANAGEMENT
+    // ============================================================
+
+    /**
+     * Gán dữ liệu relation đã load — thay thế cho dynamic property assignment.
+     */
+    public function setRelation(string $name, $value): self {
+        $this->relations[$name] = $value;
+        return $this;
+    }
+
+    /**
+     * Lấy relation đã load, trả về $default nếu chưa có.
+     */
+    public function getRelation(string $name, $default = null) {
+        return $this->relations[$name] ?? $default;
+    }
+
+    /**
+     * Trả về toàn bộ mảng relations đã được load.
+     */
+    public function getRelations(): array {
+        return $this->relations;
+    }
+
+    /**
+     * Kiểm tra relation có được load chưa.
+     */
+    public function relationLoaded(string $name): bool {
+        return array_key_exists($name, $this->relations);
     }
 
     public static function tableName(): string {
@@ -157,11 +201,38 @@ class Model implements \JsonSerializable {
         return !in_array($key, $this->guarded);
     }
 
+
     /**
-     * Xuất attributes thành mảng — áp dụng $hidden/$visible
+     * Triển khai JsonSerializable — tương thích PHP 7.4 và PHP 8.x.
+     * Không khai báo return type ':mixed' vì mixed chỉ có từ PHP 8.0.
+     */
+    #[\ReturnTypeWillChange]
+    public function jsonSerialize() {
+        return $this->toArray();
+    }
+
+    /**
+     * Chuyển model thành mảng thuần, bao gồm cả relations đã load.
+     * Relations được chuyển đổi đệ quy (toArray() lồng nhau).
      */
     public function toArray(): array {
         $data = $this->attributes;
+
+        // Merge relations — chuyển đổi đệ quy để JSON hoạt động đúng
+        foreach ($this->relations as $key => $val) {
+            if (is_array($val)) {
+                $data[$key] = array_map(
+                    fn($v) => ($v instanceof self) ? $v->toArray() : $v,
+                    $val
+                );
+            } elseif ($val instanceof self) {
+                $data[$key] = $val->toArray();
+            } else {
+                $data[$key] = $val;
+            }
+        }
+
+        // Áp dụng $visible / $hidden
         if (!empty($this->visible)) {
             $data = array_intersect_key($data, array_flip($this->visible));
         }
@@ -172,19 +243,13 @@ class Model implements \JsonSerializable {
     }
 
     /**
-     * Xuất ra chuỗi JSON
+     * Xuất ra chuỗi JSON (UTF-8 safe)
      */
     public function toJson(int $options = 0): string {
         return json_encode($this->toArray(), JSON_UNESCAPED_UNICODE | $options);
     }
 
-    /**
-     * Chuẩn bị dữ liệu cho json_encode
-     */
-    #[\ReturnTypeWillChange]
-    public function jsonSerialize() {
-        return $this->toArray();
-    }
+    
 
     /**
      * Tạo mới và lưu ngay lập tức — áp dụng $fillable
@@ -778,11 +843,14 @@ class Model implements \JsonSerializable {
         );
         
         foreach ($models as &$model) {
-            $val = $model->attributes[$name] ?? null;
+            $val = $model->getRelation($name);
             if ($isMultiple && is_array($val)) {
-                $model->attributes[$name] = array_map(fn($row) => is_object($row) ? $row : new $relatedClass($row), $val);
+                $model->setRelation($name, array_map(
+                    fn($row) => is_object($row) ? $row : new $relatedClass($row),
+                    $val
+                ));
             } elseif (!$isMultiple && is_array($val)) {
-                $model->attributes[$name] = is_object($val) ? $val : new $relatedClass($val);
+                $model->setRelation($name, is_object($val) ? $val : new $relatedClass($val));
             }
         }
     }
@@ -831,7 +899,7 @@ class Model implements \JsonSerializable {
 
         foreach ($models as &$m) {
             $key = $m->$parentKey ?? null;
-            $m->attributes[$name] = $relMap[$key] ?? [];
+            $m->setRelation($name, $relMap[$key] ?? []);
         }
     }
 
@@ -1092,7 +1160,8 @@ class Model implements \JsonSerializable {
                     }
                 }
             }
-            $related = array_map(fn($m) => $m->attributes, $relatedModels);
+            // Serialize về mảng thuần — phải dùng toArray() để bao gồm cả relations
+            $related = array_map(fn($m) => $m->toArray(), $relatedModels);
         }
 
         $relMap = [];
@@ -1104,8 +1173,15 @@ class Model implements \JsonSerializable {
         }
 
         foreach ($rows as &$model) {
-            $key = ($model instanceof self) ? ($model->attributes[$foreignKey] ?? null) : ($model[$foreignKey] ?? null);
-            $model->$alias = $relMap[$key] ?? ($isMultiple ? [] : null);
+            $key = ($model instanceof self)
+                ? ($model->attributes[$foreignKey] ?? null)
+                : ($model[$foreignKey] ?? null);
+            if ($model instanceof self) {
+                $model->setRelation($alias, $relMap[$key] ?? ($isMultiple ? [] : null));
+            } else {
+                // Fallback cho array rows (legacy)
+                $model[$alias] = $relMap[$key] ?? ($isMultiple ? [] : null);
+            }
         }
 
         return $rows;

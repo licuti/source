@@ -15,8 +15,90 @@ class CartController extends Controller {
      * Hiển thị trang giỏ hàng
      */
     public function index($request) {
+        $tong     = 0;
+        $phi_ship = $_SESSION['phi_ship'] ?? 0;
+        $so_giam  = $_SESSION['phi_sale'] ?? 0;
+
+        // Fetch Tax Settings
+        $setting_vat = (new \SettingModel())->getAll();
+        $vat_rate = (double)($setting_vat['vat_rate'] ?? 0);
+        $vat_type = (int)($setting_vat['vat_type'] ?? 0);
+
+        // Fetch Coupons
+        global $d;
+        $_now_date = date('Y-m-d');
+        $sql_coupons = "SELECT km.ma, km.gia_tri, km.don_vi, km.dieu_kien, COUNT(ls.id) AS da_dung, km.gioi_han
+             FROM #_khuyenmai km
+             LEFT JOIN #_khuyenmai_ls ls ON ls.ma_km = km.ma
+             WHERE (km.id_thanhvien = '' OR km.id_thanhvien IS NULL)
+               AND (km.tu_ngay IS NULL OR km.tu_ngay < '2000-01-01' OR km.tu_ngay <= '$_now_date')
+               AND (km.den_ngay IS NULL OR km.den_ngay < '2000-01-01' OR km.den_ngay >= '$_now_date')
+             GROUP BY km.id
+             HAVING (km.gioi_han = 0 OR da_dung < km.gioi_han)
+             ORDER BY km.id DESC
+             LIMIT 20";
+        $list_coupons = $d ? $d->o_fet($sql_coupons) : [];
+
+        // Fetch Cart Items
+        $cartItems = [];
+        if (isset($_SESSION['cart']) && is_array($_SESSION['cart'])) {
+            foreach ($_SESSION['cart'] as $key => $value) {
+                if ((int)$value['id_sp'] <= 0) continue;
+                
+                $row_sp = \ProductModel::where('id_code', $value['id_sp'])->first();
+                if (!$row_sp) continue;
+
+                $gia_sp = $value['gia'];
+                $so_luong = (int) $value['so_luong'];
+                $tong += ($gia_sp * $so_luong);
+
+                $url_sp = route('product.show', $row_sp->alias ?? '');
+                
+                if (!empty($value['thuoctinh']) && (int)$value['thuoctinh'] > 0) {
+                    $id_bienthe = (int)$value['thuoctinh'];
+                    if ($d) {
+                        $attrs = $d->o_fet("SELECT btt.id_thuoctinh_giatri, tt.loai, ttg.alias, ttg.gia_tri, tt.ten as ten_thuoctinh, ttg.ten as ten_giatri 
+                                            FROM #_sanpham_bienthe_thuoctinh btt
+                                            JOIN #_thuoctinh tt ON btt.id_thuoctinh = tt.id_code AND tt.lang = '".LANG."'
+                                            JOIN #_thuoctinh_giatri ttg ON btt.id_thuoctinh_giatri = ttg.id_code AND ttg.lang = '".LANG."'
+                                            WHERE btt.id_bienthe = $id_bienthe");
+                        
+                        if (!empty($attrs)) {
+                            $queryStr = '';
+                            foreach ($attrs as $attr) {
+                                $key_param = !empty($attr['loai']) && in_array($attr['loai'], ['color', 'size', 'image']) ? $attr['loai'] : str_slug($attr['ten_thuoctinh']);
+                                $val_param = $attr['id_thuoctinh_giatri'];
+                                $queryStr .= urlencode($key_param) . '=' . urlencode($val_param) . '&';
+                            }
+                            $queryStr = rtrim($queryStr, '&');
+                            $url_sp .= '?' . $queryStr;
+                        }
+                    }
+                }
+
+                $cartItems[$key] = [
+                    'key' => $key,
+                    'id_sp' => $value['id_sp'],
+                    'so_luong' => $so_luong,
+                    'gia_sp' => $gia_sp,
+                    'tong_gia' => $gia_sp * $so_luong,
+                    'hinh_anh' => getImageUrl($value['hinh_anh']),
+                    'ten_sp' => $row_sp->ten ?? '',
+                    'url_sp' => $url_sp,
+                    'thuoctinh_text' => $value['thuoctinh_text'] ?? ''
+                ];
+            }
+        }
+
         return view('pages/cart/index', [
-            'title' => __('Giỏ hàng'),
+            'title'        => __('Giỏ hàng'),
+            'tong'         => $tong,
+            'phi_ship'     => $phi_ship,
+            'so_giam'      => $so_giam,
+            'vat_rate'     => $vat_rate,
+            'vat_type'     => $vat_type,
+            'list_coupons' => $list_coupons,
+            'cartItems'    => $cartItems
         ]);
     }
 
@@ -33,11 +115,14 @@ class CartController extends Controller {
             case 'update_qty':
                 return $this->update($request);
             case 'delete_cart':
+            case 'delete_item':
                 return $this->remove($request);
             case 'check_sale':
                 return $this->applyCoupon($request);
             case 'remove_sale':
                 return $this->removeCoupon($request);
+            case 'get_shipping_fee':
+                return $this->shippingFee($request);
             default:
                 return Response::json(['success' => false, 'message' => 'Legacy action not found'], 404);
         }
@@ -236,5 +321,55 @@ class CartController extends Controller {
         });
 
         return Response::json(['success' => true, 'coupons' => array_values($valid)]);
+    }
+
+    /**
+     * Tính phí vận chuyển (AJAX)
+     * POST /ajax/cart/shipping-fee (hoặc qua legacy)
+     */
+    public function shippingFee($request) {
+        $code_tinh = trim($request->input('code_tinh', ''));
+        $tong_don  = (float) $request->input('tong_don', 0);
+
+        if (empty($code_tinh)) {
+            return Response::json(['success' => false]);
+        }
+
+        // Logic tính phí ship mẫu
+        $setting = \SettingModel::first();
+        $phi_ship = (float) ($setting->default_ship_phi ?? 30000);
+        
+        // Có thể áp dụng các bảng phí ship cụ thể theo tỉnh nếu có \ShippingFeeModel
+
+        $res = [
+            'success' => true,
+            'phi_ship' => $phi_ship
+        ];
+
+        // Nếu đang có mã giảm giá áp dụng, cập nhật lại số tiền giảm vì phí ship đã thay đổi
+        if (!empty($_SESSION['ma_sale'])) {
+            $ma_sale = $_SESSION['ma_sale'];
+            $row_sale = \CouponModel::where('ma', $ma_sale)->first();
+            if ($row_sale) {
+                if ($row_sale->don_vi == 1) { // %
+                    $price_sale = ($row_sale->loai == 0)
+                        ? $tong_don * ($row_sale->gia_tri / 100)
+                        : $phi_ship  * ($row_sale->gia_tri / 100);
+                    if ($row_sale->gia_tri_max > 0 && $price_sale > $row_sale->gia_tri_max) {
+                        $price_sale = (float) $row_sale->gia_tri_max;
+                    }
+                } else {
+                    $price_sale = (float) $row_sale->gia_tri;
+                }
+
+                if ($row_sale->loai == 0 && $price_sale > $tong_don) $price_sale = $tong_don;
+                if ($row_sale->loai != 0 && $price_sale > $phi_ship)  $price_sale = $phi_ship;
+
+                $_SESSION['phi_sale'] = $price_sale;
+                $res['so_tien_giam'] = $price_sale;
+            }
+        }
+
+        return Response::json($res);
     }
 }

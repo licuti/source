@@ -8,8 +8,9 @@ class SettingModel extends Model {
      */
     public function getAll() {
         if (self::$settings_cache === null) {
-            $sql = "SELECT * FROM {$this->table} WHERE lang = '" . (defined('LANG') ? LANG : 'vi') . "' LIMIT 1";
-            self::$settings_cache = $this->simple_fetch($sql);
+            $lang = defined('LANG') ? LANG : 'vi';
+            $record = static::where('lang', $lang)->first();
+            self::$settings_cache = $record ? $record->toArray() : [];
         }
         return self::$settings_cache;
     }

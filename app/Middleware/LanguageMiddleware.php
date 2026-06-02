@@ -59,6 +59,11 @@ class LanguageMiddleware implements Middleware {
         // 4. Đồng bộ hóa với Layer dữ liệu (Model)
         // Điều này giúp tất cả các câu Query tự động thêm "AND lang='$lang'"
         \Model::setGlobalConstraint("AND lang='$lang'");
+        
+        // Define legacy constant for old class.php functions
+        if (!defined('_where_lang')) {
+            define('_where_lang', " AND lang='$lang'");
+        }
 
         // Tiếp tục chuyển request đến lớp tiếp theo
         return $next($request);
