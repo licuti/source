@@ -1,13 +1,13 @@
 <?php
 return [
-    '0' => [
+    'vi' => [
         "code"  => "vi",
         "label"  => "VIE",
         "name"  => "Tiếng việt",
         "image" => "/templates/images/icon_vi.png",
         "price" => "VND"
     ],
-    '1' => [
+    'en' => [
         "code"  => "en",
         "label"  => "ENG",
         "name"  => "Tiếng anh",
