@@ -8138,3 +8138,40 @@
 [2026-06-02 17:28:18] [INFO]: App kernel booted in modern mode.
 [2026-06-02 17:28:18] [INFO]: App kernel booted in modern mode.
 [2026-06-02 17:28:18] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:40:18] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:40:19] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:40:19] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:40:53] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:40:53] [ERROR]: Class 'DistrictModel' not found
+#0 C:\laragon\www\source\app\Controllers\ProductController.php(250): App\Controllers\LocationController->district(Object(App\Core\Request))
+#1 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\ProductController->legacy(Object(App\Core\Request), Array)
+#2 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#3 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#6 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#11 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#12 {main}
+[2026-06-03 14:41:59] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:42:32] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:42:32] [ERROR]: Class 'DistrictModel' not found
+#0 C:\laragon\www\source\app\Controllers\ProductController.php(250): App\Controllers\LocationController->district(Object(App\Core\Request))
+#1 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\ProductController->legacy(Object(App\Core\Request), Array)
+#2 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#3 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#6 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#11 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#12 {main}
+[2026-06-03 14:43:13] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:43:39] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:43:53] [INFO]: App kernel booted in modern mode.

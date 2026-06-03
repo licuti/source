@@ -627,10 +627,10 @@ $(document).ready(function() {
 
 function get_huyen(code_tinh, code_huyen) {
     var id_quocgia = $('#' + code_tinh).val();
-    var url_ajax = AJAX_ROUTES.product + 'legacy';
+    var url_ajax = AJAX_ROUTES.location + 'district';
     $.ajax({
         url: url_ajax, type: "post", dataType: "text",
-        data: { do: 'get_huyen', code_tinh: id_quocgia },
+        data: { code_tinh: id_quocgia },
         success: function(result) {
             $('#' + code_huyen).html(result);
             if (typeof $.fn.niceSelect !== 'undefined') $('select').niceSelect('update');
@@ -642,10 +642,10 @@ function get_huyen(code_tinh, code_huyen) {
 }
 function get_xa(code_huyen, code_xa) {
     var id_huyen = $('#' + code_huyen).val();
-    var url_ajax = AJAX_ROUTES.product + 'legacy';
+    var url_ajax = AJAX_ROUTES.location + 'ward';
     $.ajax({
         url: url_ajax, type: "post", dataType: "text",
-        data: { do: 'get_xa', code_huyen: id_huyen },
+        data: { code_huyen: id_huyen },
         success: function(result) {
             $('#' + code_xa).html(result);
             if (typeof $.fn.niceSelect !== 'undefined') $('select').niceSelect('update');
