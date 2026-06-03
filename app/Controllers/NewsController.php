@@ -21,7 +21,11 @@ class NewsController extends Controller {
         if (!$row) {
             $slug = explode('/', ltrim($request->uri, '/'))[0];
             $row = \CategoryModel::where('alias', $slug)->first();
-            if ($row) $GLOBALS['row'] = $row;
+            if ($row) {
+                $GLOBALS['row'] = $row;
+                // Gọi một instance của PageController để dùng lại hàm registerLanguageLinks
+                (new \App\Controllers\PageController())->registerLanguageLinks($row, $slug, \CategoryModel::class);
+            }
         }
 
         $page  = max(1, (int) ($_GET['page'] ?? 1));

@@ -92,6 +92,9 @@ class Router {
 
         // 1. Fast path — exact match (không có param)
         if (isset($routes[$path])) {
+            if (php_sapi_name() === 'cli' && defined('DEBUG_ROUTE')) {
+                file_put_contents('scratch/route.log', "Matched EXACT: $path\n", FILE_APPEND);
+            }
             return ['callback' => $routes[$path], 'params' => []];
         }
 
@@ -104,6 +107,9 @@ class Router {
             $pattern = '#^' . $pattern . '$#';
 
             if (preg_match($pattern, $path, $matches)) {
+                if (php_sapi_name() === 'cli' && defined('DEBUG_ROUTE')) {
+                    file_put_contents('scratch/route.log', "Matched PATTERN: $routePath for $path\n", FILE_APPEND);
+                }
                 // Lấy tên các param từ route definition
                 preg_match_all('/\{([^}]+)\}/', $routePath, $paramNames);
                 $params = array_combine($paramNames[1], array_slice($matches, 1));

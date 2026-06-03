@@ -18,13 +18,15 @@ class ProductController extends Controller {
         if (!$row) {
             $slug = explode('/', ltrim($request->uri, '/'))[0];
             $row = \CategoryModel::where('alias', $slug)->first();
-            if ($row) $GLOBALS['row'] = $row;
+            if ($row) {
+                $GLOBALS['row'] = $row;
+                // Gọi một instance của PageController để dùng lại hàm registerLanguageLinks
+                (new \App\Controllers\PageController())->registerLanguageLinks($row, $slug, \CategoryModel::class);
+            }
         }
 
-        // 1. Khởi tạo counter nếu là trang danh mục cụ thể
-        if ($row) {
-            ProductModel::where('id', $row->id)->increment('view');
-        } else {
+        // 1. Chỉ cập nhật view nếu db có hỗ trợ. Hiện db_category không có cột view/luot_xem.
+        if (!$row) {
             // Đăng ký URL dịch cho trang index danh sách sản phẩm
             $urls = [];
             foreach (config('lang', []) as $l) {

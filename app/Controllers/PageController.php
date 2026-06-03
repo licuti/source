@@ -104,7 +104,7 @@ class PageController extends Controller {
     /**
      * Đăng ký language links dựa trên id_code của trang/danh mục
      */
-    private function registerLanguageLinks($page, string $fallbackSlug, string $modelClass) {
+    public function registerLanguageLinks($page, string $fallbackSlug, string $modelClass) {
         if (empty($page->id_code)) return;
 
         // Lấy tất cả ngôn ngữ của trang này — tắt lang constraint tạm thời
