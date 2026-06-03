@@ -69,52 +69,51 @@ if (!function_exists('Img')) {
 
 if (!function_exists('route')) {
     /**
-     * Khởi tạo URL từ tên Route đã đăng ký trong web.php
-     * Ví dụ: route('product.show', ['slug' => 'ao-thun']) 
-     *     hoặc route('product.show', 'ao-thun')
+     * Sinh URL từ tên Route.
+     *
+     * - Tự động dịch slug prefix (san-pham → product) dựa vào config/route_translations.php
+     * - Tự động thêm /{lang}/ nếu không phải ngôn ngữ mặc định (vi)
+     *
+     * Ví dụ:
+     *   route('product.show', 'ao-thun')  → /san-pham/ao-thun  (locale=vi)
+     *   route('product.show', 'ao-thun')  → /en/product/ao-thun (locale=en)
      */
     function route($name, $parameters = []) {
-        $router = \App\Core\App::getInstance()->router;
-        
-        // Try localized route first
-        $sessionLocale = $_SESSION['app_locale'] ?? config('app.locale', 'vi');
-        $localizedName = $name . '.' . $sessionLocale;
-        
-        $path = $router->getNamedRoute($localizedName);
-        if (!$path) {
-            $path = $router->getNamedRoute($name);
-        }
-        
+        $router  = \App\Core\App::getInstance()->router;
+        $locale  = $_SESSION['app_locale'] ?? config('app.locale', 'vi');
+
+        $path = $router->getNamedRoute($name);
         if (!$path) {
             return url('#route-not-found-' . $name);
         }
 
-        // Suy luận ngôn ngữ của route thực tế được match (để gắn prefix cho đúng)
-        // Nếu $path được tìm thấy nhờ fallback (từ $name), ta kiểm tra xem $name có đuôi ngôn ngữ không
-        $actualRouteName = $router->getNamedRoute($localizedName) ? $localizedName : $name;
-        $routeLang = $sessionLocale;
-        if (preg_match('/\.([a-z]{2})$/', $actualRouteName, $matches)) {
-            $routeLang = $matches[1];
+        // Dịch slug prefix nếu không phải ngôn ngữ mặc định (vi)
+        if ($locale !== 'vi') {
+            $translations = config('route_translations', []);
+            foreach ($translations as $key => $langs) {
+                $viSlug = $langs['vi'] ?? null;
+                $toLang = $langs[$locale] ?? null;
+                if ($viSlug && $toLang) {
+                    // Thay thế /san-pham → /product trong path
+                    $path = preg_replace('#^/' . preg_quote($viSlug, '#') . '(/?|/{.*)$#', '/' . $toLang . '$1', $path);
+                }
+            }
         }
 
-        // Nếu tham số truyền vào không phải mảng, ngầm định thay cho {slug} hoặc param đầu tiên
+        // Thay thế {param} trong path
         if (!is_array($parameters)) {
             $parameters = ['slug' => $parameters];
         }
-
-        // Thay thế các placeholder {param}
         foreach ($parameters as $key => $val) {
             $path = preg_replace('/\{' . $key . '\}/', $val, $path);
         }
+        $path = preg_replace('/\{[a-zA-Z0-9_]+\}/', '', $path); // Xóa param dư thừa
 
-        // Xóa các param dư thừa không được truyền
-        $path = preg_replace('/\{[a-zA-Z0-9_]+\}/', '', $path);
-        
         $path = ltrim($path, '/');
-        
-        // Thêm prefix ngôn ngữ nếu không phải ngôn ngữ mặc định (vi)
-        if ($routeLang !== 'vi') {
-            $path = $routeLang . '/' . $path;
+
+        // Thêm prefix /{lang}/ nếu không phải ngôn ngữ mặc định
+        if ($locale !== 'vi') {
+            $path = $locale . '/' . $path;
         }
 
         return url($path);

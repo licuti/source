@@ -82,6 +82,10 @@ class Model implements \JsonSerializable {
         self::$globalConstraint = $sql;
     }
 
+    public static function getGlobalConstraint(): string {
+        return self::$globalConstraint ?? '';
+    }
+
     public function __construct($attributes = []) {
         if (self::$pdo === null && class_exists('func_index') && func_index::$shared_db !== null) {
             self::$pdo    = func_index::$shared_db;

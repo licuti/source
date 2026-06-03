@@ -3,41 +3,111 @@
 namespace App\Controllers;
 
 use App\Core\Response;
+use App\Models\PageModel;
 
 /**
  * PageController
- * Xử lý các trang tĩnh lưu trong DB (bảng db_page).
- * Được gọi bởi catch-all route: GET /{slug}
+ *
+ * Đóng vai trò Smart Dispatcher cho toàn bộ trang CMS.
+ *
+ * - Các trang thông thường (về chúng tôi, dịch vụ...) → render view từ DB.
+ * - Các trang đặc biệt (giỏ hàng, thanh toán, tra cứu...) → dispatch sang
+ *   đúng Controller bằng bảng VIEW_DISPATCH.
+ *
+ * Chỉ cần thêm 1 dòng vào VIEW_DISPATCH để đăng ký trang đặc biệt mới.
  */
 class PageController extends Controller {
 
-    public function show($request, array $params = []) {
-        $slug = $params['slug'] ?? $request->param('slug');
+    /**
+     * Mapping: cột `view` trong db_page → [Controller, method]
+     * Thêm trang mới: chỉ cần thêm 1 dòng vào đây.
+     */
+    private const VIEW_DISPATCH = [
+        'pages/cart/index'    => [CartController::class,     'index'],
+        'pages/cart/checkout' => [CheckoutController::class, 'index'],
+        'pages/order-tracking'=> [\App\Controllers\OrderController::class, 'tracking'],
+    ];
+
+    /**
+     * POST dispatch map — cho các trang có xử lý form POST riêng
+     */
+    private const POST_DISPATCH = [
+        'pages/cart/checkout' => [CheckoutController::class, 'store'],
+    ];
+
+    /**
+     * Smart dispatch: xử lý mọi /{slug} request
+     */
+    public function dispatch($request, array $params = []) {
+        $slug = $params['slug'] ?? $request->param('slug') ?? '';
 
         if (!$slug) {
             return new Response(view('pages/404', ['com' => '']), 404);
         }
 
-        $page = \App\Models\PageModel::where('alias', $slug)->first();
+        $page = PageModel::where('alias', $slug)->first();
 
         if (!$page) {
             return new Response(view('pages/404', ['com' => $slug]), 404);
         }
 
-        // Đăng ký URL dịch cho trang tĩnh
-        $translations = \App\Models\PageModel::where('id_code', $page->id_code)->get();
-        $urls = [];
-        foreach ($translations as $t) {
-            // Trang tĩnh sử dụng catch-all route (/{slug})
-            $urls[$t->lang] = url($t->alias);
+        // Đăng ký URL dịch cho trang này
+        $this->registerLanguageLinks($page, $slug);
+
+        $viewKey = $page->view ?? '';
+
+        // Xử lý POST (form submit)
+        if ($request->method === 'POST' && isset(self::POST_DISPATCH[$viewKey])) {
+            [$class, $method] = self::POST_DISPATCH[$viewKey];
+            return $this->forwardTo($class, $method, $request, $params);
         }
-        \App\Core\App::getInstance()->setLanguageLinks($urls);
 
-        $viewFile = $page->view ?: 'page';
+        // Dispatch sang Controller đặc biệt nếu có
+        if (isset(self::VIEW_DISPATCH[$viewKey])) {
+            [$class, $method] = self::VIEW_DISPATCH[$viewKey];
+            return $this->forwardTo($class, $method, $request, $params);
+        }
 
-        return new Response(view($viewFile, [
+        // Render trang CMS thông thường
+        return new Response(view($viewKey ?: 'pages/page', [
             'row' => $page,
             'com' => $slug,
         ]));
+    }
+
+    /**
+     * Forward request sang Controller khác
+     */
+    private function forwardTo(string $class, string $method, $request, array $params) {
+        $controller = new $class();
+        $result = $controller->$method($request, $params);
+        return ($result instanceof Response) ? $result : new Response($result);
+    }
+
+    /**
+     * Đăng ký language links dựa trên id_code của trang
+     */
+    private function registerLanguageLinks($page, string $fallbackSlug) {
+        if (empty($page->id_code)) return;
+
+        // Lấy tất cả ngôn ngữ của trang này — tắt lang constraint tạm thời
+        $prevConstraint = \Model::getGlobalConstraint();
+        \Model::setGlobalConstraint('');
+        $allTranslations = PageModel::where('id_code', $page->id_code)->get();
+        \Model::setGlobalConstraint($prevConstraint);
+
+        if (empty($allTranslations)) return;
+
+        $links = [];
+        $defaultLang = 'vi';
+        foreach ($allTranslations as $t) {
+            $langCode = $t->lang ?? $defaultLang;
+            $slug     = $t->alias ?? $fallbackSlug;
+            // Trang CMS dùng catch-all route, cần thêm prefix nếu không phải ngôn ngữ mặc định
+            $path = ($langCode !== $defaultLang) ? "{$langCode}/{$slug}" : $slug;
+            $links[$langCode] = url($path);
+        }
+
+        \App\Core\App::getInstance()->setLanguageLinks($links);
     }
 }

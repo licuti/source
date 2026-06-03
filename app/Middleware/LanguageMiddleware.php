@@ -59,8 +59,21 @@ class LanguageMiddleware implements Middleware {
                 $lang = $uriParts[0];
                 $_SESSION['app_locale'] = $lang;
                 
-                // Rewrite URI để Router tiếp tục xử lý (bỏ /en ra khỏi URL nội bộ)
+                // Rewrite URI: bỏ /{lang}/ ra
                 array_shift($uriParts);
+                
+                // Dịch slug đầu tiên về tiếng Việt để Router match đúng route
+                // Ví dụ: /product/... → /san-pham/... (vì route đăng ký là /san-pham)
+                if ($lang !== $defaultLang && !empty($uriParts[0])) {
+                    $translations = config('route_translations', []);
+                    foreach ($translations as $routeKey => $langs) {
+                        if (isset($langs[$lang]) && $langs[$lang] === $uriParts[0]) {
+                            $uriParts[0] = $langs[$defaultLang] ?? $uriParts[0];
+                            break;
+                        }
+                    }
+                }
+                
                 $request->uri = '/' . implode('/', $uriParts);
             } elseif (!$isAjax) {
                 // Nếu URL không có tiền tố ngôn ngữ phụ và KHÔNG phải Ajax, ngầm định là ngôn ngữ mặc định (vi)

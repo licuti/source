@@ -48,8 +48,9 @@ if (!function_exists('config')) {
             $basePath = dirname(dirname(dirname(__FILE__)));
             $repository = array_merge(
                 [
-                    'database' => include $basePath . '/config/database.php',
-                    'lang'     => include $basePath . '/config/languages.php',
+                    'database'           => include $basePath . '/config/database.php',
+                    'lang'               => include $basePath . '/config/languages.php',
+                    'route_translations' => include $basePath . '/config/route_translations.php',
                 ],
                 include $basePath . '/config/app.php'
             );
