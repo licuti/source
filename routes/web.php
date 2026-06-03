@@ -37,12 +37,51 @@ $router->post('/lien-he', [ContactController::class, 'store'])->name('contact.st
 $router->post('/contact', [ContactController::class, 'store']);
 
 /**
- * 4. Giỏ hàng & Thanh toán
+ * 4. Giỏ hàng, Thanh toán, Tra cứu (Dynamic CMS Routing)
+ * Nạp động từ bảng db_page theo view đã chọn.
  */
-$router->get('/gio-hang',   [CartController::class,     'index'])->name('cart.index');
-$router->get('/thanh-toan', [CheckoutController::class, 'index'])->name('checkout.index');
-$router->post('/thanh-toan', [CheckoutController::class, 'store'])->name('checkout.store');
-$router->get('/tra-cuu',    [\App\Controllers\OrderController::class, 'tracking'])->name('order.tracking');
+try {
+    // Kết nối PDO thuần để độc lập, không phụ thuộc Model boot
+    $dbConfig = config('database');
+    $pdo = new \PDO(
+        "mysql:host={$dbConfig['host']};dbname={$dbConfig['database']};charset={$dbConfig['charset']}",
+        $dbConfig['username'],
+        $dbConfig['password']
+    );
+    
+    // Lấy tất cả trang tĩnh thuộc các loại (view) đặc thù
+    $stmt = $pdo->query("SELECT alias, view, lang FROM db_page WHERE view IN ('pages/cart/index', 'pages/cart/checkout', 'pages/order-tracking') AND hien_thi = 1");
+    if ($stmt) {
+        $specialPages = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($specialPages as $p) {
+            $alias = $p['alias'];
+            $lang = $p['lang'];
+            $viewType = $p['view'];
+
+            if ($viewType === 'pages/cart/index') {
+                $router->get('/' . $alias, [CartController::class, 'index'])->name('cart.index.' . $lang);
+                // Đăng ký fallback cho route không có suffix lang
+                $router->get('/' . $alias, [CartController::class, 'index'])->name('cart.index');
+            } elseif ($viewType === 'pages/cart/checkout') {
+                $router->get('/' . $alias, [CheckoutController::class, 'index'])->name('checkout.index.' . $lang);
+                $router->post('/' . $alias, [CheckoutController::class, 'store'])->name('checkout.store.' . $lang);
+                // Fallback
+                $router->get('/' . $alias, [CheckoutController::class, 'index'])->name('checkout.index');
+                $router->post('/' . $alias, [CheckoutController::class, 'store'])->name('checkout.store');
+            } elseif ($viewType === 'pages/order-tracking') {
+                $router->get('/' . $alias, [\App\Controllers\OrderController::class, 'tracking'])->name('order.tracking.' . $lang);
+                // Fallback
+                $router->get('/' . $alias, [\App\Controllers\OrderController::class, 'tracking'])->name('order.tracking');
+            }
+        }
+    }
+} catch (\Exception $e) {
+    // Fallback phòng khi DB lỗi
+    $router->get('/gio-hang',   [CartController::class,     'index'])->name('cart.index');
+    $router->get('/thanh-toan', [CheckoutController::class, 'index'])->name('checkout.index');
+    $router->post('/thanh-toan', [CheckoutController::class, 'store'])->name('checkout.store');
+    $router->get('/tra-cuu',    [\App\Controllers\OrderController::class, 'tracking'])->name('order.tracking');
+}
 
 
 /**

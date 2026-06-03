@@ -75,7 +75,15 @@ if (!function_exists('route')) {
      */
     function route($name, $parameters = []) {
         $router = \App\Core\App::getInstance()->router;
-        $path = $router->getNamedRoute($name);
+        
+        // Try localized route first
+        $locale = $_SESSION['app_locale'] ?? config('app.locale', 'vi');
+        $localizedName = $name . '.' . $locale;
+        
+        $path = $router->getNamedRoute($localizedName);
+        if (!$path) {
+            $path = $router->getNamedRoute($name);
+        }
         
         if (!$path) {
             return url('#route-not-found-' . $name);

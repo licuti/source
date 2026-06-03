@@ -8339,3 +8339,49 @@
 #12 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
 #13 C:\laragon\www\source\index.php(24): App\Core\App->run()
 #14 {main}
+[2026-06-03 15:00:08] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:00:09] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:00:09] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:04:01] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:04:01] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:04:01] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:05:21] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:05:21] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:05:21] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:05:22] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:05:26] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:05:26] [ERROR]: Trying to get property 'id_code' of non-object
+#0 C:\laragon\www\source\resources\views\pages\news\index.php(3): App\Core\App->App\Core\{closure}(8, 'Trying to get p...', 'C:\\laragon\\www\\...', 3, Array)
+#1 C:\laragon\www\source\app\Core\View.php(52): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source\app\Helpers\core.php(175): App\Core\View->render('pages/news/inde...', Array)
+#3 C:\laragon\www\source\app\Controllers\NewsController.php(46): view('pages/news/inde...', Array)
+#4 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\NewsController->index(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#14 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#15 {main}
+[2026-06-03 15:05:29] [INFO]: App kernel booted in modern mode.
+[2026-06-03 15:05:29] [ERROR]: Trying to get property 'id_code' of non-object
+#0 C:\laragon\www\source\resources\views\pages\news\index.php(3): App\Core\App->App\Core\{closure}(8, 'Trying to get p...', 'C:\\laragon\\www\\...', 3, Array)
+#1 C:\laragon\www\source\app\Core\View.php(52): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source\app\Helpers\core.php(175): App\Core\View->render('pages/news/inde...', Array)
+#3 C:\laragon\www\source\app\Controllers\NewsController.php(46): view('pages/news/inde...', Array)
+#4 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\NewsController->index(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#14 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#15 {main}
