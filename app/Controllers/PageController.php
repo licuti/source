@@ -45,6 +45,23 @@ class PageController extends Controller {
             return new Response(view('pages/404', ['com' => '']), 404);
         }
 
+        // 1. Cứu cánh cho danh mục (VD: /ao-khoac)
+        $category = \CategoryModel::where('alias', $slug)->first();
+        if ($category) {
+            $GLOBALS['row'] = $category;
+            $this->registerLanguageLinks($category, $slug, \CategoryModel::class);
+            
+            // Dispatch tới đúng Controller dựa vào module
+            if ($category->module == 4) { // 4 = Sản phẩm
+                return $this->forwardTo(ProductController::class, 'index', $request, $params);
+            } elseif ($category->module == 3) { // 3 = Tin tức
+                return $this->forwardTo(NewsController::class, 'index', $request, $params);
+            }
+            // Fallback render template mặc định
+            return new Response(view($category->view ?: 'pages/products/index', ['row' => $category, 'com' => $slug]));
+        }
+
+        // 2. Tra cứu db_page
         $page = PageModel::where('alias', $slug)->first();
 
         if (!$page) {
@@ -52,7 +69,7 @@ class PageController extends Controller {
         }
 
         // Đăng ký URL dịch cho trang này
-        $this->registerLanguageLinks($page, $slug);
+        $this->registerLanguageLinks($page, $slug, PageModel::class);
 
         $viewKey = $page->view ?? '';
 
@@ -85,15 +102,15 @@ class PageController extends Controller {
     }
 
     /**
-     * Đăng ký language links dựa trên id_code của trang
+     * Đăng ký language links dựa trên id_code của trang/danh mục
      */
-    private function registerLanguageLinks($page, string $fallbackSlug) {
+    private function registerLanguageLinks($page, string $fallbackSlug, string $modelClass) {
         if (empty($page->id_code)) return;
 
         // Lấy tất cả ngôn ngữ của trang này — tắt lang constraint tạm thời
         $prevConstraint = \Model::getGlobalConstraint();
         \Model::setGlobalConstraint('');
-        $allTranslations = PageModel::where('id_code', $page->id_code)->get();
+        $allTranslations = $modelClass::where('id_code', $page->id_code)->get();
         \Model::setGlobalConstraint($prevConstraint);
 
         if (empty($allTranslations)) return;

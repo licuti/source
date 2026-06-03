@@ -13,6 +13,13 @@ class ProductController extends Controller {
      */
     public function index($request) {
         $row = $GLOBALS['row'] ?? null;
+        
+        // Cứu cánh: Nếu gọi qua route tĩnh (VD: /san-pham) mà chưa có $row, thử tự tìm category
+        if (!$row) {
+            $slug = explode('/', ltrim($request->uri, '/'))[0];
+            $row = \CategoryModel::where('alias', $slug)->first();
+            if ($row) $GLOBALS['row'] = $row;
+        }
 
         // 1. Khởi tạo counter nếu là trang danh mục cụ thể
         if ($row) {

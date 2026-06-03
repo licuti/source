@@ -33,6 +33,11 @@ class View
             $data['d'] = $GLOBALS['d'];
         }
 
+        // Inject global '$row' for SEO and category metadata
+        if (!isset($data['row']) && isset($GLOBALS['row'])) {
+            $data['row'] = $GLOBALS['row'];
+        }
+
         $data = array_merge($this->data, $data);
 
         // Export to global scope for legacy including as well

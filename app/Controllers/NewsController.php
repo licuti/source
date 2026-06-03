@@ -16,6 +16,14 @@ class NewsController extends Controller {
      */
     public function index($request) {
         $row   = $GLOBALS['row'] ?? null;
+        
+        // Cứu cánh: Nếu gọi qua route tĩnh (VD: /tin-tuc) mà chưa có $row, thử tự tìm category
+        if (!$row) {
+            $slug = explode('/', ltrim($request->uri, '/'))[0];
+            $row = \CategoryModel::where('alias', $slug)->first();
+            if ($row) $GLOBALS['row'] = $row;
+        }
+
         $page  = max(1, (int) ($_GET['page'] ?? 1));
         $limit = (int) config('posts.paging', 12);
 

@@ -82,6 +82,18 @@ if (!function_exists('route')) {
         $router  = \App\Core\App::getInstance()->router;
         $locale  = $_SESSION['app_locale'] ?? config('app.locale', 'vi');
 
+        // Hỗ trợ override ngôn ngữ từ tên route (VD: gọi route('product.index.en'))
+        if (preg_match('/\.([a-z]{2})$/', $name, $matches)) {
+            $langSuffix = $matches[1];
+            $supportedLangs = array_keys(config('lang', []));
+            if (empty($supportedLangs)) $supportedLangs = ['vi', 'en'];
+            
+            if (in_array($langSuffix, $supportedLangs)) {
+                $locale = $langSuffix; // Ghi đè locale
+                $name = preg_replace('/\.([a-z]{2})$/', '', $name); // Bỏ đuôi .en để tìm đúng route base
+            }
+        }
+
         $path = $router->getNamedRoute($name);
         if (!$path) {
             return url('#route-not-found-' . $name);
