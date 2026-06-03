@@ -8558,3 +8558,9 @@
 [2026-06-03 15:37:33] [INFO]: App kernel booted in modern mode.
 [2026-06-03 15:39:43] [INFO]: App kernel booted in modern mode.
 [2026-06-03 15:39:49] [INFO]: App kernel booted in modern mode.
+[2026-06-03 16:01:34] [ERROR]: Class 'App\Models\SettingModel' not found
+#0 C:\laragon\www\source\app\Core\App.php(147): require_once()
+#1 C:\laragon\www\source\app\Core\App.php(80): App\Core\App->loadRoutes()
+#2 C:\laragon\www\source\index.php(23): App\Core\App->boot()
+#3 {main}
+[2026-06-03 16:04:10] [INFO]: App kernel booted in modern mode.

@@ -44,7 +44,6 @@ function luudulieu(){
             $data['hotline']    =   $d->clear(addslashes($_POST['hotline'][$key]));
             $data['address']    =   $d->clear(addslashes($_POST['address'][$key]));
             $data['office']    =   $d->clear(addslashes($_POST['office'][$key]));
-            $data['url_lang_style'] = $d->clear(addslashes($_POST['url_lang_style'][$key]));
 
             $data['dien_thoai'] =   $d->clear(addslashes($_POST['dien_thoai'][$key]));
 

@@ -58,16 +58,6 @@
                                             <input type="text" placeholder="Nhập địa chỉ website" name="website[]" class="form-control" value="<?= $row['website']?>" >
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">Định dạng URL:</label>
-                                        <div class="col-sm-10">
-                                            <select class="form-control" name="url_lang_style[]">
-                                                <option value="query" <?= $row['url_lang_style'] == 'query' ? 'selected' : '' ?>>Tham số (?lang=en)</option>
-                                                <option value="path" <?= $row['url_lang_style'] == 'path' ? 'selected' : '' ?>>Tiền tố (/en/...)</option>
-                                            </select>
-                                            <p class="help-block">Chọn định dạng hiển thị ngôn ngữ trên URL (chỉ áp dụng cho các ngôn ngữ phụ).</p>
-                                        </div>
-                                    </div>
                                     <div class=" form-group">
                                         <label class="col-sm-2 control-label">Copyright:</label>
                                         <div class="col-sm-10">

@@ -16,61 +16,65 @@ class LanguageMiddleware implements Middleware {
     public function handle($request, $next) {
         // 1. Nhận diện Ngữ cảnh (Admin vs Frontend)
         $isAdmin = (strpos($request->uri, '/admin') === 0);
-        // 2. Nạp dữ liệu ngôn ngữ từ Database thông qua Model
-        if (config('lang') === null || empty(config('lang'))) {
-            $dbLangs = \LanguageModel::where('is_active', 1)->get();
-            if (!empty($dbLangs)) {
-                $langs = [];
-                foreach ($dbLangs as $item) {
-                    $langs[$item->code] = [
-                        'code'  => $item->code,
-                        'name'  => $item->name,
-                        'label' => $item->label,
-                        'image' => $item->image,
-                        'price' => $item->price_unit
-                    ];
-                }
-                config(['lang' => $langs]);
-            }
-        }
+        $defaultLang = config('app.locale', 'vi');
 
         if ($isAdmin) {
             // NGỮ CẢNH ADMIN:
+            // Có thể lấy từ $_SESSION['admin_locale'] hoặc ép cứng về tiếng Việt
             $lang = $_SESSION['admin_locale'] ?? 'vi';
         } else {
             // NGỮ CẢNH FRONTEND (WEB):
-            $defaultLang = config('app.locale', 'vi');
+            // Sử dụng một chìa khóa riêng biệt 'app_locale' để không bị Admin ghi đè
             $lang = $_SESSION['app_locale'] ?? $defaultLang;
             
-            // Đọc cấu hình từ SettingModel
-            $urlStyle = (new \App\Models\SettingModel())->getValue('url_lang_style', 'query');
-            
-            if ($urlStyle === 'path') {
-                $segments = explode('/', trim($request->uri, '/'));
-                if (!empty($segments[0])) {
-                    $firstSeg = $segments[0];
-                    $supportedLangs = config('lang') ?: [];
-                    if (array_key_exists($firstSeg, $supportedLangs)) {
-                        $lang = $firstSeg;
-                        $_SESSION['app_locale'] = $lang;
-                    } else {
-                        // Nếu url không có prefix ngôn ngữ hợp lệ, mặc định là vi (hoặc defaultLang)
-                        $lang = $defaultLang;
-                        $_SESSION['app_locale'] = $lang;
+            // 2. Nạp dữ liệu ngôn ngữ từ Database thông qua Model
+            // Chuyển khối này lên trên để lấy danh sách ngôn ngữ hỗ trợ
+            if (config('lang') === null || empty(config('lang'))) {
+                $dbLangs = \LanguageModel::where('is_active', 1)->get();
+                if (!empty($dbLangs)) {
+                    $langs = [];
+                    foreach ($dbLangs as $item) {
+                        $langs[$item->code] = [
+                            'code'  => $item->code,
+                            'name'  => $item->name,
+                            'label' => $item->label,
+                            'image' => $item->image,
+                            'price' => $item->price_unit
+                        ];
                     }
-                } else {
-                    $lang = $defaultLang;
-                    $_SESSION['app_locale'] = $lang;
+                    config(['lang' => $langs]);
                 }
             }
+
+            $supportedLangs = array_keys(config('lang', []));
+            if (empty($supportedLangs)) $supportedLangs = ['vi', 'en'];
+
+            // Nhận diện Subfolder URL: /en/product/t-shirt -> cắt 'en'
+            $uriParts = explode('/', ltrim($request->uri, '/'));
+            $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') 
+                      || strpos($request->uri, '/ajax/') === 0 
+                      || strpos($request->uri, '/api/') === 0;
+
+            if (!empty($uriParts[0]) && in_array($uriParts[0], $supportedLangs)) {
+                $lang = $uriParts[0];
+                $_SESSION['app_locale'] = $lang;
+                
+                // Rewrite URI để Router tiếp tục xử lý (bỏ /en ra khỏi URL nội bộ)
+                array_shift($uriParts);
+                $request->uri = '/' . implode('/', $uriParts);
+            } elseif (!$isAjax) {
+                // Nếu URL không có tiền tố ngôn ngữ phụ và KHÔNG phải Ajax, ngầm định là ngôn ngữ mặc định (vi)
+                // Cập nhật lại session để đồng bộ khi user chuyển về giao diện tiếng Việt
+                $lang = $defaultLang;
+                $_SESSION['app_locale'] = $lang;
+            }
             
-            // Ưu tiên nạp từ tham số lang (áp dụng cho cả query style, hoặc fallback)
+            // Hỗ trợ tham số ?lang=en (dự phòng)
             if ($request->get('lang')) {
                 $lang = $request->get('lang');
                 $_SESSION['app_locale'] = $lang;
             }
         }
-
         // 3. Thiết lập ngôn ngữ thực tế cho Request hiện tại
         config(['app.locale' => $lang]);
         

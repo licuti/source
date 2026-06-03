@@ -77,8 +77,8 @@ if (!function_exists('route')) {
         $router = \App\Core\App::getInstance()->router;
         
         // Try localized route first
-        $locale = $_SESSION['app_locale'] ?? config('app.locale', 'vi');
-        $localizedName = $name . '.' . $locale;
+        $sessionLocale = $_SESSION['app_locale'] ?? config('app.locale', 'vi');
+        $localizedName = $name . '.' . $sessionLocale;
         
         $path = $router->getNamedRoute($localizedName);
         if (!$path) {
@@ -87,6 +87,14 @@ if (!function_exists('route')) {
         
         if (!$path) {
             return url('#route-not-found-' . $name);
+        }
+
+        // Suy luận ngôn ngữ của route thực tế được match (để gắn prefix cho đúng)
+        // Nếu $path được tìm thấy nhờ fallback (từ $name), ta kiểm tra xem $name có đuôi ngôn ngữ không
+        $actualRouteName = $router->getNamedRoute($localizedName) ? $localizedName : $name;
+        $routeLang = $sessionLocale;
+        if (preg_match('/\.([a-z]{2})$/', $actualRouteName, $matches)) {
+            $routeLang = $matches[1];
         }
 
         // Nếu tham số truyền vào không phải mảng, ngầm định thay cho {slug} hoặc param đầu tiên
@@ -101,8 +109,15 @@ if (!function_exists('route')) {
 
         // Xóa các param dư thừa không được truyền
         $path = preg_replace('/\{[a-zA-Z0-9_]+\}/', '', $path);
+        
+        $path = ltrim($path, '/');
+        
+        // Thêm prefix ngôn ngữ nếu không phải ngôn ngữ mặc định (vi)
+        if ($routeLang !== 'vi') {
+            $path = $routeLang . '/' . $path;
+        }
 
-        return url(ltrim($path, '/'));
+        return url($path);
     }
 }
 
@@ -111,25 +126,17 @@ if (!function_exists('url_lang')) {
      * Tạo URL chuyển đổi ngôn ngữ cho trang hiện tại
      */
     function url_lang($langCode) {
-        $urlStyle = (new \App\Models\SettingModel())->getValue('url_lang_style', 'query');
-        $defaultLang = config('app.locale', 'vi');
-
         // Lấy link đồng bộ ngôn ngữ từ Controller (nếu có)
         $links = \App\Core\App::getInstance()->getLanguageLinks();
         if (!empty($links) && isset($links[$langCode])) {
-            $link = $links[$langCode];
-            if ($urlStyle === 'query') {
-                $separator = (strpos($link, '?') !== false) ? '&' : '?';
-                return $link . $separator . 'lang=' . $langCode;
-            }
-            return $link;
+            return $links[$langCode];
         }
 
-        // Fallback: Trả về trang chủ
-        if ($urlStyle === 'path' && $langCode !== $defaultLang) {
-            return url($langCode);
+        // Fallback: Trả về trang chủ của ngôn ngữ tương ứng
+        $path = '';
+        if ($langCode !== 'vi') {
+            $path = $langCode . '/';
         }
-        
-        return url('?lang=' . $langCode);
+        return url($path);
     }
 }
