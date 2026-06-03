@@ -158,7 +158,7 @@ function getStepClass($step_val, $current_status)
                                     <tr>
                                         <td class="text-muted">Tổng tiền:</td>
                                         <td class="fw-bold text-x h5 mb-0">
-                                            <?= numberformat($order['so_tien_giam'] + $order['phi_vanchuyen'] + $total_details_price) ?>
+                                            <?= renderPrice($order['so_tien_giam'] + $order['phi_vanchuyen'] + $total_details_price) ?>
                                         </td>
                                     </tr>
                                 </table>
@@ -191,10 +191,10 @@ function getStepClass($step_val, $current_status)
                                                 <div class="text-danger small"><?= htmlspecialchars($item['thuoc_tinh']) ?>
                                                 </div>
                                             </td>
-                                            <td class="text-end"><?= numberformat($item['gia_ban']) ?></td>
+                                            <td class="text-end"><?= renderPrice($item['gia_ban']) ?></td>
                                             <td class="text-center"><?= $item['so_luong'] ?></td>
                                             <td class="text-end fw-bold">
-                                                <?= numberformat($item['gia_ban'] * $item['so_luong']) ?></td>
+                                                <?= renderPrice($item['gia_ban'] * $item['so_luong']) ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>

@@ -8319,3 +8319,23 @@
 [2026-06-03 14:49:59] [INFO]: App kernel booted in modern mode.
 [2026-06-03 14:50:00] [INFO]: App kernel booted in modern mode.
 [2026-06-03 14:50:00] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:56:32] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:56:32] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:56:32] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:56:38] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:56:38] [ERROR]: Call to undefined function numberformat()
+#0 C:\laragon\www\source\app\Core\View.php(52): include()
+#1 C:\laragon\www\source\app\Helpers\core.php(175): App\Core\View->render('pages/order-tra...', Array)
+#2 C:\laragon\www\source\app\Controllers\OrderController.php(67): view('pages/order-tra...', Array)
+#3 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\OrderController->tracking(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#13 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#14 {main}
