@@ -8175,3 +8175,147 @@
 [2026-06-03 14:43:13] [INFO]: App kernel booted in modern mode.
 [2026-06-03 14:43:39] [INFO]: App kernel booted in modern mode.
 [2026-06-03 14:43:53] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:46:51] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:46:51] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:46:51] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:46:52] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:46:54] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:46:54] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:46:54] [ERROR]: Non-static method Model::first() should not be called statically
+#0 C:\laragon\www\source\app\Controllers\CartController.php(339): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 339, Array)
+#1 C:\laragon\www\source\app\Controllers\CartController.php(125): App\Controllers\CartController->shippingFee(Object(App\Core\Request))
+#2 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\CartController->legacy(Object(App\Core\Request), Array)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-03 14:46:57] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:46:57] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:46:57] [ERROR]: Non-static method Model::first() should not be called statically
+#0 C:\laragon\www\source\app\Controllers\CartController.php(339): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 339, Array)
+#1 C:\laragon\www\source\app\Controllers\CartController.php(125): App\Controllers\CartController->shippingFee(Object(App\Core\Request))
+#2 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\CartController->legacy(Object(App\Core\Request), Array)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-03 14:48:43] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:48:43] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:48:43] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:49:32] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:49:32] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:49:32] [ERROR]: Non-static method Model::first() should not be called statically
+#0 C:\laragon\www\source\app\Controllers\CartController.php(339): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 339, Array)
+#1 C:\laragon\www\source\app\Controllers\CartController.php(125): App\Controllers\CartController->shippingFee(Object(App\Core\Request))
+#2 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\CartController->legacy(Object(App\Core\Request), Array)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-03 14:49:38] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:49:38] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:49:38] [ERROR]: Non-static method Model::first() should not be called statically
+#0 C:\laragon\www\source\app\Controllers\CartController.php(339): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 339, Array)
+#1 C:\laragon\www\source\app\Controllers\CartController.php(125): App\Controllers\CartController->shippingFee(Object(App\Core\Request))
+#2 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\CartController->legacy(Object(App\Core\Request), Array)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-03 14:49:46] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:49:46] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:49:46] [ERROR]: Non-static method Model::first() should not be called statically
+#0 C:\laragon\www\source\app\Controllers\CartController.php(339): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 339, Array)
+#1 C:\laragon\www\source\app\Controllers\CartController.php(125): App\Controllers\CartController->shippingFee(Object(App\Core\Request))
+#2 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\CartController->legacy(Object(App\Core\Request), Array)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-03 14:49:54] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:49:54] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:49:54] [ERROR]: Non-static method Model::first() should not be called statically
+#0 C:\laragon\www\source\app\Controllers\CartController.php(339): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 339, Array)
+#1 C:\laragon\www\source\app\Controllers\CartController.php(125): App\Controllers\CartController->shippingFee(Object(App\Core\Request))
+#2 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\CartController->legacy(Object(App\Core\Request), Array)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-03 14:49:56] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:49:56] [ERROR]: Non-static method Model::first() should not be called statically
+#0 C:\laragon\www\source\app\Controllers\CartController.php(339): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 339, Array)
+#1 C:\laragon\www\source\app\Controllers\CartController.php(125): App\Controllers\CartController->shippingFee(Object(App\Core\Request))
+#2 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\CartController->legacy(Object(App\Core\Request), Array)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-03 14:49:58] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:49:58] [ERROR]: Non-static method Model::first() should not be called statically
+#0 C:\laragon\www\source\app\Controllers\CartController.php(339): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 339, Array)
+#1 C:\laragon\www\source\app\Controllers\CartController.php(125): App\Controllers\CartController->shippingFee(Object(App\Core\Request))
+#2 C:\laragon\www\source\app\Core\Router.php(137): App\Controllers\CartController->legacy(Object(App\Core\Request), Array)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(121): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(69): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(124): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(147): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-03 14:49:59] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:50:00] [INFO]: App kernel booted in modern mode.
+[2026-06-03 14:50:00] [INFO]: App kernel booted in modern mode.

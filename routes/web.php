@@ -42,6 +42,7 @@ $router->post('/contact', [ContactController::class, 'store']);
 $router->get('/gio-hang',   [CartController::class,     'index'])->name('cart.index');
 $router->get('/thanh-toan', [CheckoutController::class, 'index'])->name('checkout.index');
 $router->post('/thanh-toan', [CheckoutController::class, 'store'])->name('checkout.store');
+$router->get('/tra-cuu',    [\App\Controllers\OrderController::class, 'tracking'])->name('order.tracking');
 
 
 /**

@@ -1,28 +1,6 @@
 <?php
-$order_id = isset($_GET['id']) ? addslashes($_GET['id']) : '';
-$phone = isset($_GET['p']) ? addslashes($_GET['p']) : '';
-
-$order = null;
-$error = '';
-
-if ($order_id && $phone) {
-    $order = $d->simple_fetch("SELECT * FROM #_dathang WHERE ma_dh = '$order_id' AND dien_thoai = '$phone' LIMIT 1");
-    if (!$order) {
-        $error = "Không tìm thấy đơn hàng phù hợp với thông tin đã cung cấp. Vui lòng kiểm tra lại Mã đơn hàng hoặc Số điện thoại.";
-    } else {
-        $order_details = $d->o_fet("SELECT * FROM #_dathang_chitiet WHERE id_dh = " . (int) $order['id'] . " ORDER BY id ASC");
-        $history = $d->o_fet("SELECT * FROM #_dathang_xuly WHERE id_dh = " . (int) $order['id'] . " ORDER BY ngay_xuly DESC, id DESC");
-    }
-}
-
-// Map status for Stepper
-$status = (int) ($order['trangthai_xuly'] ?? -1);
-$steps = [
-    ['label' => 'Đặt hàng thành công', 'icon' => 'fa-check', 'active_val' => 0],
-    ['label' => 'Đang xử lý', 'icon' => 'fa-hourglass-half', 'active_val' => 1],
-    ['label' => 'Đang giao hàng', 'icon' => 'fa-truck', 'active_val' => 2],
-    ['label' => 'Đã giao hàng', 'icon' => 'fa-handshake', 'active_val' => 3],
-];
+// Variables passed from OrderController:
+// $order_id, $phone, $order, $order_details, $history, $error, $status, $steps, $total_details_price
 
 function getStepClass($step_val, $current_status)
 {
@@ -46,7 +24,7 @@ function getStepClass($step_val, $current_status)
                     <p class="text-muted">Nhập mã đơn hàng và số điện thoại để theo dõi lộ trình đơn hàng của bạn.</p>
                 </div>
 
-                <form action="<?= URLPATH ?>tra-cuu.html" method="GET" class="form-tracking">
+                <form action="<?= route('order.tracking') ?>" method="GET" class="form-tracking">
                     <div class="row g-3">
                         <div class="col-md-5">
                             <label class="form-label small fw-bold text-uppercase">Mã đơn hàng</label>
@@ -180,7 +158,7 @@ function getStepClass($step_val, $current_status)
                                     <tr>
                                         <td class="text-muted">Tổng tiền:</td>
                                         <td class="fw-bold text-x h5 mb-0">
-                                            <?= numberformat($order['so_tien_giam'] + $order['phi_vanchuyen'] + $d->simple_fetch("SELECT SUM(gia_ban*so_luong) as total FROM #_dathang_chitiet WHERE id_dh=" . (int) $order['id'])['total']) ?>
+                                            <?= numberformat($order['so_tien_giam'] + $order['phi_vanchuyen'] + $total_details_price) ?>
                                         </td>
                                     </tr>
                                 </table>
