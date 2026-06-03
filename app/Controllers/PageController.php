@@ -24,6 +24,15 @@ class PageController extends Controller {
             return new Response(view('pages/404', ['com' => $slug]), 404);
         }
 
+        // Đăng ký URL dịch cho trang tĩnh
+        $translations = \App\Models\PageModel::where('id_code', $page->id_code)->get();
+        $urls = [];
+        foreach ($translations as $t) {
+            // Trang tĩnh sử dụng catch-all route (/{slug})
+            $urls[$t->lang] = url($t->alias);
+        }
+        \App\Core\App::getInstance()->setLanguageLinks($urls);
+
         $viewFile = $page->view ?: 'page';
 
         return new Response(view($viewFile, [

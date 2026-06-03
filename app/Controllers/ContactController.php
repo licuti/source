@@ -15,6 +15,14 @@ class ContactController extends Controller {
      * Hiển thị trang liên hệ
      */
     public function index($request) {
+        // Đăng ký URL dịch
+        $urls = [];
+        foreach (config('lang', []) as $l) {
+            $urls[$l['code']] = route('contact.index.' . $l['code']);
+        }
+        \App\Core\App::getInstance()->setLanguageLinks($urls);
+
+        $row_detail = \App\Models\PageModel::where('type', 'lienhe')->first();
         return view('pages/contact', [
             'title' => 'Liên hệ'
         ]);

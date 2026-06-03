@@ -11,6 +11,7 @@ class App {
     public $request;
     public $router;
     public $view;
+    protected $languageLinks = [];
 
     protected function __construct() {
         $this->request = new Request();
@@ -23,6 +24,14 @@ class App {
             self::$instance = new self();
         }
         return self::$instance;
+    }
+
+    public function setLanguageLinks(array $links) {
+        $this->languageLinks = $links;
+    }
+
+    public function getLanguageLinks() {
+        return $this->languageLinks;
     }
 
     /**

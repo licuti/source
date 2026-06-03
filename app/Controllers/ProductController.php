@@ -17,6 +17,13 @@ class ProductController extends Controller {
         // 1. Khởi tạo counter nếu là trang danh mục cụ thể
         if ($row) {
             ProductModel::where('id', $row->id)->increment('view');
+        } else {
+            // Đăng ký URL dịch cho trang index danh sách sản phẩm
+            $urls = [];
+            foreach (config('lang', []) as $l) {
+                $urls[$l['code']] = route('product.index.' . $l['code']);
+            }
+            \App\Core\App::getInstance()->setLanguageLinks($urls);
         }
 
         // 2. Tham số phân trang & lọc
@@ -115,6 +122,14 @@ class ProductController extends Controller {
         // 2. Nạp lại chi tiết Sản phẩm với Eager Loading (Variants, Albums)
         $row = ProductModel::where('id_code', $row->id_code)->with('variants', 'albums')->first();
         if (!$row) return '404';
+
+        // Đăng ký URL dịch cho trang chi tiết sản phẩm
+        $translations = ProductModel::where('id_code', $row->id_code)->get();
+        $urls = [];
+        foreach ($translations as $t) {
+            $urls[$t->lang] = route('product.show.' . $t->lang, $t->alias);
+        }
+        \App\Core\App::getInstance()->setLanguageLinks($urls);
 
         // 3. Eager Load lồng nhau (Nested Relations) cho thuộc tính của biến thể
         if (!empty($row->variants)) {

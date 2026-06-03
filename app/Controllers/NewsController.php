@@ -36,6 +36,21 @@ class NewsController extends Controller {
             ->limit($limit, ($page - 1) * $limit)
             ->get();
 
+        if ($row) {
+            $translations = \CategoryModel::where('id_code', $row->id_code)->get();
+            $urls = [];
+            foreach ($translations as $t) {
+                $urls[$t->lang] = route('news.show.' . $t->lang, $t->alias);
+            }
+            \App\Core\App::getInstance()->setLanguageLinks($urls);
+        } else {
+            $urls = [];
+            foreach (config('lang', []) as $l) {
+                $urls[$l['code']] = route('news.index.' . $l['code']);
+            }
+            \App\Core\App::getInstance()->setLanguageLinks($urls);
+        }
+
         return view('pages/news/index', [
             'posts'         => $posts,
             'total_records' => $total,
@@ -59,6 +74,13 @@ class NewsController extends Controller {
             NewsModel::where('id', $row->id)->increment('view');
             $_SESSION['viewed_posts'][$row->id] = true;
         }
+
+        $translations = NewsModel::where('id_code', $row->id_code)->get();
+        $urls = [];
+        foreach ($translations as $t) {
+            $urls[$t->lang] = route('news.show.' . $t->lang, $t->alias);
+        }
+        \App\Core\App::getInstance()->setLanguageLinks($urls);
 
         // Lấy bài viết liên quan
         $category = CategoryModel::where('id_code', $row->id_loai)->first();

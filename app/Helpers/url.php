@@ -111,8 +111,14 @@ if (!function_exists('url_lang')) {
      * Tạo URL chuyển đổi ngôn ngữ cho trang hiện tại
      */
     function url_lang($langCode) {
-        // Trả về trang chủ kèm theo tham số ngôn ngữ
-        // Việc này giúp tránh lỗi 404 do các slug cũ (ví dụ /tra-cuu của tiếng Việt) không tồn tại trong tiếng Anh
+        // Lấy link đồng bộ ngôn ngữ từ Controller (nếu có)
+        $links = \App\Core\App::getInstance()->getLanguageLinks();
+        if (!empty($links) && isset($links[$langCode])) {
+            return $links[$langCode];
+        }
+
+        // Fallback: Trả về trang chủ kèm theo tham số ngôn ngữ
+        // Việc này giúp tránh lỗi 404 do các slug cũ không tồn tại trong ngôn ngữ mới
         return url('?lang=' . $langCode);
     }
 }

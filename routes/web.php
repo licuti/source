@@ -29,12 +29,8 @@ $router->get('/', [HomeController::class, 'index'])->name('home');
 $router->get('/search', [SearchController::class, 'index'])->name('search');
 
 /**
- * 3. Liên hệ
+ * 3. Liên hệ (đã tích hợp vào phần 6)
  */
-$router->get('/lien-he',  [ContactController::class, 'index'])->name('contact.index');
-$router->get('/contact',  [ContactController::class, 'index']);
-$router->post('/lien-he', [ContactController::class, 'store'])->name('contact.store');
-$router->post('/contact', [ContactController::class, 'store']);
 
 /**
  * 4. Giỏ hàng, Thanh toán, Tra cứu (Dynamic CMS Routing)
@@ -94,15 +90,40 @@ $router->get('/dang-xuat',      [AuthController::class, 'logout']);
 $router->get('/quen-mat-khau',  [AuthController::class, 'forgotPassword']);
 
 /**
- * 6. Nội dung — URL có prefix theo loại (Laravel-style).
- * Controller tự trả 404 nếu slug không tìm thấy trong DB.
- * Slug lấy trong Controller qua: $request->param('slug')
+ * 6. Nội dung — Đa ngôn ngữ cho các tiền tố tĩnh
  */
-$router->get('/san-pham',        [ProductController::class,                    'index'])->name('product.index');
-$router->get('/san-pham/{slug}', [ProductController::class,                    'show'])->name('product.show');
-$router->get('/tin-tuc',         [NewsController::class,                       'index'])->name('news.index');
-$router->get('/tin-tuc/{slug}',  [NewsController::class,                       'show'])->name('news.show');
-$router->get('/danh-muc/{slug}', [\App\Controllers\CategoryController::class,  'show'])->name('category.show');
+$localizedPrefixes = [
+    'vi' => ['product' => 'san-pham', 'news' => 'tin-tuc', 'category' => 'danh-muc', 'contact' => 'lien-he'],
+    'en' => ['product' => 'product',  'news' => 'news',    'category' => 'category', 'contact' => 'contact'],
+];
+
+foreach ($localizedPrefixes as $lang => $prefixes) {
+    // Sản phẩm
+    $router->get('/' . $prefixes['product'], [ProductController::class, 'index'])->name('product.index.' . $lang);
+    $router->get('/' . $prefixes['product'] . '/{slug}', [ProductController::class, 'show'])->name('product.show.' . $lang);
+    
+    // Tin tức
+    $router->get('/' . $prefixes['news'], [NewsController::class, 'index'])->name('news.index.' . $lang);
+    $router->get('/' . $prefixes['news'] . '/{slug}', [NewsController::class, 'show'])->name('news.show.' . $lang);
+    
+    // Danh mục
+    $router->get('/' . $prefixes['category'] . '/{slug}', [\App\Controllers\CategoryController::class, 'show'])->name('category.show.' . $lang);
+
+    // Liên hệ
+    $router->get('/' . $prefixes['contact'], [ContactController::class, 'index'])->name('contact.index.' . $lang);
+    $router->post('/' . $prefixes['contact'], [ContactController::class, 'store'])->name('contact.store.' . $lang);
+}
+
+// Đăng ký fallback cho route chuẩn không có ngôn ngữ (Mặc định lấy tiếng Việt)
+$viPrefix = $localizedPrefixes['vi'];
+$router->get('/' . $viPrefix['product'], [ProductController::class, 'index'])->name('product.index');
+$router->get('/' . $viPrefix['product'] . '/{slug}', [ProductController::class, 'show'])->name('product.show');
+$router->get('/' . $viPrefix['news'], [NewsController::class, 'index'])->name('news.index');
+$router->get('/' . $viPrefix['news'] . '/{slug}', [NewsController::class, 'show'])->name('news.show');
+$router->get('/' . $viPrefix['category'] . '/{slug}', [\App\Controllers\CategoryController::class, 'show'])->name('category.show');
+$router->get('/' . $viPrefix['contact'], [ContactController::class, 'index'])->name('contact.index');
+$router->post('/' . $viPrefix['contact'], [ContactController::class, 'store'])->name('contact.store');
+
 
 /**
  * 7. AJAX — Giỏ hàng

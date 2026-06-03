@@ -11,6 +11,14 @@ class CheckoutController extends Controller {
      * Hiển thị trang thanh toán
      */
     public function index($request) {
+        // Đăng ký URL dịch
+        $translations = \App\Models\PageModel::where('view', 'pages/cart/checkout')->get();
+        $urls = [];
+        foreach ($translations as $t) {
+            $urls[$t->lang] = route('checkout.index.' . $t->lang);
+        }
+        \App\Core\App::getInstance()->setLanguageLinks($urls);
+
         // Nếu giỏ hàng trống → redirect về trang giỏ hàng
         if (empty($_SESSION['cart']) || count($_SESSION['cart']) == 0) {
             header('Location: ' . route('cart.index'));

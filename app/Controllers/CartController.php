@@ -15,6 +15,14 @@ class CartController extends Controller {
      * Hiển thị trang giỏ hàng
      */
     public function index($request) {
+        // Đăng ký URL dịch
+        $translations = \App\Models\PageModel::where('view', 'pages/cart/index')->get();
+        $urls = [];
+        foreach ($translations as $t) {
+            $urls[$t->lang] = route('cart.index.' . $t->lang);
+        }
+        \App\Core\App::getInstance()->setLanguageLinks($urls);
+
         $tong     = 0;
         $phi_ship = $_SESSION['phi_ship'] ?? 0;
         $so_giam  = $_SESSION['phi_sale'] ?? 0;

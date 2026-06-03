@@ -53,6 +53,14 @@ class OrderController extends Controller {
             ['label' => 'Đã giao hàng', 'icon' => 'fa-handshake', 'active_val' => 3],
         ];
 
+        // Đăng ký URL dịch
+        $translations = \App\Models\PageModel::where('view', 'pages/order-tracking')->get();
+        $urls = [];
+        foreach ($translations as $t) {
+            $urls[$t->lang] = route('order.tracking.' . $t->lang);
+        }
+        \App\Core\App::getInstance()->setLanguageLinks($urls);
+
         return view('pages/order-tracking', [
             'order_id'            => $order_id,
             'phone'               => $phone,
