@@ -114,7 +114,9 @@ if (!function_exists('url_lang')) {
         // Lấy link đồng bộ ngôn ngữ từ Controller (nếu có)
         $links = \App\Core\App::getInstance()->getLanguageLinks();
         if (!empty($links) && isset($links[$langCode])) {
-            return $links[$langCode];
+            $link = $links[$langCode];
+            $separator = (strpos($link, '?') !== false) ? '&' : '?';
+            return $link . $separator . 'lang=' . $langCode;
         }
 
         // Fallback: Trả về trang chủ kèm theo tham số ngôn ngữ
