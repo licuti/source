@@ -111,32 +111,8 @@ if (!function_exists('url_lang')) {
      * Tạo URL chuyển đổi ngôn ngữ cho trang hiện tại
      */
     function url_lang($langCode) {
-        // Lấy URI hiện tại (loại bỏ query string nếu cần hoặc giữ lại)
-        $uri = $_SERVER['REQUEST_URI'] ?? '/';
-        
-        // Loại bỏ base path nếu có (ví dụ: /source/) để xử lý slug
-        $baseUrl = config('urls.base', '/');
-        $basePath = parse_url($baseUrl, PHP_URL_PATH) ?: '/';
-        $relativeUri = ltrim(str_replace($basePath, '', $uri), '/');
-        
-        // Tách các phần của URI
-        $parts = explode('/', $relativeUri);
-        
-        // Danh sách ngôn ngữ hỗ trợ (Lấy từ cột 'code')
-        $langConfig = config('lang', []);
-        $supportedLangs = array_column($langConfig, 'code');
-        if (empty($supportedLangs)) {
-            $supportedLangs = ['vi', 'en'];
-        }
-        
-        // Nếu phần đầu tiên là ngôn ngữ, thay thế nó
-        if (!empty($parts[0]) && in_array($parts[0], $supportedLangs)) {
-            $parts[0] = $langCode;
-        } else {
-            // Nếu chưa có ngôn ngữ trên URL, chèn thêm vào đầu
-            array_unshift($parts, $langCode);
-        }
-        
-        return url(implode('/', $parts));
+        // Trả về trang chủ kèm theo tham số ngôn ngữ
+        // Việc này giúp tránh lỗi 404 do các slug cũ (ví dụ /tra-cuu của tiếng Việt) không tồn tại trong tiếng Anh
+        return url('?lang=' . $langCode);
     }
 }

@@ -78,13 +78,13 @@
 				href="<?= url_lang($item['code']) ?>">
 				<?= $item['label'] ?>
 				<div class="icon">
-					<img src="<?= asset(str_replace('/templates/', 'assets/', $item['image'])) ?>" alt="<?= $item['label'] ?>" class="image-cover" style="width: 100%; height: 100%; object-fit: cover;">
+					<img src="<?= url(str_replace('/templates/', 'assets/', $item['image'])) ?>" alt="<?= $item['label'] ?>" class="image-cover" style="width: 100%; height: 100%; object-fit: cover;">
 				</div>
 			</a>
 		</li>
 		<?php endforeach ?>
 	</ul>
 	<div class="getImageUrl-lang-current">
-		<img src="<?= asset(str_replace('/templates/', 'assets/', $current_flag)) ?>" class="image-cover" style="width: 100%; height: 100%; object-fit: cover;">
+		<img src="<?= url(str_replace('/templates/', 'assets/', $current_flag)) ?>" class="image-cover" style="width: 100%; height: 100%; object-fit: cover;">
 	</div>
 </div>
