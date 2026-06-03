@@ -62,6 +62,7 @@
 	<button class="btn dropdown-toggle" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
 		<?php
 			$current_lang = $_SESSION['app_locale'] ?? 'vi';
+			$current_flag = '';
 			foreach ($get_lang as $item) {
 				if ($item['code'] == $current_lang) {
 					echo $item['label'];
@@ -85,6 +86,8 @@
 		<?php endforeach ?>
 	</ul>
 	<div class="getImageUrl-lang-current">
+		<?php if ($current_flag): ?>
 		<img src="<?= url(str_replace('/templates/', 'assets/', $current_flag)) ?>" class="image-cover" style="width: 100%; height: 100%; object-fit: cover;">
+		<?php endif; ?>
 	</div>
 </div>
