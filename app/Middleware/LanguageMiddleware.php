@@ -16,26 +16,7 @@ class LanguageMiddleware implements Middleware {
     public function handle($request, $next) {
         // 1. Nhận diện Ngữ cảnh (Admin vs Frontend)
         $isAdmin = (strpos($request->uri, '/admin') === 0);
-        $defaultLang = config('app.locale', 'vi');
-
-        if ($isAdmin) {
-            // NGỮ CẢNH ADMIN:
-            // Có thể lấy từ $_SESSION['admin_locale'] hoặc ép cứng về tiếng Việt
-            $lang = $_SESSION['admin_locale'] ?? 'vi';
-        } else {
-            // NGỮ CẢNH FRONTEND (WEB):
-            // Sử dụng một chìa khóa riêng biệt 'app_locale' để không bị Admin ghi đè
-            $lang = $_SESSION['app_locale'] ?? $defaultLang;
-            
-            // Nếu có tham số lang trên URL (ví dụ: ?lang=en), ưu tiên nạp và lưu lại
-            if ($request->get('lang')) {
-                $lang = $request->get('lang');
-                $_SESSION['app_locale'] = $lang;
-            }
-        }
-        
         // 2. Nạp dữ liệu ngôn ngữ từ Database thông qua Model
-        // (Chỉ nạp nếu cần thiết để tối ưu Performance)
         if (config('lang') === null || empty(config('lang'))) {
             $dbLangs = \LanguageModel::where('is_active', 1)->get();
             if (!empty($dbLangs)) {
@@ -50,6 +31,43 @@ class LanguageMiddleware implements Middleware {
                     ];
                 }
                 config(['lang' => $langs]);
+            }
+        }
+
+        if ($isAdmin) {
+            // NGỮ CẢNH ADMIN:
+            $lang = $_SESSION['admin_locale'] ?? 'vi';
+        } else {
+            // NGỮ CẢNH FRONTEND (WEB):
+            $defaultLang = config('app.locale', 'vi');
+            $lang = $_SESSION['app_locale'] ?? $defaultLang;
+            
+            // Đọc cấu hình từ SettingModel
+            $urlStyle = (new \App\Models\SettingModel())->getValue('url_lang_style', 'query');
+            
+            if ($urlStyle === 'path') {
+                $segments = explode('/', trim($request->uri, '/'));
+                if (!empty($segments[0])) {
+                    $firstSeg = $segments[0];
+                    $supportedLangs = config('lang') ?: [];
+                    if (array_key_exists($firstSeg, $supportedLangs)) {
+                        $lang = $firstSeg;
+                        $_SESSION['app_locale'] = $lang;
+                    } else {
+                        // Nếu url không có prefix ngôn ngữ hợp lệ, mặc định là vi (hoặc defaultLang)
+                        $lang = $defaultLang;
+                        $_SESSION['app_locale'] = $lang;
+                    }
+                } else {
+                    $lang = $defaultLang;
+                    $_SESSION['app_locale'] = $lang;
+                }
+            }
+            
+            // Ưu tiên nạp từ tham số lang (áp dụng cho cả query style, hoặc fallback)
+            if ($request->get('lang')) {
+                $lang = $request->get('lang');
+                $_SESSION['app_locale'] = $lang;
             }
         }
 

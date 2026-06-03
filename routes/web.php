@@ -23,6 +23,19 @@ use App\Controllers\PageController;
  */
 $router->get('/', [HomeController::class, 'index'])->name('home');
 
+// Đọc cấu hình từ SettingModel để biết kiểu định tuyến
+$urlStyle = (new \App\Models\SettingModel())->getValue('url_lang_style', 'query');
+$defaultLang = config('app.locale', 'vi');
+
+if ($urlStyle === 'path') {
+    $supportedLangs = ['en', 'vi']; // Hoặc query DB nếu cần
+    foreach ($supportedLangs as $code) {
+        if ($code !== $defaultLang) {
+            $router->get('/' . $code, [HomeController::class, 'index'])->name('home.' . $code);
+        }
+    }
+}
+
 /**
  * 2. Tìm kiếm
  */
@@ -45,6 +58,9 @@ try {
         $dbConfig['password']
     );
     
+    $urlStyle = (new \App\Models\SettingModel())->getValue('url_lang_style', 'query');
+    $defaultLang = config('app.locale', 'vi');
+
     // Lấy tất cả trang tĩnh thuộc các loại (view) đặc thù
     $stmt = $pdo->query("SELECT alias, view, lang FROM db_page WHERE view IN ('pages/cart/index', 'pages/cart/checkout', 'pages/order-tracking') AND hien_thi = 1");
     if ($stmt) {
@@ -54,20 +70,25 @@ try {
             $lang = $p['lang'];
             $viewType = $p['view'];
 
+            $pathPrefix = '';
+            if ($urlStyle === 'path' && $lang !== $defaultLang) {
+                $pathPrefix = $lang . '/';
+            }
+
             if ($viewType === 'pages/cart/index') {
-                $router->get('/' . $alias, [CartController::class, 'index'])->name('cart.index.' . $lang);
+                $router->get('/' . $pathPrefix . $alias, [CartController::class, 'index'])->name('cart.index.' . $lang);
                 // Đăng ký fallback cho route không có suffix lang
-                $router->get('/' . $alias, [CartController::class, 'index'])->name('cart.index');
+                $router->get('/' . $pathPrefix . $alias, [CartController::class, 'index'])->name('cart.index');
             } elseif ($viewType === 'pages/cart/checkout') {
-                $router->get('/' . $alias, [CheckoutController::class, 'index'])->name('checkout.index.' . $lang);
-                $router->post('/' . $alias, [CheckoutController::class, 'store'])->name('checkout.store.' . $lang);
+                $router->get('/' . $pathPrefix . $alias, [CheckoutController::class, 'index'])->name('checkout.index.' . $lang);
+                $router->post('/' . $pathPrefix . $alias, [CheckoutController::class, 'store'])->name('checkout.store.' . $lang);
                 // Fallback
-                $router->get('/' . $alias, [CheckoutController::class, 'index'])->name('checkout.index');
-                $router->post('/' . $alias, [CheckoutController::class, 'store'])->name('checkout.store');
+                $router->get('/' . $pathPrefix . $alias, [CheckoutController::class, 'index'])->name('checkout.index');
+                $router->post('/' . $pathPrefix . $alias, [CheckoutController::class, 'store'])->name('checkout.store');
             } elseif ($viewType === 'pages/order-tracking') {
-                $router->get('/' . $alias, [\App\Controllers\OrderController::class, 'tracking'])->name('order.tracking.' . $lang);
+                $router->get('/' . $pathPrefix . $alias, [\App\Controllers\OrderController::class, 'tracking'])->name('order.tracking.' . $lang);
                 // Fallback
-                $router->get('/' . $alias, [\App\Controllers\OrderController::class, 'tracking'])->name('order.tracking');
+                $router->get('/' . $pathPrefix . $alias, [\App\Controllers\OrderController::class, 'tracking'])->name('order.tracking');
             }
         }
     }
@@ -97,21 +118,31 @@ $localizedPrefixes = [
     'en' => ['product' => 'product',  'news' => 'news',    'category' => 'category', 'contact' => 'contact'],
 ];
 
+// Đọc cấu hình từ SettingModel để biết kiểu định tuyến
+$urlStyle = (new \App\Models\SettingModel())->getValue('url_lang_style', 'query');
+$defaultLang = config('app.locale', 'vi');
+
 foreach ($localizedPrefixes as $lang => $prefixes) {
+    // Xác định prefix path (chỉ thêm nếu là path style và không phải ngôn ngữ mặc định)
+    $pathPrefix = '';
+    if ($urlStyle === 'path' && $lang !== $defaultLang) {
+        $pathPrefix = $lang . '/';
+    }
+
     // Sản phẩm
-    $router->get('/' . $prefixes['product'], [ProductController::class, 'index'])->name('product.index.' . $lang);
-    $router->get('/' . $prefixes['product'] . '/{slug}', [ProductController::class, 'show'])->name('product.show.' . $lang);
+    $router->get('/' . $pathPrefix . $prefixes['product'], [ProductController::class, 'index'])->name('product.index.' . $lang);
+    $router->get('/' . $pathPrefix . $prefixes['product'] . '/{slug}', [ProductController::class, 'show'])->name('product.show.' . $lang);
     
     // Tin tức
-    $router->get('/' . $prefixes['news'], [NewsController::class, 'index'])->name('news.index.' . $lang);
-    $router->get('/' . $prefixes['news'] . '/{slug}', [NewsController::class, 'show'])->name('news.show.' . $lang);
+    $router->get('/' . $pathPrefix . $prefixes['news'], [NewsController::class, 'index'])->name('news.index.' . $lang);
+    $router->get('/' . $pathPrefix . $prefixes['news'] . '/{slug}', [NewsController::class, 'show'])->name('news.show.' . $lang);
     
     // Danh mục
-    $router->get('/' . $prefixes['category'] . '/{slug}', [\App\Controllers\CategoryController::class, 'show'])->name('category.show.' . $lang);
+    $router->get('/' . $pathPrefix . $prefixes['category'] . '/{slug}', [\App\Controllers\CategoryController::class, 'show'])->name('category.show.' . $lang);
 
     // Liên hệ
-    $router->get('/' . $prefixes['contact'], [ContactController::class, 'index'])->name('contact.index.' . $lang);
-    $router->post('/' . $prefixes['contact'], [ContactController::class, 'store'])->name('contact.store.' . $lang);
+    $router->get('/' . $pathPrefix . $prefixes['contact'], [ContactController::class, 'index'])->name('contact.index.' . $lang);
+    $router->post('/' . $pathPrefix . $prefixes['contact'], [ContactController::class, 'store'])->name('contact.store.' . $lang);
 }
 
 // Đăng ký fallback cho route chuẩn không có ngôn ngữ (Mặc định lấy tiếng Việt)
@@ -161,4 +192,11 @@ $router->post('/ajax/location/ward',     [\App\Controllers\LocationController::c
  * PHẢI đặt CUỐI CÙNG — để các route cụ thể ở trên được ưu tiên.
  * Nếu slug không tìm thấy trong PageModel → PageController tự trả 404.
  */
+if ($urlStyle === 'path') {
+    foreach ($localizedPrefixes as $lang => $prefixes) {
+        if ($lang !== $defaultLang) {
+            $router->get('/' . $lang . '/{slug}', [PageController::class, 'show']);
+        }
+    }
+}
 $router->get('/{slug}', [PageController::class, 'show']);

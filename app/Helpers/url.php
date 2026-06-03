@@ -111,16 +111,25 @@ if (!function_exists('url_lang')) {
      * Tạo URL chuyển đổi ngôn ngữ cho trang hiện tại
      */
     function url_lang($langCode) {
+        $urlStyle = (new \App\Models\SettingModel())->getValue('url_lang_style', 'query');
+        $defaultLang = config('app.locale', 'vi');
+
         // Lấy link đồng bộ ngôn ngữ từ Controller (nếu có)
         $links = \App\Core\App::getInstance()->getLanguageLinks();
         if (!empty($links) && isset($links[$langCode])) {
             $link = $links[$langCode];
-            $separator = (strpos($link, '?') !== false) ? '&' : '?';
-            return $link . $separator . 'lang=' . $langCode;
+            if ($urlStyle === 'query') {
+                $separator = (strpos($link, '?') !== false) ? '&' : '?';
+                return $link . $separator . 'lang=' . $langCode;
+            }
+            return $link;
         }
 
-        // Fallback: Trả về trang chủ kèm theo tham số ngôn ngữ
-        // Việc này giúp tránh lỗi 404 do các slug cũ không tồn tại trong ngôn ngữ mới
+        // Fallback: Trả về trang chủ
+        if ($urlStyle === 'path' && $langCode !== $defaultLang) {
+            return url($langCode);
+        }
+        
         return url('?lang=' . $langCode);
     }
 }
