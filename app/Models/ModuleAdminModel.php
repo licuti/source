@@ -2,5 +2,5 @@
 
 class ModuleAdminModel extends Model {
     public $table = '#_module_admin';
-    public $timestamps = false;
+    public bool $timestamps = false;
 }
