@@ -95,7 +95,10 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                                                 </td>
                                             <?php endforeach; ?>
                                             <td>
-                                                <input type="text" name="val_gia_tri[]" class="form-control" value="<?= htmlspecialchars($val['gia_tri'] ?? '') ?>" placeholder="VD: #FF0000">
+                                                <div class="input-group">
+                                                    <input type="text" name="val_gia_tri[]" id="val_gia_tri_<?= $val_id_code ?>" class="form-control" value="<?= htmlspecialchars($val['gia_tri'] ?? '') ?>" placeholder="Mã màu / Ảnh">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('val_gia_tri_<?= $val_id_code ?>', '/img_data/images/')"><i class="fa-solid fa-image"></i></button>
+                                                </div>
                                             </td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-sm btn-outline-danger btn-remove-row"><i class="fa-solid fa-trash"></i></button>
@@ -113,7 +116,10 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                                                 </td>
                                             <?php endforeach; ?>
                                             <td>
-                                                <input type="text" name="val_gia_tri[]" class="form-control" placeholder="VD: #FF0000">
+                                                <div class="input-group">
+                                                    <input type="text" name="val_gia_tri[]" id="val_gia_tri_new_1" class="form-control" placeholder="Mã màu / Ảnh">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('val_gia_tri_new_1', '/img_data/images/')"><i class="fa-solid fa-image"></i></button>
+                                                </div>
                                             </td>
                                             <td class="text-center">
                                                 <button type="button" class="btn btn-sm btn-outline-danger btn-remove-row"><i class="fa-solid fa-trash"></i></button>
@@ -173,6 +179,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const tableBody = document.querySelector('#valuesTable tbody');
     const addBtn = document.getElementById('addValueBtn');
     const langs = <?= json_encode(array_column($langs, 'code')) ?>;
+    let newRowCounter = 2; // Dùng để tạo ID ngẫu nhiên cho input
     
     // Cập nhật số thứ tự (Row numbers)
     function updateRowNumbers() {
@@ -186,6 +193,7 @@ document.addEventListener("DOMContentLoaded", function() {
     addBtn.addEventListener('click', function() {
         const tr = document.createElement('tr');
         tr.className = 'value-row';
+        const uniqueId = 'val_gia_tri_new_' + (newRowCounter++);
         
         let inputsHtml = `<td class="text-center fw-bold text-muted row-number"></td>
             <input type="hidden" name="val_id_code[]" value="0">`;
@@ -194,7 +202,12 @@ document.addEventListener("DOMContentLoaded", function() {
             inputsHtml += `<td><input type="text" name="val_ten[${lang}][]" class="form-control" required placeholder="Nhập tên..."></td>`;
         });
         
-        inputsHtml += `<td><input type="text" name="val_gia_tri[]" class="form-control" placeholder="VD: #FF0000"></td>
+        inputsHtml += `<td>
+                <div class="input-group">
+                    <input type="text" name="val_gia_tri[]" id="${uniqueId}" class="form-control" placeholder="Mã màu / Ảnh">
+                    <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('${uniqueId}', '/img_data/images/')"><i class="fa-solid fa-image"></i></button>
+                </div>
+            </td>
             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger btn-remove-row"><i class="fa-solid fa-trash"></i></button></td>`;
             
         tr.innerHTML = inputsHtml;
@@ -230,3 +243,32 @@ document.addEventListener("DOMContentLoaded", function() {
     }, true);
 });
 </script>
+
+<?php if (!defined('CKFINDER_SCRIPT_LOADED')): ?>
+    <?php define('CKFINDER_SCRIPT_LOADED', true); ?>
+    <script src="/assets/admin/ckfinder/ckfinder.js"></script>
+    <script>
+        function openCKFinder(inputId, basePath) {
+            CKFinder.modal({
+                chooseFiles: true,
+                width: 800,
+                height: 600,
+                onInit: function(finder) {
+                    finder.on('files:choose', function(evt) {
+                        var file = evt.data.files.first();
+                        var fullPath = file.getUrl();
+                        var fileName = fullPath;
+                        if (basePath && fullPath.startsWith(basePath)) {
+                            fileName = fullPath.substring(basePath.length);
+                        } else if (fullPath.indexOf('/images/') !== -1) {
+                            fileName = fullPath.substring(fullPath.indexOf('/images/') + 8);
+                        } else {
+                            fileName = fullPath.substring(fullPath.lastIndexOf('/') + 1);
+                        }
+                        document.getElementById(inputId).value = fileName;
+                    });
+                }
+            });
+        }
+    </script>
+<?php endif; ?>
