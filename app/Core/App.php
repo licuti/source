@@ -76,6 +76,9 @@ class App {
             $this->router->pushMiddleware(\App\Middleware\SitePasswordMiddleware::class);
         }
 
+        // Middleware bảo vệ khu vực Admin
+        $this->router->pushMiddleware(\App\Middleware\AdminAuthMiddleware::class);
+
         // 6. Load Routing System
         $this->loadRoutes();
 
@@ -146,6 +149,7 @@ class App {
         $router = $this->router;
         require_once dirname(dirname(__DIR__)) . '/routes/web.php';
         require_once dirname(dirname(__DIR__)) . '/routes/api.php';
+        require_once dirname(dirname(__DIR__)) . '/routes/admin.php';
     }
 
     /**

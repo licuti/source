@@ -9,6 +9,10 @@ namespace App\Core;
 class Logger {
     public static function log(string $message, string $level = 'info') {
         $logPath = dirname(dirname(__DIR__)) . '/storage/logs/app.log';
+        $logDir = dirname($logPath);
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0777, true);
+        }
         $time = date('Y-m-d H:i:s');
         $formattedMessage = "[$time] [$level]: $message" . PHP_EOL;
         

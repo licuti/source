@@ -269,6 +269,12 @@ class Model implements \JsonSerializable {
      * Cập nhật mảng dữ liệu và lưu ngay
      */
     public function update(array $attributes) {
+        // Nếu đang trong ngữ cảnh Query Builder (có điều kiện WHERE) -> Mass Update
+        if (!empty($this->qb_where) || !empty($this->qb_where_raw) || !empty($this->qb_or_where)) {
+            return $this->qbUpdate($attributes);
+        }
+        
+        // Ngược lại, cập nhật instance hiện tại
         return $this->fill($attributes)->save();
     }
 
@@ -324,12 +330,12 @@ class Model implements \JsonSerializable {
      *   Eloquent-style: where('age', '>=', 18)  — (col, op, val)
      *   Legacy-style:   where('age', 18, '>=')  — (col, val, op)
      */
-    public static function where($column, $value = null, $operator = '=') {
-        return static::query()->qbWhere($column, $value, $operator);
+    public function where($column, $value = null, $operator = '=') {
+        return $this->qbWhere($column, $value, $operator);
     }
 
-    public static function orWhere($column, $value = null, $operator = '=') {
-        return static::query()->qbOrWhere($column, $value, $operator);
+    public function orWhere($column, $value = null, $operator = '=') {
+        return $this->qbOrWhere($column, $value, $operator);
     }
 
     public static function __callStatic($method, $parameters) {
@@ -1004,6 +1010,39 @@ class Model implements \JsonSerializable {
         if ($whereSql) $sql .= " WHERE $whereSql";
         $stmt = self::$pdo->prepare($sql);
         $result = $stmt->execute($params);
+        $this->resetQB();
+        return $result;
+    }
+
+    /**
+     * Cập nhật hàng loạt (Mass Update) qua Query Builder
+     * Ví dụ: Model::where('status', 0)->update(['status' => 1]);
+     */
+    protected function qbUpdate(array $data) {
+        if (empty($data)) return false;
+        
+        $tableName = $this->tableName();
+        list($whereSql, $params) = $this->buildWhereClause();
+        
+        if ($this->timestamps) {
+            $data[$this->updatedAt] = time();
+        }
+
+        $fields = [];
+        $updateParams = [];
+        foreach ($data as $col => $val) {
+            $fields[] = "`$col` = ?";
+            $updateParams[] = $val;
+        }
+        
+        $sql = "UPDATE $tableName SET " . implode(', ', $fields);
+        if ($whereSql) {
+            $sql .= " WHERE $whereSql";
+            $updateParams = array_merge($updateParams, $params);
+        }
+        
+        $stmt = self::$pdo->prepare($sql);
+        $result = $stmt->execute($updateParams);
         $this->resetQB();
         return $result;
     }

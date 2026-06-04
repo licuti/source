@@ -8787,3 +8787,1961 @@
 [2026-06-03 17:44:42] [INFO]: App kernel booted in modern mode.
 [2026-06-03 17:44:44] [INFO]: App kernel booted in modern mode.
 [2026-06-03 17:44:44] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:19:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:19:25] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:20:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:20:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:25:59] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:26:02] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:26:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:26:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:26:29] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:26:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:26:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:27:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:27:02] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:27:02] [ERROR]: Undefined variable: total_records
+#0 C:\laragon\www\source-develop\resources\views\pages\products\index.php(16): App\Core\App->App\Core\{closure}(8, 'Undefined varia...', 'C:\\laragon\\www\\...', 16, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(176): App\Core\View->render('pages/products/...', Array)
+#3 C:\laragon\www\source-develop\app\Controllers\PageController.php(61): view('pages/products/...', Array)
+#4 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\PageController->dispatch(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Core\App.php(156): App\Core\Router->dispatch()
+#14 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#15 {main}
+[2026-06-04 01:27:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:27:06] [ERROR]: Undefined variable: total_records
+#0 C:\laragon\www\source-develop\resources\views\pages\products\index.php(16): App\Core\App->App\Core\{closure}(8, 'Undefined varia...', 'C:\\laragon\\www\\...', 16, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(176): App\Core\View->render('pages/products/...', Array)
+#3 C:\laragon\www\source-develop\app\Controllers\PageController.php(61): view('pages/products/...', Array)
+#4 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\PageController->dispatch(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Core\App.php(156): App\Core\Router->dispatch()
+#14 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#15 {main}
+[2026-06-04 01:27:18] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:27:20] [INFO]: App kernel booted in modern mode.
+[2026-06-04 01:27:20] [ERROR]: Undefined variable: total_records
+#0 C:\laragon\www\source-develop\resources\views\pages\products\index.php(16): App\Core\App->App\Core\{closure}(8, 'Undefined varia...', 'C:\\laragon\\www\\...', 16, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(176): App\Core\View->render('pages/products/...', Array)
+#3 C:\laragon\www\source-develop\app\Controllers\PageController.php(61): view('pages/products/...', Array)
+#4 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\PageController->dispatch(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Core\App.php(156): App\Core\Router->dispatch()
+#14 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#15 {main}
+[2026-06-04 01:31:40] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:03:44] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:03:44] [ERROR]: Class App\Middleware\AdminAuthMiddleware cannot extend from interface App\Middleware\Middleware
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 02:03:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:03:46] [ERROR]: Class App\Middleware\AdminAuthMiddleware cannot extend from interface App\Middleware\Middleware
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 02:03:50] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:03:50] [ERROR]: Class App\Middleware\AdminAuthMiddleware cannot extend from interface App\Middleware\Middleware
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 02:14:53] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:14:53] [ERROR]: Class App\Middleware\AdminAuthMiddleware cannot extend from interface App\Middleware\Middleware
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 02:16:57] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:16:57] [ERROR]: Class App\Middleware\AdminAuthMiddleware cannot extend from interface App\Middleware\Middleware
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 02:17:03] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:17:03] [ERROR]: Class App\Middleware\AdminAuthMiddleware cannot extend from interface App\Middleware\Middleware
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 02:17:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:17:05] [ERROR]: Class App\Middleware\AdminAuthMiddleware cannot extend from interface App\Middleware\Middleware
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 02:17:55] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:17:55] [ERROR]: Class App\Middleware\AdminAuthMiddleware cannot extend from interface App\Middleware\Middleware
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 02:18:53] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:18:53] [ERROR]: Declaration of App\Middleware\AdminAuthMiddleware::handle(App\Core\Request $request, Closure $next) must be compatible with App\Middleware\Middleware::handle($request, $next)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 02:19:19] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:19:19] [ERROR]: Cannot call constructor
+#0 C:\laragon\www\source-develop\app\Core\Router.php(140): App\Controllers\Admin\BaseAdminController->__construct()
+#1 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(28): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-04 02:21:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:25:24] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:25:30] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:25:30] [ERROR]: Function get_magic_quotes_gpc() is deprecated
+#0 C:\laragon\www\source-develop\admin\lib\class.php(350): App\Core\App->App\Core\{closure}(8192, 'Function get_ma...', 'C:\\laragon\\www\\...', 350, Array)
+#1 C:\laragon\www\source-develop\app\Controllers\Admin\AuthController.php(37): func_index->clean('admin')
+#2 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\Admin\AuthController->loginPost(Object(App\Core\Request), Array)
+#3 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(28): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#14 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#15 {main}
+[2026-06-04 02:25:44] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:25:45] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:27:15] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:27:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:31:19] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:31:26] [INFO]: App kernel booted in modern mode.
+[2026-06-04 02:39:30] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:03:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:03:51] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:03:53] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:03:54] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:03:58] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:03:58] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:04:02] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:04:03] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:04:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:04:50] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:16:09] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:16:12] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:16:29] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:16:31] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:16:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:16:38] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:16:39] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:18:53] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:18:53] [ERROR]: include(&lt;nav class=&quot;app-header navbar navbar-expand bg-body&quot;&gt;
+    &lt;div class=&quot;container-fluid&quot;&gt;
+        &lt;!-- Bật tắt sidebar --&gt;
+        &lt;ul class=&quot;navbar-nav&quot;&gt;
+            &lt;li class=&quot;nav-item&quot;&gt;
+                &lt;a class=&quot;nav-link&quot; data-lte-toggle=&quot;sidebar&quot; href=&quot;#&quot; role=&quot;button&quot;&gt;&lt;i class=&quot;fa-solid fa-bars&quot;&gt;&lt;/i&gt;&lt;/a&gt;
+            &lt;/li&gt;
+            &lt;li class=&quot;nav-item d-none d-md-block&quot;&gt;
+                &lt;a href=&quot;/&quot; target=&quot;_blank&quot; class=&quot;nav-link&quot;&gt;Xem Website&lt;/a&gt;
+            &lt;/li&gt;
+        &lt;/ul&gt;
+
+        &lt;!-- Menu người dùng --&gt;
+        &lt;ul class=&quot;navbar-nav ms-auto&quot;&gt;
+            &lt;li class=&quot;nav-item dropdown user-menu&quot;&gt;
+                &lt;a href=&quot;#&quot; class=&quot;nav-link dropdown-toggle&quot; data-bs-toggle=&quot;dropdown&quot;&gt;
+                    &lt;img src=&quot;http://source-develop.test/assets/admin/assets/img/user2-160x160.jpg&quot; onerror=&quot;this.src='https://ui-avatars.com/api/?name=Admin'&quot; class=&quot;user-image rounded-circle shadow&quot; alt=&quot;User Image&quot;&gt;
+                    &lt;span class=&quot;d-none d-md-inline&quot;&gt;Administrator&lt;/span&gt;
+                &lt;/a&gt;
+                &lt;ul class=&quot;dropdown-menu dropdown-menu-lg dropdown-menu-end&quot;&gt;
+                    &lt;li class=&quot;user-header text-bg-primary&quot;&gt;
+                        &lt;img src=&quot;https://ui-avatars.com/api/?name=Admin&quot; class=&quot;rounded-circle shadow&quot; alt=&quot;User Image&quot;&gt;
+                        &lt;p&gt;
+                            Administrator
+                            &lt;small&gt;Quản trị viên cấp cao&lt;/small&gt;
+                        &lt;/p&gt;
+                    &lt;/li&gt;
+                    &lt;li class=&quot;user-footer&quot;&gt;
+                        &lt;a href=&quot;#&quot; class=&quot;btn btn-default btn-flat&quot;&gt;Hồ sơ&lt;/a&gt;
+                        &lt;a href=&quot;http://source-develop.test/admin/logout&quot; class=&quot;btn btn-default btn-flat float-end&quot;&gt;Đăng xuất&lt;/a&gt;
+                    &lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/div&gt;
+&lt;/nav&gt;
+): failed to open stream: No error
+#0 C:\laragon\www\source-develop\resources\views\admin\layouts\main.php(20): App\Core\App->App\Core\{closure}(2, 'include(&lt;nav...', 'C:\\laragon\\www\\...', 20, Array)
+#1 C:\laragon\www\source-develop\resources\views\admin\layouts\main.php(20): include()
+#2 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#3 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('admin.layouts.m...', Array)
+#4 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('admin.dashboard...', Array)
+#5 C:\laragon\www\source-develop\app\Controllers\Admin\BaseAdminController.php(22): view('admin.dashboard...', Array)
+#6 C:\laragon\www\source-develop\app\Controllers\Admin\DashboardController.php(8): App\Controllers\Admin\BaseAdminController->render('admin.dashboard...')
+#7 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\Admin\DashboardController->index(Object(App\Core\Request), Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#9 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(28): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#17 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#18 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#19 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#20 {main}
+[2026-06-04 03:38:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 03:38:26] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:09:34] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:14:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:14:35] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:14:45] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:14:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:15:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:15:34] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:15:34] [ERROR]: Type of CfCodeModel::$timestamps must be bool (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 04:16:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:16:33] [ERROR]: Type of CfCodeModel::$timestamps must be bool (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 04:16:47] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:16:47] [ERROR]: Type of CfCodeModel::$timestamps must be bool (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 04:23:22] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:23:29] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:23:29] [ERROR]: Type of CfCodeModel::$timestamps must be bool (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 04:25:02] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:25:02] [ERROR]: Type of CfCodeModel::$guarded must be array (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 04:25:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:25:06] [ERROR]: Type of CfCodeModel::$guarded must be array (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 04:27:58] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:27:59] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:28:04] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:28:04] [ERROR]: Type of ProductVariantModel::$use_lang must not be defined (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 04:28:20] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:28:21] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:28:21] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:29:39] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:29:39] [ERROR]: Type of CfCodeModel::$guarded must be array (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 04:29:42] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:29:42] [ERROR]: Type of CfCodeModel::$guarded must be array (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-04 04:38:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:38:33] [ERROR]: Array to string conversion
+#0 [internal function]: App\Core\App->App\Core\{closure}(8, 'Array to string...', 'C:\\laragon\\www\\...', 589, Array)
+#1 C:\laragon\www\source-develop\app\Core\Model.php(589): PDOStatement->execute(Array)
+#2 C:\laragon\www\source-develop\app\Core\Model.php(558): Model->executeGet('*')
+#3 C:\laragon\www\source-develop\app\Core\Model.php(657): Model->get('*')
+#4 C:\laragon\www\source-develop\app\Controllers\Admin\CategoryController.php(39): Model->first()
+#5 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\Admin\CategoryController->edit(Object(App\Core\Request), Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(28): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-04 04:38:44] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:38:44] [ERROR]: Array to string conversion
+#0 [internal function]: App\Core\App->App\Core\{closure}(8, 'Array to string...', 'C:\\laragon\\www\\...', 589, Array)
+#1 C:\laragon\www\source-develop\app\Core\Model.php(589): PDOStatement->execute(Array)
+#2 C:\laragon\www\source-develop\app\Core\Model.php(558): Model->executeGet('*')
+#3 C:\laragon\www\source-develop\app\Core\Model.php(657): Model->get('*')
+#4 C:\laragon\www\source-develop\app\Controllers\Admin\CategoryController.php(39): Model->first()
+#5 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\Admin\CategoryController->edit(Object(App\Core\Request), Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(28): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-04 04:40:34] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:40:34] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:40:36] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:40:36] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:40:54] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:40:54] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:41:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:41:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:42:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:42:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:46:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:46:24] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:46:25] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:46:32] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:46:32] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:48:52] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:48:57] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:48:57] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:49:02] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:49:02] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:49:02] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:49:03] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:49:03] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:49:03] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:49:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:49:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:49:55] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:50:26] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:50:30] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:50:30] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:53:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:53:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:56:44] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:56:44] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:56:48] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:56:48] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:58:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:58:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:59:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:59:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:59:37] [INFO]: App kernel booted in modern mode.
+[2026-06-04 04:59:37] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:08:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:10:34] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:11:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:11:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:13:35] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:13:35] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:15:42] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:15:42] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:15:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:15:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:15:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:15:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:15:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:15:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:15:49] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:18:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:18:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:18:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:18:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:24] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:25] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:25] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:25] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:25] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:25] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:56] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:57] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:57] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:57] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:57] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:47:57] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:48:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:49:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:49:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:49:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:49:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:49:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:49:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:49:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:49:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:49:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:49:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:55:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:55:28] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'lang' in 'where clause'
+#0 C:\laragon\www\source-develop\app\Core\Model.php(1045): PDOStatement->execute(Array)
+#1 C:\laragon\www\source-develop\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source-develop\app\Controllers\Admin\CategoryController.php(139): Model->update(Array)
+#3 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\Admin\CategoryController->update(Object(App\Core\Request), '100')
+#4 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(28): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-04 06:59:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:29] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:30] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:30] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:30] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:30] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:30] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:30] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:31] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:31] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:32] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:32] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:32] [INFO]: App kernel booted in modern mode.
+[2026-06-04 06:59:32] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:41] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:41] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:41] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:41] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:44] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:44] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:44] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:47] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:47] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:47] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:47] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:51] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:51] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:51] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:51] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:52] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:18:52] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:28:09] [INFO]: App kernel booted in modern mode.
+[2026-06-04 07:38:31] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:34] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:34] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:36] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:39] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:39] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:39] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:39] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:39] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:39] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:44] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:44] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:13:46] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:03] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:03] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:07] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:14:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:00] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:00] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:00] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:00] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:00] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:00] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:03] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:03] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:06] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:29] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:32:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:10] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:10] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:10] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:10] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:10] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:13] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:15] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:17] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:54] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:54] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:38:56] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:01] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:11] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:37] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:37] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:37] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:39] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:39] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:43] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:53] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:39:53] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:40:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:40:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:40:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:40:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:40:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 08:40:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:05] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:05] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:05] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:05] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:05] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:05] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:09] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:09] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:09] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:09] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:09] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:09] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:09] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:09] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:09] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:09] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:09] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:20] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:20] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:21] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:21] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:23] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:23] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:23] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:23] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:23] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:29] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:29] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:29] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:29] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:31] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:31] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:31] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:33] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:33] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:33] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:33] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:33] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:33] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:40] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:40] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:40] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:40] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:41] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:41] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:41] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:42] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:42] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:42] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:42] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:42] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:42] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:42] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:42] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:42] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:00:42] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:00:42] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:01:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:08] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:01:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:08] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:01:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:08] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:01:08] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:08] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:01:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:23] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:25] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:26] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:26] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:26] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:01:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:27] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:01:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:27] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:01:27] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:01:27] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:14:52] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:14:52] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:14:52] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:14:52] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:14:52] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:14:52] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:14:52] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:14:52] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:14:52] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:17:16] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:17:17] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:17:17] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:17:17] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:17:17] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:17:17] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:17:17] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:17:17] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:17:17] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:31:15] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:31:16] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:31:16] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:31:16] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:31:16] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:31:16] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:31:16] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:31:16] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:31:16] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:31:50] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:31:50] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:31:50] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:31:50] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:31:50] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:31:50] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:31:50] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:31:50] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:31:50] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:40:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:28] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:40:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:28] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:40:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:28] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:40:28] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:28] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:40:34] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:34] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:35] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:37] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:37] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:37] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:40:37] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:37] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:40:37] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:37] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-04 09:40:37] [INFO]: App kernel booted in modern mode.
+[2026-06-04 09:40:37] [ERROR]: Non-static method Model::where() should not be called statically
+#0 C:\laragon\www\source-develop\resources\views\partials\header.php(4): App\Core\App->App\Core\{closure}(8192, 'Non-static meth...', 'C:\\laragon\\www\\...', 4, Array)
+#1 C:\laragon\www\source-develop\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('partials/header', Array)
+#3 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#4 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#5 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#6 C:\laragon\www\source-develop\app\Helpers\core.php(184): App\Core\View->render('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}

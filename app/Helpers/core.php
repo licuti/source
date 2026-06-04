@@ -166,9 +166,17 @@ if (!function_exists('view')) {
         
         $view = new \App\Core\View();
         
-        // Nếu đang ở mức 0 (gọi từ Controller), thì bọc trong layout chính
+        // Tự động gán layout tương ứng (Frontend hoặc Admin)
         if ($renderLevel === 0) {
-            $view->setLayout('layouts/main');
+            if (strpos($template, 'admin.') === 0) {
+                // View của admin (trừ trang login) thì dùng layout admin
+                if ($template !== 'admin.auth.login') {
+                    $view->setLayout('admin.layouts.main');
+                }
+            } else {
+                // Các view còn lại dùng layout frontend
+                $view->setLayout('layouts/main');
+            }
         }
         
         $renderLevel++;
