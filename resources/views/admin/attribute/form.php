@@ -45,13 +45,14 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                                     
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Tên nhóm thuộc tính <span class="text-danger">*</span></label>
-                                        <input type="text" name="ten[<?= $c ?>]" class="form-control" placeholder="VD: Màu sắc, Kích thước..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" <?= $i === 0 ? 'required' : '' ?>>
+                                        <input type="text" name="ten[<?= $c ?>]" class="form-control" placeholder="VD: Màu sắc, Kích thước..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" <?= $i === 0 ? 'required' : '' ?>>
                                     </div>
                                     
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Đường dẫn thân thiện (Alias)</label>
-                                            <input type="text" name="alias[<?= $c ?>]" class="form-control text-muted" placeholder="Tự động tạo nếu để trống" value="<?= htmlspecialchars($item['alias'][$c] ?? '') ?>">
+                                            <?php $isAutoSlug = empty($item['alias'][$c]) ? 'auto-slug' : ''; ?>
+                                            <input type="text" name="alias[<?= $c ?>]" class="form-control text-muted <?= $isAutoSlug ?>" placeholder="Tự động tạo nếu để trống" value="<?= htmlspecialchars($item['alias'][$c] ?? '') ?>" data-slug-target="<?= $c ?>">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Mô tả ngắn</label>

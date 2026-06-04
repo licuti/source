@@ -56,12 +56,13 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
                                     
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Tên danh mục <span class="text-danger">*</span></label>
-                                        <input type="text" name="ten[<?= $c ?>]" class="form-control form-control-lg" placeholder="Nhập tên..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" required>
+                                        <input type="text" name="ten[<?= $c ?>]" class="form-control form-control-lg" placeholder="Nhập tên..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" required>
                                     </div>
                                     
                                     <div class="mb-3">
                                         <label class="form-label">Đường dẫn thân thiện (Alias / Slug)</label>
-                                        <input type="text" name="alias[<?= $c ?>]" class="form-control text-muted" placeholder="tu-dong-tao-neu-de-trong" value="<?= htmlspecialchars($item['alias'][$c] ?? '') ?>">
+                                        <?php $isAutoSlug = empty($item['alias'][$c]) ? 'auto-slug' : ''; ?>
+                                        <input type="text" name="alias[<?= $c ?>]" class="form-control text-muted <?= $isAutoSlug ?>" placeholder="tu-dong-tao-neu-de-trong" value="<?= htmlspecialchars($item['alias'][$c] ?? '') ?>" data-slug-target="<?= $c ?>">
                                     </div>
 
                                     <!-- Thay thế textarea bằng Component CKEditor cho phần Mô tả -->

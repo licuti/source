@@ -105,7 +105,7 @@ class CategoryController extends BaseAdminController {
                     'id_code' => $id_code,
                     'lang' => $c,
                     'ten' => $request->input('ten')[$c] ?? '',
-                    'alias' => $request->input('alias')[$c] ?? '',
+                    'alias' => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
                     'mo_ta' => $request->input('mo_ta')[$c] ?? '',
                     'noi_dung' => $request->input('noi_dung')[$c] ?? '',
                     'hinh_anh' => $request->input('hinh_anh') ?? '',
@@ -157,7 +157,7 @@ class CategoryController extends BaseAdminController {
             
             $data = [
                 'ten' => $request->input('ten')[$c] ?? '',
-                'alias' => $request->input('alias')[$c] ?? '',
+                'alias' => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
                 'mo_ta' => $request->input('mo_ta')[$c] ?? '',
                 'noi_dung' => $request->input('noi_dung')[$c] ?? '',
                 'hinh_anh' => $request->input('hinh_anh') ?? '',
