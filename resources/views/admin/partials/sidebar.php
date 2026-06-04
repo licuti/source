@@ -19,6 +19,10 @@
                 </li>
                 
                 <?php
+                // Chỉ lấy các module mà user hiện tại được phép xem (tuỳ theo logic ACL sau này)
+                // Hiện tại $_SESSION['quyen'] đang lưu quyền hạn của user.
+                $userRole = $_SESSION['quyen'] ?? 1;
+                
                 $mainModules = \ModuleAdminModel::where('parent', 0)
                     ->where('hien_thi', 1)
                     ->orderBy('so_thu_tu', 'ASC')
@@ -39,13 +43,18 @@
                     
                     if ($hasSub) {
                         foreach ($subModules as $sub) {
-                            if (!empty($sub->alias) && strpos($requestUri, '/admin/' . $sub->alias) !== false) {
+                            // Ưu tiên check theo route_name, nếu không có thì check theo alias
+                            $checkPath = !empty($sub->alias) ? $sub->alias : $sub->route_name;
+                            if (!empty($checkPath) && strpos($requestUri, '/admin/' . $checkPath) !== false) {
                                 $isActive = true;
                                 break;
                             }
                         }
-                    } elseif (!empty($main->alias) && strpos($requestUri, '/admin/' . $main->alias) !== false) {
-                        $isActive = true;
+                    } else {
+                        $checkPath = !empty($main->alias) ? $main->alias : $main->route_name;
+                        if (!empty($checkPath) && strpos($requestUri, '/admin/' . $checkPath) !== false) {
+                            $isActive = true;
+                        }
                     }
                     ?>
                     
@@ -53,7 +62,7 @@
                     <?php if ($hasSub): ?>
                         <li class="nav-item <?= $isActive ? 'menu-open' : '' ?>">
                             <a href="#" class="nav-link <?= $isActive ? 'active' : '' ?>">
-                                <i class="nav-icon fa-solid <?= htmlspecialchars($main->alias ?: 'fa-box') ?>"></i>
+                                <i class="nav-icon fa-solid <?= htmlspecialchars($main->icon ?: 'fa-box') ?>"></i>
                                 <p>
                                     <?= htmlspecialchars($main->name) ?>
                                     <i class="nav-arrow fa-solid fa-angle-right"></i>
@@ -62,14 +71,17 @@
                             <ul class="nav nav-treeview">
                                 <?php foreach ($subModules as $sub): ?>
                                     <?php 
-                                        $subActive = (!empty($sub->alias) && strpos($requestUri, '/admin/' . $sub->alias) !== false);
+                                        $checkPath = !empty($sub->alias) ? $sub->alias : $sub->route_name;
+                                        $subActive = (!empty($checkPath) && strpos($requestUri, '/admin/' . $checkPath) !== false);
+                                        
                                         // Try to resolve route, fallback to legacy URL if route doesn't exist
                                         try {
                                             $router = \App\Core\App::getInstance()->router;
-                                            $routeName = 'admin.' . $sub->alias . '.index';
+                                            // Sử dụng route_name nếu có, ngược lại dùng fallback admin.{alias}.index
+                                            $routeName = $sub->route_name ?: 'admin.' . $sub->alias . '.index';
                                             $subUrl = $router->getNamedRoute($routeName);
                                             if (!$subUrl) {
-                                                // Fallback to legacy URL or temporary placeholder
+                                                // Fallback to legacy URL
                                                 $subUrl = url('admin/index.php?com=' . $sub->alias . '&act=man');
                                             } else {
                                                 $subUrl = route($routeName);
@@ -80,7 +92,7 @@
                                     ?>
                                     <li class="nav-item">
                                         <a href="<?= $subUrl ?>" class="nav-link <?= $subActive ? 'active' : '' ?>">
-                                            <i class="nav-icon fa-regular fa-circle"></i>
+                                            <i class="nav-icon fa-regular <?= htmlspecialchars($sub->icon ?: 'fa-circle') ?>"></i>
                                             <p><?= htmlspecialchars($sub->name) ?></p>
                                         </a>
                                     </li>
@@ -91,7 +103,7 @@
                         <?php 
                             try {
                                 $router = \App\Core\App::getInstance()->router;
-                                $routeName = 'admin.' . $main->alias . '.index';
+                                $routeName = $main->route_name ?: 'admin.' . $main->alias . '.index';
                                 $mainUrl = $router->getNamedRoute($routeName);
                                 if (!$mainUrl) {
                                     $mainUrl = url('admin/index.php?com=' . $main->alias . '&act=man');
@@ -104,7 +116,7 @@
                         ?>
                         <li class="nav-item">
                             <a href="<?= $mainUrl ?>" class="nav-link <?= $isActive ? 'active' : '' ?>">
-                                <i class="nav-icon fa-solid <?= htmlspecialchars($main->alias ?: 'fa-box') ?>"></i>
+                                <i class="nav-icon fa-solid <?= htmlspecialchars($main->icon ?: 'fa-box') ?>"></i>
                                 <p><?= htmlspecialchars($main->name) ?></p>
                             </a>
                         </li>
