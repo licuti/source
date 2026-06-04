@@ -97,7 +97,8 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                                             <td>
                                                 <div class="input-group">
                                                     <input type="text" name="val_gia_tri[]" id="val_gia_tri_<?= $val_id_code ?>" class="form-control" value="<?= htmlspecialchars($val['gia_tri'] ?? '') ?>" placeholder="Mã màu / Ảnh">
-                                                    <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('val_gia_tri_<?= $val_id_code ?>', '/img_data/images/')"><i class="fa-solid fa-image"></i></button>
+                                                    <input type="color" class="form-control form-control-color px-1 py-1" style="max-width: 38px; cursor: pointer;" onchange="document.getElementById('val_gia_tri_<?= $val_id_code ?>').value = this.value" title="Chọn màu">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('val_gia_tri_<?= $val_id_code ?>', '/img_data/images/')" title="Chọn ảnh"><i class="fa-solid fa-image"></i></button>
                                                 </div>
                                             </td>
                                             <td class="text-center">
@@ -118,7 +119,8 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                                             <td>
                                                 <div class="input-group">
                                                     <input type="text" name="val_gia_tri[]" id="val_gia_tri_new_1" class="form-control" placeholder="Mã màu / Ảnh">
-                                                    <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('val_gia_tri_new_1', '/img_data/images/')"><i class="fa-solid fa-image"></i></button>
+                                                    <input type="color" class="form-control form-control-color px-1 py-1" style="max-width: 38px; cursor: pointer;" onchange="document.getElementById('val_gia_tri_new_1').value = this.value" title="Chọn màu">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('val_gia_tri_new_1', '/img_data/images/')" title="Chọn ảnh"><i class="fa-solid fa-image"></i></button>
                                                 </div>
                                             </td>
                                             <td class="text-center">
@@ -205,7 +207,8 @@ document.addEventListener("DOMContentLoaded", function() {
         inputsHtml += `<td>
                 <div class="input-group">
                     <input type="text" name="val_gia_tri[]" id="${uniqueId}" class="form-control" placeholder="Mã màu / Ảnh">
-                    <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('${uniqueId}', '/img_data/images/')"><i class="fa-solid fa-image"></i></button>
+                    <input type="color" class="form-control form-control-color px-1 py-1" style="max-width: 38px; cursor: pointer;" onchange="document.getElementById('${uniqueId}').value = this.value" title="Chọn màu">
+                    <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('${uniqueId}', '/img_data/images/')" title="Chọn ảnh"><i class="fa-solid fa-image"></i></button>
                 </div>
             </td>
             <td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger btn-remove-row"><i class="fa-solid fa-trash"></i></button></td>`;

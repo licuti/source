@@ -27,8 +27,8 @@ $config = array();
 
 $config['authentication'] = function () {
     if (session_status() === PHP_SESSION_NONE) session_start();
-    // Trả về true nếu admin đã đăng nhập (cả 2 chuẩn tên biến)
-    return isset($_SESSION['id_user']) || isset($_SESSION['login_admin']);
+    // Trả về true nếu admin đã đăng nhập (cả 2 chuẩn tên biến cũ và mới)
+    return isset($_SESSION['id_user']) || isset($_SESSION['login_admin']) || isset($_SESSION['user_hash']);
 };
 
 /*============================ License Key ============================================*/
