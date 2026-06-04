@@ -58,7 +58,7 @@
                     }
                     ?>
                     
-                    <li class="nav-header"><?= mb_strtoupper($main->name, 'UTF-8') ?></li>
+
                     <?php if ($hasSub): ?>
                         <li class="nav-item <?= $isActive ? 'menu-open' : '' ?>">
                             <a href="#" class="nav-link <?= $isActive ? 'active' : '' ?>">
