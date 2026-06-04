@@ -1,2 +1,8 @@
 Matched EXACT: /san-pham
 Matched PATTERN: /san-pham/{slug} for /san-pham/test-san-pham-bien-the
+Matched PATTERN: /san-pham/{slug} for /san-pham/test-san-pham-bien-the
+Matched EXACT: /san-pham
+Matched EXACT: /san-pham
+Matched EXACT: /san-pham
+Matched EXACT: /
+Matched EXACT: /
