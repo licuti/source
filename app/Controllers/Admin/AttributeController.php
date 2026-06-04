@@ -101,8 +101,8 @@ class AttributeController extends BaseAdminController {
         $data_type_variation = [
             'select' => 'Lựa chọn (Select)',
             'color' => 'Màu sắc (Color)',
-            'button' => 'Nút bấm (Button)',
-            'text' => 'Chữ (Text)'
+            'image' => 'Hình ảnh (Image)',
+            'label' => 'Nhãn / Nút bấm (Label)'
         ];
         
         return $this->render('admin.attribute.form', compact('langs', 'item', 'itemValues', 'data_type_variation'));
