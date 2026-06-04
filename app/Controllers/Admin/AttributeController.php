@@ -46,7 +46,12 @@ class AttributeController extends BaseAdminController {
             'label' => 'Nhãn / Nút bấm (Label)'
         ];
 
-        return $this->render('admin.attribute.form', compact('langs', 'data_type_variation'));
+        $data_type_sort = [
+            'id' => 'Theo thời gian tạo (ID)',
+            'ten' => 'Theo tên (A-Z)'
+        ];
+
+        return $this->render('admin.attribute.form', compact('langs', 'data_type_variation', 'data_type_sort'));
     }
 
     /**
@@ -67,7 +72,8 @@ class AttributeController extends BaseAdminController {
         $item = [
             'id' => $id, 
             'loai' => '',
-            'sap_xep' => $cfCode->so_thu_tu,
+            'sap_xep' => '', // Sort values by
+            'so_thu_tu' => $cfCode->so_thu_tu, // Attribute order
             'hien_thi' => $cfCode->hien_thi
         ];
         
@@ -78,6 +84,7 @@ class AttributeController extends BaseAdminController {
             $item["mo_ta"][$lang] = $t->mo_ta;
             if (empty($item["loai"])) {
                 $item["loai"] = $t->loai;
+                $item["sap_xep"] = $t->sap_xep;
             }
         }
         
@@ -104,15 +111,21 @@ class AttributeController extends BaseAdminController {
             'image' => 'Hình ảnh (Image)',
             'label' => 'Nhãn / Nút bấm (Label)'
         ];
+
+        $data_type_sort = [
+            'id' => 'Theo thời gian tạo (ID)',
+            'ten' => 'Theo tên (A-Z)'
+        ];
         
-        return $this->render('admin.attribute.form', compact('langs', 'item', 'itemValues', 'data_type_variation'));
+        return $this->render('admin.attribute.form', compact('langs', 'item', 'itemValues', 'data_type_variation', 'data_type_sort'));
     }
 
     /**
      * Lưu dữ liệu thêm mới
      */
     public function store(Request $request) {
-        $sap_xep = (int)$request->input('sap_xep', 0);
+        $so_thu_tu = (int)$request->input('so_thu_tu', 0);
+        $sap_xep = $request->input('sap_xep', 'id');
         $loai = $request->input('loai', 'select');
         $hien_thi = $request->input('hien_thi') !== null ? 1 : 0;
         
@@ -123,7 +136,7 @@ class AttributeController extends BaseAdminController {
         $id_code = CfCodeModel::insert([
             'ten' => $ten_vi,
             'module' => 4,
-            'so_thu_tu' => $sap_xep,
+            'so_thu_tu' => $so_thu_tu,
             'hien_thi' => $hien_thi
         ]);
 
@@ -158,7 +171,8 @@ class AttributeController extends BaseAdminController {
     public function update(Request $request, $id) {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
         
-        $sap_xep = (int)$request->input('sap_xep', 0);
+        $so_thu_tu = (int)$request->input('so_thu_tu', 0);
+        $sap_xep = $request->input('sap_xep', 'id');
         $loai = $request->input('loai', 'select');
         $hien_thi = $request->input('hien_thi') !== null ? 1 : 0;
         
@@ -168,7 +182,7 @@ class AttributeController extends BaseAdminController {
         // 1. Cập nhật bảng gốc
         CfCodeModel::query()->where('id', $id)->update([
             'ten' => $ten_vi,
-            'so_thu_tu' => $sap_xep,
+            'so_thu_tu' => $so_thu_tu,
             'hien_thi' => $hien_thi
         ]);
 

@@ -155,8 +155,19 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Số thứ tự hiển thị</label>
-                                <input type="number" name="sap_xep" class="form-control" value="<?= $item['sap_xep'] ?? 0 ?>">
+                                <label class="form-label fw-bold">Sắp xếp giá trị theo</label>
+                                <select name="sap_xep" class="form-select">
+                                    <?php foreach ($data_type_sort as $key => $title): ?>
+                                    <option value="<?= htmlspecialchars($key) ?>" <?= ($item['sap_xep'] ?? '') == $key ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($title) ?>
+                                    </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Thứ tự hiển thị nhóm</label>
+                                <input type="number" name="so_thu_tu" class="form-control" value="<?= $item['so_thu_tu'] ?? 0 ?>">
                                 <small class="text-muted">Số càng nhỏ ưu tiên hiển thị trước.</small>
                             </div>
 
