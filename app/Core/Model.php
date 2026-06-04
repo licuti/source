@@ -325,18 +325,6 @@ class Model implements \JsonSerializable {
         return static::query()->qbFind($id, $columns);
     }
 
-    /**
-     * Hỗ trợ cả 2 chữ ký:
-     *   Eloquent-style: where('age', '>=', 18)  — (col, op, val)
-     *   Legacy-style:   where('age', 18, '>=')  — (col, val, op)
-     */
-    public function where($column, $value = null, $operator = '=') {
-        return $this->qbWhere($column, $value, $operator);
-    }
-
-    public function orWhere($column, $value = null, $operator = '=') {
-        return $this->qbOrWhere($column, $value, $operator);
-    }
 
     public static function __callStatic($method, $parameters) {
         return static::query()->$method(...$parameters);
@@ -552,7 +540,7 @@ class Model implements \JsonSerializable {
 
     protected static array $noLangModels = [];
 
-    public function get(string $columns = '*'): array {
+    public function qbGet(string $columns = '*'): array {
         // Nếu đã biết model này không có cột lang, tắt nó đi
         if (isset(self::$noLangModels[get_called_class()])) {
             $this->use_lang = false;
@@ -624,7 +612,7 @@ class Model implements \JsonSerializable {
         return $models;
     }
 
-    public function count(): int {
+    public function qbCount(): int {
         if (isset(self::$noLangModels[get_called_class()])) {
             $this->use_lang = false;
         }
@@ -659,7 +647,7 @@ class Model implements \JsonSerializable {
         return $this->qbWhere('id', $id)->first($columns);
     }
 
-    public function first(string $columns = '*') {
+    public function qbFirst(string $columns = '*') {
         $results = $this->qbLimit(1)->get($columns);
         return $results[0] ?? null;
     }
@@ -667,7 +655,7 @@ class Model implements \JsonSerializable {
     /**
      * Gi\u1ed1ng first() nh\u01b0ng n\u00e9m Exception n\u1ebfu kh\u00f4ng t\u00ecm th\u1ea5y
      */
-    public function firstOrFail(string $columns = '*') {
+    public function qbFirstOrFail(string $columns = '*') {
         $result = $this->first($columns);
         if (!$result) {
             throw new \RuntimeException(static::class . ': Record not found.');
@@ -690,7 +678,7 @@ class Model implements \JsonSerializable {
      * L\u1ea5y m\u1ea3ng c\u00e1c gi\u00e1 tr\u1ecb c\u1ee7a 1 c\u1ed9t \u2014 gi\u1ed1ng Laravel pluck()
      * V\u00ed d\u1ee5: ProductModel::pluck('id_code') => [1, 5, 12, ...]
      */
-    public function pluck(string $column, ?string $keyBy = null): array {
+    public function qbPluck(string $column, ?string $keyBy = null): array {
         $cols   = $keyBy ? "$column, $keyBy" : $column;
         $rows   = $this->get($cols);
         $result = [];
@@ -718,7 +706,7 @@ class Model implements \JsonSerializable {
      * Ki\u1ec3m tra t\u1ed3n t\u1ea1i \u2014 nhanh h\u01a1n count() > 0
      * V\u00ed d\u1ee5: if (ProductModel::where('alias', $slug)->exists()) { ... }
      */
-    public function exists(): bool {
+    public function qbExists(): bool {
         $tableName = $this->tableName();
         list($whereSql, $params) = $this->buildWhereClause();
         $sql = "SELECT 1 FROM $tableName";
@@ -735,7 +723,7 @@ class Model implements \JsonSerializable {
      * X\u1eed l\u00fd d\u1eef li\u1ec7u l\u1edbn theo t\u1eebng l\u00f4 \u2014 gi\u1ed1ng Laravel chunk()
      * V\u00ed d\u1ee5: ProductModel::chunk(100, function($products) { ... });
      */
-    public function chunk(int $size, callable $callback): void {
+    public function qbChunk(int $size, callable $callback): void {
         $page = 1;
         // Snapshot QB \u0111\u1ec3 d\u00f9ng l\u1ea1i nhi\u1ec1u l\u1ea7n
         $snap = [
@@ -756,7 +744,7 @@ class Model implements \JsonSerializable {
         } while (count($results) === $size);
     }
 
-    public function paginate(int $perPage = 15, int $page = 0, string $pageName = 'page') {
+    public function qbPaginate(int $perPage = 15, int $page = 0, string $pageName = 'page') {
         // Nếu không truyền $page trực tiếp — đọc từ $_GET (tương thích ngược)
         if ($page < 1) $page = max(1, (int)($_GET[$pageName] ?? 1));
 
