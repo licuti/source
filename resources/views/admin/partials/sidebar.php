@@ -58,7 +58,6 @@
                     }
                     ?>
                     
-
                     <?php if ($hasSub): ?>
                         <li class="nav-item <?= $isActive ? 'menu-open' : '' ?>">
                             <a href="#" class="nav-link <?= $isActive ? 'active' : '' ?>">
