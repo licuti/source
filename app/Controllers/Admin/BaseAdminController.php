@@ -23,6 +23,13 @@ class BaseAdminController extends Controller {
     }
 
     /**
+     * Trả về JSON Response
+     */
+    protected function json($data, $statusCode = 200) {
+        return Response::json($data, $statusCode);
+    }
+
+    /**
      * Chuyển hướng trang
      */
     protected function redirect($url) {

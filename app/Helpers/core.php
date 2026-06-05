@@ -6,6 +6,35 @@
  * ============================================================
  */
 
+if (!function_exists('base_path')) {
+    /**
+     * Lấy đường dẫn tuyệt đối đến thư mục gốc của project
+     */
+    function base_path($path = '') {
+        $base = dirname(dirname(__DIR__));
+        return $path ? $base . DIRECTORY_SEPARATOR . ltrim($path, '/') : $base;
+    }
+}
+
+if (!function_exists('app_path')) {
+    function app_path($path = '') {
+        return base_path('app' . ($path ? DIRECTORY_SEPARATOR . ltrim($path, '/') : ''));
+    }
+}
+
+if (!function_exists('config_path')) {
+    function config_path($path = '') {
+        return base_path('config' . ($path ? DIRECTORY_SEPARATOR . ltrim($path, '/') : ''));
+    }
+}
+
+if (!function_exists('public_path')) {
+    function public_path($path = '') {
+        // Tuỳ cấu trúc, có thể là thư mục gốc hoặc public/
+        return base_path($path);
+    }
+}
+
 if (!function_exists('calculateVAT')) {
     function calculateVAT($amount, $rate, $type = 1) {
         $amount = (float)$amount;

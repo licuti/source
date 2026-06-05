@@ -1,6 +1,7 @@
 <?php
 class TextModel extends Model {
     public $table = '#_text';
+    public bool $timestamps = false;
     protected static $cache = null;
 
     /**
@@ -56,6 +57,21 @@ class TextModel extends Model {
         }
 
         return "[{$key}]";
+    }
+
+    /**
+     * Cập nhật một chuỗi dịch
+     */
+    public static function updateTranslationAjax($id, $lang, $val) {
+        $record = self::find($id);
+        if (!$record) return false;
+
+        $translations = json_decode($record->text, true) ?: [];
+        $translations[$lang] = $val;
+        
+        return self::where('id', $id)->update([
+            'text' => json_encode($translations, JSON_UNESCAPED_UNICODE)
+        ]);
     }
 }
 ?>

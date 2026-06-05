@@ -20,7 +20,7 @@ class LanguageModel extends Model {
     public static function getActive() {
         return static::query()
                    ->where('is_active', 1)
-                   ->orderBy('so_thu_tu', 'ASC')
+                   ->orderBy('sort_order', 'ASC')
                    ->get();
     }
 
@@ -36,7 +36,7 @@ class LanguageModel extends Model {
      * Kết quả: [ 'vi' => Object, 'en' => Object ]
      */
     public static function getCodeMap() {
-        $langs = static::query()->orderBy('so_thu_tu', 'ASC')->get();
+        $langs = static::query()->orderBy('sort_order', 'ASC')->get();
         $map = [];
         foreach ($langs as $l) {
             $map[$l->code] = $l;

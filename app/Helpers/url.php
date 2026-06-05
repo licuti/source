@@ -51,8 +51,12 @@ if (!function_exists('getImageUrl')) {
      * Lấy đường dẫn ảnh chuẩn xác
      */
     function getImageUrl($filename) {
-        if (empty(trim($filename))) {
+        $filename = trim($filename ?? '');
+        if (empty($filename)) {
             return url('img_data/no-image.png');
+        }
+        if (strpos($filename, 'http') === 0 || strpos($filename, '/') === 0) {
+            return strpos($filename, '/') === 0 ? url(ltrim($filename, '/')) : $filename;
         }
         return url('img_data/images/' . $filename);
     }
