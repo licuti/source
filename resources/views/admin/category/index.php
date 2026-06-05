@@ -5,11 +5,13 @@
                 <h3 class="mb-0">Quản lý Danh mục</h3>
             </div>
             <div class="col-sm-8 text-end">
-                <ol class="breadcrumb float-sm-end mb-0 me-3 d-inline-flex align-items-center">
+                <ol class="breadcrumb float-sm-end mb-0 d-inline-flex align-items-center">
                     <li class="breadcrumb-item"><a href="<?= route('admin.dashboard') ?>">Dashboard</a></li>
                     <li class="breadcrumb-item active" aria-current="page">Danh mục</li>
                 </ol>
-                <a href="<?= route('admin.category.create') ?>" class="btn btn-primary d-inline-block"><i class="fa-solid fa-plus"></i> Thêm mới</a>
+                <div class="ms-3 d-inline-block">
+                    <a href="<?= route('admin.category.create') ?>" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Thêm mới</a>
+                </div>
             </div>
         </div>
     </div>
