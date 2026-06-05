@@ -6,11 +6,11 @@ RewriteEngine On
     Deny from all
 </FilesMatch>
 
-# 2. Cho phép truy cập index.php và các tài nguyên tĩnh
-<Files "index.php">
+# 2. Cho phép truy cập index.php và các tệp xử lý đặc biệt (như CKFinder connector.php)
+<FilesMatch "^(index\.php|connector\.php)$">
     Order allow,deny
     Allow from all
-</Files>
+</FilesMatch>
 
 # 3. Giữ lại quy tắc Thumb (Legacy)
 RewriteRule ^thumb_([0-9]+)x([0-9]+)_([0-9]+)/(.*)$ thumb.php?w=$1&h=$2&zc=$3&q=95&src=http://%{HTTP_HOST}/$4 [L]
