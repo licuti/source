@@ -10873,3 +10873,458 @@
 #15 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
 #16 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
 #17 {main}
+[2026-06-05 13:04:27] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:04:47] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:04:49] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:04:49] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:04:50] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:04:52] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:05:11] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:05:15] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:05:16] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:05:17] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:05:17] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:05:18] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:05:18] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:05:34] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:05:38] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:05:41] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:21:12] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:21:13] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:21:13] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:21:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:21:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:21:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:21:21] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:21:21] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:57:56] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:57:57] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:57:57] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:58:55] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:58:55] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:58:55] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:58:59] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:59:03] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:59:03] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:59:03] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:59:17] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:59:17] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'lang' in 'where clause'
+#0 C:\laragon\www\source\app\Core\Model.php(1033): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Models\TextModel.php(73): Model->update(Array)
+#3 C:\laragon\www\source\app\Controllers\Admin\TextTranslationController.php(62): TextModel::updateTranslationAjax('97', 'en', 'Total')
+#4 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\TextTranslationController->updateAjax(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#16 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#17 {main}
+[2026-06-05 13:59:22] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:59:22] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'lang' in 'where clause'
+#0 C:\laragon\www\source\app\Core\Model.php(1033): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Models\TextModel.php(73): Model->update(Array)
+#3 C:\laragon\www\source\app\Controllers\Admin\TextTranslationController.php(62): TextModel::updateTranslationAjax('97', 'en', 'Total')
+#4 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\TextTranslationController->updateAjax(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#16 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#17 {main}
+[2026-06-05 13:59:32] [INFO]: App kernel booted in modern mode.
+[2026-06-05 13:59:32] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'lang' in 'where clause'
+#0 C:\laragon\www\source\app\Core\Model.php(1033): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Models\TextModel.php(73): Model->update(Array)
+#3 C:\laragon\www\source\app\Controllers\Admin\TextTranslationController.php(62): TextModel::updateTranslationAjax('156', 'en', 'contact')
+#4 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\TextTranslationController->updateAjax(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#16 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#17 {main}
+[2026-06-05 14:01:49] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:01:49] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:01:49] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:01:59] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:03] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:03] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:03] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:05] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:05] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:05] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:16] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:20] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:21] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:21] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:24] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:26] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:02:42] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:10:53] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:10:53] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:10:53] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:11:08] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:11:08] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:11:08] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:11:22] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:11:24] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:11:24] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:11:24] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:20] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:20] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:20] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:20] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:27] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:27] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:27] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:30] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:30] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:30] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:33] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:33] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:33] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:33] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:38] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:12:38] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:13:20] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:13:20] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:13:20] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:13:22] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:13:22] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:14:41] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:18] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:25] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:27] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:27] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:27] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:29] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:30] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:30] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:30] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:46] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:48] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:49] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:52] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:52] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:33:52] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:34:34] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:35:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:35:27] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:35:27] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:37:20] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:37:50] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:37:51] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:37:51] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:37:51] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:39:10] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:39:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:39:16] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:39:16] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:39:16] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:39:18] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:39:47] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:39:56] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:40:32] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:42:54] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:42:57] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:43:06] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:50:12] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:50:12] [ERROR]: Class 'App\Core\Model' not found
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\TextTranslationController->index(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-05 14:51:47] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:51:47] [ERROR]: Cannot access protected property TextModel::$pdo
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\TextTranslationController->index(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-05 14:55:11] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:55:11] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:55:11] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:55:24] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:55:26] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:55:37] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:55:41] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:55:41] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:55:41] [INFO]: App kernel booted in modern mode.
+[2026-06-05 14:59:08] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:00:59] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:00] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:07] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:11] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:12] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:12] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:12] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:18] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:21] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:24] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:26] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:32] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:32] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:35] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:35] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:36] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:01:36] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:03:05] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:03:05] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:03:05] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:03:30] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:03:45] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:03:45] [ERROR]: Cannot access protected property TextModel::$pdo
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\TextTranslationController->updateBulkGroupAjax(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-05 15:03:48] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:03:48] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:03:48] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:03:53] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:03:53] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:03:53] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:02] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:02] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:02] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:04] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:17] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:17] [ERROR]: Cannot access protected property TextModel::$pdo
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\TextTranslationController->updateBulkGroupAjax(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-05 15:04:18] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:18] [ERROR]: Cannot access protected property TextModel::$pdo
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\TextTranslationController->updateBulkGroupAjax(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-05 15:04:18] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:18] [ERROR]: Cannot access protected property TextModel::$pdo
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\TextTranslationController->updateBulkGroupAjax(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-05 15:04:18] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:18] [ERROR]: Cannot access protected property TextModel::$pdo
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\TextTranslationController->updateBulkGroupAjax(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-05 15:04:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:41] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:04:41] [ERROR]: Cannot access protected property TextModel::$pdo
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\TextTranslationController->updateBulkGroupAjax(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(29): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-05 15:05:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:19] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:20] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:21] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:34] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:34] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:34] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:44] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:45] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:45] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:45] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:57] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:59] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:59] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:05:59] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:06:32] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:07:51] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:07:52] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:07:53] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:07:53] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:07:53] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:07:58] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:07:58] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:07:58] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:08:00] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:08:02] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:08:37] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:08:37] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:08:37] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:10:59] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:11:10] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:11:12] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:11:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:11:16] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:11:18] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:11:35] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:11:39] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:12:04] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:12:08] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:12:31] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:12:47] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:12:50] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:12:52] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:13:02] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:13:02] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:13:02] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:13:40] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:13:43] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:13:43] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:14:27] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:14:33] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:14:33] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:14:46] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:14:47] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:14:47] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:14:47] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:14:49] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:14:49] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:14:49] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:48:35] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:48:35] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:48:35] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:02] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:02] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:02] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:10] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:14] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:47] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:50] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:52] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:54] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:54] [INFO]: App kernel booted in modern mode.
+[2026-06-05 15:49:54] [INFO]: App kernel booted in modern mode.
+[2026-06-05 16:05:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 16:05:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 16:05:23] [INFO]: App kernel booted in modern mode.
+[2026-06-05 16:05:45] [INFO]: App kernel booted in modern mode.
+[2026-06-05 16:05:47] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:05] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:06] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:06] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:23] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:23] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:23] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:30] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:32] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:33] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:33] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:33] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:44] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:44] [INFO]: App kernel booted in modern mode.
+[2026-06-06 00:36:44] [INFO]: App kernel booted in modern mode.

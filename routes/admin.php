@@ -51,6 +51,11 @@ $router->group('/admin', function($r) {
     // Quản lý Dịch Chuỗi (Text Translations)
     $r->get('/translations', [\App\Controllers\Admin\TextTranslationController::class, 'index'])->name('admin.translation.index');
     $r->post('/translations/update-ajax', [\App\Controllers\Admin\TextTranslationController::class, 'updateAjax'])->name('admin.translation.updateAjax');
+    $r->post('/translations/update-key-ajax', [\App\Controllers\Admin\TextTranslationController::class, 'updateKeyAjax'])->name('admin.translation.updateKeyAjax');
+    $r->post('/translations/update-group-ajax', [\App\Controllers\Admin\TextTranslationController::class, 'updateGroupAjax'])->name('admin.translation.updateGroupAjax');
+    $r->post('/translations/update-bulk-group-ajax', [\App\Controllers\Admin\TextTranslationController::class, 'updateBulkGroupAjax'])->name('admin.translation.updateBulkGroupAjax');
+    $r->post('/translations/rename-group-ajax', [\App\Controllers\Admin\TextTranslationController::class, 'renameGroupAjax'])->name('admin.translation.renameGroupAjax');
+    $r->post('/translations/delete-group-ajax', [\App\Controllers\Admin\TextTranslationController::class, 'deleteGroupAjax'])->name('admin.translation.deleteGroupAjax');
     $r->post('/translations/store', [\App\Controllers\Admin\TextTranslationController::class, 'store'])->name('admin.translation.store');
     $r->get('/translations/delete/{id}', [\App\Controllers\Admin\TextTranslationController::class, 'destroy'])->name('admin.translation.destroy');
     $r->post('/translations/scan', [\App\Controllers\Admin\TextTranslationController::class, 'scan'])->name('admin.translation.scan');
