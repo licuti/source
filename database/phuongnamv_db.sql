@@ -252,7 +252,7 @@ CREATE TABLE `db_binhluan_media` (
   `loai` enum('image','video') NOT NULL DEFAULT 'image',
   `ten_file` varchar(255) NOT NULL,
   `ngay` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `db_binhluan_media`
