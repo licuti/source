@@ -20,3 +20,7 @@
 # Dependency Folders (if composer is added later)
 # vendor/
 # node_modules/
+
+# GitNexus - Knowledge Graph index (machine-specific, very large files)
+# Chạy lại "gitnexus analyze" trên máy mới để tạo lại
+.gitnexus/
