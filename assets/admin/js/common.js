@@ -41,8 +41,8 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 el.disabled = false;
                 if (data.success) {
-                    if (typeof AppNotify !== 'undefined' && data.message) {
-                        AppNotify.success(data.message);
+                    if (typeof AppNotify !== 'undefined') {
+                        AppNotify.success(data.message || 'Đã cập nhật thành công!');
                     }
                 } else {
                     if (typeof AppNotify !== 'undefined') {

@@ -271,9 +271,10 @@ class PostController extends BaseAdminController {
             
             $updateQuery = PostModel::query();
             $updateQuery->use_lang = false;
+            $label = $field === 'is_featured' ? 'Nổi bật' : 'Trạng thái hiển thị';
             $updateQuery->where('id_code', $id)->update([$field => $value]);
 
-            return $this->json(['success' => true]);
+            return $this->json(['success' => true, 'message' => $label . ' đã được cập nhật!']);
         }
         return $this->json(['success' => false, 'message' => 'ID không hợp lệ']);
     }
