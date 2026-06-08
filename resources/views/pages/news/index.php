@@ -3,9 +3,9 @@
     $categoryIds = getCategoryTreeIds($row->id_code);
     $limit = (int)get_json('posts', 'paging') ?: 10;
     
-    $allPost = NewsModel::query()
+    $allPost = \App\Models\PostModel::query()
         ->where('id_loai', $categoryIds, 'IN')
-        ->where('hien_thi', 1)
+        ->where('status', 'publish')
         ->orderBy('so_thu_tu')
         ->orderBy('id', 'DESC')
         ->get();

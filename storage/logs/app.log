@@ -13320,3 +13320,161 @@
 [2026-06-08 16:07:04] [INFO]: App kernel booted in modern mode.
 [2026-06-08 16:07:04] [INFO]: App kernel booted in modern mode.
 [2026-06-08 16:07:04] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:33] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:33] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:33] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:33] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:33] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:35] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:36] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:41] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:43] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:43] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\CategoryController.php(233): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\CategoryController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 16:08:44] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:44] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\CategoryController.php(233): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\CategoryController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 16:08:45] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:08:45] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\CategoryController.php(233): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\CategoryController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 16:08:46] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:20:36] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:20:43] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:20:59] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:21:01] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:21:01] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:21:02] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:21:30] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:21:36] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:22:22] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:22:22] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:22:22] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:22:22] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:22:22] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:36:51] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:36:52] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:36:52] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:36:52] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:36:52] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:37:13] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:37:14] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:37:19] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:37:20] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:38:35] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:38:38] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:38:39] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:38:39] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:38:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:38:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:38:41] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:38:41] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:38:41] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:02] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:02] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:02] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:02] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:02] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:16] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:16] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:16] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:16] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:16] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:51] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:51] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:51] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:51] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:51] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:58] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:59] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:59] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:59] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:40:59] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:30] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:32] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:32] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:34] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:38] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:38] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:38] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:38] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:38] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:55] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:41:56] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:42:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:46:56] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:46:56] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:48:01] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:48:20] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:48:25] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:49:26] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:49:26] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:49:26] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:49:26] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:49:26] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:51:38] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:51:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:51:41] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:51:41] [INFO]: App kernel booted in modern mode.
+[2026-06-08 16:51:41] [INFO]: App kernel booted in modern mode.
+[2026-06-08 17:35:33] [INFO]: App kernel booted in modern mode.
+[2026-06-08 17:35:37] [INFO]: App kernel booted in modern mode.
+[2026-06-08 17:35:39] [INFO]: App kernel booted in modern mode.
+[2026-06-08 17:46:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 17:56:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 17:58:27] [INFO]: App kernel booted in modern mode.

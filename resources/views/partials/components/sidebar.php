@@ -2,10 +2,10 @@
     $current_id = $row->id ?? 0;
     
     // Sử dụng NewsModel để trả về object
-    $post_sidebar = NewsModel::query()
+    $post_sidebar = \App\Models\PostModel::query()
         ->where('view', '>', 0)
         ->where('id', '!=', $current_id)
-        ->where('hien_thi', 1)
+        ->where('status', 'publish')
         ->where('lang', $_SESSION['lang'] ?? 'vi')
         ->orderBy('view', 'DESC')
         ->limit(12)

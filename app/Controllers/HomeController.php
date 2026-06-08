@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use CategoryModel;
 use ProductModel;
-use NewsModel;
+use App\Models\PostModel;
 
 
 class HomeController extends Controller {
@@ -12,7 +12,7 @@ class HomeController extends Controller {
      * Xử lý hiển thị trang chủ
      */
     public function index($request) {
-        $latestNews = NewsModel::where('hien_thi', 1)
+        $latestNews = PostModel::where('status', 'publish')
             ->orderBy('id', 'DESC')
             ->limit(4)
             ->get();

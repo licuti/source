@@ -34,99 +34,81 @@ Mọi trang danh sách phải tuân theo cấu trúc 3 phần sau:
 ### 1.2 Phần Bộ lọc & Tìm kiếm (BẮT BUỘC có trên mọi trang danh sách)
 
 ```html
+```html
 <div class="app-content">
     <div class="container-fluid">
-
-        <!-- (TRƯỜNG HỢP 1) KHUNG BỘ LỌC ĐỘC LẬP - Dùng khi module có NHIỀU tiêu chí lọc (trạng thái, danh mục, ngày tháng...) -->
-        <div class="card card-outline card-secondary mb-3">
-            <div class="card-body py-2">
-                <form action="<?= route('admin.module.index') ?>" method="GET" class="row g-2 align-items-end">
-
-                    <!-- Ô tìm kiếm text -->
-                    <div class="col-md-4">
-                        <label class="form-label form-label-sm mb-1">Tìm kiếm</label>
-                        <div class="input-group input-group-sm">
-                            <input type="text" name="keyword" class="form-control form-control-sm"
-                                placeholder="Nhập từ khóa..." value="<?= htmlspecialchars($keyword ?? '') ?>">
-                        </div>
-                    </div>
-
-                    <!-- Dropdown lọc theo nhóm/loại -->
-                    <div class="col-md-2">
-                        <label class="form-label form-label-sm mb-1">Trạng thái</label>
-                        <select name="status" class="form-select form-select-sm">
-                            <option value="">-- Tất cả --</option>
-                            <option value="1" <?= ($status ?? '') == '1' ? 'selected' : '' ?>>Hiển thị</option>
-                            <option value="0" <?= ($status ?? '') == '0' ? 'selected' : '' ?>>Đã ẩn</option>
+        <div class="card card-outline card-primary shadow-sm">
+            
+            <!-- HEADER: Bulk Action, Filter, Search -->
+            <div class="card-header wp-toolbar">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    
+                    <!-- TRÁI: Hành động hàng loạt (Bulk actions) -->
+                    <div class="d-flex align-items-center flex-wrap gap-2">
+                        <select id="bulkActionSelect" class="form-select form-select-sm w-auto">
+                            <option value="">Hành động hàng loạt</option>
+                            <option value="delete" data-url="<?= route('admin.module.destroy_multiple') ?>" data-confirm="Bạn có chắc chắn muốn xóa các mục đã chọn?">Xóa</option>
                         </select>
+                        <button type="button" id="btnBulkApply" class="btn btn-outline-secondary btn-sm" disabled>Áp dụng</button>
                     </div>
 
-                    <!-- Nút hành động của form lọc -->
-                    <div class="col-md-auto">
-                        <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="fa-solid fa-search"></i> Lọc
-                        </button>
-                        <?php if (!empty($keyword) || !empty($status)): ?>
-                            <a href="<?= route('admin.module.index') ?>" class="btn btn-outline-secondary btn-sm">
-                                <i class="fa-solid fa-xmark"></i> Xóa lọc
-                            </a>
-                        <?php endif; ?>
-                    </div>
+                    <!-- PHẢI: Bộ lọc, Tìm kiếm & Nút Thêm mới -->
+                    <form action="<?= route('admin.module.index') ?>" method="GET" class="d-flex align-items-center flex-wrap gap-2 m-0">
+                        
+                        <!-- Lọc theo Trạng thái -->
+                        <select name="hien_thi" class="form-select form-select-sm w-auto">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="1" <?= ($hien_thi ?? '') === '1' ? 'selected' : '' ?>>Hiển thị</option>
+                            <option value="0" <?= ($hien_thi ?? '') === '0' ? 'selected' : '' ?>>Đã ẩn</option>
+                        </select>
 
-                </form>
-            </div>
-        </div>
-        <!-- /KHUNG BỘ LỌC ĐỘC LẬP -->
-
-        <!-- BẢNG DỮ LIỆU -->
-        <div class="card card-outline card-primary">
-            <div class="card-header">
-                <h3 class="card-title">
-                    Danh sách <span class="badge bg-secondary ms-1"><?= $totalRows ?? 0 ?></span>
-                </h3>
-                
-                <!-- (TRƯỜNG HỢP 2) TÌM KIẾM CƠ BẢN VÀ NÚT THÊM - Đặt ở góc phải header bảng -->
-                <div class="card-tools">
-                    <form action="<?= route('admin.module.index') ?>" method="GET" class="d-inline-block">
-                        <div class="input-group input-group-sm" style="width: 250px;">
-                            <input type="text" name="keyword" class="form-control float-right" placeholder="Tìm kiếm..." value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>">
+                        <!-- Ô tìm kiếm -->
+                        <div class="input-group input-group-sm w-auto">
+                            <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm..." value="<?= htmlspecialchars($keyword ?? '') ?>">
                             <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                         </div>
+                        
+                        <!-- Nút Xóa lọc -->
+                        <?php if (!empty($keyword) || $hien_thi !== ''): ?>
+                            <a href="<?= route('admin.module.index') ?>" class="btn btn-link btn-sm text-decoration-none text-muted">Hủy lọc</a>
+                        <?php endif; ?>
+
+                        <!-- Nút Thêm mới -->
+                        <a href="<?= route('admin.module.create') ?>" class="btn btn-success btn-sm">
+                            <i class="fas fa-plus me-1"></i> Thêm mới
+                        </a>
                     </form>
-                    <a href="<?= route('admin.module.create') ?>" class="btn btn-sm btn-success ms-2"><i class="fa-solid fa-plus"></i> Thêm mới</a>
                 </div>
             </div>
-            <div class="card-body p-0">
-                <!-- Thanh Bulk Action (ẩn mặc định, hiện khi có checkbox được chọn) -->
-                <div id="bulkActionPanel" class="px-3 py-2 bg-light border-bottom d-none">
-                    <span class="fw-bold me-2"><span id="selectedCount">0</span> mục đã chọn:</span>
-                    <button type="button" class="btn btn-danger btn-sm" id="btnBulkDelete">
-                        <i class="fa-solid fa-trash"></i> Xóa đã chọn
-                    </button>
-                </div>
+            <!-- /HEADER -->
 
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover table-striped align-middle mb-0">
+                    <table class="table table-striped table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th style="width: 40px;" class="text-center">
-                                    <input type="checkbox" class="form-check-input" id="checkAll">
+                                    <div class="form-check d-flex justify-content-center mb-0">
+                                        <input class="form-check-input check-all" type="checkbox" title="Chọn tất cả">
+                                    </div>
                                 </th>
                                 <th style="width: 60px;" class="text-center">ID</th>
                                 <th>Tên</th>
-                                <th style="width: 100px;" class="text-center">Trạng thái</th>
+                                <th style="width: 120px;" class="text-center">Trạng thái</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (!empty($items)): ?>
                                 <?php foreach ($items as $item): ?>
                                 <tr class="wp-row">
-                                    <td class="text-center">
-                                        <input type="checkbox" class="form-check-input row-check" value="<?= $item->id ?>">
-                                    </td>
-                                    <td class="text-center text-muted fw-bold"><?= $item->id ?></td>
-                                    <td>
-                                        <strong><?= htmlspecialchars($item->ten) ?></strong>
+                                    <th scope="row" class="text-center align-middle">
+                                        <div class="form-check d-flex justify-content-center mb-0">
+                                            <input class="form-check-input row-check" type="checkbox" value="<?= $item->id ?>">
+                                        </div>
+                                    </th>
+                                    <td class="text-center text-muted fw-bold align-middle"><?= $item->id ?></td>
+                                    <td class="align-middle">
+                                        <strong><a href="<?= route('admin.module.edit', ['id' => $item->id]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->ten) ?></a></strong>
                                         
                                         <!-- WP-Style Row Actions -->
                                         <?php 
@@ -139,25 +121,28 @@ Mọi trang danh sách phải tuân theo cấu trúc 3 phần sau:
                                             'delete' => [
                                                 'label' => 'Xóa', 
                                                 'url' => route('admin.module.destroy', ['id' => $item->id]), 
-                                                'class' => 'text-danger btn-delete'
+                                                'class' => 'text-danger btn-delete',
+                                                'attributes' => 'onclick="return confirm(\'Bạn có chắc muốn xóa?\')"'
                                             ]
                                         ];
                                         echo view('admin.components.row_actions', ['actions' => $actions]);
                                         ?>
                                     </td>
-                                    <td class="text-center">
-                                        <?php if ($item->hien_thi): ?>
-                                            <span class="badge bg-success"><i class="fa-solid fa-check"></i> Hiển thị</span>
-                                        <?php else: ?>
-                                            <span class="badge bg-secondary"><i class="fa-solid fa-eye-slash"></i> Đã ẩn</span>
-                                        <?php endif; ?>
+                                    <td class="text-center align-middle">
+                                        <!-- Cột Toggle Status bằng AJAX -->
+                                        <div class="form-check form-switch d-flex justify-content-center">
+                                            <input class="form-check-input ajax-toggle-status" type="checkbox" 
+                                                data-id="<?= $item->id ?>" data-field="status" 
+                                                data-url="<?= route('admin.module.updateStatusAjax') ?>" 
+                                                <?= $item->hien_thi ? 'checked' : '' ?>>
+                                        </div>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="5" class="text-center py-5 text-muted">
-                                        <i class="fa-solid fa-inbox fs-1 d-block mb-2"></i>
+                                    <td colspan="4" class="text-center py-5 text-muted">
+                                        <i class="fa-regular fa-file-lines fs-1 mb-2"></i><br>
                                         Chưa có dữ liệu nào.
                                     </td>
                                 </tr>
@@ -167,37 +152,23 @@ Mọi trang danh sách phải tuân theo cấu trúc 3 phần sau:
                 </div>
             </div>
 
-            <!-- FOOTER: PHÂN TRANG - BẮT BUỘC -->
-            <div class="card-footer clearfix">
+            <!-- FOOTER: PHÂN TRANG -->
+            <div class="card-footer bg-white clearfix py-3">
                 <div class="row align-items-center">
-                    <div class="col-md-6 text-muted small">
-                        Hiển thị <?= count($items ?? []) ?> / <?= $totalRows ?? 0 ?> bản ghi
+                    <div class="col-md-4 text-muted small">
+                        Hiển thị <?= count($items ?? []) ?> / <?= $items->total() ?? 0 ?> mục
                     </div>
-                    <div class="col-md-6">
-                        <?php if (($totalPages ?? 1) > 1): ?>
-                        <ul class="pagination pagination-sm m-0 float-end">
-                            <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                <a class="page-link" href="?page=<?= $page - 1 ?>&keyword=<?= urlencode($keyword ?? '') ?>">«</a>
-                            </li>
-                            <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                            <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                                <a class="page-link" href="?page=<?= $i ?>&keyword=<?= urlencode($keyword ?? '') ?>"><?= $i ?></a>
-                            </li>
-                            <?php endfor; ?>
-                            <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
-                                <a class="page-link" href="?page=<?= $page + 1 ?>&keyword=<?= urlencode($keyword ?? '') ?>">»</a>
-                            </li>
-                        </ul>
-                        <?php endif; ?>
+                    <div class="col-md-8 text-end pagination-right-sm">
+                        <?= $items->links() ?? '' ?>
                     </div>
                 </div>
             </div>
             <!-- /FOOTER -->
 
         </div>
-        <!-- /BẢNG DỮ LIỆU -->
     </div>
 </div>
+```
 ```
 
 ---
@@ -217,8 +188,8 @@ Mọi trang thêm/sửa phải theo bố cục **2 cột: 9-3 (col-md-9 + col-md
                 <!-- CỘT TRÁI: Nội dung chính -->
                 <div class="col-md-9">
                     <div class="card card-outline card-primary mb-4">
-                        <div class="card-header">
-                            <h3 class="card-title">Thông tin chính</h3>
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0 fw-bold">Thông tin chính</h5>
                         </div>
                         <div class="card-body">
 
@@ -228,10 +199,12 @@ Mọi trang thêm/sửa phải theo bố cục **2 cột: 9-3 (col-md-9 + col-md
                                     value="<?= htmlspecialchars($item->ten ?? '') ?>" required>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Mô tả</label>
-                                <textarea name="mo_ta" class="form-control form-control-sm" rows="3"><?= htmlspecialchars($item->mo_ta ?? '') ?></textarea>
-                            </div>
+                            <!-- Sử dụng Component CKEditor -->
+                            <?= view('admin.components.ckeditor', [
+                                'name' => 'mo_ta',
+                                'value' => $item->mo_ta ?? '',
+                                'label' => 'Mô tả'
+                            ]) ?>
 
                         </div>
                     </div>
@@ -240,10 +213,15 @@ Mọi trang thêm/sửa phải theo bố cục **2 cột: 9-3 (col-md-9 + col-md
                 <!-- CỘT PHẢI: Cấu hình & Hành động -->
                 <div class="col-md-3">
                     <div class="card card-outline card-secondary mb-4">
-                        <div class="card-header">
-                            <h3 class="card-title"><i class="fa-solid fa-gears text-secondary"></i> Thiết lập</h3>
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0 fw-bold"><i class="fa-solid fa-gears text-secondary"></i> Thiết lập</h5>
                         </div>
                         <div class="card-body bg-light">
+
+                            <div class="form-check form-switch mb-3 d-flex align-items-center">
+                                <input class="form-check-input" type="checkbox" name="hien_thi" id="hien_thi" <?= (!isset($item) || !empty($item->hien_thi)) ? 'checked' : '' ?>>
+                                <label class="form-check-label mt-1 ms-2 fw-bold" for="hien_thi">Cho phép hiển thị</label>
+                            </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Số thứ tự</label>
@@ -252,21 +230,22 @@ Mọi trang thêm/sửa phải theo bố cục **2 cột: 9-3 (col-md-9 + col-md
                                 <div class="form-text">Số nhỏ hiển thị trước.</div>
                             </div>
 
-                            <div class="form-check form-switch mb-3">
-                                <input class="form-check-input" type="checkbox" name="hien_thi" id="hien_thi"
-                                    <?= (!isset($item) || !empty($item->hien_thi)) ? 'checked' : '' ?>>
-                                <label class="form-check-label fw-bold" for="hien_thi">Cho phép hiển thị</label>
-                            </div>
+                            <!-- Sử dụng Component Image Upload -->
+                            <?= view('admin.components.image_upload', [
+                                'name' => 'hinh_anh',
+                                'value' => $item->hinh_anh ?? '',
+                                'label' => 'Hình đại diện'
+                            ]) ?>
 
                         </div>
-                        <div class="card-footer d-flex justify-content-end gap-1">
+                        <div class="card-footer d-flex justify-content-end gap-1 flex-wrap">
                             <a href="<?= route('admin.module.index') ?>" class="btn btn-secondary btn-sm">
                                 <i class="fa-solid fa-arrow-left"></i> Quay lại
                             </a>
-                            <button type="submit" name="submit_action" value="save" class="btn btn-primary btn-sm">
+                            <button type="submit" name="save_action" value="exit" class="btn btn-primary btn-sm">
                                 <i class="fa-solid fa-save"></i> Lưu
                             </button>
-                            <button type="submit" name="submit_action" value="save_and_edit" class="btn btn-success btn-sm">
+                            <button type="submit" name="save_action" value="continue" class="btn btn-success btn-sm">
                                 <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
                             </button>
                         </div>
@@ -337,10 +316,10 @@ Thêm tab ngôn ngữ vào cột trái:
 |---|---|
 | Tất cả input/select trong form | `form-control-sm`, `form-select-sm` |
 | Nút bên trong bảng (Thao tác) | `btn btn-sm` |
-| Nút trong header Card (card-tools) | `btn btn-sm` |
-| Nút Submit chính trong form (card-footer) | `btn btn-sm` (với `d-grid` để full width) |
+| Nút trong toolbar card header | `btn btn-sm` |
+| Nút Submit chính trong form (card-footer) | `btn btn-sm` |
 | Nút trong Breadcrumb header trang | `btn btn-sm` |
-| Phân trang | `pagination pagination-sm` |
+| Phân trang | Dùng `->links()` của Laravel/Paginator (nếu có) hoặc tự style nhỏ gọn |
 
 > ⚠️ **KHÔNG dùng** `btn` to mặc định (không có `-sm`) ở bất cứ đâu trong admin trừ khi có lý do đặc biệt.
 
@@ -475,30 +454,16 @@ Luôn đặt ở đầu nội dung, trước card bộ lọc:
 
 ## 7. 📄 PHÂN TRANG (Pagination)
 
-Luôn đặt trong `card-footer`:
+Luôn đặt trong `card-footer` và dùng style `bg-white clearfix py-3`. Sử dụng hàm `->links()` thay vì tự viết vòng lặp:
 
 ```php
-<div class="card-footer clearfix">
+<div class="card-footer bg-white clearfix py-3">
     <div class="row align-items-center">
-        <div class="col-md-6 text-muted small">
-            Hiển thị <?= count($items) ?> / <?= $totalRows ?> bản ghi
+        <div class="col-md-4 text-muted small">
+            Hiển thị <?= count($items ?? []) ?> / <?= $items->total() ?? 0 ?> mục
         </div>
-        <div class="col-md-6">
-            <?php if ($totalPages > 1): ?>
-            <ul class="pagination pagination-sm m-0 float-end">
-                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page - 1 ?>&keyword=<?= urlencode($keyword ?? '') ?>">«</a>
-                </li>
-                <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
-                <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                    <a class="page-link" href="?page=<?= $i ?>&keyword=<?= urlencode($keyword ?? '') ?>"><?= $i ?></a>
-                </li>
-                <?php endfor; ?>
-                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
-                    <a class="page-link" href="?page=<?= $page + 1 ?>&keyword=<?= urlencode($keyword ?? '') ?>">»</a>
-                </li>
-            </ul>
-            <?php endif; ?>
+        <div class="col-md-8 text-end pagination-right-sm">
+            <?= $items->links() ?? '' ?>
         </div>
     </div>
 </div>
@@ -527,13 +492,12 @@ Dùng Bootstrap Modal thay cho `confirm()` khi xóa có ảnh hưởng dây chuy
 
 Trước khi hoàn thành một module, hãy kiểm tra lại:
 
-- [ ] Trang Index có **bộ lọc tìm kiếm** không?
-- [ ] Trang Index có **phân trang** (`pagination-sm`) trong `card-footer` không?
-- [ ] Trang Index có **hàng trống** (`Chưa có dữ liệu nào`) khi không có bản ghi không?
-- [ ] Tất cả input/select trong form đã dùng **`-sm` size** chưa?
-- [ ] Button Thao tác trong bảng phải dùng **WP-Style Row Actions** component ở dưới Cột Tên (Không tách riêng cột thao tác) chưa?
-- [ ] Flash message (`$_SESSION['success']` / `$_SESSION['error']`) đã được hiển thị chưa?
-- [ ] Breadcrumb đã hiển thị đúng cây điều hướng chưa?
+- [ ] Trang Index có dùng **wp-toolbar** bao gồm Bulk Action (trái) và Filter/Search (phải) không?
+- [ ] Trang Index có cột Trạng thái dạng **Ajax Toggle Switch** không?
+- [ ] Form thêm/sửa có dùng component `ckeditor`, `image_upload` thay cho thẻ HTML chay chưa?
+- [ ] Button lưu form dùng name `save_action` với value là `exit` hoặc `continue` chưa?
+- [ ] Nút thao tác trong bảng có nằm ngay dưới Tên/Tiêu đề qua component `row_actions` không?
+- [ ] File giao diện đã bỏ thẻ form độc lập ở khung lọc cũ và gộp chung vào form trên header chưa?
 
 ---
 

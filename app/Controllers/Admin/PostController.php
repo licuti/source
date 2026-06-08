@@ -35,7 +35,7 @@ class PostController extends BaseAdminController {
      */
     public function index(Request $request) {
         $keyword = trim($request->input('keyword', ''));
-        $status  = $request->input('status', '');
+        $hien_thi = $request->input('hien_thi', '');
         $category_id = (int)$request->input('category_id', 0);
         $page    = (int)$request->input('page', 1);
         if ($page < 1) $page = 1;
@@ -51,8 +51,8 @@ class PostController extends BaseAdminController {
             $postQuery->where('created_by', $user->id);
         }
 
-        if ($status !== '') {
-            $postQuery->where('is_active', (int)$status);
+        if ($hien_thi !== '') {
+            $postQuery->where('status', $hien_thi);
         }
         
         if ($category_id > 0) {
@@ -68,7 +68,7 @@ class PostController extends BaseAdminController {
 
         $categories = CategoryModel::getTreeForAdminByModule(config('modules.post'));
 
-        return $this->render('admin.post.index', compact('posts', 'keyword', 'status', 'category_id', 'categories'));
+        return $this->render('admin.post.index', compact('posts', 'keyword', 'hien_thi', 'category_id', 'categories'));
     }
 
     /**
@@ -107,7 +107,8 @@ class PostController extends BaseAdminController {
             'id'        => $id, 
             'id_loai'   => $firstPost->category_id, 
             'so_thu_tu' => $firstPost->sort_order, 
-            'hien_thi'  => $firstPost->is_active,
+            'hien_thi'  => $firstPost->status,
+            'created_at'=> $firstPost->created_at,
             'is_featured' => $firstPost->is_featured,
             'hinh_anh'  => $firstPost->image
         ];
@@ -137,6 +138,9 @@ class PostController extends BaseAdminController {
         $so_thu_tu = (int)$request->input('so_thu_tu', 0);
         $hien_thi = $request->input('hien_thi') !== null ? 1 : 0;
         
+        $createdAtInput = $request->input('created_at');
+        $createdAt = $createdAtInput ? date('Y-m-d H:i:s', strtotime($createdAtInput)) : date('Y-m-d H:i:s');
+        
         $tenInput = $request->input('ten', []);
         $ten_vi = $tenInput['vi'] ?? '';
 
@@ -164,16 +168,22 @@ class PostController extends BaseAdminController {
                     'image'       => $request->input('hinh_anh') ?? '',
                     'category_id' => $id_loai,
                     'sort_order'  => $so_thu_tu,
-                    'is_active'   => $hien_thi,
+                    'status'      => $hien_thi,
                     'is_featured' => $request->input('is_featured') !== null ? 1 : 0,
                     'created_by'  => $user_id,
-                    'created_at'  => $now,
+                    'created_at'  => $createdAt,
                     'updated_at'  => $now
                 ]);
             }
             session('success', 'Thêm bài viết thành công!');
         }
         
+        $saveAction = $request->input('save_action', 'exit');
+        if ($saveAction === 'continue') {
+            return $this->redirect(route('admin.post.edit', ['id' => $id_code]));
+        } elseif ($saveAction === 'new') {
+            return $this->redirect(route('admin.post.create'));
+        }
         return $this->redirect(route('admin.post.index'));
     }
 
@@ -195,6 +205,9 @@ class PostController extends BaseAdminController {
         $id_loai = (int)$request->input('id_loai', 0);
         $so_thu_tu = (int)$request->input('so_thu_tu', 0);
         $hien_thi = $request->input('hien_thi') !== null ? 1 : 0;
+        
+        $createdAtInput = $request->input('created_at');
+        $createdAt = $createdAtInput ? date('Y-m-d H:i:s', strtotime($createdAtInput)) : null;
         
         $tenInput = $request->input('ten', []);
         $ten_vi = $tenInput['vi'] ?? '';
@@ -222,11 +235,15 @@ class PostController extends BaseAdminController {
                 'image'       => $request->input('hinh_anh') ?? '',
                 'category_id' => $id_loai,
                 'sort_order'  => $so_thu_tu,
-                'is_active'   => $hien_thi,
+                'status'      => $hien_thi,
                 'is_featured' => $request->input('is_featured') !== null ? 1 : 0,
                 'updated_by'  => $user_id,
                 'updated_at'  => $now
             ];
+            
+            if ($createdAt) {
+                $data['created_at'] = $createdAt;
+            }
             
             if ($exists) {
                 $updateQuery = PostModel::query();
@@ -236,12 +253,19 @@ class PostController extends BaseAdminController {
                 $data['id_code'] = $id;
                 $data['lang'] = $c;
                 $data['created_by'] = $user_id;
-                $data['created_at'] = $now;
+                if (!$createdAt) $data['created_at'] = $now;
                 PostModel::insert($data);
             }
         }
         
         session('success', 'Cập nhật bài viết thành công!');
+        
+        $saveAction = $request->input('save_action', 'exit');
+        if ($saveAction === 'continue') {
+            return $this->redirect(route('admin.post.edit', ['id' => $id]));
+        } elseif ($saveAction === 'new') {
+            return $this->redirect(route('admin.post.create'));
+        }
         return $this->redirect(route('admin.post.index'));
     }
 
@@ -253,7 +277,7 @@ class PostController extends BaseAdminController {
         $field = $request->input('field', 'is_active');
         $value = (int)$request->input('value', 0);
 
-        $allowedFields = ['is_active', 'hien_thi', 'is_featured']; 
+        $allowedFields = ['is_active', 'status', 'hien_thi', 'is_featured']; 
         if (!in_array($field, $allowedFields)) {
             return $this->jsonError('Trường dữ liệu không hợp lệ');
         }
@@ -272,7 +296,17 @@ class PostController extends BaseAdminController {
             $updateQuery = PostModel::query();
             $updateQuery->use_lang = false;
             $label = $field === 'is_featured' ? 'Nổi bật' : 'Trạng thái hiển thị';
-            $updateQuery->where('id_code', $id)->update([$field => $value]);
+            
+            // Map legacy fields to status column
+            if ($field === 'is_active' || $field === 'hien_thi' || $field === 'status') {
+                $dbField = 'status';
+                $dbValue = $value ? 1 : 0;
+            } else {
+                $dbField = $field;
+                $dbValue = $value;
+            }
+            
+            $updateQuery->where('id_code', $id)->update([$dbField => $dbValue]);
 
             return $this->jsonSuccess($label . ' đã được cập nhật!');
         }

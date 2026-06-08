@@ -9,10 +9,10 @@
     if ($author) $author = (object)$author;
 
     // Sử dụng NewsModel để lấy bài viết liên quan
-    $related = NewsModel::query()
+    $related = \App\Models\PostModel::query()
         ->where('id_loai', $category->id_code)
         ->where('id_code', $row->id_code, '<>')
-        ->where('hien_thi', 1)
+        ->where('status', 'publish')
         ->limit(12)
         ->orderBy('so_thu_tu')
         ->orderBy('id', 'DESC')

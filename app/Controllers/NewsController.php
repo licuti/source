@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 
-use NewsModel;
+use App\Models\PostModel;
 use CategoryModel;
 
 /**
@@ -37,7 +37,7 @@ class NewsController extends Controller {
             $categoryIds = getCategoryTreeIds($row->id_code);
         }
 
-        $query = NewsModel::where('hien_thi', 1);
+        $query = PostModel::where('status', 'publish');
         
         if (!empty($categoryIds)) {
             $query->where('id_loai', $categoryIds, 'IN');
@@ -83,11 +83,11 @@ class NewsController extends Controller {
 
         // Tăng lượt xem (chỉ 1 lần / session)
         if (!isset($_SESSION['viewed_posts'][$row->id])) {
-            NewsModel::where('id', $row->id)->increment('view');
+            PostModel::where('id', $row->id)->increment('view');
             $_SESSION['viewed_posts'][$row->id] = true;
         }
 
-        $translations = NewsModel::where('id_code', $row->id_code)->get();
+        $translations = PostModel::where('id_code', $row->id_code)->get();
         $urls = [];
         foreach ($translations as $t) {
             $urls[$t->lang] = route('news.show.' . $t->lang, $t->alias);
@@ -96,7 +96,7 @@ class NewsController extends Controller {
 
         // Lấy bài viết liên quan
         $category = CategoryModel::where('id_code', $row->id_loai)->first();
-        $related  = NewsModel::where('hien_thi', 1)
+        $related  = PostModel::where('status', 'publish')
             ->where('id_loai', $row->id_loai)
             ->whereRaw("tt.id != {$row->id}")
             ->orderBy('id', 'DESC')

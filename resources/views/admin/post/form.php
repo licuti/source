@@ -106,9 +106,13 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
                             ]) ?>
 
                             <div class="mb-3">
-                                <label class="form-label">Số thứ tự hiển thị</label>
-                                <input type="number" name="so_thu_tu" class="form-control form-control-sm" value="<?= $item['so_thu_tu'] ?? 0 ?>">
-                                <small class="form-text text-muted">Số càng nhỏ ưu tiên hiển thị trước.</small>
+                                <label class="form-label">Ngày đăng</label>
+                                <?php 
+                                    $createdAt = $item['created_at'] ?? date('Y-m-d H:i:s');
+                                    // Convert to datetime-local format: YYYY-MM-DDThh:mm
+                                    $createdAtLocal = date('Y-m-d\TH:i', strtotime($createdAt));
+                                ?>
+                                <input type="datetime-local" name="created_at" class="form-control form-control-sm" value="<?= $createdAtLocal ?>">
                             </div>
 
                             <div class="form-check form-switch mb-3 d-flex align-items-center">
@@ -122,11 +126,17 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
                             </div>
 
                         </div>
-                        <div class="card-footer bg-white border-top-0 py-3">
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-save"></i> <?= $isEdit ? 'Lưu cập nhật' : 'Thêm mới' ?></button>
-                                <a href="<?= route('admin.category.index') ?>" class="btn btn-light border btn-sm"><i class="fa-solid fa-arrow-left"></i> Trở về</a>
-                            </div>
+                        <div class="card-footer d-flex justify-content-end gap-1 flex-wrap">
+                            <a href="<?= route('admin.post.index') ?>" class="btn btn-secondary btn-sm">
+                                <i class="fa-solid fa-arrow-left"></i> Quay lại
+                            </a>
+                            <button type="submit" name="save_action" value="exit" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-save"></i> Lưu
+                            </button>
+                            <button type="submit" name="save_action" value="continue" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
+                            </button>
+
                         </div>
                     </div>
                 </div>

@@ -7,8 +7,8 @@ $row_raw = $d->simple_fetch("select hinh_anh, ho_ten, noi_dung, id_code from #_u
 $row = $row_raw ? (object)$row_raw : null;
 
 // Lấy bài viết liên quan của tác giả này
-$tinlienquan_raw = NewsModel::query()
-    ->where('hien_thi', 1)
+$tinlienquan_raw = \App\Models\PostModel::query()
+    ->where('status', 'publish')
     ->where('id_user', $id_tacgia)
     ->orderBy('so_thu_tu')
     ->orderBy('id', 'DESC')
