@@ -27,4 +27,4 @@
 .gemini/
 optimize_user.sql
 storage/logs/
-img_data/
+img_data/.ckfinder/cache/
