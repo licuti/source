@@ -92,7 +92,8 @@ if ($canAdd) {
                                 <th style="width: 120px;" class="text-center">Người đăng</th>
                                 <th style="width: 120px;" class="text-center">Lượt xem</th>
                                 <th style="width: 100px;" class="text-center">Sắp xếp</th>
-                                <th style="width: 120px;" class="text-center">Trạng thái</th>
+                                <th style="width: 100px;" class="text-center">Nổi bật</th>
+                                <th style="width: 120px;" class="text-center">Hiển thị</th>
                             </tr>
                         </thead>
                         <tbody>
