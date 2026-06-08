@@ -41,69 +41,35 @@ class PostController extends BaseAdminController {
         if ($page < 1) $page = 1;
         $limit = 10;
 
-        // 1. Lấy danh sách ID master từ bảng cf_code để đếm tổng số
-        $cfQuery = CfCodeModel::query()->where('module', 3);
+        $postQuery = PostModel::query();
+        $postQuery->use_lang = false;
+        // Chỉ lấy 1 ngôn ngữ làm đại diện để đếm và hiển thị (VD: 'vi')
+        $postQuery->where('lang', 'vi');
         
         $user = user();
         if ($user->is_admin != 1) {
-            // Lấy danh sách post_id do user này tạo
-            $myPostIds = PostModel::query()
-                ->where('created_by', $user->id)
-                ->use_lang(false)
-                ->get('id_code');
-            $allowedIds = array_unique(array_column($myPostIds, 'id_code'));
-            
-            if (empty($allowedIds)) {
-                $cfQuery->where('id', -1); // Force empty
-            } else {
-                $cfQuery->whereIn('id', $allowedIds);
-            }
+            $postQuery->where('created_by', $user->id);
         }
 
         if ($status !== '') {
-            $cfQuery->where('hien_thi', (int)$status);
+            $postQuery->where('is_active', (int)$status);
         }
         
         if ($category_id > 0) {
-            $cfQuery->where('id_loai', $category_id);
+            $postQuery->where('category_id', $category_id);
         }
 
         if ($keyword !== '') {
-            $cfQuery->whereLike('ten', '%' . $keyword . '%');
+            $postQuery->whereLike('title', '%' . $keyword . '%');
         }
 
-        $totalRows = count($cfQuery->get('id'));
+        $totalRows = count($postQuery->get('id'));
         $totalPages = max(1, ceil($totalRows / $limit));
         $offset = ($page - 1) * $limit;
 
-        $cfQuery->orderBy('so_thu_tu', 'ASC')->orderBy('id', 'DESC');
-        $cfQuery->limit($limit, $offset);
-        $masters = $cfQuery->get();
-
-        $posts = [];
-        if (!empty($masters)) {
-            $masterIds = array_column($masters, 'id');
-            // Lấy bản dịch tiếng Việt mặc định (hoặc lang hiện tại)
-            $translations = PostModel::query()
-                ->whereIn('id_code', $masterIds)
-                ->get();
-                
-            $transMap = [];
-            foreach ($translations as $t) {
-                $transMap[$t->id_code] = $t;
-            }
-
-            foreach ($masters as $m) {
-                if (isset($transMap[$m->id])) {
-                    $post = $transMap[$m->id];
-                    // Map lại các trường gốc nếu cần
-                    $post->hien_thi = $m->hien_thi;
-                    $post->so_thu_tu = $m->so_thu_tu;
-                    $post->id_loai = $m->id_loai;
-                    $posts[] = $post;
-                }
-            }
-        }
+        $postQuery->orderBy('sort_order', 'ASC')->orderBy('id', 'DESC');
+        $postQuery->limit($limit, $offset);
+        $posts = $postQuery->get();
 
         $categories = CategoryModel::getTreeForAdmin();
 
@@ -126,14 +92,17 @@ class PostController extends BaseAdminController {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
         $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
         
-        $cfCode = CfCodeModel::query()->where('id', $id)->first();
-        if (!$cfCode) return $this->redirect(route('admin.post.index'));
-        
         $postQuery = PostModel::query();
         $postQuery->use_lang = false; // Lấy tất cả ngôn ngữ
         $translations = $postQuery->where('id_code', $id)->get();
         
-        if (count($translations) > 0 && !$this->canEditPost($translations[0]->created_by)) {
+        if (count($translations) == 0) {
+            return $this->redirect(route('admin.post.index'));
+        }
+        
+        $firstPost = $translations[0];
+        
+        if (!$this->canEditPost($firstPost->created_by)) {
             session('error', 'Bạn không có quyền chỉnh sửa bài viết này!');
             return $this->redirect(route('admin.post.index'));
         }
@@ -141,11 +110,11 @@ class PostController extends BaseAdminController {
         // Chuyển hóa dữ liệu để render lên form
         $item = [
             'id'        => $id, 
-            'id_loai'   => $cfCode->id_loai, 
-            'so_thu_tu' => $cfCode->so_thu_tu, 
-            'hien_thi'  => $cfCode->hien_thi,
-            'is_featured' => 0,
-            'hinh_anh'  => ''
+            'id_loai'   => $firstPost->category_id, 
+            'so_thu_tu' => $firstPost->sort_order, 
+            'hien_thi'  => $firstPost->is_active,
+            'is_featured' => $firstPost->is_featured,
+            'hinh_anh'  => $firstPost->image
         ];
         
         foreach ($translations as $t) {
@@ -176,15 +145,11 @@ class PostController extends BaseAdminController {
         $tenInput = $request->input('ten', []);
         $ten_vi = $tenInput['vi'] ?? '';
 
-        // 1. Lưu vào bảng gốc
-        $id_code = CfCodeModel::insert([
-            'ten'       => $ten_vi,
-            'hinh_anh'  => $request->input('hinh_anh') ?? '',
-            'id_loai'   => $id_loai,
-            'module'    => 3,
-            'so_thu_tu' => $so_thu_tu,
-            'hien_thi'  => $hien_thi
-        ]);
+        // 1. Khởi tạo id_code bằng cách lấy ID lớn nhất + 1 để tránh đụng độ
+        // (Bỏ lưu vào CfCodeModel vì cf_code là bảng danh mục!)
+        $db = \App\Core\Database::getInstance();
+        $maxId = $db->query("SELECT MAX(id_code) as max_id FROM db_posts")->fetch(\PDO::FETCH_ASSOC)['max_id'] ?? 0;
+        $id_code = $maxId + 1;
 
         if ($id_code) {
             $user_id = user()->id;
@@ -239,14 +204,8 @@ class PostController extends BaseAdminController {
         $tenInput = $request->input('ten', []);
         $ten_vi = $tenInput['vi'] ?? '';
 
-        // 1. Cập nhật bảng gốc
-        CfCodeModel::query()->where('id', $id)->update([
-            'ten'       => $ten_vi,
-            'hinh_anh'  => $request->input('hinh_anh') ?? '',
-            'id_loai'   => $id_loai,
-            'so_thu_tu' => $so_thu_tu,
-            'hien_thi'  => $hien_thi
-        ]);
+        // 1. Không cần cập nhật bảng gốc (cf_code) vì bài viết không dùng bảng này
+        // (cf_code đang được dùng cho Danh mục!)
 
         // 2. Cập nhật hoặc tạo mới bản dịch
         $langs = config('lang', [['code' => 'vi']]);
@@ -313,8 +272,7 @@ class PostController extends BaseAdminController {
                 return $this->json(['success' => false, 'message' => 'Bạn không có quyền sửa bài viết này!']);
             }
 
-            $cfField = $field == 'is_active' ? 'hien_thi' : $field;
-            CfCodeModel::query()->where('id', $id)->update([$cfField => $value]);
+            // Chỉ cập nhật bảng db_posts (Không liên quan đến cf_code)
             
             $updateQuery = PostModel::query();
             $updateQuery->use_lang = false;
@@ -341,7 +299,7 @@ class PostController extends BaseAdminController {
         }
 
         if ($id > 0) {
-            CfCodeModel::query()->where('id', $id)->delete();
+            // Không xóa bảng cf_code vì đây không phải dữ liệu của bài viết
             
             $delQuery = PostModel::query();
             $delQuery->use_lang = false;
@@ -367,7 +325,7 @@ class PostController extends BaseAdminController {
                 $post = $postQuery->where('id_code', $id)->first();
                 
                 if ($post && $this->canEditPost($post->created_by)) {
-                    CfCodeModel::query()->where('id', $id)->delete();
+                    // Không xóa bảng cf_code
                     
                     $delQuery = PostModel::query();
                     $delQuery->use_lang = false;
