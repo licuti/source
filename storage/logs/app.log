@@ -12918,3 +12918,230 @@
 [2026-06-08 15:37:08] [INFO]: App kernel booted in modern mode.
 [2026-06-08 15:37:10] [INFO]: App kernel booted in modern mode.
 [2026-06-08 15:37:11] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:39:59] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:40:02] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:40:04] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:41:39] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:41:39] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(274): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 15:41:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:41:40] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(274): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 15:41:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:41:40] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(274): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 15:41:41] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:41:41] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(274): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 15:41:42] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:41:45] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:41:45] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(274): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 15:41:47] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:41:47] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(274): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 15:41:47] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:41:47] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(274): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 15:41:48] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:41:48] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(274): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 15:41:50] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:41:50] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(274): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 15:41:51] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:52:22] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:52:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:52:29] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:52:33] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:52:36] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:52:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:52:57] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:53:00] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:53:03] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:53:15] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:53:15] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'cap_nhat' in 'field list'
+#0 C:\laragon\www\source\app\Core\Model.php(1067): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(274): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-08 15:54:55] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:54:56] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:54:59] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:54:59] [ERROR]: Call to undefined method App\Core\View::layout()
+#0 C:\laragon\www\source\app\Core\View.php(57): include()
+#1 C:\laragon\www\source\app\Helpers\core.php(213): App\Core\View->render('admin.payment.i...', Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\BaseAdminController.php(22): view('admin.payment.i...', Array)
+#3 C:\laragon\www\source\app\Controllers\Admin\PaymentSettingController.php(12): App\Controllers\Admin\BaseAdminController->render('admin.payment.i...')
+#4 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PaymentSettingController->index(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#16 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#17 {main}
+[2026-06-08 15:55:17] [INFO]: App kernel booted in modern mode.
