@@ -1,5 +1,4 @@
 <?php
-
 $breadcrumbActions = [];
 $canAdd = hasPermission('admin.post', 'add');
 $canDelete = hasPermission('admin.post', 'delete');
@@ -28,8 +27,15 @@ if ($canAdd) {
             <!-- HEADER: Bulk Action, Filter, Search -->
             <div class="card-header wp-toolbar">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                    <?php if ($canDelete): ?>
+                    <?php if ($canAdd || $canDelete): ?>
                     <div class="d-flex align-items-center flex-wrap gap-2">
+                        <?php if ($canAdd): ?>
+                            <a href="<?= route('admin.post.create') ?>" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i> Thêm mới
+                            </a>
+                        <?php endif; ?>
+                        
+                        <?php if ($canDelete): ?>
                         <select id="bulkActionSelect" class="form-select form-select-sm w-auto">
                             <option value="">Hành động hàng loạt</option>
                             <option value="delete" data-url="<?= route('admin.post.destroy_multiple') ?>" data-confirm="Bạn có chắc chắn muốn xóa các bài viết đã chọn?">
@@ -39,6 +45,7 @@ if ($canAdd) {
                         <button type="button" id="btnBulkApply" class="btn btn-outline-secondary btn-sm" disabled>
                             Áp dụng
                         </button>
+                        <?php endif; ?>
                     </div>
                     <?php else: ?>
                     <div></div>
@@ -97,47 +104,9 @@ if ($canAdd) {
                             <?php if(!empty($posts)): ?>
                                 <?php foreach($posts as $item): ?>
                                     <?php 
-                                    $imgHtml = '';
-                                    if ($item->image) {
-                                        $imgHtml = '<img src="' . getImageUrl($item->image) . '" alt="Image" class="img-thumbnail" style="height: 45px; width: auto; object-fit: cover;">';
-                                    } else {
-                                        $imgHtml = '<span class="badge bg-light text-dark border">Trống</span>';
-                                    }
-
                                     // Permission check for this specific row
                                     $rowCanEdit = $canEdit && ($isAdmin || $item->created_by == $user->id);
                                     $rowCanDelete = $canDelete && ($isAdmin || $item->created_by == $user->id);
-
-                                    $checked = $item->is_active ? 'checked' : '';
-                                    if ($rowCanEdit) {
-                                        $statusHtml = '
-                                            <div class="form-check form-switch d-flex justify-content-center">
-                                                <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="' . $item->id_code . '" data-field="is_active" data-url="' . route('admin.post.updateStatusAjax') . '" ' . $checked . ' style="cursor: pointer; width: 2.5em; height: 1.25em;">
-                                            </div>
-                                        ';
-                                    } else {
-                                        $statusHtml = '
-                                            <div class="form-check form-switch d-flex justify-content-center">
-                                                <input class="form-check-input" type="checkbox" ' . $checked . ' disabled style="width: 2.5em; height: 1.25em;">
-                                            </div>
-                                        ';
-                                    }
-
-                                    // is_featured logic
-                                    $featuredChecked = $item->is_featured ? 'checked' : '';
-                                    if ($rowCanEdit) {
-                                        $featuredHtml = '
-                                            <div class="form-check form-switch d-flex justify-content-center">
-                                                <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="' . $item->id_code . '" data-field="is_featured" data-url="' . route('admin.post.updateStatusAjax') . '" ' . $featuredChecked . ' style="cursor: pointer; width: 2.5em; height: 1.25em;">
-                                            </div>
-                                        ';
-                                    } else {
-                                        $featuredHtml = '
-                                            <div class="form-check form-switch d-flex justify-content-center">
-                                                <input class="form-check-input" type="checkbox" ' . $featuredChecked . ' disabled style="width: 2.5em; height: 1.25em;">
-                                            </div>
-                                        ';
-                                    }
                                     ?>
                                     <tr class="wp-row">
                                         <th scope="row" class="text-center align-middle">
@@ -147,7 +116,17 @@ if ($canAdd) {
                                             </div>
                                             <?php endif; ?>
                                         </th>
-                                        <td class="text-center align-middle"><?= $imgHtml ?></td>
+                                        
+                                        <!-- Hình ảnh -->
+                                        <td class="text-center align-middle">
+                                            <?php if ($item->image): ?>
+                                                <img src="<?= getImageUrl($item->image) ?>" alt="Image" class="img-thumbnail" style="height: 45px; width: auto; object-fit: cover;">
+                                            <?php else: ?>
+                                                <span class="badge bg-light text-dark border">Trống</span>
+                                            <?php endif; ?>
+                                        </td>
+                                        
+                                        <!-- Tiêu đề -->
                                         <td class="align-middle">
                                             <?php if ($rowCanEdit): ?>
                                                 <strong><a href="<?= route('admin.post.edit', ['id' => $item->id_code]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->title) ?></a></strong>
@@ -177,13 +156,39 @@ if ($canAdd) {
                                             }
                                             ?>
                                         </td>
+                                        
+                                        <!-- Người đăng -->
                                         <td class="text-center align-middle">
                                             <span class="badge bg-secondary"><?= $item->created_by == $user->id ? 'Bạn' : 'ID: '.$item->created_by ?></span>
                                         </td>
+                                        
+                                        <!-- Lượt xem -->
                                         <td class="text-center align-middle"><?= number_format($item->views) ?></td>
+                                        
+                                        <!-- Sắp xếp -->
                                         <td class="text-center align-middle"><?= $item->sort_order ?></td>
-                                        <td class="text-center align-middle"><?= $featuredHtml ?></td>
-                                        <td class="text-center align-middle"><?= $statusHtml ?></td>
+                                        
+                                        <!-- is_featured -->
+                                        <td class="text-center align-middle">
+                                            <div class="form-check form-switch d-flex justify-content-center">
+                                                <?php if ($rowCanEdit): ?>
+                                                    <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="<?= $item->id_code ?>" data-field="is_featured" data-url="<?= route('admin.post.updateStatusAjax') ?>" <?= $item->is_featured ? 'checked' : '' ?> style="cursor: pointer; width: 2.5em; height: 1.25em;">
+                                                <?php else: ?>
+                                                    <input class="form-check-input" type="checkbox" <?= $item->is_featured ? 'checked' : '' ?> disabled style="width: 2.5em; height: 1.25em;">
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                        
+                                        <!-- is_active -->
+                                        <td class="text-center align-middle">
+                                            <div class="form-check form-switch d-flex justify-content-center">
+                                                <?php if ($rowCanEdit): ?>
+                                                    <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="<?= $item->id_code ?>" data-field="is_active" data-url="<?= route('admin.post.updateStatusAjax') ?>" <?= $item->is_active ? 'checked' : '' ?> style="cursor: pointer; width: 2.5em; height: 1.25em;">
+                                                <?php else: ?>
+                                                    <input class="form-check-input" type="checkbox" <?= $item->is_active ? 'checked' : '' ?> disabled style="width: 2.5em; height: 1.25em;">
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>

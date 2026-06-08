@@ -256,17 +256,10 @@ if (!function_exists('getCategoryTreeIds')) {
 }
 
 if (!function_exists('renderCategoryFilter')) {
-    /**
-     * In ra các thẻ option cho select dropdown danh mục (đệ quy)
-     */
     function renderCategoryFilter($categories, $selectedId = 0, $prefix = '') {
         foreach ($categories as $cat) {
-            $id = $cat->id_code ?? $cat->id ?? 0;
-            $name = $cat->ten ?? $cat->name ?? '';
-            $selected = ($id == $selectedId) ? 'selected' : '';
-            
-            echo '<option value="' . $id . '" ' . $selected . '>' . $prefix . htmlspecialchars($name) . '</option>';
-            
+            $selected = ($cat->id_code == $selectedId) ? 'selected' : '';
+            echo '<option value="' . $cat->id_code . '" ' . $selected . '>' . $prefix . htmlspecialchars($cat->ten ?? $cat->name) . '</option>';
             if (!empty($cat->children)) {
                 renderCategoryFilter($cat->children, $selectedId, $prefix . '--- ');
             }
