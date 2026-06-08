@@ -60,6 +60,14 @@ class Paginator implements \IteratorAggregate, \Countable, \ArrayAccess {
         return null;
     }
 
+    /**
+     * Bắt buộc phải có để empty() và isset() hoạt động đúng trên các virtual property.
+     * PHP chỉ gọi __get khi property không tồn tại VÀ __isset trả về true.
+     */
+    public function __isset($name) {
+        return in_array($name, ['data', 'total', 'per_page', 'current_page', 'last_page']);
+    }
+
     // --- IteratorAggregate ---
     public function getIterator(): \Traversable {
         return new \ArrayIterator($this->items);

@@ -12862,3 +12862,11 @@
 #15 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
 #16 C:\laragon\www\source\index.php(24): App\Core\App->run()
 #17 {main}
+[2026-06-08 15:17:10] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:19:38] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:19:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:19:42] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:19:47] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:19:48] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:19:49] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:30:24] [INFO]: App kernel booted in modern mode.
