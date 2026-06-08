@@ -255,7 +255,7 @@ class PostController extends BaseAdminController {
 
         $allowedFields = ['is_active', 'hien_thi', 'is_featured']; 
         if (!in_array($field, $allowedFields)) {
-            return $this->json(['success' => false, 'message' => 'Trường dữ liệu không hợp lệ']);
+            return $this->jsonError('Trường dữ liệu không hợp lệ');
         }
 
         if ($id > 0) {
@@ -264,7 +264,7 @@ class PostController extends BaseAdminController {
             $post = $postQuery->where('id_code', $id)->first();
             
             if ($post && !$this->canEditPost($post->created_by)) {
-                return $this->json(['success' => false, 'message' => 'Bạn không có quyền sửa bài viết này!']);
+                return $this->jsonError('Bạn không có quyền sửa bài viết này!');
             }
 
             // Chỉ cập nhật bảng db_posts (Không liên quan đến cf_code)
@@ -274,9 +274,9 @@ class PostController extends BaseAdminController {
             $label = $field === 'is_featured' ? 'Nổi bật' : 'Trạng thái hiển thị';
             $updateQuery->where('id_code', $id)->update([$field => $value]);
 
-            return $this->json(['success' => true, 'message' => $label . ' đã được cập nhật!']);
+            return $this->jsonSuccess($label . ' đã được cập nhật!');
         }
-        return $this->json(['success' => false, 'message' => 'ID không hợp lệ']);
+        return $this->jsonError('ID không hợp lệ');
     }
 
     /**

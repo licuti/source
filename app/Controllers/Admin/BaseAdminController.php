@@ -23,10 +23,34 @@ class BaseAdminController extends Controller {
     }
 
     /**
-     * Trả về JSON Response
+     * Trả về JSON Response — format thô (dùng khi cần kiểm soát toàn bộ)
      */
     protected function json($data, $statusCode = 200) {
         return Response::json($data, $statusCode);
+    }
+
+    /**
+     * Trả về JSON thành công chuẩn:
+     * { "success": true, "message": "...", "data": {...} }
+     */
+    protected function jsonSuccess(string $message = '', $data = null) {
+        $body = ['success' => true, 'message' => $message];
+        if ($data !== null) {
+            $body['data'] = $data;
+        }
+        return Response::json($body, 200);
+    }
+
+    /**
+     * Trả về JSON lỗi chuẩn:
+     * { "success": false, "message": "...", "errors": {...} }
+     */
+    protected function jsonError(string $message, $errors = null, int $statusCode = 200) {
+        $body = ['success' => false, 'message' => $message];
+        if ($errors !== null) {
+            $body['errors'] = $errors;
+        }
+        return Response::json($body, $statusCode);
     }
 
     /**
