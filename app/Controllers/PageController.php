@@ -52,9 +52,9 @@ class PageController extends Controller {
             $this->registerLanguageLinks($category, $slug, \CategoryModel::class);
             
             // Dispatch tới đúng Controller dựa vào module
-            if ($category->module == 4) { // 4 = Sản phẩm
+            if ($category->module == config('modules.product')) {
                 return $this->forwardTo(ProductController::class, 'index', $request, $params);
-            } elseif ($category->module == 3) { // 3 = Tin tức
+            } elseif ($category->module == config('modules.post')) {
                 return $this->forwardTo(NewsController::class, 'index', $request, $params);
             }
             // Fallback render template mặc định

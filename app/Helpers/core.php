@@ -80,6 +80,7 @@ if (!function_exists('config')) {
                     'database'           => include $basePath . '/config/database.php',
                     'lang'               => include $basePath . '/config/languages.php',
                     'route_translations' => include $basePath . '/config/route_translations.php',
+                    'modules'            => include $basePath . '/config/modules.php',
                 ],
                 include $basePath . '/config/app.php'
             );
