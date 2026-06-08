@@ -946,7 +946,7 @@ class Model implements \JsonSerializable {
 
         // Xử lý Timestamps tự động
         if ($this->timestamps) {
-            $currentTime = time();
+            $currentTime = date('Y-m-d H:i:s');
             if (!$id) {
                 $this->attributes[$this->createdAt] = $currentTime;
                 $data[$this->createdAt] = $currentTime;
@@ -995,7 +995,7 @@ class Model implements \JsonSerializable {
 
         // Auto timestamps
         if ($instance->timestamps) {
-            $currentTime = time();
+            $currentTime = date('Y-m-d H:i:s');
             if (!isset($data[$instance->createdAt])) {
                 $data[$instance->createdAt] = $currentTime;
             }
@@ -1047,7 +1047,7 @@ class Model implements \JsonSerializable {
         list($whereSql, $params) = $this->buildWhereClause();
         
         if ($this->timestamps) {
-            $data[$this->updatedAt] = time();
+            $data[$this->updatedAt] = date('Y-m-d H:i:s');
         }
 
         $fields = [];
