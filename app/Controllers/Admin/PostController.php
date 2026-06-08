@@ -66,7 +66,7 @@ class PostController extends BaseAdminController {
         // 1. Phân trang kiểu Laravel
         $posts = $postQuery->orderBy('sort_order', 'ASC')->orderBy('id', 'DESC')->paginate($limit);
 
-        $categories = CategoryModel::getTreeForAdmin();
+        $categories = CategoryModel::getTreeForAdminByModule(3);
 
         return $this->render('admin.post.index', compact('posts', 'keyword', 'status', 'category_id', 'categories'));
     }
@@ -76,7 +76,7 @@ class PostController extends BaseAdminController {
      */
     public function create(Request $request) {
         $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
-        $categories = CategoryModel::getTreeForAdmin();
+        $categories = CategoryModel::getTreeForAdminByModule(3);
         return $this->render('admin.post.form', compact('langs', 'categories'));
     }
 
@@ -124,7 +124,7 @@ class PostController extends BaseAdminController {
             }
         }
         
-        $categories = CategoryModel::getTreeForAdmin();
+        $categories = CategoryModel::getTreeForAdminByModule(3);
         
         return $this->render('admin.post.form', compact('langs', 'item', 'categories'));
     }

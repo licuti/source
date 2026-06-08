@@ -80,6 +80,26 @@ class CategoryModel extends Model {
     }
 
     /**
+     * Lấy danh mục theo module cụ thể (dành cho Admin)
+     * Module: 2=Trang, 3=Bài viết, 4=Sản phẩm, ...
+     */
+    public static function getAllForAdminByModule(int $module) {
+        return self::query()
+            ->where('module', $module)
+            ->orderBy('sort_order')
+            ->orderBy('id', 'DESC')
+            ->get();
+    }
+
+    /**
+     * Lấy cây danh mục cho Admin theo module
+     */
+    public static function getTreeForAdminByModule(int $module, $parentId = 0) {
+        $elements = self::getAllForAdminByModule($module);
+        return self::buildTree($elements, $parentId);
+    }
+
+    /**
      * Lấy cây danh mục cho Admin (Bao gồm cả danh mục ẩn)
      */
     public static function getTreeForAdmin($parentId = 0) {
