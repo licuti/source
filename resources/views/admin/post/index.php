@@ -1,15 +1,4 @@
 <?php
-if (!function_exists('renderCategoryFilter')) {
-    function renderCategoryFilter($categories, $selectedId = 0, $prefix = '') {
-        foreach ($categories as $cat) {
-            $selected = ($cat->id_code == $selectedId) ? 'selected' : '';
-            echo '<option value="' . $cat->id_code . '" ' . $selected . '>' . $prefix . htmlspecialchars($cat->ten ?? $cat->name) . '</option>';
-            if (!empty($cat->children)) {
-                renderCategoryFilter($cat->children, $selectedId, $prefix . '--- ');
-            }
-        }
-    }
-}
 
 $breadcrumbActions = [];
 $canAdd = hasPermission('admin.post', 'add');
