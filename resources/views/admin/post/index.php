@@ -27,15 +27,9 @@ if ($canAdd) {
             <!-- HEADER: Bulk Action, Filter, Search -->
             <div class="card-header wp-toolbar">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                    <?php if ($canAdd || $canDelete): ?>
+                    <!-- Left: Bulk actions -->
+                    <?php if ($canDelete): ?>
                     <div class="d-flex align-items-center flex-wrap gap-2">
-                        <?php if ($canAdd): ?>
-                            <a href="<?= route('admin.post.create') ?>" class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus me-1"></i> Thêm mới
-                            </a>
-                        <?php endif; ?>
-                        
-                        <?php if ($canDelete): ?>
                         <select id="bulkActionSelect" class="form-select form-select-sm w-auto">
                             <option value="">Hành động hàng loạt</option>
                             <option value="delete" data-url="<?= route('admin.post.destroy_multiple') ?>" data-confirm="Bạn có chắc chắn muốn xóa các bài viết đã chọn?">
@@ -45,13 +39,12 @@ if ($canAdd) {
                         <button type="button" id="btnBulkApply" class="btn btn-outline-secondary btn-sm" disabled>
                             Áp dụng
                         </button>
-                        <?php endif; ?>
                     </div>
                     <?php else: ?>
                     <div></div>
                     <?php endif; ?>
 
-                    <!-- Right: Search & Filter -->
+                    <!-- Right: Search, Filter & Add New -->
                     <form action="<?= route('admin.post.index') ?>" method="GET" class="d-flex align-items-center flex-wrap gap-2 m-0">
                         
                         <select name="category_id" class="form-select form-select-sm w-auto">
@@ -67,14 +60,16 @@ if ($canAdd) {
 
                         <div class="input-group input-group-sm w-auto">
                             <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm bài viết..." value="<?= htmlspecialchars($keyword ?? '') ?>">
-                            <button type="submit" class="btn btn-primary">
-                                Tìm kiếm
-                            </button>
+                            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                         </div>
                         
                         <?php if (!empty($keyword) || !empty($status) || !empty($category_id)): ?>
-                            <a href="<?= route('admin.post.index') ?>" class="btn btn-link btn-sm text-decoration-none text-muted">
-                                Hủy lọc
+                            <a href="<?= route('admin.post.index') ?>" class="btn btn-link btn-sm text-decoration-none text-muted">Hủy lọc</a>
+                        <?php endif; ?>
+
+                        <?php if ($canAdd): ?>
+                            <a href="<?= route('admin.post.create') ?>" class="btn btn-success btn-sm">
+                                <i class="fas fa-plus me-1"></i> Thêm mới
                             </a>
                         <?php endif; ?>
                     </form>

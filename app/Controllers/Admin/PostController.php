@@ -60,7 +60,7 @@ class PostController extends BaseAdminController {
         }
 
         if ($keyword !== '') {
-            $postQuery->whereLike('title', '%' . $keyword . '%');
+            $postQuery->where('title', 'LIKE', '%' . $keyword . '%');
         }
 
         // 1. Phân trang kiểu Laravel

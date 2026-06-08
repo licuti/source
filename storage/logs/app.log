@@ -12870,3 +12870,45 @@
 [2026-06-08 15:19:48] [INFO]: App kernel booted in modern mode.
 [2026-06-08 15:19:49] [INFO]: App kernel booted in modern mode.
 [2026-06-08 15:30:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:32:00] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:32:04] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:32:06] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:32:17] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:32:20] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:32:21] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:32:35] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:32:35] [ERROR]: Method whereLike does not exist.
+#0 C:\laragon\www\source\app\Controllers\Admin\PostController.php(63): Model->__call('whereLike', Array)
+#1 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->index(Object(App\Core\Request), Array)
+#2 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#3 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#6 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#13 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#14 {main}
+[2026-06-08 15:32:39] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:32:42] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:33:32] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:33:32] [ERROR]: Method whereLike does not exist.
+#0 C:\laragon\www\source\app\Controllers\Admin\PostController.php(63): Model->__call('whereLike', Array)
+#1 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->index(Object(App\Core\Request), Array)
+#2 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#3 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#6 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#13 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#14 {main}
