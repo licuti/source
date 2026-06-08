@@ -407,6 +407,36 @@ class Model implements \JsonSerializable {
         return $this;
     }
 
+    /**
+     * Tìm kiếm theo LIKE — tự động thêm % nếu chưa có
+     * Ví dụ:
+     *   ->whereLike('title', 'php')          → WHERE `title` LIKE '%php%'
+     *   ->whereLike('title', 'php%')         → WHERE `title` LIKE 'php%'
+     *   ->whereLike('title', '%php')         → WHERE `title` LIKE '%php'
+     */
+    protected function qbWhereLike(string $column, string $value) {
+        // Nếu chưa có ký tự % nào, bọc hai đầu
+        if (strpos($value, '%') === false) {
+            $value = '%' . $value . '%';
+        }
+        $this->qb_where[] = "`$column` LIKE ?";
+        $this->qb_params[] = $value;
+        return $this;
+    }
+
+    /**
+     * Ngược lại với whereLike
+     * Ví dụ: ->whereNotLike('title', 'draft')  → WHERE `title` NOT LIKE '%draft%'
+     */
+    protected function qbWhereNotLike(string $column, string $value) {
+        if (strpos($value, '%') === false) {
+            $value = '%' . $value . '%';
+        }
+        $this->qb_where[] = "`$column` NOT LIKE ?";
+        $this->qb_params[] = $value;
+        return $this;
+    }
+
     // ── Điều kiện NULL ────────────────────────────────────────
 
     protected function qbWhereNull(string $column) {
