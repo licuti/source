@@ -63,7 +63,7 @@ class PostController extends BaseAdminController {
             $postQuery->whereLike('title', '%' . $keyword . '%');
         }
 
-        $totalRows = count($postQuery->get('id'));
+        $totalRows = (clone $postQuery)->count();
         $totalPages = max(1, ceil($totalRows / $limit));
         $offset = ($page - 1) * $limit;
 
