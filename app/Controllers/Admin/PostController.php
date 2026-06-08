@@ -42,7 +42,7 @@ class PostController extends BaseAdminController {
         $limit = 10;
 
         // 1. Lấy danh sách ID master từ bảng cf_code để đếm tổng số
-        $cfQuery = CfCodeModel::query()->where('module', 'tin_tuc');
+        $cfQuery = CfCodeModel::query()->where('module', 3);
         
         $user = user();
         if ($user->is_admin != 1) {
@@ -144,6 +144,7 @@ class PostController extends BaseAdminController {
             'id_loai'   => $cfCode->id_loai, 
             'so_thu_tu' => $cfCode->so_thu_tu, 
             'hien_thi'  => $cfCode->hien_thi,
+            'is_featured' => 0,
             'hinh_anh'  => ''
         ];
         
@@ -153,6 +154,7 @@ class PostController extends BaseAdminController {
             $item["alias"][$lang] = $t->alias;
             $item["mo_ta"][$lang] = $t->description;
             $item["noi_dung"][$lang] = $t->content;
+            $item["is_featured"] = $t->is_featured;
             if (empty($item["hinh_anh"])) {
                 $item["hinh_anh"] = $t->image;
             }
@@ -179,7 +181,7 @@ class PostController extends BaseAdminController {
             'ten'       => $ten_vi,
             'hinh_anh'  => $request->input('hinh_anh') ?? '',
             'id_loai'   => $id_loai,
-            'module'    => 'tin_tuc',
+            'module'    => 3,
             'so_thu_tu' => $so_thu_tu,
             'hien_thi'  => $hien_thi
         ]);
@@ -203,6 +205,7 @@ class PostController extends BaseAdminController {
                     'category_id' => $id_loai,
                     'sort_order'  => $so_thu_tu,
                     'is_active'   => $hien_thi,
+                    'is_featured' => $request->input('is_featured') !== null ? 1 : 0,
                     'created_by'  => $user_id,
                     'created_at'  => $now,
                     'updated_at'  => $now
@@ -266,6 +269,7 @@ class PostController extends BaseAdminController {
                 'category_id' => $id_loai,
                 'sort_order'  => $so_thu_tu,
                 'is_active'   => $hien_thi,
+                'is_featured' => $request->input('is_featured') !== null ? 1 : 0,
                 'updated_by'  => $user_id,
                 'updated_at'  => $now
             ];
@@ -295,7 +299,7 @@ class PostController extends BaseAdminController {
         $field = $request->input('field', 'is_active');
         $value = (int)$request->input('value', 0);
 
-        $allowedFields = ['is_active', 'hien_thi']; 
+        $allowedFields = ['is_active', 'hien_thi', 'is_featured']; 
         if (!in_array($field, $allowedFields)) {
             return $this->json(['success' => false, 'message' => 'Trường dữ liệu không hợp lệ']);
         }

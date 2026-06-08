@@ -111,9 +111,14 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
                                 <small class="form-text text-muted">Số càng nhỏ ưu tiên hiển thị trước.</small>
                             </div>
 
-                            <div class="form-check form-switch mb-3 pt-2">
+                            <div class="form-check form-switch mb-3 d-flex align-items-center">
                                 <input class="form-check-input" type="checkbox" name="hien_thi" id="hien_thi" <?= (!isset($item) || !empty($item['hien_thi'])) ? 'checked' : '' ?>>
                                 <label class="form-check-label mt-1 ms-2 fw-bold" for="hien_thi">Cho phép hiển thị</label>
+                            </div>
+                            
+                            <div class="form-check form-switch mb-3 d-flex align-items-center">
+                                <input class="form-check-input" type="checkbox" name="is_featured" id="is_featured" <?= (!empty($item['is_featured'])) ? 'checked' : '' ?>>
+                                <label class="form-check-label mt-1 ms-2 fw-bold text-danger" for="is_featured">Nổi bật</label>
                             </div>
 
                         </div>

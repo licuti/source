@@ -265,6 +265,29 @@ if (!function_exists('hasPermission')) {
         return false;
     }
 }
+
+if (!function_exists('user')) {
+    /**
+     * Lấy thông tin người dùng đang đăng nhập từ Session
+     * Trả về Object stdClass hoặc null
+     */
+    function user() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        if (!isset($_SESSION['id_user'])) {
+            return null;
+        }
+        
+        $user = new \stdClass();
+        $user->id = $_SESSION['id_user'];
+        $user->username = $_SESSION['user_admin'] ?? '';
+        $user->fullname = $_SESSION['name'] ?? '';
+        $user->role_id = $_SESSION['role_id'] ?? $_SESSION['quyen'] ?? 0;
+        $user->is_admin = $_SESSION['is_admin'] ?? 0;
+        
+        return $user;
+    }
+}
 if (!function_exists('getExchangeRate')) {
     /**
      * Lấy tỷ giá hối đoái (Mặc định lấy từ config)

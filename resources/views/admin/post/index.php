@@ -133,6 +133,22 @@ if ($canAdd) {
                                             </div>
                                         ';
                                     }
+
+                                    // is_featured logic
+                                    $featuredChecked = $item->is_featured ? 'checked' : '';
+                                    if ($rowCanEdit) {
+                                        $featuredHtml = '
+                                            <div class="form-check form-switch d-flex justify-content-center">
+                                                <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="' . $item->id_code . '" data-field="is_featured" data-url="' . route('admin.post.updateStatusAjax') . '" ' . $featuredChecked . ' style="cursor: pointer; width: 2.5em; height: 1.25em;">
+                                            </div>
+                                        ';
+                                    } else {
+                                        $featuredHtml = '
+                                            <div class="form-check form-switch d-flex justify-content-center">
+                                                <input class="form-check-input" type="checkbox" ' . $featuredChecked . ' disabled style="width: 2.5em; height: 1.25em;">
+                                            </div>
+                                        ';
+                                    }
                                     ?>
                                     <tr class="wp-row">
                                         <th scope="row" class="text-center align-middle">
@@ -177,6 +193,7 @@ if ($canAdd) {
                                         </td>
                                         <td class="text-center align-middle"><?= number_format($item->views) ?></td>
                                         <td class="text-center align-middle"><?= $item->sort_order ?></td>
+                                        <td class="text-center align-middle"><?= $featuredHtml ?></td>
                                         <td class="text-center align-middle"><?= $statusHtml ?></td>
                                     </tr>
                                 <?php endforeach; ?>
