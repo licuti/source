@@ -63,17 +63,12 @@ class PostController extends BaseAdminController {
             $postQuery->whereLike('title', '%' . $keyword . '%');
         }
 
-        $totalRows = (clone $postQuery)->count();
-        $totalPages = max(1, ceil($totalRows / $limit));
-        $offset = ($page - 1) * $limit;
-
-        $postQuery->orderBy('sort_order', 'ASC')->orderBy('id', 'DESC');
-        $postQuery->limit($limit, $offset);
-        $posts = $postQuery->get();
+        // 1. Phân trang kiểu Laravel
+        $posts = $postQuery->orderBy('sort_order', 'ASC')->orderBy('id', 'DESC')->paginate($limit);
 
         $categories = CategoryModel::getTreeForAdmin();
 
-        return $this->render('admin.post.index', compact('posts', 'keyword', 'status', 'category_id', 'page', 'totalPages', 'totalRows', 'categories'));
+        return $this->render('admin.post.index', compact('posts', 'keyword', 'status', 'category_id', 'categories'));
     }
 
     /**

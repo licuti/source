@@ -214,10 +214,10 @@ if ($canAdd) {
             <div class="card-footer bg-white clearfix py-3">
                 <div class="row align-items-center">
                     <div class="col-md-4 text-muted small">
-                        Hiển thị <?= count($posts ?? []) ?> / <?= $totalRows ?? 0 ?> mục
+                        Hiển thị <?= count($posts) ?> / <?= $posts->total() ?> mục
                     </div>
                     <div class="col-md-8 text-end pagination-right-sm">
-                        <?= paging($totalRows, 10, $page, getCurrentUrlWithoutPage()) ?>
+                        <?= $posts->links() ?>
                     </div>
                 </div>
             </div>

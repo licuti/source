@@ -765,13 +765,7 @@ class Model implements \JsonSerializable {
         $lastPage = max(1, (int)ceil($total / $perPage));
         $results  = $this->limit($perPage, ($page - 1) * $perPage)->get();
 
-        return (object)[
-            'data'         => $results,
-            'total'        => $total,
-            'per_page'     => $perPage,
-            'current_page' => $page,
-            'last_page'    => $lastPage,
-        ];
+        return new \App\Core\Paginator($results, $total, $perPage, $page);
     }
 
     // ============================================================
