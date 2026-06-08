@@ -23,6 +23,14 @@ class Response {
         return $this;
     }
 
+    public function with($key, $value) {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        $_SESSION[$key] = $value;
+        return $this;
+    }
+
     public function send() {
         http_response_code($this->statusCode);
         foreach ($this->headers as $name => $value) {

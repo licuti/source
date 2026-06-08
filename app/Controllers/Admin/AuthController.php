@@ -30,18 +30,33 @@ class AuthController extends BaseAdminController {
         $pass_hash = sha1($password);
 
         // Truy vấn thông qua Model mới
-        $login = \UserModel::where('user_hash', $user_hash)
-                           ->where('pass_hash', $pass_hash)
-                           ->where('quyen_han', 1, '>=')
+        $login = \App\Models\UserModel::where('username', $username)
+                           ->where('password', $pass_hash)
+                           ->where('role_id', 1, '>=')
                            ->first();
 
         if ($login) {
             $_SESSION['id_user']    = $login->id;
-            $_SESSION['user_admin'] = $login->tai_khoan;
-            $_SESSION['user_hash']  = $user_hash;
-            $_SESSION['quyen']      = $login->quyen_han;
-            $_SESSION['name']       = $login->ho_ten;
+            $_SESSION['user_admin'] = $login->username;
+            $_SESSION['quyen']      = $login->role_id;
+            $_SESSION['role_id']    = $login->role_id; // Thêm biến chuẩn
+            $_SESSION['name']       = $login->fullname;
             $_SESSION['is_admin']   = $login->is_admin;
+            
+            // Cache quyền vào Session
+            if ($login->is_admin != 1) {
+                $perms = \App\Models\RolePermissionModel::where('role_id', $login->role_id)->get();
+                $permissionsArray = [];
+                foreach ($perms as $p) {
+                    $permissionsArray[$p->module_id] = [
+                        'can_view' => $p->can_view,
+                        'can_add' => $p->can_add,
+                        'can_edit' => $p->can_edit,
+                        'can_delete' => $p->can_delete
+                    ];
+                }
+                $_SESSION['role_permissions'] = $permissionsArray;
+            }
 
             if ($request->input('checkbox')) {
                 $key_login = md5(time() . $login->id);
@@ -63,7 +78,6 @@ class AuthController extends BaseAdminController {
         
         unset($_SESSION['id_user']);
         unset($_SESSION['user_admin']);
-        unset($_SESSION['user_hash']);
         unset($_SESSION['quyen']);
         unset($_SESSION['name']);
         unset($_SESSION['is_admin']);

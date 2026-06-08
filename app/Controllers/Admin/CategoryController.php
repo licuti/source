@@ -9,18 +9,42 @@ use CfCodeModel;
 class CategoryController extends BaseAdminController {
     
     /**
-     * Hiển thị danh sách danh mục
+     * Hiển thị danh mục dạng cây hoặc danh sách tìm kiếm
      */
     public function index(Request $request) {
-        $categories = CategoryModel::query()->where('lang', 'vi')->orderBy('so_thu_tu', 'ASC')->orderBy('id_code', 'DESC')->get();
-        
-        // Map tên danh mục cha cho dễ nhìn
-        $parentMap = [];
-        foreach ($categories as $cat) {
-            $parentMap[$cat->id_code] = $cat->ten;
+        $keyword = trim($request->input('keyword', ''));
+        $status  = $request->input('status', '');
+        $page    = (int)$request->input('page', 1);
+        if ($page < 1) $page = 1;
+        $limit = 10;
+
+        if ($keyword !== '' || $status !== '') {
+            // Giải pháp 2: Trả về danh sách phẳng để lọc và phân trang
+            $allCategories = CategoryModel::getAllForAdmin();
+            $filtered = [];
+            foreach ($allCategories as $cat) {
+                $matchKeyword = $keyword === '' || mb_stripos($cat->ten, $keyword) !== false || (string)$cat->id_code === $keyword;
+                $matchStatus = $status === '' || (string)$cat->hien_thi === $status;
+                if ($matchKeyword && $matchStatus) {
+                    $filtered[] = $cat;
+                }
+            }
+            
+            $totalRows = count($filtered);
+            $totalPages = max(1, ceil($totalRows / $limit));
+            $offset = ($page - 1) * $limit;
+            
+            $categories = array_slice($filtered, $offset, $limit);
+            $isSearch = true;
+        } else {
+            // Chế độ xem mặc định: Cây danh mục (không phân trang)
+            $categories = CategoryModel::getTreeForAdmin();
+            $isSearch = false;
+            $totalRows = count(CategoryModel::getAllForAdmin());
+            $totalPages = 1;
         }
 
-        return $this->render('admin.category.index', compact('categories', 'parentMap'));
+        return $this->render('admin.category.index', compact('categories', 'isSearch', 'keyword', 'status', 'page', 'totalPages', 'totalRows'));
     }
 
     /**
@@ -28,7 +52,7 @@ class CategoryController extends BaseAdminController {
      */
     public function create(Request $request) {
         $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
-        $parentCategories = CategoryModel::getTree();
+        $parentCategories = CategoryModel::getTreeForAdmin();
         $modules = ModuleModel::query()->where('hide', 1)->orderBy('stt', 'ASC')->get();
         return $this->render('admin.category.form', compact('langs', 'parentCategories', 'modules'));
     }
@@ -49,12 +73,12 @@ class CategoryController extends BaseAdminController {
         
         // Chuyển hóa dữ liệu để render lên form
         $item = [
-            'id' => $id, 
-            'id_loai' => $cfCode->id_loai, 
-            'module' => $cfCode->module, 
+            'id'        => $id, 
+            'id_loai'   => $cfCode->id_loai, 
+            'module'    => $cfCode->module, 
             'so_thu_tu' => $cfCode->so_thu_tu, 
-            'hien_thi' => $cfCode->hien_thi,
-            'hinh_anh' => ''
+            'hien_thi'  => $cfCode->hien_thi,
+            'hinh_anh'  => ''
         ];
         
         foreach ($translations as $t) {
@@ -68,7 +92,7 @@ class CategoryController extends BaseAdminController {
             }
         }
         
-        $parentCategories = CategoryModel::getTree();
+        $parentCategories = CategoryModel::getTreeForAdmin();
         $modules = ModuleModel::query()->where('hide', 1)->orderBy('stt', 'ASC')->get();
         
         return $this->render('admin.category.form', compact('langs', 'item', 'parentCategories', 'modules'));
@@ -88,12 +112,12 @@ class CategoryController extends BaseAdminController {
 
         // 1. Lưu vào bảng gốc
         $id_code = CfCodeModel::insert([
-            'ten' => $ten_vi,
-            'hinh_anh' => $request->input('hinh_anh') ?? '',
-            'id_loai' => $id_loai,
-            'module' => $module,
+            'ten'       => $ten_vi,
+            'hinh_anh'  => $request->input('hinh_anh') ?? '',
+            'id_loai'   => $id_loai,
+            'module'    => $module,
             'so_thu_tu' => $so_thu_tu,
-            'hien_thi' => $hien_thi
+            'hien_thi'  => $hien_thi
         ]);
 
         if ($id_code) {
@@ -102,17 +126,17 @@ class CategoryController extends BaseAdminController {
             foreach ($langs as $l) {
                 $c = $l['code'];
                 CategoryModel::insert([
-                    'id_code' => $id_code,
-                    'lang' => $c,
-                    'ten' => $request->input('ten')[$c] ?? '',
-                    'alias' => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
-                    'mo_ta' => $request->input('mo_ta')[$c] ?? '',
-                    'noi_dung' => $request->input('noi_dung')[$c] ?? '',
-                    'hinh_anh' => $request->input('hinh_anh') ?? '',
-                    'id_loai' => $id_loai,
-                    'module' => $module,
+                    'id_code'   => $id_code,
+                    'lang'      => $c,
+                    'ten'       => $request->input('ten')[$c] ?? '',
+                    'alias'     => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
+                    'mo_ta'     => $request->input('mo_ta')[$c] ?? '',
+                    'noi_dung'  => $request->input('noi_dung')[$c] ?? '',
+                    'hinh_anh'  => $request->input('hinh_anh') ?? '',
+                    'id_loai'   => $id_loai,
+                    'module'    => $module,
                     'so_thu_tu' => $so_thu_tu,
-                    'hien_thi' => $hien_thi
+                    'hien_thi'  => $hien_thi
                 ]);
             }
         }
@@ -124,8 +148,6 @@ class CategoryController extends BaseAdminController {
      * Lưu dữ liệu cập nhật
      */
     public function update(Request $request, $id) {
-        ini_set('display_errors', 1);
-        error_reporting(E_ALL);
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
         
         $id_loai = (int)$request->input('id_loai', 0);
@@ -136,14 +158,19 @@ class CategoryController extends BaseAdminController {
         $tenInput = $request->input('ten', []);
         $ten_vi = $tenInput['vi'] ?? '';
 
+        // Kiểm tra chống loop (cha không thể nhận chính nó làm con)
+        if ($id == $id_loai) {
+            $id_loai = 0;
+        }
+
         // 1. Cập nhật bảng gốc
         CfCodeModel::query()->where('id', $id)->update([
-            'ten' => $ten_vi,
-            'hinh_anh' => $request->input('hinh_anh') ?? '',
-            'id_loai' => $id_loai,
-            'module' => $module,
+            'ten'       => $ten_vi,
+            'hinh_anh'  => $request->input('hinh_anh') ?? '',
+            'id_loai'   => $id_loai,
+            'module'    => $module,
             'so_thu_tu' => $so_thu_tu,
-            'hien_thi' => $hien_thi
+            'hien_thi'  => $hien_thi
         ]);
 
         // 2. Cập nhật hoặc tạo mới bản dịch
@@ -156,15 +183,15 @@ class CategoryController extends BaseAdminController {
             $exists = $catQuery->where('id_code', $id)->where('lang', $c)->first();
             
             $data = [
-                'ten' => $request->input('ten')[$c] ?? '',
-                'alias' => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
-                'mo_ta' => $request->input('mo_ta')[$c] ?? '',
-                'noi_dung' => $request->input('noi_dung')[$c] ?? '',
-                'hinh_anh' => $request->input('hinh_anh') ?? '',
-                'id_loai' => $id_loai,
-                'module' => $module,
+                'ten'       => $request->input('ten')[$c] ?? '',
+                'alias'     => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
+                'mo_ta'     => $request->input('mo_ta')[$c] ?? '',
+                'noi_dung'  => $request->input('noi_dung')[$c] ?? '',
+                'hinh_anh'  => $request->input('hinh_anh') ?? '',
+                'id_loai'   => $id_loai,
+                'module'    => $module,
                 'so_thu_tu' => $so_thu_tu,
-                'hien_thi' => $hien_thi
+                'hien_thi'  => $hien_thi
             ];
             
             if ($exists) {
@@ -182,13 +209,78 @@ class CategoryController extends BaseAdminController {
     }
 
     /**
-     * Xóa 1 dòng
+     * Cập nhật trạng thái hiển thị (hoặc bất kỳ trường boolean nào) qua AJAX
+     */
+    public function updateStatusAjax(Request $request) {
+        $id = (int)$request->input('id');
+        $field = $request->input('field', 'hien_thi'); // Mặc định là hien_thi
+        $value = (int)$request->input('value', 0);
+
+        // Danh sách các cột được phép update qua AJAX để bảo mật
+        $allowedFields = ['hien_thi']; 
+        if (!in_array($field, $allowedFields)) {
+            return $this->json(['success' => false, 'message' => 'Trường dữ liệu không hợp lệ']);
+        }
+
+        if ($id > 0) {
+            CfCodeModel::query()->where('id', $id)->update([$field => $value]);
+            
+            $catQuery = CategoryModel::query();
+            $catQuery->use_lang = false;
+            $catQuery->where('id_code', $id)->update([$field => $value]);
+
+            return $this->json(['success' => true]);
+        }
+        return $this->json(['success' => false, 'message' => 'ID không hợp lệ']);
+    }
+
+    /**
+     * Xóa 1 dòng (xóa luôn cả các danh mục con nếu có)
      */
     public function destroy(Request $request, $id) {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
-        CfCodeModel::query()->where('id', $id)->delete();
-        CategoryModel::query()->where('id_code', $id)->delete();
+        
+        // Lấy tất cả danh mục con của ID này
+        $allIdsString = CategoryModel::getChildrenIds($id, true);
+        $ids = array_filter(explode(',', $allIdsString));
+
+        if (!empty($ids)) {
+            foreach ($ids as $delId) {
+                CfCodeModel::query()->where('id', $delId)->delete();
+                
+                $catQuery = CategoryModel::query();
+                $catQuery->use_lang = false;
+                $catQuery->where('id_code', $delId)->delete();
+            }
+        }
         return $this->redirect(route('admin.category.index'));
     }
 
+    /**
+     * Xóa hàng loạt
+     */
+    public function destroyMultiple(Request $request) {
+        $ids = $request->input('ids', []);
+        
+        if (!empty($ids) && is_array($ids)) {
+            $allIdsToDelete = [];
+            foreach ($ids as $id) {
+                $childIdsStr = CategoryModel::getChildrenIds($id, true);
+                $childIds = array_filter(explode(',', $childIdsStr));
+                $allIdsToDelete = array_merge($allIdsToDelete, $childIds);
+            }
+
+            $allIdsToDelete = array_unique($allIdsToDelete);
+
+            foreach ($allIdsToDelete as $delId) {
+                CfCodeModel::query()->where('id', $delId)->delete();
+                
+                $catQuery = CategoryModel::query();
+                $catQuery->use_lang = false;
+                $catQuery->where('id_code', $delId)->delete();
+            }
+            return $this->json(['success' => true]);
+        }
+        return $this->json(['success' => false, 'message' => 'Chưa chọn bản ghi nào']);
+    }
 }

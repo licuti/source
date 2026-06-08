@@ -214,8 +214,55 @@ if (!function_exists('view')) {
         } finally {
             $renderLevel--;
         }
-        
         return $result;
+    }
+}
+
+if (!function_exists('hasPermission')) {
+    /**
+     * Kiểm tra quyền hiện tại của User (dành cho View/UI)
+     * @param string $routeName VD: 'admin.user' hoặc 'admin.user.index'
+     * @param string $action 'can_view', 'can_add', 'can_edit', 'can_delete'
+     * @return bool
+     */
+    function hasPermission($routeName, $action = 'can_view') {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        
+        $isAdmin = $_SESSION['is_admin'] ?? 0;
+        if ($isAdmin == 1) return true; // Super Admin có mọi quyền
+        
+        $roleId = $_SESSION['role_id'] ?? 0;
+        if ($roleId == 0) return false;
+
+        $parts = explode('.', $routeName);
+        if (count($parts) >= 2) {
+            $prefix = $parts[0] . '.' . $parts[1]; // admin.user
+            
+            // Tìm module id theo cache hoặc query DB
+            static $modulesCache = [];
+            if (!isset($modulesCache[$prefix])) {
+                $module = \ModuleAdminModel::where('route_name', 'LIKE', $prefix . '.%')->first();
+                $modulesCache[$prefix] = $module ? $module->id : 0;
+            }
+            $moduleId = $modulesCache[$prefix];
+            
+            if ($moduleId > 0) {
+                // Kiểm tra trong session cache
+                $permsCache = $_SESSION['role_permissions'] ?? [];
+                if (isset($permsCache[$moduleId])) {
+                    return !empty($permsCache[$moduleId][$action]);
+                } else {
+                    // Fallback
+                    $perm = \App\Models\RolePermissionModel::where('role_id', $roleId)
+                        ->where('module_id', $moduleId)->first();
+                    if ($perm) {
+                        return $perm->{$action} == 1;
+                    }
+                }
+            }
+        }
+        
+        return false;
     }
 }
 if (!function_exists('getExchangeRate')) {
@@ -304,5 +351,37 @@ if (!function_exists('csrf_field')) {
      */
     function csrf_field() {
         return '<input type="hidden" name="_token" value="' . csrf_token() . '">';
+    }
+}
+
+if (!function_exists('session')) {
+    /**
+     * Lấy hoặc gán giá trị session, tự động start session nếu chưa có.
+     * Nếu lấy key flash (success/error), tự động xóa sau khi lấy.
+     */
+    function session($key = null, $default = null) {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        if ($key === null) {
+            return $_SESSION;
+        }
+        
+        if (is_array($key)) {
+            foreach ($key as $k => $v) {
+                $_SESSION[$k] = $v;
+            }
+            return true;
+        }
+
+        $value = $_SESSION[$key] ?? $default;
+        
+        // Cơ chế flash session cơ bản cho success/error
+        if (in_array($key, ['success', 'error']) && isset($_SESSION[$key])) {
+            unset($_SESSION[$key]);
+        }
+        
+        return $value;
     }
 }

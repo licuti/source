@@ -522,5 +522,18 @@ Trước khi hoàn thành một module, hãy kiểm tra lại:
 - [ ] Button Thao tác trong bảng chỉ dùng **icon** (không có chữ) chưa?
 - [ ] Cột phải của form có **`sticky-top`** không?
 - [ ] Flash message (`$_SESSION['success']` / `$_SESSION['error']`) đã được hiển thị chưa?
-- [ ] Xóa có **`confirm()`** hoặc **Modal** xác nhận chưa?
 - [ ] Breadcrumb đã hiển thị đúng cây điều hướng chưa?
+
+---
+
+## 10. 🛡️ QUẢN LÝ QUYỀN TRUY CẬP (RBAC) TRÊN GIAO DIỆN
+
+Tất cả các nút chức năng (Thêm, Sửa, Xóa) phải được kiểm tra quyền hiển thị bằng hàm `hasPermission()`:
+
+```php
+<?php if (hasPermission('admin.module', 'can_add')): ?>
+    <a href="..." class="btn btn-primary">Thêm mới</a>
+<?php endif; ?>
+```
+- Các action được hỗ trợ: `can_view`, `can_add`, `can_edit`, `can_delete`.
+- Đối với các nút thao tác bên trong bảng (`row_actions`), hãy bọc bằng khối IF tương ứng trước khi đưa vào mảng `$actions`.

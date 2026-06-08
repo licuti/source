@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 06, 2026 at 12:37 AM
+-- Generation Time: Jun 08, 2026 at 12:17 AM
 -- Server version: 8.0.30
 -- PHP Version: 7.4.9
 
@@ -252,7 +252,7 @@ CREATE TABLE `db_binhluan_media` (
   `loai` enum('image','video') NOT NULL DEFAULT 'image',
   `ten_file` varchar(255) NOT NULL,
   `ngay` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `db_binhluan_media`
@@ -338,8 +338,8 @@ INSERT INTO `db_category` (`id`, `id_loai`, `id_code`, `parent`, `slug`, `alias`
 (149, 0, 122, 0, '', 'gio-hang', '', 'Giỏ hàng', '', '<h6><span style=\"color:#ed1c24\">THƯƠNG HIỆU VẬN TẢI H&Agrave;NG ĐẦU</span></h6>\r\n\r\n<p>Dịch vụ vận tải Qu&acirc;n Hưng tr&atilde;i d&agrave;i khắp mọi miền Bắc - Nam. Mang đến cho kh&aacute;ch h&agrave;ng niềm tin v&agrave; sự h&agrave;i l&ograve;ng về dịch vụ của ch&uacute;ng t&ocirc;i.</p>\r\n', '', '', 0, 1, 0, NULL, 1773942867, 5, 'vi', 0, 0, 'Giỏ hàng', '', '', '', ''),
 (163, 0, 129, 0, '', 'tin-tuc', '', 'Tin tức', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', '', 0, 1, 0, NULL, 1773942962, 3, 'vi', 0, 0, 'Tin tức', '', '', '', ''),
 (165, 0, 130, 0, '', 'lien-he', '', 'Liên hệ', '<p>Mọi thắc mắc vui l&ograve;ng li&ecirc;n hệ theo th&ocirc;ng tin b&ecirc;n dưới:</p>\r\n\r\n<p><span style=\"color:#d35400;\"><span style=\"font-size:18px;\"><strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XNK VNJT</strong></span></span></p>\r\n\r\n<ul>\r\n	<li>&nbsp;Số 4 Nguyễn Đ&igrave;nh Chiểu, Phường Đa Kao, Quận 1, TP. HCM</li>\r\n	<li>&nbsp;385/1 Huỳnh Văn B&aacute;nh, Phường 11, Quận Ph&uacute; Nhuận, TP. HCM</li>\r\n	<li>&nbsp;(+84) 96 1816 887 - (+82) 10 3362 5376</li>\r\n	<li>&nbsp;mymy.vnjt@gmail.com</li>\r\n	<li>&nbsp;vnjt.com</li>\r\n</ul>\r\n', '', '', '', 0, 1, 0, NULL, 1773943022, 14, 'vi', 0, 0, 'Liên hệ', '', '', '', ''),
-(310, 0, 242, 0, '', 'dich-vu', '', 'Dịch vụ', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', 0, 0, 0, NULL, 1719394757, 2, 'vi', 0, 0, 'Dịch vụ', '', '', '', ''),
-(339, 0, 269, 0, '', 'k6t5gi', '', 'Chính sách bảo mật', '', '', '', '', 0, 1, 0, NULL, 1773943069, 2, 'vi', 0, 0, 'Chính sách bảo mật', '', '', '', ''),
+(310, 0, 242, 0, '', 'dich-vu', '', 'Dịch vụ', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', 0, 1, 0, NULL, 1780756444, 2, 'vi', 0, 0, 'Dịch vụ', '', '', '', ''),
+(339, 0, 269, 0, '', 'k6t5gi', '', 'Chính sách bảo mật', '', '', '', '', 0, 1, 0, NULL, 1780842957, 2, 'vi', 0, 0, 'Chính sách bảo mật', '', '', '', ''),
 (324, 0, 254, 0, '', 'thanh-toan', '', 'Thanh toán', '', '', '', '', 0, 1, 0, NULL, 1773942885, 6, 'vi', 0, 0, 'Thanh toán', '', '', '', ''),
 (352, 100, 272, 100, '', 'tieu', '', 'Tiêu', '', '', '2.png', '', 0, 1, 1, NULL, 1726202873, 3, 'vi', 0, 0, 'Tiêu', '', '', '', ''),
 (353, 100, 273, 100, '', 'quefrngjc', '', 'Quế', '', '', '3.png', '', 0, 1, 1, NULL, 1726202895, 3, 'vi', 0, 0, 'Quế', '', '', '', ''),
@@ -351,8 +351,8 @@ INSERT INTO `db_category` (`id`, `id_loai`, `id_code`, `parent`, `slug`, `alias`
 (359, 0, 122, 0, '', 'cart', '', 'Cart', '', '<h6><span style=\"color:#ed1c24\">THƯƠNG HIỆU VẬN TẢI H&Agrave;NG ĐẦU</span></h6>\r\n\r\n<p>Dịch vụ vận tải Qu&acirc;n Hưng tr&atilde;i d&agrave;i khắp mọi miền Bắc - Nam. Mang đến cho kh&aacute;ch h&agrave;ng niềm tin v&agrave; sự h&agrave;i l&ograve;ng về dịch vụ của ch&uacute;ng t&ocirc;i.</p>\r\n', '', '', 0, 1, 0, NULL, 1773942867, 5, 'en', 0, 0, 'Cart', '', '', '', ''),
 (360, 0, 129, 0, '', 'news', '', 'News', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', '', 0, 1, 0, NULL, 1773942962, 3, 'en', 0, 0, 'News', '', '', '', ''),
 (361, 0, 130, 0, '', 'contact', '', 'Contact', '<p>For any questions please contact the information below</p>\r\n', '', '', '', 0, 1, 0, NULL, 1773943022, 14, 'en', 0, 0, 'Contact', '', '', '', ''),
-(362, 0, 242, 0, '', 'dich-vu', '', 'Dịch vụ', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', 0, 0, 0, NULL, 1719394757, 2, 'en', 0, 0, 'Dịch vụ', '', '', '', ''),
-(363, 0, 269, 0, '', 'factory', '', 'Factory', '', '', '', '', 0, 1, 0, NULL, 1773943069, 2, 'en', 0, 0, 'Factory', '', '', '', ''),
+(362, 0, 242, 0, '', 'dich-vu', '', 'Dịch vụ', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', 0, 1, 0, NULL, 1780756444, 2, 'en', 0, 0, 'Dịch vụ', '', '', '', ''),
+(363, 0, 269, 0, '', 'factory', '', 'Factory', '', '', '', '', 0, 1, 0, NULL, 1780842957, 2, 'en', 0, 0, 'Factory', '', '', '', ''),
 (364, 0, 254, 0, '', 'thong-bao', '', 'Thông báo', '', '', '', '', 0, 1, 0, NULL, 1773942885, 6, 'en', 0, 0, 'Thông báo', '', '', '', ''),
 (365, 100, 272, 100, '', 'pepper', '', 'Pepper', '', '', '2.png', '', 0, 1, 1, NULL, 1726202873, 3, 'en', 0, 0, 'Pepper', '', '', '', ''),
 (366, 100, 273, 100, '', 'cinnamon', '', 'Cinnamon', '', '', '3.png', '', 0, 1, 1, NULL, 1726202895, 3, 'en', 0, 0, 'Cinnamon', '', '', '', ''),
@@ -1726,55 +1726,58 @@ CREATE TABLE `db_module_admin` (
   `icon` varchar(255) DEFAULT NULL,
   `alias` varchar(100) NOT NULL,
   `route_name` varchar(255) DEFAULT NULL,
-  `so_thu_tu` int NOT NULL,
-  `hien_thi` int NOT NULL,
-  `quyen_han` int NOT NULL DEFAULT '1'
+  `sort_order` int NOT NULL DEFAULT '0',
+  `is_active` int NOT NULL DEFAULT '1',
+  `permission_level` int NOT NULL DEFAULT '1',
+  `badge_query` varchar(255) DEFAULT NULL,
+  `badge_color` varchar(50) DEFAULT 'danger'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_module_admin`
 --
 
-INSERT INTO `db_module_admin` (`id`, `parent`, `name`, `icon`, `alias`, `route_name`, `so_thu_tu`, `hien_thi`, `quyen_han`) VALUES
-(7, 0, 'Quản lý Bài viết', 'fa-newspaper', '', NULL, 3, 1, 1),
-(8, 0, 'Cấu hình hệ thống', 'fa-gear', '', NULL, 4, 1, 1),
-(101, 8, 'Cấu hình Email / SMTP', 'fa-circle', 'email-smtp', 'admin.email.index', 99, 1, 1),
-(10, 0, 'Hệ thống & Phân quyền', 'fa-lock', '', NULL, 6, 1, 1),
-(30, 100, 'Sản phẩm', 'fa-circle', 'san-pham', 'admin.san-pham.index', 1, 1, 1),
-(22, 100, 'Loại danh mục', 'fa-circle', 'category', 'admin.category.index', 2, 1, 1),
-(23, 7, 'Bài viết', 'fa-circle', 'bai-viet', 'admin.bai-viet.index', 1, 1, 1),
-(24, 7, 'Nội dung', 'fa-circle', 'noi-dung', 'admin.noi-dung.index', 2, 1, 1),
-(25, 8, 'Thông tin website - liên hệ', 'fa-circle', 'thongtin-lienhe', 'admin.thongtin-lienhe.index', 1, 1, 1),
-(26, 8, 'Dịch chuỗi ngôn ngữ', 'fa-circle', 'text', 'admin.translation.index', 3, 1, 1),
-(27, 10, 'Quản lý user', 'fa-circle', 'ql-user', 'admin.ql-user.index', 5, 1, 1),
-(28, 8, 'Cấu hình SEO cơ bản', 'fa-circle', 'seo-co-ban', 'admin.seo-co-ban.index', 4, 1, 1),
-(31, 0, 'Khách hàng & Tương tác', 'fa-users', '', NULL, 4, 1, 1),
-(32, 43, 'Quản lý đơn hàng', 'fa-circle', 'quan-ly-don-hang', 'admin.quan-ly-don-hang.index', 2, 1, 1),
-(33, 31, 'Khách hàng liên hệ', 'fa-circle', 'lien-he', 'admin.lien-he.index', 3, 1, 1),
-(36, 7, 'Album ảnh', 'fa-circle', 'gallery', 'admin.gallery.index', 3, 1, 1),
-(37, 7, 'Videos', 'fa-circle', 'video', 'admin.video.index', 5, 1, 1),
-(38, 7, 'Upload file', 'fa-circle', 'upload-file', 'admin.upload-file.index', 6, 1, 1),
-(39, 8, 'Sitemap', 'fa-circle', 'sitemap', 'admin.sitemap.index', 2, 1, 1),
-(41, 31, 'Thành viên', 'fa-circle', 'thanh-vien', 'admin.thanh-vien.index', 0, 1, 1),
-(42, 31, 'Công tác viên', 'fa-circle', 'cong-tac-vien', 'admin.cong-tac-vien.index', 0, 1, 1),
-(43, 0, 'Thương mại điện tử', 'fa-cart-shopping', '', NULL, 2, 1, 1),
-(46, 43, 'Mã khuyến mãi', 'fa-circle', 'ma-khuyen-mai', 'admin.ma-khuyen-mai.index', 6, 1, 1),
-(45, 43, 'Thống kê doanh  thu', 'fa-circle', 'doanh-thu', 'admin.doanh-thu.index', 0, 1, 1),
-(47, 43, 'Flash Sale', 'fa-circle', 'flash-sale', 'admin.flash-sale.index', 0, 1, 1),
-(48, 31, 'Quản lý bình luận', 'fa-circle', 'binh-luan', 'admin.binh-luan.index', 4, 1, 1),
-(49, 100, 'Nhóm thuộc tính', 'fa-circle', 'attribute', 'admin.attribute.index', 3, 1, 1),
-(50, 31, 'Đăng ký nhận tin', 'fa-circle', 'newsletter', 'admin.newsletter.index', 0, 0, 1),
-(51, 43, 'Đăng nhận nhận ưu đãi', 'fa-circle', 'coupon', 'admin.coupon.index', 5, 1, 1),
-(53, 8, 'Button Contact', 'fa-circle', 'button-contact', 'admin.button-contact.index', 4, 1, 1),
-(54, 8, 'Menu', 'fa-circle', 'menu', 'admin.menu.index', 2, 1, 1),
-(55, 43, 'Cấu hình vận chuyển', 'fa-circle', 'quan-ly-van-chuyen', 'admin.quan-ly-van-chuyen.index', 10, 1, 1),
-(56, 43, 'Quản lý thuế', 'fa-circle', 'quan-ly-thue', 'admin.quan-ly-thue.index', 10, 1, 1),
-(100, 0, 'Quản lý Sản phẩm', 'fa-box', '', NULL, 1, 1, 1),
-(102, 8, 'Tích hợp API / Scripts', 'fa-circle', 'api-integration', 'admin.api_integration.index', 99, 1, 1),
-(103, 8, 'Cấu hình Ngôn ngữ', 'fa-circle', 'language', 'admin.language.index', 99, 1, 1),
-(104, 8, 'Sao lưu & Cache', 'fa-circle', 'backup-cache', 'admin.backup.index', 99, 1, 1),
-(105, 8, 'Chế độ bảo trì', 'fa-circle', 'maintenance', 'admin.maintenance.index', 99, 1, 1),
-(106, 43, 'Cổng thanh toán', 'fa-circle', 'payment', 'admin.payment.index', 99, 1, 1);
+INSERT INTO `db_module_admin` (`id`, `parent`, `name`, `icon`, `alias`, `route_name`, `sort_order`, `is_active`, `permission_level`, `badge_query`, `badge_color`) VALUES
+(7, 0, 'Quản lý Bài viết', 'fa-newspaper', '', NULL, 3, 1, 1, NULL, 'danger'),
+(8, 0, 'Cấu hình hệ thống', 'fa-gear', '', NULL, 4, 1, 1, NULL, 'danger'),
+(101, 8, 'Cấu hình Email / SMTP', 'fa-circle', 'email-smtp', 'admin.email.index', 7, 1, 1, NULL, 'danger'),
+(10, 0, 'Hệ thống & Phân quyền', 'fa-lock', '', NULL, 6, 1, 1, NULL, 'danger'),
+(30, 100, 'Sản phẩm', 'fa-circle', 'san-pham', 'admin.san-pham.index', 1, 1, 1, '', 'danger'),
+(22, 100, 'Danh mục | Trang', 'fa-circle', 'category', 'admin.category.index', 2, 1, 1, '', 'danger'),
+(23, 7, 'Bài viết', 'fa-circle', 'bai-viet', 'admin.bai-viet.index', 1, 1, 1, NULL, 'danger'),
+(24, 7, 'Nội dung', 'fa-circle', 'noi-dung', 'admin.noi-dung.index', 2, 1, 1, NULL, 'danger'),
+(25, 8, 'Thông tin website - liên hệ', 'fa-circle', 'thongtin-lienhe', 'admin.thongtin-lienhe.index', 1, 1, 1, NULL, 'danger'),
+(26, 8, 'Dịch chuỗi ngôn ngữ', 'fa-circle', 'text', 'admin.translation.index', 4, 1, 1, NULL, 'danger'),
+(27, 10, 'Quản lý Tài khoản', 'fa-circle', 'user', 'admin.user.index', 1, 1, 1, NULL, 'danger'),
+(28, 8, 'Cấu hình SEO cơ bản', 'fa-circle', 'seo-co-ban', 'admin.seo-co-ban.index', 5, 1, 1, NULL, 'danger'),
+(31, 0, 'Khách hàng & Tương tác', 'fa-users', '', NULL, 5, 1, 1, NULL, 'danger'),
+(32, 43, 'Quản lý đơn hàng', 'fa-circle', 'quan-ly-don-hang', 'admin.quan-ly-don-hang.index', 3, 1, 1, NULL, 'danger'),
+(33, 31, 'Khách hàng liên hệ', 'fa-circle', 'lien-he', 'admin.lien-he.index', 4, 1, 1, NULL, 'danger'),
+(36, 7, 'Album ảnh', 'fa-circle', 'gallery', 'admin.gallery.index', 3, 1, 1, NULL, 'danger'),
+(37, 7, 'Videos', 'fa-circle', 'video', 'admin.video.index', 4, 1, 1, NULL, 'danger'),
+(38, 7, 'Upload file', 'fa-circle', 'upload-file', 'admin.upload-file.index', 5, 1, 1, NULL, 'danger'),
+(39, 8, 'Sitemap', 'fa-circle', 'sitemap', 'admin.sitemap.index', 2, 1, 1, NULL, 'danger'),
+(41, 31, 'Thành viên', 'fa-circle', 'thanh-vien', 'admin.thanh-vien.index', 1, 1, 1, NULL, 'danger'),
+(42, 31, 'Công tác viên', 'fa-circle', 'cong-tac-vien', 'admin.cong-tac-vien.index', 3, 1, 1, NULL, 'danger'),
+(43, 0, 'Thương mại điện tử', 'fa-cart-shopping', '', NULL, 2, 1, 1, NULL, 'danger'),
+(46, 43, 'Mã khuyến mãi', 'fa-circle', 'ma-khuyen-mai', 'admin.ma-khuyen-mai.index', 5, 1, 1, NULL, 'danger'),
+(45, 43, 'Thống kê doanh  thu', 'fa-circle', 'doanh-thu', 'admin.doanh-thu.index', 2, 1, 1, NULL, 'danger'),
+(47, 43, 'Flash Sale', 'fa-circle', 'flash-sale', 'admin.flash-sale.index', 1, 1, 1, NULL, 'danger'),
+(48, 31, 'Quản lý bình luận', 'fa-circle', 'binh-luan', 'admin.binh-luan.index', 5, 1, 1, NULL, 'danger'),
+(49, 100, 'Nhóm thuộc tính', 'fa-circle', 'attribute', 'admin.attribute.index', 3, 1, 1, NULL, 'danger'),
+(50, 31, 'Đăng ký nhận tin', 'fa-circle', 'newsletter', 'admin.newsletter.index', 2, 0, 1, NULL, 'danger'),
+(51, 43, 'Đăng nhận nhận ưu đãi', 'fa-circle', 'coupon', 'admin.coupon.index', 4, 1, 1, NULL, 'danger'),
+(53, 8, 'Button Contact', 'fa-circle', 'button-contact', 'admin.button-contact.index', 6, 1, 1, NULL, 'danger'),
+(54, 8, 'Menu', 'fa-circle', 'menu', 'admin.menu.index', 3, 1, 1, NULL, 'danger'),
+(55, 43, 'Cấu hình vận chuyển', 'fa-circle', 'quan-ly-van-chuyen', 'admin.quan-ly-van-chuyen.index', 6, 1, 1, NULL, 'danger'),
+(56, 43, 'Quản lý thuế', 'fa-circle', 'quan-ly-thue', 'admin.quan-ly-thue.index', 7, 1, 1, NULL, 'danger'),
+(100, 0, 'Quản lý Sản phẩm', 'fa-box', '', NULL, 1, 1, 1, NULL, 'danger'),
+(102, 8, 'Tích hợp API / Scripts', 'fa-circle', 'api-integration', 'admin.api_integration.index', 8, 1, 1, NULL, 'danger'),
+(103, 8, 'Cấu hình Ngôn ngữ', 'fa-circle', 'language', 'admin.language.index', 9, 1, 1, NULL, 'danger'),
+(104, 8, 'Sao lưu & Cache', 'fa-circle', 'backup-cache', 'admin.backup.index', 10, 1, 1, NULL, 'danger'),
+(105, 8, 'Chế độ bảo trì', 'fa-circle', 'maintenance', 'admin.maintenance.index', 11, 1, 1, NULL, 'danger'),
+(106, 43, 'Cổng thanh toán', 'fa-circle', 'payment', 'admin.payment.index', 8, 1, 1, NULL, 'danger'),
+(107, 10, 'Nhóm quyền', 'fa-circle', 'nhom-quyen', 'admin.role.index', 2, 1, 1, NULL, 'danger');
 
 -- --------------------------------------------------------
 
@@ -1825,26 +1828,6 @@ CREATE TABLE `db_page` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `db_permission`
---
-
-CREATE TABLE `db_permission` (
-  `id` int NOT NULL,
-  `name` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
-
---
--- Dumping data for table `db_permission`
---
-
-INSERT INTO `db_permission` (`id`, `name`) VALUES
-(2, 'USER'),
-(3, 'EDITOR'),
-(4, 'ADMINISTRATOR');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `db_permission_action`
 --
 
@@ -1861,6 +1844,54 @@ INSERT INTO `db_permission_action` (`id`, `name`) VALUES
 (1, 'View'),
 (2, 'Ediit'),
 (3, 'Delete');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `db_roles`
+--
+
+CREATE TABLE `db_roles` (
+  `id` int NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `is_system` tinyint(1) DEFAULT '0',
+  `created_at` int DEFAULT NULL,
+  `updated_at` int DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
+
+--
+-- Dumping data for table `db_roles`
+--
+
+INSERT INTO `db_roles` (`id`, `name`, `description`, `is_active`, `is_system`, `created_at`, `updated_at`) VALUES
+(2, 'USER', NULL, 1, 0, NULL, 1780877657),
+(3, 'EDITOR', '', 1, 0, NULL, 1780877690),
+(4, 'ADMINISTRATOR', NULL, 1, 1, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `db_role_permissions`
+--
+
+CREATE TABLE `db_role_permissions` (
+  `id` int NOT NULL,
+  `role_id` int NOT NULL,
+  `module_id` int NOT NULL,
+  `can_view` tinyint(1) DEFAULT '0',
+  `can_add` tinyint(1) DEFAULT '0',
+  `can_edit` tinyint(1) DEFAULT '0',
+  `can_delete` tinyint(1) DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `db_role_permissions`
+--
+
+INSERT INTO `db_role_permissions` (`id`, `role_id`, `module_id`, `can_view`, `can_add`, `can_edit`, `can_delete`) VALUES
+(2, 3, 30, 1, 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -2724,36 +2755,34 @@ INSERT INTO `db_tintuc` (`id`, `id_code`, `ten`, `alias`, `slug`, `mo_ta`, `noi_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `db_user`
+-- Table structure for table `db_users`
 --
 
-CREATE TABLE `db_user` (
+CREATE TABLE `db_users` (
   `id` int NOT NULL,
-  `token` text NOT NULL,
-  `user_hash` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `pass_hash` text NOT NULL,
-  `tai_khoan` text NOT NULL,
-  `email` text NOT NULL,
-  `ho_ten` text NOT NULL,
-  `dien_thoai` text NOT NULL,
-  `dia_chi` text NOT NULL,
-  `hinh_anh` text NOT NULL,
-  `ngay_sinh` text NOT NULL,
-  `gioi_tinh` int NOT NULL,
-  `quyen_han` int NOT NULL,
-  `hien_thi` int NOT NULL,
-  `ngay_tao` int NOT NULL,
-  `is_admin` tinyint NOT NULL,
-  `parent` int NOT NULL,
-  `noi_dung` text
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
+  `token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fullname` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `birthday` date DEFAULT NULL,
+  `gender` tinyint(1) DEFAULT '0',
+  `role_id` int DEFAULT '0',
+  `is_admin` tinyint(1) DEFAULT '0',
+  `is_active` tinyint(1) DEFAULT '1',
+  `created_at` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `db_user`
+-- Dumping data for table `db_users`
 --
 
-INSERT INTO `db_user` (`id`, `token`, `user_hash`, `pass_hash`, `tai_khoan`, `email`, `ho_ten`, `dien_thoai`, `dia_chi`, `hinh_anh`, `ngay_sinh`, `gioi_tinh`, `quyen_han`, `hien_thi`, `ngay_tao`, `is_admin`, `parent`, `noi_dung`) VALUES
-(1, '32f05e59108c2b89c2305de3c3f79702', 'd033e22ae348aeb5660fc2140aec35850c4da997', 'ddcc6c60df64e89faf2bc1ec321c00b167dd4287', 'admin', '', 'Admin', '', '', '20.png', '', 1, 4, 1, 1473306606, 1, 0, '');
+INSERT INTO `db_users` (`id`, `token`, `username`, `password`, `email`, `fullname`, `phone`, `address`, `avatar`, `birthday`, `gender`, `role_id`, `is_admin`, `is_active`, `created_at`) VALUES
+(1, '32f05e59108c2b89c2305de3c3f79702', 'admin', 'ddcc6c60df64e89faf2bc1ec321c00b167dd4287', 'linhnguyen93cmg@gmail.com', 'Admin', '0388442351', 'K01B/14 Lê Trọng Tấn', '395209126_7098402140171579_3912294698631496411_n_5168_1698218521013_16982185211191625182965.jpg', '2026-06-19', 0, 4, 1, 1, 1473306606),
+(26, NULL, 'phuongnam', 'fb149a24af28bad60f730dca664f90b0a1f59230', 'linhnguyen93cmg@gmail.com', 'Nguyễn Xuân Linh', '0388442351', 'Phú Thuận', '13.jpg', NULL, 0, 3, 0, 1, 1780854134);
 
 -- --------------------------------------------------------
 
@@ -14190,16 +14219,24 @@ ALTER TABLE `db_page`
   ADD KEY `alias` (`alias`);
 
 --
--- Indexes for table `db_permission`
---
-ALTER TABLE `db_permission`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `db_permission_action`
 --
 ALTER TABLE `db_permission_action`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `db_roles`
+--
+ALTER TABLE `db_roles`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `db_role_permissions`
+--
+ALTER TABLE `db_role_permissions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `role_id` (`role_id`),
+  ADD KEY `module_id` (`module_id`);
 
 --
 -- Indexes for table `db_sanpham`
@@ -14317,10 +14354,12 @@ ALTER TABLE `db_tintuc`
   ADD KEY `alias` (`alias`);
 
 --
--- Indexes for table `db_user`
+-- Indexes for table `db_users`
 --
-ALTER TABLE `db_user`
-  ADD PRIMARY KEY (`id`);
+ALTER TABLE `db_users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idx_username` (`username`),
+  ADD KEY `idx_role_id` (`role_id`);
 
 --
 -- Indexes for table `db_user_permission_group`
@@ -14517,7 +14556,7 @@ ALTER TABLE `db_module`
 -- AUTO_INCREMENT for table `db_module_admin`
 --
 ALTER TABLE `db_module_admin`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- AUTO_INCREMENT for table `db_newsletter`
@@ -14532,16 +14571,22 @@ ALTER TABLE `db_page`
   MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `db_permission`
---
-ALTER TABLE `db_permission`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
 -- AUTO_INCREMENT for table `db_permission_action`
 --
 ALTER TABLE `db_permission_action`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `db_roles`
+--
+ALTER TABLE `db_roles`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `db_role_permissions`
+--
+ALTER TABLE `db_role_permissions`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_sanpham`
@@ -14646,10 +14691,10 @@ ALTER TABLE `db_tintuc`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
 
 --
--- AUTO_INCREMENT for table `db_user`
+-- AUTO_INCREMENT for table `db_users`
 --
-ALTER TABLE `db_user`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+ALTER TABLE `db_users`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `db_user_permission_group`

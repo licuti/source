@@ -756,6 +756,7 @@ class Model implements \JsonSerializable {
             'params'    => $this->qb_params,
             'joins'     => $this->qb_joins,
             'group_by'  => $this->qb_group_by,
+            'with'      => $this->qb_with,
         ];
         $total = $this->count();
         // Restore
@@ -986,6 +987,15 @@ class Model implements \JsonSerializable {
         $result = $stmt->execute(array_values($data));
 
         return $result ? (int) self::$pdo->lastInsertId() : false;
+    }
+
+    /**
+     * Alias for insert() - Trả về ID vừa insert (giống Laravel)
+     * @param array $data
+     * @return int|false
+     */
+    public static function insertGetId(array $data) {
+        return self::insert($data);
     }
 
     /**

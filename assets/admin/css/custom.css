@@ -1,0 +1,38 @@
+/* CSS tùy chỉnh chung cho Admin */
+
+body{
+    font-size: 15px;
+}
+
+.form-control,
+.form-select{
+    font-size: inherit;
+    border-radius: 0;
+    box-shadow: none !important;
+}
+
+/* =========================================
+   WordPress Style Row Actions
+   ========================================= */
+.wp-row:hover .wp-row-actions {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.wp-toolbar {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* =========================================
+   Pagination Overrides
+   ========================================= */
+.pagination-right-sm .pagination.justify-content-center {
+    justify-content: flex-end !important;
+    margin: 0 !important;
+}
+
+.pagination-right-sm .pagination .page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: .875rem;
+}

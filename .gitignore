@@ -24,3 +24,7 @@
 # GitNexus - Knowledge Graph index (machine-specific, very large files)
 # Chạy lại "gitnexus analyze" trên máy mới để tạo lại
 .gitnexus/
+.gemini/
+optimize_user.sql
+storage/logs/
+img_data/

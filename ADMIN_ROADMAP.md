@@ -14,13 +14,24 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
 |---|---|---|---|
 | N/A | **Đăng nhập & Xác thực** | `AuthController.php` | 🟢 Hoàn thành |
-| 27 | **Quản lý user** (`ql-user`) | `AdminUserController` | 🔴 Chưa làm |
+| N/A | **Nhóm quyền (Role)** (`role`) | `RoleAdminController.php` | 🟢 Hoàn thành |
+| 27 | **Tài khoản quản trị** (`ql-user`) | `UserAdminController.php` | 🟢 Hoàn thành |
 
 ### 🟢 Chi tiết: AuthController (Đăng nhập & Xác thực)
 - **`login()`**: Hiển thị trang đăng nhập Admin.
-- **`loginPost()`**: Xác thực thông tin đăng nhập, so sánh mật khẩu đã hash, tạo Session `admin_logged_in`.
+- **`loginPost()`**: Xác thực thông tin đăng nhập, so sánh mật khẩu đã hash, tạo Session `admin_logged_in`. Caching toàn bộ ma trận phân quyền vào `$_SESSION['role_permissions']`.
 - **`logout()`**: Hủy toàn bộ Session, redirect về trang đăng nhập.
-- **`BaseAdminController`**: Lớp cha tự động kiểm tra Session trong constructor. Nếu chưa đăng nhập, tự động redirect về `/admin/login`. Tất cả Controller Admin đều phải kế thừa lớp này.
+- **`BaseAdminController`**: Lớp cha tự động kiểm tra Session.
+- **`AdminAuthMiddleware`**: Middleware kiểm tra quyền truy cập (Role-Based Access Control - RBAC) dựa trên cấu hình nhóm quyền, ngăn chặn cả HTTP và AJAX không hợp lệ.
+
+### 🟢 Chi tiết: RoleAdminController (Quản lý Nhóm quyền)
+- **Cấu trúc DB mới:** Bảng `db_roles` chứa danh sách nhóm, `db_role_permissions` chứa ma trận quyền.
+- **Chức năng:** Thêm, Sửa, Xóa nhóm quyền. Phân quyền chi tiết (Xem, Thêm, Sửa, Xóa) cho từng Module.
+- **Bảo mật:** Gắn cờ `is_system` cho các nhóm mặc định không thể sửa tên/xóa.
+
+### 🟢 Chi tiết: UserAdminController (Tài khoản quản trị)
+- **Chức năng:** CRUD tài khoản quản trị viên.
+- **Giao diện:** Gắn danh sách tài khoản với nhóm quyền tương ứng, tự động lọc qua Pagination eager-loading (`qbPaginate`).
 
 ---
 
@@ -143,4 +154,4 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 ---
 
-> **📊 Tổng kết tiến độ:** Hoàn thành **5/31 module** (16%). Ưu tiên tiếp theo: Module Sản phẩm và Đơn hàng là cốt lõi của hệ thống E-commerce.
+> **📊 Tổng kết tiến độ:** Hoàn thành **7/33 module** (21%). Hệ thống phân quyền (RBAC) và Quản lý User (Core) đã hoàn thiện 100%. Ưu tiên tiếp theo: Module Sản phẩm và Đơn hàng là cốt lõi của hệ thống E-commerce.

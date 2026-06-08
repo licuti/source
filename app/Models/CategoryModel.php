@@ -69,6 +69,25 @@ class CategoryModel extends Model {
     }
 
     /**
+     * Lấy toàn bộ danh mục (dành cho Admin, không lọc hien_thi)
+     */
+    public static function getAllForAdmin($parentId = null) {
+        $query = self::query();
+        if ($parentId !== null) {
+            $query->where('id_loai', (int)$parentId);
+        }
+        return $query->orderBy('so_thu_tu')->orderBy('id', 'DESC')->get();
+    }
+
+    /**
+     * Lấy cây danh mục cho Admin (Bao gồm cả danh mục ẩn)
+     */
+    public static function getTreeForAdmin($parentId = 0) {
+        $elements = self::getAllForAdmin();
+        return self::buildTree($elements, $parentId);
+    }
+
+    /**
      * Hàm hỗ trợ dựng cây đệ quy
      */
     private static function buildTree($elements, $parentId = 0) {

@@ -11,7 +11,7 @@ $bitems = $bitems ?? [];
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <h3 class="mb-0"><?= htmlspecialchars($title) ?></h3>
+                <h5 class="mb-0"><?= htmlspecialchars($title) ?></h5>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">

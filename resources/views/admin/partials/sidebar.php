@@ -19,22 +19,53 @@
                 </li>
                 
                 <?php
-                // Chỉ lấy các module mà user hiện tại được phép xem (tuỳ theo logic ACL sau này)
-                // Hiện tại $_SESSION['quyen'] đang lưu quyền hạn của user.
-                $userRole = $_SESSION['quyen'] ?? 1;
+                // RBAC: Lấy danh sách module được phép xem
+                $isAdmin = session('is_admin') == 1;
+                $roleId = session('role_id') ?? 0;
+                $allowedModuleIds = [];
+                
+                if (!$isAdmin && $roleId > 0) {
+                    if (isset($_SESSION['role_permissions'])) {
+                        foreach ($_SESSION['role_permissions'] as $mId => $actions) {
+                            if (!empty($actions['can_view'])) {
+                                $allowedModuleIds[] = $mId;
+                            }
+                        }
+                    } else {
+                        // Fallback
+                        $perms = \App\Models\RolePermissionModel::where('role_id', $roleId)->where('can_view', 1)->get();
+                        foreach ($perms as $p) {
+                            $allowedModuleIds[] = $p->module_id;
+                        }
+                    }
+                }
                 
                 $mainModules = \ModuleAdminModel::where('parent', 0)
-                    ->where('hien_thi', 1)
-                    ->orderBy('so_thu_tu', 'ASC')
+                    ->where('is_active', 1)
+                    ->orderBy('sort_order', 'ASC')
                     ->get();
                 ?>
                 
                 <?php foreach ($mainModules as $main): ?>
                     <?php
-                    $subModules = \ModuleAdminModel::where('parent', $main->id)
-                        ->where('hien_thi', 1)
-                        ->orderBy('so_thu_tu', 'ASC')
+                    $subModulesRaw = \ModuleAdminModel::where('parent', $main->id)
+                        ->where('is_active', 1)
+                        ->orderBy('sort_order', 'ASC')
                         ->get();
+                        
+                    // Lọc SubModules theo quyền
+                    $subModules = [];
+                    $hasVisibleChild = false;
+                    foreach ($subModulesRaw as $sub) {
+                        if ($isAdmin || in_array($sub->id, $allowedModuleIds)) {
+                            $subModules[] = $sub;
+                            $hasVisibleChild = true;
+                        }
+                    }
+                    
+                    // Bỏ qua nếu không có quyền xem parent VÀ cũng không có child nào được phép xem
+                    if (!$isAdmin && !in_array($main->id, $allowedModuleIds) && !$hasVisibleChild) continue;
+                    
                     $hasSub = count($subModules) > 0;
                     
                     // Check active state

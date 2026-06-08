@@ -14,8 +14,34 @@ $router->group('/admin', function($r) {
     $r->post('/login', [AuthController::class, 'loginPost']);
     $r->get('/logout', [AuthController::class, 'logout'])->name('admin.logout');
     
+    // Module Quản lý User (RBAC)
+    $r->get('/user', [\App\Controllers\Admin\UserAdminController::class, 'index'])->name('admin.user.index');
+    $r->get('/user/create', [\App\Controllers\Admin\UserAdminController::class, 'create'])->name('admin.user.create');
+    $r->post('/user/store', [\App\Controllers\Admin\UserAdminController::class, 'store'])->name('admin.user.store');
+    $r->get('/user/edit/{id}', [\App\Controllers\Admin\UserAdminController::class, 'edit'])->name('admin.user.edit');
+    $r->post('/user/update/{id}', [\App\Controllers\Admin\UserAdminController::class, 'update'])->name('admin.user.update');
+    $r->get('/user/destroy/{id}', [\App\Controllers\Admin\UserAdminController::class, 'destroy'])->name('admin.user.destroy');
+    $r->post('/user/update-status-ajax', [\App\Controllers\Admin\UserAdminController::class, 'updateStatusAjax'])->name('admin.user.updateStatusAjax');
+
+    // Quản lý Role (Nhóm quyền)
+    $r->get('/role', [\App\Controllers\Admin\RoleAdminController::class, 'index'])->name('admin.role.index');
+    $r->get('/role/create', [\App\Controllers\Admin\RoleAdminController::class, 'create'])->name('admin.role.create');
+    $r->post('/role/store', [\App\Controllers\Admin\RoleAdminController::class, 'store'])->name('admin.role.store');
+    $r->get('/role/edit/{id}', [\App\Controllers\Admin\RoleAdminController::class, 'edit'])->name('admin.role.edit');
+    $r->post('/role/update/{id}', [\App\Controllers\Admin\RoleAdminController::class, 'update'])->name('admin.role.update');
+    $r->get('/role/destroy/{id}', [\App\Controllers\Admin\RoleAdminController::class, 'destroy'])->name('admin.role.destroy');
+    $r->post('/role/update-status-ajax', [\App\Controllers\Admin\RoleAdminController::class, 'updateStatusAjax'])->name('admin.role.updateStatusAjax');
+
     // Dashboard (Yêu cầu đăng nhập, sẽ bị AdminAuthMiddleware kiểm tra)
     $r->get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+    // System Sidebar Menu Management Routes (Drag & Drop)
+    $r->get('/system-menu', [\App\Controllers\Admin\MenuAdminController::class, 'index'])->name('admin.system_menu.index');
+    $r->post('/system-menu/store', [\App\Controllers\Admin\MenuAdminController::class, 'store'])->name('admin.system_menu.store');
+    $r->get('/system-menu/edit/{id}', [\App\Controllers\Admin\MenuAdminController::class, 'edit'])->name('admin.system_menu.edit');
+    $r->post('/system-menu/update/{id}', [\App\Controllers\Admin\MenuAdminController::class, 'update'])->name('admin.system_menu.update');
+    $r->get('/system-menu/delete/{id}', [\App\Controllers\Admin\MenuAdminController::class, 'destroy'])->name('admin.system_menu.destroy');
+    $r->post('/system-menu/update-sort-ajax', [\App\Controllers\Admin\MenuAdminController::class, 'updateSortAjax'])->name('admin.system_menu.updateSortAjax');
 
     // Category Routes
     $r->get('/category', [\App\Controllers\Admin\CategoryController::class, 'index'])->name('admin.category.index');
@@ -25,6 +51,7 @@ $router->group('/admin', function($r) {
     $r->post('/category/update/{id}', [\App\Controllers\Admin\CategoryController::class, 'update'])->name('admin.category.update');
     $r->get('/category/delete/{id}', [\App\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.category.destroy');
     $r->post('/category/delete-multiple', [\App\Controllers\Admin\CategoryController::class, 'destroyMultiple'])->name('admin.category.destroy_multiple');
+    $r->post('/category/update-status-ajax', [\App\Controllers\Admin\CategoryController::class, 'updateStatusAjax'])->name('admin.category.updateStatusAjax');
 
     // Attribute Routes
     $r->get('/attribute', [\App\Controllers\Admin\AttributeController::class, 'index'])->name('admin.attribute.index');

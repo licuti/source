@@ -1,6 +1,6 @@
 <?php
 
-$nav = $d->o_fet("select * from #_module_admin where parent = '0' and hien_thi = 1  order by so_thu_tu ASC");
+$nav = $d->o_fet("select * from #_module_admin where parent = '0' and is_active = 1  order by sort_order ASC");
 $donhangmoi = $d->o_fet("select * from #_dathang where trangthai_xuly = 0 order by id desc");
 $lienhemoi = $d->o_fet("select * from #_lienhe where trang_thai = 0 order by id desc");
 ?>
@@ -27,7 +27,7 @@ $lienhemoi = $d->o_fet("select * from #_lienhe where trang_thai = 0 order by id 
              <li class="header">MAIN NAVIGATION</li>
             <?php
             foreach ($nav as $key => $value) {
-                $item0 = $d->o_fet("select * from #_module_admin where parent = '".$value['id']."' and hien_thi = 1 order by so_thu_tu ASC");
+                $item0 = $d->o_fet("select * from #_module_admin where parent = '".$value['id']."' and is_active = 1 order by sort_order ASC");
                 $list_id        =   ',';
                 $list_alias     =   ',';
                 foreach ($item0 as $key2 => $value2) {

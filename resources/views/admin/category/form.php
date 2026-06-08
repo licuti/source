@@ -14,21 +14,15 @@ if (!function_exists('renderCategoryTree')) {
 $isEdit = isset($item);
 $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : route('admin.category.store');
 ?>
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><?= $isEdit ? 'Cập nhật danh mục' : 'Thêm danh mục mới' ?></h3>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="<?= route('admin.category.index') ?>">Danh mục</a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><?= $isEdit ? 'Cập nhật' : 'Thêm mới' ?></li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
+
+<?= view('admin.components.breadcrumb', [
+    'title' => $isEdit ? 'Cập nhật danh mục' : 'Thêm danh mục mới',
+    'bitems' => [
+        ['name' => 'Bảng điều khiển', 'url' => route('admin.dashboard')],
+        ['name' => 'Danh mục', 'url' => route('admin.category.index')],
+        ['name' => $isEdit ? 'Cập nhật' : 'Thêm mới', 'url' => '']
+    ]
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
@@ -36,7 +30,7 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
             <div class="row">
                 <!-- Cột Trái: Đa Ngôn Ngữ -->
                 <div class="col-md-9">
-                    <div class="card shadow-sm border-0 mb-4">
+                    <div class="card card-outline card-primary mb-4">
                         <div class="card-header p-0 pt-1 border-bottom-0 bg-white">
                             <ul class="nav nav-tabs" id="langTabs" role="tablist">
                                 <?php $i = 0; foreach($langs as $index => $lang): ?>
@@ -56,13 +50,13 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
                                     
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Tên danh mục <span class="text-danger">*</span></label>
-                                        <input type="text" name="ten[<?= $c ?>]" class="form-control form-control-lg" placeholder="Nhập tên..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" required>
+                                        <input type="text" name="ten[<?= $c ?>]" class="form-control form-control-sm" placeholder="Nhập tên..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" required>
                                     </div>
                                     
                                     <div class="mb-3">
                                         <label class="form-label">Đường dẫn thân thiện (Alias / Slug)</label>
                                         <?php $isAutoSlug = empty($item['alias'][$c]) ? 'auto-slug' : ''; ?>
-                                        <input type="text" name="alias[<?= $c ?>]" class="form-control text-muted <?= $isAutoSlug ?>" placeholder="tu-dong-tao-neu-de-trong" value="<?= htmlspecialchars($item['alias'][$c] ?? '') ?>" data-slug-target="<?= $c ?>">
+                                        <input type="text" name="alias[<?= $c ?>]" class="form-control form-control-sm text-muted <?= $isAutoSlug ?>" placeholder="tu-dong-tao-neu-de-trong" value="<?= htmlspecialchars($item['alias'][$c] ?? '') ?>" data-slug-target="<?= $c ?>">
                                     </div>
 
                                     <!-- Thay thế textarea bằng Component CKEditor cho phần Mô tả -->
@@ -88,7 +82,7 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
 
                 <!-- Cột Phải: Cấu Hình Chung -->
                 <div class="col-md-3">
-                    <div class="card shadow-sm border-0 mb-4 sticky-top" style="top: 70px; z-index: 1;">
+                    <div class="card card-outline card-secondary mb-4 sticky-top" style="top: 70px;">
                         <div class="card-header bg-white">
                             <h5 class="card-title mb-0 fw-bold"><i class="fa-solid fa-gears text-secondary"></i> Thiết lập chung</h5>
                         </div>
@@ -96,7 +90,7 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
                             
                             <div class="mb-3">
                                 <label class="form-label">Danh mục cha</label>
-                                <select name="id_loai" class="form-select">
+                                <select name="id_loai" class="form-select form-select-sm">
                                     <option value="0">--- Trở thành Danh mục gốc ---</option>
                                     <?php renderCategoryTree($parentCategories ?? [], $item['id_loai'] ?? 0, $item['id'] ?? 0); ?>
                                 </select>
@@ -104,7 +98,7 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
 
                             <div class="mb-3">
                                 <label class="form-label">Phân loại hiển thị (Module)</label>
-                                <select name="module" class="form-select">
+                                <select name="module" class="form-select form-select-sm">
                                     <?php foreach ($modules ?? [] as $mod): ?>
                                     <option value="<?= htmlspecialchars($mod->id) ?>" <?= ($item['module'] ?? '') == $mod->id ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($mod->title) ?>
@@ -122,19 +116,21 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
 
                             <div class="mb-3">
                                 <label class="form-label">Số thứ tự hiển thị</label>
-                                <input type="number" name="so_thu_tu" class="form-control" value="<?= $item['so_thu_tu'] ?? 0 ?>">
-                                <small class="text-muted">Số càng nhỏ ưu tiên hiển thị trước.</small>
+                                <input type="number" name="so_thu_tu" class="form-control form-control-sm" value="<?= $item['so_thu_tu'] ?? 0 ?>">
+                                <small class="form-text text-muted">Số càng nhỏ ưu tiên hiển thị trước.</small>
                             </div>
 
                             <div class="form-check form-switch mb-3 pt-2">
-                                <input class="form-check-input fs-5" type="checkbox" name="hien_thi" id="hien_thi" <?= (!isset($item) || !empty($item['hien_thi'])) ? 'checked' : '' ?>>
+                                <input class="form-check-input" type="checkbox" name="hien_thi" id="hien_thi" <?= (!isset($item) || !empty($item['hien_thi'])) ? 'checked' : '' ?>>
                                 <label class="form-check-label mt-1 ms-2 fw-bold" for="hien_thi">Cho phép hiển thị</label>
                             </div>
 
                         </div>
-                        <div class="card-footer bg-white text-end border-top-0 py-3">
-                            <a href="<?= route('admin.category.index') ?>" class="btn btn-light border me-2"><i class="fa-solid fa-arrow-left"></i> Trở về</a>
-                            <button type="submit" class="btn btn-primary px-4"><i class="fa-solid fa-save"></i> <?= $isEdit ? 'Lưu cập nhật' : 'Thêm mới' ?></button>
+                        <div class="card-footer bg-white border-top-0 py-3">
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-save"></i> <?= $isEdit ? 'Lưu cập nhật' : 'Thêm mới' ?></button>
+                                <a href="<?= route('admin.category.index') ?>" class="btn btn-light border btn-sm"><i class="fa-solid fa-arrow-left"></i> Trở về</a>
+                            </div>
                         </div>
                     </div>
                 </div>
