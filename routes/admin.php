@@ -53,6 +53,16 @@ $router->group('/admin', function($r) {
     $r->post('/category/delete-multiple', [\App\Controllers\Admin\CategoryController::class, 'destroyMultiple'])->name('admin.category.destroy_multiple');
     $r->post('/category/update-status-ajax', [\App\Controllers\Admin\CategoryController::class, 'updateStatusAjax'])->name('admin.category.updateStatusAjax');
 
+    // Post Routes
+    $r->get('/post', [\App\Controllers\Admin\PostController::class, 'index'])->name('admin.post.index');
+    $r->get('/post/create', [\App\Controllers\Admin\PostController::class, 'create'])->name('admin.post.create');
+    $r->post('/post/store', [\App\Controllers\Admin\PostController::class, 'store'])->name('admin.post.store');
+    $r->get('/post/edit/{id}', [\App\Controllers\Admin\PostController::class, 'edit'])->name('admin.post.edit');
+    $r->post('/post/update/{id}', [\App\Controllers\Admin\PostController::class, 'update'])->name('admin.post.update');
+    $r->get('/post/delete/{id}', [\App\Controllers\Admin\PostController::class, 'destroy'])->name('admin.post.destroy');
+    $r->post('/post/delete-multiple', [\App\Controllers\Admin\PostController::class, 'destroyMultiple'])->name('admin.post.destroy_multiple');
+    $r->post('/post/update-status-ajax', [\App\Controllers\Admin\PostController::class, 'updateStatusAjax'])->name('admin.post.updateStatusAjax');
+
     // Attribute Routes
     $r->get('/attribute', [\App\Controllers\Admin\AttributeController::class, 'index'])->name('admin.attribute.index');
     $r->get('/attribute/create', [\App\Controllers\Admin\AttributeController::class, 'create'])->name('admin.attribute.create');
@@ -60,6 +70,9 @@ $router->group('/admin', function($r) {
     $r->get('/attribute/edit/{id}', [\App\Controllers\Admin\AttributeController::class, 'edit'])->name('admin.attribute.edit');
     $r->post('/attribute/update/{id}', [\App\Controllers\Admin\AttributeController::class, 'update'])->name('admin.attribute.update');
     $r->get('/attribute/delete/{id}', [\App\Controllers\Admin\AttributeController::class, 'destroy'])->name('admin.attribute.destroy');
+    $r->post('/attribute/update-status-ajax', [\App\Controllers\Admin\AttributeController::class, 'updateStatusAjax'])->name('admin.attribute.updateStatusAjax');
+
+    // Language Settings Routes
 
     // System Configuration Routes
     $r->get('/email-smtp', [\App\Controllers\Admin\EmailController::class, 'index'])->name('admin.email.index');

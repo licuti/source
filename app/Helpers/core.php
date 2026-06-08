@@ -385,3 +385,70 @@ if (!function_exists('session')) {
         return $value;
     }
 }
+
+if (!function_exists('hasPermission')) {
+    /**
+     * Kiểm tra quyền của User hiện tại với một module.
+     * Dùng để ẩn/hiện các nút bấm trên giao diện Admin.
+     * 
+     * @param string $moduleRoutePrefix Tiền tố route (VD: admin.category)
+     * @param string $action Hành động (view, add, edit, delete)
+     * @return bool
+     */
+    function hasPermission($moduleRoutePrefix, $action = 'view') {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        $is_admin = $_SESSION['is_admin'] ?? 0;
+        if ($is_admin == 1) return true; // Super Admin bypasses all
+        
+        $role_id = $_SESSION['role_id'] ?? 0;
+        if ($role_id == 0) return false;
+        
+        // Caching module IDs by prefix in memory to prevent N+1 queries during loop rendering
+        static $moduleMapping = null;
+        if ($moduleMapping === null) {
+            $moduleMapping = [];
+            try {
+                $modules = \ModuleAdminModel::where('is_active', 1)->get();
+                foreach ($modules as $mod) {
+                    if (!empty($mod->route_name)) {
+                        $parts = explode('.', $mod->route_name);
+                        if (count($parts) >= 2) {
+                            $prefix = $parts[0] . '.' . $parts[1];
+                            $moduleMapping[$prefix] = $mod->id;
+                        }
+                    }
+                }
+            } catch (\Exception $e) {}
+        }
+        
+        $moduleId = $moduleMapping[$moduleRoutePrefix] ?? null;
+        if (!$moduleId) {
+            // Fallback
+            $module = \ModuleAdminModel::where('route_name', 'LIKE', $moduleRoutePrefix . '.%')->first();
+            if ($module) {
+                $moduleId = $module->id;
+                $moduleMapping[$moduleRoutePrefix] = $moduleId;
+            } else {
+                return false;
+            }
+        }
+        
+        $permsCache = $_SESSION['role_permissions'] ?? [];
+        if (!isset($permsCache[$moduleId])) {
+            return false;
+        }
+        
+        $perm = $permsCache[$moduleId];
+        
+        switch ($action) {
+            case 'view':   return !empty($perm['can_view']);
+            case 'add':    return !empty($perm['can_add']);
+            case 'edit':   return !empty($perm['can_edit']);
+            case 'delete': return !empty($perm['can_delete']);
+            default:       return false;
+        }
+    }
+}

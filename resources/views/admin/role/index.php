@@ -1,49 +1,43 @@
 <?php
 $title = 'Nhóm quyền (Roles)';
 ?>
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-6">
-                <h3 class="mb-0">Nhóm quyền</h3>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="<?= route('admin.dashboard') ?>">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Nhóm quyền</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
+
+<?= view('admin.components.breadcrumb', [
+    'title'  => $title,
+    'bitems' => [
+        ['name' => 'Bảng điều khiển', 'url' => route('admin.dashboard')],
+        ['name' => 'Nhóm quyền', 'url' => '']
+    ]
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
+
+        <!-- BẢNG DỮ LIỆU -->
         <div class="card card-outline card-primary">
             <div class="card-header">
-                <h3 class="card-title">Danh sách nhóm quyền</h3>
-                <?php if (hasPermission('admin.role', 'can_add')): ?>
+                <h3 class="card-title">
+                    Danh sách <span class="badge bg-secondary ms-1"><?= $roles->total ?? 0 ?></span>
+                </h3>
                 <div class="card-tools">
-                    <a href="<?= route('admin.role.create') ?>" class="btn btn-sm btn-primary">
-                        <i class="fa-solid fa-plus"></i> Thêm mới
-                    </a>
+                    <form action="<?= route('admin.role.index') ?>" method="GET" class="d-inline-block">
+                        <div class="input-group input-group-sm" style="width: 250px;">
+                            <input type="text" name="keyword" class="form-control float-right" placeholder="Tìm tên nhóm quyền..." value="<?= htmlspecialchars($_GET['keyword'] ?? $keyword ?? '') ?>">
+                            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                        </div>
+                    </form>
+                    <?php if (hasPermission('admin.role', 'add')): ?>
+                        <a href="<?= route('admin.role.create') ?>" class="btn btn-sm btn-success ms-2"><i class="fa-solid fa-plus"></i> Thêm Mới</a>
+                    <?php endif; ?>
                 </div>
-                <?php endif; ?>
             </div>
             
             <div class="card-body p-0">
-                <form method="GET" action="<?= route('admin.role.index') ?>" class="p-3 border-bottom bg-light">
-                    <div class="input-group input-group-sm" style="width: 250px;">
-                        <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm nhóm quyền..." value="<?= htmlspecialchars($keyword ?? '') ?>">
-                        <button type="submit" class="btn btn-default"><i class="fa-solid fa-search"></i></button>
-                    </div>
-                </form>
-
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped align-middle mb-0">
-                        <thead>
+                    <table class="table table-bordered table-hover table-striped align-middle mb-0">
+                        <thead class="table-light">
                             <tr>
-                                <th width="50" class="text-center">ID</th>
+
                                 <th>Tên nhóm quyền</th>
                                 <th>Mô tả</th>
                                 <th width="120" class="text-center">Trạng thái</th>
@@ -51,27 +45,32 @@ $title = 'Nhóm quyền (Roles)';
                         </thead>
                         <tbody>
                             <?php if (empty($roles->data)): ?>
-                                <tr><td colspan="4" class="text-center text-muted">Không có dữ liệu!</td></tr>
+                                <tr>
+                                    <td colspan="5" class="text-center py-5 text-muted">
+                                        <i class="fa-solid fa-inbox fs-1 d-block mb-2"></i>
+                                        Chưa có dữ liệu nào.
+                                    </td>
+                                </tr>
                             <?php else: ?>
                                 <?php foreach ($roles->data as $item): ?>
                                     <tr class="wp-row">
-                                        <td class="text-center"><?= $item->id ?></td>
+
                                         <td>
-                                            <strong><?= htmlspecialchars($item->name) ?></strong>
+                                            <strong><?= htmlspecialchars($item->name ?? '') ?></strong>
                                             <?php if ($item->is_system == 1): ?>
                                                 <span class="badge bg-danger ms-1">Hệ thống</span>
                                             <?php endif; ?>
                                             
                                             <?php 
                                             $roleActions = [];
-                                            if (hasPermission('admin.role', 'can_edit')) {
+                                            if (hasPermission('admin.role', 'edit')) {
                                                 $roleActions['edit'] = [
                                                     'label' => 'Chỉnh sửa', 
                                                     'url' => route('admin.role.edit', ['id' => $item->id]), 
                                                     'class' => 'text-primary'
                                                 ];
                                             }
-                                            if ($item->is_system != 1 && hasPermission('admin.role', 'can_delete')) {
+                                            if ($item->is_system != 1 && hasPermission('admin.role', 'delete')) {
                                                 $roleActions['delete'] = [
                                                     'label' => 'Xóa', 
                                                     'url' => route('admin.role.destroy', ['id' => $item->id]), 
@@ -83,10 +82,10 @@ $title = 'Nhóm quyền (Roles)';
                                             }
                                             ?>
                                         </td>
-                                        <td><?= htmlspecialchars($item->description) ?></td>
+                                        <td><?= htmlspecialchars($item->description ?? '') ?></td>
                                         <td class="text-center">
-                                            <div class="form-check form-switch d-inline-block">
-                                                <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="<?= $item->id ?>" data-field="is_active" data-url="<?= route('admin.role.updateStatusAjax') ?>" <?= $item->is_active == 1 ? 'checked' : '' ?> <?= ($item->is_system == 1 || !hasPermission('admin.role', 'can_edit')) ? 'disabled' : '' ?> style="cursor: pointer;">
+                                            <div class="form-check form-switch d-flex justify-content-center">
+                                                <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="<?= $item->id ?>" data-field="is_active" data-url="<?= route('admin.role.updateStatusAjax') ?>" <?= $item->is_active == 1 ? 'checked' : '' ?> <?= ($item->is_system == 1 || !hasPermission('admin.role', 'edit')) ? 'disabled' : '' ?> style="cursor: pointer;">
                                             </div>
                                         </td>
                                     </tr>
@@ -97,12 +96,12 @@ $title = 'Nhóm quyền (Roles)';
                 </div>
             </div>
 
-            <div class="card-footer bg-white clearfix py-3">
+            <div class="card-footer clearfix">
                 <div class="row align-items-center">
-                    <div class="col-md-4 text-muted small">
-                        Hiển thị <?= count($roles->data ?? []) ?> / <?= $roles->total ?? 0 ?> mục
+                    <div class="col-md-6 text-muted small">
+                        Hiển thị <?= count($roles->data ?? []) ?> / <?= $roles->total ?? 0 ?> bản ghi
                     </div>
-                    <div class="col-md-8 text-end pagination-right-sm">
+                    <div class="col-md-6 text-end pagination-right-sm">
                         <?= paging($roles->total, $roles->per_page, $roles->current_page, getCurrentUrlWithoutPage()) ?>
                     </div>
                 </div>

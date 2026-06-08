@@ -1,6 +1,6 @@
 <?php
 class CategoryModel extends Model {
-    public $table = '#_category';
+    public $table = '#_categories';
     
     // Lưu trữ mảng Category trên RAM trong 1 vòng đời request để dùng nhiều lần mà không cần Query
     protected static $cachedCategories = null;
@@ -12,8 +12,8 @@ class CategoryModel extends Model {
         if (self::$cachedCategories === null) {
             // Chỉ lấy các cột cần thiết để tối ưu bộ nhớ
             self::$cachedCategories = self::query()
-                ->where('hien_thi', 1)
-                ->get('id_code, id_loai');
+                ->where('is_active', 1)
+                ->get('id_code, parent_id');
         }
         return self::$cachedCategories;
     }
@@ -41,7 +41,7 @@ class CategoryModel extends Model {
     protected static function findChildrenRecursive($parentId, &$categories) {
         $childIds = '';
         foreach ($categories as $cat) {
-            if ($cat->id_loai == $parentId) {
+            if ($cat->parent_id == $parentId) {
                 $childIds .= ',' . $cat->id_code;
                 // Gọi đệ quy tiếp tục tìm con của danh mục hiện tại
                 $childIds .= self::findChildrenRecursive($cat->id_code, $categories);
@@ -53,11 +53,11 @@ class CategoryModel extends Model {
      * Lấy toàn bộ danh mục đang hiển thị
      */
     public static function getAll($parentId = null) {
-        $query = self::query()->where('hien_thi', 1);
+        $query = self::query()->where('is_active', 1);
         if ($parentId !== null) {
-            $query->where('id_loai', (int)$parentId);
+            $query->where('parent_id', (int)$parentId);
         }
-        return $query->orderBy('so_thu_tu')->orderBy('id', 'DESC')->get();
+        return $query->orderBy('sort_order')->orderBy('id', 'DESC')->get();
     }
 
     /**
@@ -74,9 +74,9 @@ class CategoryModel extends Model {
     public static function getAllForAdmin($parentId = null) {
         $query = self::query();
         if ($parentId !== null) {
-            $query->where('id_loai', (int)$parentId);
+            $query->where('parent_id', (int)$parentId);
         }
-        return $query->orderBy('so_thu_tu')->orderBy('id', 'DESC')->get();
+        return $query->orderBy('sort_order')->orderBy('id', 'DESC')->get();
     }
 
     /**
@@ -93,7 +93,7 @@ class CategoryModel extends Model {
     private static function buildTree($elements, $parentId = 0) {
         $branch = array();
         foreach ($elements as $element) {
-            if ($element->id_loai == $parentId) {
+            if ($element->parent_id == $parentId) {
                 $children = self::buildTree($elements, $element->id_code);
                 if ($children) {
                     $element->children = $children;

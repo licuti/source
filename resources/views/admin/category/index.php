@@ -1,13 +1,17 @@
 
+<?php
+$breadcrumbActions = [];
+if (hasPermission('admin.category', 'add')) {
+    $breadcrumbActions[] = ['label' => 'Thêm mới', 'icon' => 'fa-plus', 'url' => route('admin.category.create'), 'class' => 'btn-primary'];
+}
+?>
 <?= view('admin.components.breadcrumb', [
     'title' => 'Quản lý Danh mục',
     'bitems' => [
         ['name' => 'Bảng điều khiển', 'url' => route('admin.dashboard')],
         ['name' => 'Danh mục', 'url' => '']
     ],
-    'actions' => [
-        ['label' => 'Thêm mới', 'icon' => 'fa-plus', 'url' => route('admin.category.create'), 'class' => 'btn-primary']
-    ]
+    'actions' => $breadcrumbActions
 ]) ?>
 
 <div class="app-content">
@@ -17,7 +21,7 @@
             <!-- HEADER: Gộp Bulk Action, Filter, và Search theo chuẩn WordPress -->
             <div class="card-header wp-toolbar">
                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                    <!-- Left: Bulk Actions -->
+                    <?php if (hasPermission('admin.category', 'delete')): ?>
                     <div class="d-flex align-items-center flex-wrap gap-2">
                         <select id="bulkActionSelect" class="form-select form-select-sm w-auto">
                             <option value="">Hành động hàng loạt</option>
@@ -29,6 +33,9 @@
                             Áp dụng
                         </button>
                     </div>
+                    <?php else: ?>
+                    <div></div>
+                    <?php endif; ?>
 
                     <!-- Right: Search & Filter -->
                     <form action="<?= route('admin.category.index') ?>" method="GET" class="d-flex align-items-center flex-wrap gap-2 m-0">
@@ -40,7 +47,7 @@
 
                         <div class="input-group input-group-sm w-auto">
                             <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm danh mục..." value="<?= htmlspecialchars($keyword ?? '') ?>">
-                            <button type="submit" class="btn btn-outline-secondary">
+                            <button type="submit" class="btn btn-primary">
                                 Tìm kiếm
                             </button>
                         </div>

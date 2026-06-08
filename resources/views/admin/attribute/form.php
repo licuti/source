@@ -2,21 +2,14 @@
 $isEdit = isset($item);
 $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : route('admin.attribute.store');
 ?>
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><?= $isEdit ? 'Cập nhật Thuộc tính' : 'Thêm Thuộc tính mới' ?></h3>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="<?= route('admin.attribute.index') ?>">Thuộc tính</a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><?= $isEdit ? 'Cập nhật' : 'Thêm mới' ?></li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
+<?= view('admin.components.breadcrumb', [
+    'title' => $isEdit ? 'Cập nhật Thuộc tính' : 'Thêm Thuộc tính mới',
+    'bitems' => [
+        ['name' => 'Bảng điều khiển', 'url' => route('admin.dashboard')],
+        ['name' => 'Thuộc tính', 'url' => route('admin.attribute.index')],
+        ['name' => $isEdit ? 'Cập nhật' : 'Thêm mới', 'url' => '']
+    ]
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
@@ -45,18 +38,18 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                                     
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Tên nhóm thuộc tính <span class="text-danger">*</span></label>
-                                        <input type="text" name="ten[<?= $c ?>]" class="form-control" placeholder="VD: Màu sắc, Kích thước..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" <?= $i === 0 ? 'required' : '' ?>>
+                                        <input type="text" name="ten[<?= $c ?>]" class="form-control form-control-sm" placeholder="VD: Màu sắc, Kích thước..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" <?= $i === 0 ? 'required' : '' ?>>
                                     </div>
                                     
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Đường dẫn thân thiện (Alias)</label>
                                             <?php $isAutoSlug = empty($item['alias'][$c]) ? 'auto-slug' : ''; ?>
-                                            <input type="text" name="alias[<?= $c ?>]" class="form-control text-muted <?= $isAutoSlug ?>" placeholder="Tự động tạo nếu để trống" value="<?= htmlspecialchars($item['alias'][$c] ?? '') ?>" data-slug-target="<?= $c ?>">
+                                            <input type="text" name="alias[<?= $c ?>]" class="form-control form-control-sm text-muted <?= $isAutoSlug ?>" placeholder="Tự động tạo nếu để trống" value="<?= htmlspecialchars($item['alias'][$c] ?? '') ?>" data-slug-target="<?= $c ?>">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Mô tả ngắn</label>
-                                            <textarea class="form-control" rows="1" name="mo_ta[<?= $c ?>]"><?= htmlspecialchars($item['mo_ta'][$c] ?? '') ?></textarea>
+                                            <textarea class="form-control form-control-sm" rows="1" name="mo_ta[<?= $c ?>]"><?= htmlspecialchars($item['mo_ta'][$c] ?? '') ?></textarea>
                                         </div>
                                     </div>
 
@@ -92,13 +85,13 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                                             <input type="hidden" name="val_id_code[]" value="<?= $val_id_code ?>">
                                             <?php foreach($langs as $lang): ?>
                                                 <td>
-                                                    <input type="text" name="val_ten[<?= $lang['code'] ?>][]" class="form-control" value="<?= htmlspecialchars($val['ten'][$lang['code']] ?? '') ?>" required placeholder="Nhập tên...">
+                                                    <input type="text" name="val_ten[<?= $lang['code'] ?>][]" class="form-control form-control-sm" value="<?= htmlspecialchars($val['ten'][$lang['code']] ?? '') ?>" required placeholder="Nhập tên...">
                                                 </td>
                                             <?php endforeach; ?>
                                             <td>
                                                 <div class="input-group">
-                                                    <input type="text" name="val_gia_tri[]" id="val_gia_tri_<?= $val_id_code ?>" class="form-control" value="<?= htmlspecialchars($val['gia_tri'] ?? '') ?>" placeholder="Mã màu / Ảnh">
-                                                    <input type="color" class="form-control form-control-color px-1 py-1" style="max-width: 38px; cursor: pointer;" onchange="document.getElementById('val_gia_tri_<?= $val_id_code ?>').value = this.value" title="Chọn màu">
+                                                    <input type="text" name="val_gia_tri[]" id="val_gia_tri_<?= $val_id_code ?>" class="form-control form-control-sm" value="<?= htmlspecialchars($val['gia_tri'] ?? '') ?>" placeholder="Mã màu / Ảnh">
+                                                    <input type="color" class="form-control form-control-sm form-control-color px-1 py-1" style="max-width: 38px; cursor: pointer;" onchange="document.getElementById('val_gia_tri_<?= $val_id_code ?>').value = this.value" title="Chọn màu">
                                                     <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('val_gia_tri_<?= $val_id_code ?>', '/img_data/images/')" title="Chọn ảnh"><i class="fa-solid fa-image"></i></button>
                                                 </div>
                                             </td>
@@ -114,13 +107,13 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                                             <input type="hidden" name="val_id_code[]" value="0">
                                             <?php foreach($langs as $lang): ?>
                                                 <td>
-                                                    <input type="text" name="val_ten[<?= $lang['code'] ?>][]" class="form-control" required placeholder="Nhập tên...">
+                                                    <input type="text" name="val_ten[<?= $lang['code'] ?>][]" class="form-control form-control-sm" required placeholder="Nhập tên...">
                                                 </td>
                                             <?php endforeach; ?>
                                             <td>
                                                 <div class="input-group">
-                                                    <input type="text" name="val_gia_tri[]" id="val_gia_tri_new_1" class="form-control" placeholder="Mã màu / Ảnh">
-                                                    <input type="color" class="form-control form-control-color px-1 py-1" style="max-width: 38px; cursor: pointer;" onchange="document.getElementById('val_gia_tri_new_1').value = this.value" title="Chọn màu">
+                                                    <input type="text" name="val_gia_tri[]" id="val_gia_tri_new_1" class="form-control form-control-sm" placeholder="Mã màu / Ảnh">
+                                                    <input type="color" class="form-control form-control-sm form-control-color px-1 py-1" style="max-width: 38px; cursor: pointer;" onchange="document.getElementById('val_gia_tri_new_1').value = this.value" title="Chọn màu">
                                                     <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('val_gia_tri_new_1', '/img_data/images/')" title="Chọn ảnh"><i class="fa-solid fa-image"></i></button>
                                                 </div>
                                             </td>
@@ -137,7 +130,7 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
 
                 <!-- Cột Phải: Cấu Hình Chung -->
                 <div class="col-md-3">
-                    <div class="card shadow-sm border-0 mb-4 sticky-top" style="top: 70px; z-index: 1;">
+                    <div class="card shadow-sm border-0 mb-4">
                         <div class="card-header bg-white">
                             <h5 class="card-title mb-0 fw-bold"><i class="fa-solid fa-gears text-secondary"></i> Thiết lập chung</h5>
                         </div>
@@ -145,7 +138,7 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                             
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Loại thuộc tính</label>
-                                <select name="loai" class="form-select">
+                                <select name="loai" class="form-select form-select-sm">
                                     <?php foreach ($data_type_variation as $key => $title): ?>
                                     <option value="<?= htmlspecialchars($key) ?>" <?= ($item['loai'] ?? '') == $key ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($title) ?>
@@ -156,7 +149,7 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
 
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Sắp xếp giá trị theo</label>
-                                <select name="sap_xep" class="form-select">
+                                <select name="sap_xep" class="form-select form-select-sm">
                                     <?php foreach ($data_type_sort as $key => $title): ?>
                                     <option value="<?= htmlspecialchars($key) ?>" <?= ($item['sap_xep'] ?? '') == $key ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($title) ?>
@@ -167,7 +160,7 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
 
                             <div class="mb-3">
                                 <label class="form-label">Thứ tự hiển thị nhóm</label>
-                                <input type="number" name="so_thu_tu" class="form-control" value="<?= $item['so_thu_tu'] ?? 0 ?>">
+                                <input type="number" name="so_thu_tu" class="form-control form-control-sm" value="<?= $item['so_thu_tu'] ?? 0 ?>">
                                 <small class="text-muted">Số càng nhỏ ưu tiên hiển thị trước.</small>
                             </div>
 

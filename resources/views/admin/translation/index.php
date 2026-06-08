@@ -27,9 +27,12 @@
                     <div class="card-header">
                         <h3 class="card-title">Danh sách Từ khóa Dịch</h3>
                         <div class="card-tools d-flex gap-2">
+                            <?php if (hasPermission('admin.translation', 'edit')): ?>
                             <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#manageGroupsModal">
                                 <i class="fa-solid fa-layer-group"></i> Quản lý Nhóm
                             </button>
+                            <?php endif; ?>
+                            <?php if (hasPermission('admin.translation', 'add')): ?>
                             <form action="<?= route('admin.translation.scan') ?>" method="POST" class="d-inline">
                                 <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Bạn có muốn quét mã nguồn để tìm các từ khóa mới không? Quá trình này có thể mất vài giây.');">
                                     <i class="fa-solid fa-search"></i> Quét Hệ Thống
@@ -38,6 +41,7 @@
                             <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addTranslationModal">
                                 <i class="fa-solid fa-plus"></i> Thêm Từ Khóa
                             </button>
+                            <?php endif; ?>
                         </div>
                     </div>
                     
@@ -46,7 +50,7 @@
                         <form action="<?= route('admin.translation.index') ?>" method="GET" class="mb-4">
                             <div class="row g-2">
                                 <div class="col-md-3">
-                                    <select name="group_name" class="form-select">
+                                    <select name="group_name" class="form-select form-select-sm">
                                         <option value="">-- Tất cả các nhóm --</option>
                                         <?php foreach ($groups as $g): ?>
                                             <option value="<?= htmlspecialchars($g) ?>" <?= ($groupFilter == $g) ? 'selected' : '' ?>>
@@ -56,7 +60,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-5">
-                                    <div class="input-group">
+                                    <div class="input-group input-group-sm">
                                         <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm từ khóa hoặc bản dịch..." value="<?= htmlspecialchars($keyword) ?>">
                                         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i> Tìm kiếm</button>
                                         <?php if ($keyword || $groupFilter): ?>
@@ -68,6 +72,7 @@
                         </form>
 
                         <!-- Thao tác hàng loạt -->
+                        <?php if (hasPermission('admin.translation', 'edit')): ?>
                         <div class="bulk-actions mb-3 p-2 bg-light border rounded d-flex align-items-center gap-2" style="display: none !important;" id="bulkActionPanel">
                             <span class="fw-bold"><span id="selectedCount">0</span> mục đã chọn:</span>
                             <div class="input-group input-group-sm" style="width: 300px;">
@@ -84,6 +89,7 @@
                                 <button class="btn btn-primary" type="button" id="btnBulkGroup">Đổi Nhóm</button>
                             </div>
                         </div>
+                        <?php endif; ?>
 
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover table-striped align-middle">
@@ -92,7 +98,7 @@
                                         <th style="width: 40px;" class="text-center">
                                             <input type="checkbox" class="form-check-input" id="checkAll">
                                         </th>
-                                        <th style="width: 50px;">ID</th>
+
                                         <th style="width: 20%;">Nhóm (Group)</th>
                                         <th style="width: 25%;">Mã từ khóa (Key)</th>
                                         <th>Các bản dịch</th>
@@ -110,7 +116,7 @@
                                                 <td class="text-center">
                                                     <input type="checkbox" class="form-check-input row-check" value="<?= $item->id ?>">
                                                 </td>
-                                                <td class="align-middle"><?= $item->id ?></td>
+
                                                 <td>
                                                     <select class="form-select form-select-sm group-input" data-id="<?= $item->id ?>">
                                                         <option value="uncategorized" <?= $currentGroup == 'uncategorized' ? 'selected' : '' ?>>uncategorized</option>
@@ -126,7 +132,7 @@
                                                     <input type="text" class="form-control form-control-sm key-input fw-bold" 
                                                         data-id="<?= $item->id ?>" 
                                                         value="<?= htmlspecialchars($item->key_name ?? '') ?>" 
-                                                        placeholder="[Khóa cũ ID: <?= $item->id ?>]">
+                                                        placeholder="[Khóa cũ ID: <?= $item->id ?>]" <?= hasPermission('admin.translation', 'edit') ? '' : 'readonly' ?>>
                                                 </td>
                                                 <td>
                                                     <?php foreach ($languages as $code => $lang): ?>
@@ -141,14 +147,17 @@
                                                                 data-id="<?= $item->id ?>" 
                                                                 data-lang="<?= $code ?>"
                                                                 placeholder="Nhập bản dịch..."
+                                                                <?= hasPermission('admin.translation', 'edit') ? '' : 'readonly' ?>
                                                             ><?= htmlspecialchars($texts[$code] ?? '') ?></textarea>
                                                         </div>
                                                     <?php endforeach; ?>
                                                 </td>
                                                 <td class="text-center align-middle">
+                                                    <?php if (hasPermission('admin.translation', 'delete')): ?>
                                                     <a href="<?= route('admin.translation.destroy', ['id' => $item->id]) ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa từ khóa này?');">
                                                         <i class="fa-solid fa-trash"></i>
                                                     </a>
+                                                    <?php endif; ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

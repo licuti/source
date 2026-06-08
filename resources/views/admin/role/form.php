@@ -2,61 +2,42 @@
 $isEdit = isset($role);
 $title = $isEdit ? 'Chỉnh sửa Nhóm quyền' : 'Thêm Nhóm quyền';
 ?>
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-6">
-                <h3 class="mb-0"><?= $title ?></h3>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="<?= route('admin.dashboard') ?>">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="<?= route('admin.role.index') ?>">Nhóm quyền</a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><?= $title ?></li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
+
+<?= view('admin.components.breadcrumb', [
+    'title'  => $title,
+    'bitems' => [
+        ['name' => 'Bảng điều khiển', 'url' => route('admin.dashboard')],
+        ['name' => 'Nhóm quyền', 'url' => route('admin.role.index')],
+        ['name' => $title, 'url' => '']
+    ]
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
         <form action="<?= $isEdit ? route('admin.role.update', ['id' => $role->id]) : route('admin.role.store') ?>" method="POST">
             <div class="row">
-                <!-- Cột trái: Thông tin cơ bản -->
-                <div class="col-md-4">
-                    <div class="card card-outline card-primary">
+                <!-- CỘT TRÁI: Nội dung chính -->
+                <div class="col-md-9">
+                    <div class="card card-outline card-primary mb-4">
                         <div class="card-header">
-                            <h3 class="card-title">Thông tin cơ bản</h3>
+                            <h3 class="card-title">Thông tin chính</h3>
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
-                                <label class="form-label">Tên nhóm quyền <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($role->name ?? '') ?>" required <?= ($isEdit && $role->is_system == 1) ? 'readonly' : '' ?>>
+                                <label class="form-label fw-bold">Tên nhóm quyền <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control form-control-sm" value="<?= htmlspecialchars($role->name ?? '') ?>" required <?= ($isEdit && $role->is_system == 1) ? 'readonly' : '' ?>>
                                 <?php if ($isEdit && $role->is_system == 1): ?>
                                     <small class="text-danger">Không thể đổi tên nhóm quyền hệ thống.</small>
                                 <?php endif; ?>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Mô tả</label>
-                                <textarea name="description" class="form-control" rows="3"><?= htmlspecialchars($role->description ?? '') ?></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active" <?= ($isEdit ? $role->is_active : 1) == 1 ? 'checked' : '' ?> <?= ($isEdit && $role->is_system == 1) ? 'disabled' : '' ?>>
-                                    <label class="form-check-label" for="is_active">Kích hoạt</label>
-                                </div>
-                                <?php if ($isEdit && $role->is_system == 1): ?>
-                                    <input type="hidden" name="is_active" value="1">
-                                <?php endif; ?>
+                                <textarea name="description" class="form-control form-control-sm" rows="3"><?= htmlspecialchars($role->description ?? '') ?></textarea>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Cột phải: Ma trận phân quyền -->
-                <div class="col-md-8">
-                    <div class="card card-outline card-success">
+                    <div class="card card-outline card-success mb-4">
                         <div class="card-header">
                             <h3 class="card-title">Ma trận phân quyền</h3>
                         </div>
@@ -154,21 +135,31 @@ $title = $isEdit ? 'Chỉnh sửa Nhóm quyền' : 'Thêm Nhóm quyền';
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Nút Hành động (Component dùng chung) -->
-            <div class="card mb-4">
-                <div class="card-body p-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a href="<?= route('admin.role.index') ?>" class="btn btn-secondary">
-                            <i class="fa-solid fa-arrow-left"></i> Quay lại
-                        </a>
-                        <div>
-                            <button type="submit" name="save_action" value="save" class="btn btn-success me-2">
-                                <i class="fa-solid fa-save"></i> Lưu nhóm quyền
+                <!-- CỘT PHẢI: Thiết lập & Hành động -->
+                <div class="col-md-3">
+                    <div class="card card-outline card-secondary mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title"><i class="fa-solid fa-gears text-secondary"></i> Thiết lập</h3>
+                        </div>
+                        <div class="card-body bg-light">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" name="is_active" value="1" id="is_active" <?= ($isEdit ? $role->is_active : 1) == 1 ? 'checked' : '' ?> <?= ($isEdit && $role->is_system == 1) ? 'disabled' : '' ?>>
+                                <label class="form-check-label fw-bold" for="is_active">Kích hoạt</label>
+                            </div>
+                            <?php if ($isEdit && $role->is_system == 1): ?>
+                                <input type="hidden" name="is_active" value="1">
+                            <?php endif; ?>
+                        </div>
+                        <div class="card-footer d-flex justify-content-end gap-1">
+                            <a href="<?= route('admin.role.index') ?>" class="btn btn-secondary btn-sm">
+                                <i class="fa-solid fa-arrow-left"></i> Quay lại
+                            </a>
+                            <button type="submit" name="save_action" value="save" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-save"></i> Lưu
                             </button>
-                            <button type="submit" name="save_action" value="save_and_edit" class="btn btn-primary">
-                                <i class="fa-solid fa-edit"></i> Lưu & Tiếp tục sửa
+                            <button type="submit" name="save_action" value="save_and_edit" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
                             </button>
                         </div>
                     </div>
@@ -177,5 +168,4 @@ $title = $isEdit ? 'Chỉnh sửa Nhóm quyền' : 'Thêm Nhóm quyền';
         </form>
     </div>
 </div>
-
 

@@ -23,8 +23,8 @@ Mọi trang danh sách phải tuân theo cấu trúc 3 phần sau:
         ['name' => 'Trang hiện tại', 'url' => '']
     ],
     'actions' => [
-        // Nút chính (Thêm mới)
-        ['label' => 'Thêm mới', 'icon' => 'fa-plus', 'url' => route('admin.module.create'), 'class' => 'btn-primary'],
+        // Nút chính (Thêm mới) có thể đặt ở đây hoặc trong card-tools của bảng dữ liệu
+        // ['label' => 'Thêm mới', 'icon' => 'fa-plus', 'url' => route('admin.module.create'), 'class' => 'btn-primary'],
         // Nút phụ (Scan, Export...)
         ['label' => 'Xuất Excel', 'icon' => 'fa-file-excel', 'url' => '#', 'class' => 'btn-success'],
     ]
@@ -37,7 +37,7 @@ Mọi trang danh sách phải tuân theo cấu trúc 3 phần sau:
 <div class="app-content">
     <div class="container-fluid">
 
-        <!-- KHUNG BỘ LỌC - BẮT BUỘC -->
+        <!-- (TRƯỜNG HỢP 1) KHUNG BỘ LỌC ĐỘC LẬP - Dùng khi module có NHIỀU tiêu chí lọc (trạng thái, danh mục, ngày tháng...) -->
         <div class="card card-outline card-secondary mb-3">
             <div class="card-body py-2">
                 <form action="<?= route('admin.module.index') ?>" method="GET" class="row g-2 align-items-end">
@@ -76,7 +76,7 @@ Mọi trang danh sách phải tuân theo cấu trúc 3 phần sau:
                 </form>
             </div>
         </div>
-        <!-- /KHUNG BỘ LỌC -->
+        <!-- /KHUNG BỘ LỌC ĐỘC LẬP -->
 
         <!-- BẢNG DỮ LIỆU -->
         <div class="card card-outline card-primary">
@@ -84,11 +84,16 @@ Mọi trang danh sách phải tuân theo cấu trúc 3 phần sau:
                 <h3 class="card-title">
                     Danh sách <span class="badge bg-secondary ms-1"><?= $totalRows ?? 0 ?></span>
                 </h3>
+                
+                <!-- (TRƯỜNG HỢP 2) TÌM KIẾM CƠ BẢN VÀ NÚT THÊM - Đặt ở góc phải header bảng -->
                 <div class="card-tools">
-                    <!-- Nút thêm mới nhỏ trong header bảng (tùy chọn) -->
-                    <a href="<?= route('admin.module.create') ?>" class="btn btn-primary btn-sm">
-                        <i class="fa-solid fa-plus"></i> Thêm mới
-                    </a>
+                    <form action="<?= route('admin.module.index') ?>" method="GET" class="d-inline-block">
+                        <div class="input-group input-group-sm" style="width: 250px;">
+                            <input type="text" name="keyword" class="form-control float-right" placeholder="Tìm kiếm..." value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>">
+                            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                        </div>
+                    </form>
+                    <a href="<?= route('admin.module.create') ?>" class="btn btn-sm btn-success ms-2"><i class="fa-solid fa-plus"></i> Thêm mới</a>
                 </div>
             </div>
             <div class="card-body p-0">
@@ -110,35 +115,42 @@ Mọi trang danh sách phải tuân theo cấu trúc 3 phần sau:
                                 <th style="width: 60px;" class="text-center">ID</th>
                                 <th>Tên</th>
                                 <th style="width: 100px;" class="text-center">Trạng thái</th>
-                                <th style="width: 100px;" class="text-center">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (!empty($items)): ?>
                                 <?php foreach ($items as $item): ?>
-                                <tr>
+                                <tr class="wp-row">
                                     <td class="text-center">
                                         <input type="checkbox" class="form-check-input row-check" value="<?= $item->id ?>">
                                     </td>
                                     <td class="text-center text-muted fw-bold"><?= $item->id ?></td>
-                                    <td><strong><?= htmlspecialchars($item->ten) ?></strong></td>
+                                    <td>
+                                        <strong><?= htmlspecialchars($item->ten) ?></strong>
+                                        
+                                        <!-- WP-Style Row Actions -->
+                                        <?php 
+                                        $actions = [
+                                            'edit' => [
+                                                'label' => 'Chỉnh sửa', 
+                                                'url' => route('admin.module.edit', ['id' => $item->id]), 
+                                                'class' => 'text-primary'
+                                            ],
+                                            'delete' => [
+                                                'label' => 'Xóa', 
+                                                'url' => route('admin.module.destroy', ['id' => $item->id]), 
+                                                'class' => 'text-danger btn-delete'
+                                            ]
+                                        ];
+                                        echo view('admin.components.row_actions', ['actions' => $actions]);
+                                        ?>
+                                    </td>
                                     <td class="text-center">
                                         <?php if ($item->hien_thi): ?>
                                             <span class="badge bg-success"><i class="fa-solid fa-check"></i> Hiển thị</span>
                                         <?php else: ?>
                                             <span class="badge bg-secondary"><i class="fa-solid fa-eye-slash"></i> Đã ẩn</span>
                                         <?php endif; ?>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="<?= route('admin.module.edit', ['id' => $item->id]) ?>"
-                                           class="btn btn-sm btn-outline-info" title="Chỉnh sửa">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
-                                        <a href="<?= route('admin.module.destroy', ['id' => $item->id]) ?>"
-                                           class="btn btn-sm btn-outline-danger" title="Xóa"
-                                           onclick="return confirm('Bạn có chắc muốn xóa?')">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
                                     </td>
                                 </tr>
                                 <?php endforeach; ?>
@@ -227,7 +239,7 @@ Mọi trang thêm/sửa phải theo bố cục **2 cột: 9-3 (col-md-9 + col-md
 
                 <!-- CỘT PHẢI: Cấu hình & Hành động -->
                 <div class="col-md-3">
-                    <div class="card card-outline card-secondary mb-4 sticky-top" style="top: 70px;">
+                    <div class="card card-outline card-secondary mb-4">
                         <div class="card-header">
                             <h3 class="card-title"><i class="fa-solid fa-gears text-secondary"></i> Thiết lập</h3>
                         </div>
@@ -247,15 +259,16 @@ Mọi trang thêm/sửa phải theo bố cục **2 cột: 9-3 (col-md-9 + col-md
                             </div>
 
                         </div>
-                        <div class="card-footer bg-white border-top-0">
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-sm">
-                                    <i class="fa-solid fa-save"></i> <?= $isEdit ? 'Lưu cập nhật' : 'Thêm mới' ?>
-                                </button>
-                                <a href="<?= route('admin.module.index') ?>" class="btn btn-light border btn-sm">
-                                    <i class="fa-solid fa-arrow-left"></i> Trở về
-                                </a>
-                            </div>
+                        <div class="card-footer d-flex justify-content-end gap-1">
+                            <a href="<?= route('admin.module.index') ?>" class="btn btn-secondary btn-sm">
+                                <i class="fa-solid fa-arrow-left"></i> Quay lại
+                            </a>
+                            <button type="submit" name="submit_action" value="save" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-save"></i> Lưu
+                            </button>
+                            <button type="submit" name="submit_action" value="save_and_edit" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -366,9 +379,9 @@ Thêm tab ngôn ngữ vào cột trái:
 ### 4.3 Form thêm/sửa - Cột thiết lập phải (Sidebar)
 
 ```html
-<div class="card card-outline card-secondary mb-4 sticky-top" style="top: 70px;">
+<div class="card card-outline card-secondary mb-4">
 ```
-*(Viền màu xám, sticky để luôn hiển thị khi cuộn)*
+*(Viền màu xám)*
 
 ### 4.4 Bộ lọc (Filter)
 
@@ -391,10 +404,9 @@ Thêm tab ngôn ngữ vào cột trái:
 | Checkbox | `text-center` | Width: 40px |
 | ID | `text-center` | Width: 60px, `text-muted fw-bold` |
 | Hình ảnh (nếu có) | `text-center` | Width: 100px, `img-thumbnail` h45px |
-| Tên / Tiêu đề chính | Trái | Dùng `<strong>` |
+| Tên / Tiêu đề chính | Trái | Dùng `<strong>`, thẻ `<tr>` phải có class `.wp-row`, và chèn component `row_actions` ở dưới tiêu đề này |
 | Số thứ tự | `text-center` | |
 | Trạng thái | `text-center` | Dùng `<badge>` |
-| Thao tác | `text-center` | Width: 100px, chỉ icon, chỉ `btn-outline-*` |
 
 **Trạng thái hiển thị (Badge):**
 
@@ -519,8 +531,7 @@ Trước khi hoàn thành một module, hãy kiểm tra lại:
 - [ ] Trang Index có **phân trang** (`pagination-sm`) trong `card-footer` không?
 - [ ] Trang Index có **hàng trống** (`Chưa có dữ liệu nào`) khi không có bản ghi không?
 - [ ] Tất cả input/select trong form đã dùng **`-sm` size** chưa?
-- [ ] Button Thao tác trong bảng chỉ dùng **icon** (không có chữ) chưa?
-- [ ] Cột phải của form có **`sticky-top`** không?
+- [ ] Button Thao tác trong bảng phải dùng **WP-Style Row Actions** component ở dưới Cột Tên (Không tách riêng cột thao tác) chưa?
 - [ ] Flash message (`$_SESSION['success']` / `$_SESSION['error']`) đã được hiển thị chưa?
 - [ ] Breadcrumb đã hiển thị đúng cây điều hướng chưa?
 

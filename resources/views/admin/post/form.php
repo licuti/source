@@ -4,7 +4,7 @@ if (!function_exists('renderCategoryTree')) {
         foreach ($categories as $cat) {
             if ($currentEditingId > 0 && $cat->id_code == $currentEditingId) continue;
             $selected = ($cat->id_code == $selectedId) ? 'selected' : '';
-            echo '<option value="' . $cat->id_code . '" ' . $selected . '>' . $prefix . htmlspecialchars($cat->ten) . '</option>';
+            echo '<option value="' . $cat->id_code . '" ' . $selected . '>' . $prefix . htmlspecialchars($cat->name ?? $cat->ten) . '</option>';
             if (!empty($cat->children)) {
                 renderCategoryTree($cat->children, $selectedId, $currentEditingId, $prefix . '--- ');
             }
@@ -12,14 +12,14 @@ if (!function_exists('renderCategoryTree')) {
     }
 }
 $isEdit = isset($item);
-$action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : route('admin.category.store');
+$action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('admin.post.store');
 ?>
 
 <?= view('admin.components.breadcrumb', [
-    'title' => $isEdit ? 'Cập nhật danh mục' : 'Thêm danh mục mới',
+    'title' => $isEdit ? 'Cập nhật bài viết' : 'Thêm bài viết mới',
     'bitems' => [
         ['name' => 'Bảng điều khiển', 'url' => route('admin.dashboard')],
-        ['name' => 'Danh mục', 'url' => route('admin.category.index')],
+        ['name' => 'Bài viết', 'url' => route('admin.post.index')],
         ['name' => $isEdit ? 'Cập nhật' : 'Thêm mới', 'url' => '']
     ]
 ]) ?>
@@ -49,7 +49,7 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
                                 <div class="tab-pane fade <?= $i === 0 ? 'show active' : '' ?>" id="content-<?= $c ?>" role="tabpanel" aria-labelledby="tab-<?= $c ?>">
                                     
                                     <div class="mb-3">
-                                        <label class="form-label fw-bold">Tên danh mục <span class="text-danger">*</span></label>
+                                        <label class="form-label fw-bold">Tiêu đề bài viết <span class="text-danger">*</span></label>
                                         <input type="text" name="ten[<?= $c ?>]" class="form-control form-control-sm" placeholder="Nhập tên..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" required>
                                     </div>
                                     
@@ -91,21 +91,12 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
                             <div class="mb-3">
                                 <label class="form-label">Danh mục cha</label>
                                 <select name="id_loai" class="form-select form-select-sm">
-                                    <option value="0">--- Trở thành Danh mục gốc ---</option>
-                                    <?php renderCategoryTree($parentCategories ?? [], $item['id_loai'] ?? 0, $item['id'] ?? 0); ?>
+                                    <option value="0">--- Chọn danh mục ---</option>
+                                    <?php renderCategoryTree($categories ?? [], $item['id_loai'] ?? 0); ?>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label">Phân loại hiển thị (Module)</label>
-                                <select name="module" class="form-select form-select-sm">
-                                    <?php foreach ($modules ?? [] as $mod): ?>
-                                    <option value="<?= htmlspecialchars($mod->id) ?>" <?= ($item['module'] ?? '') == $mod->id ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($mod->title) ?>
-                                    </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+
 
                             <!-- Nhúng Component Tải ảnh tái sử dụng -->
                             <?= view('admin.components.image_upload', [

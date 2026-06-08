@@ -17,12 +17,12 @@
                     <form action="<?= route('admin.user.index') ?>" method="GET" class="d-inline-block">
                         <div class="input-group input-group-sm" style="width: 250px;">
                             <input type="text" name="keyword" class="form-control float-right" placeholder="Tìm tên, email, tài khoản..." value="<?= htmlspecialchars($_GET['keyword'] ?? '') ?>">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default"><i class="fa-solid fa-search"></i></button>
-                            </div>
+                            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                         </div>
                     </form>
+                    <?php if (hasPermission('admin.user', 'add')): ?>
                     <a href="<?= route('admin.user.create') ?>" class="btn btn-sm btn-success ms-2"><i class="fa-solid fa-plus"></i> Thêm Mới</a>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -31,7 +31,7 @@
                     <table class="table table-hover table-striped align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center" width="50">ID</th>
+
                                 <th>Tài khoản</th>
                                 <th>Họ tên</th>
                                 <th>Email</th>
@@ -45,7 +45,7 @@
                             <?php else: ?>
                                 <?php foreach ($users->data as $item): ?>
                                     <tr class="wp-row">
-                                        <td class="text-center"><?= $item->id ?></td>
+
                                         <td>
                                             <strong><?= htmlspecialchars($item->username) ?></strong>
                                             <?php if ($item->is_admin == 1): ?>
@@ -54,21 +54,24 @@
                                             
                                             <!-- WP-Style Row Actions -->
                                             <?php 
-                                            $userActions = [
-                                                'edit' => [
+                                            $userActions = [];
+                                            if (hasPermission('admin.user', 'edit')) {
+                                                $userActions['edit'] = [
                                                     'label' => 'Chỉnh sửa', 
                                                     'url' => route('admin.user.edit', ['id' => $item->id]), 
                                                     'class' => 'text-primary'
-                                                ]
-                                            ];
-                                            if ($item->id != session('id_user') && $item->is_admin != 1) {
+                                                ];
+                                            }
+                                            if ($item->id != session('id_user') && $item->is_admin != 1 && hasPermission('admin.user', 'delete')) {
                                                 $userActions['delete'] = [
                                                     'label' => 'Xóa', 
                                                     'url' => route('admin.user.destroy', ['id' => $item->id]), 
                                                     'class' => 'text-danger btn-delete'
                                                 ];
                                             }
-                                            echo view('admin.components.row_actions', ['actions' => $userActions]);
+                                            if (!empty($userActions)) {
+                                                echo view('admin.components.row_actions', ['actions' => $userActions]);
+                                            }
                                             ?>
                                         </td>
                                         <td><?= htmlspecialchars($item->fullname) ?></td>
@@ -82,7 +85,7 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="form-check form-switch d-inline-block">
-                                                <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="<?= $item->id ?>" data-field="is_active" data-url="<?= route('admin.user.updateStatusAjax') ?>" <?= $item->is_active == 1 ? 'checked' : '' ?> <?= ($item->is_admin == 1 && session('is_admin') != 1) ? 'disabled' : '' ?> style="cursor: pointer;">
+                                                <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="<?= $item->id ?>" data-field="is_active" data-url="<?= route('admin.user.updateStatusAjax') ?>" <?= $item->is_active == 1 ? 'checked' : '' ?> <?= ($item->is_admin == 1 && session('is_admin') != 1 || !hasPermission('admin.user', 'edit')) ? 'disabled' : '' ?> style="cursor: pointer;">
                                             </div>
                                         </td>
                                     </tr>

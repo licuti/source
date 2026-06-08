@@ -23,8 +23,8 @@ class CategoryController extends BaseAdminController {
             $allCategories = CategoryModel::getAllForAdmin();
             $filtered = [];
             foreach ($allCategories as $cat) {
-                $matchKeyword = $keyword === '' || mb_stripos($cat->ten, $keyword) !== false || (string)$cat->id_code === $keyword;
-                $matchStatus = $status === '' || (string)$cat->hien_thi === $status;
+                $matchKeyword = $keyword === '' || mb_stripos($cat->name, $keyword) !== false || (string)$cat->id_code === $keyword;
+                $matchStatus = $status === '' || (string)$cat->is_active === $status;
                 if ($matchKeyword && $matchStatus) {
                     $filtered[] = $cat;
                 }
@@ -83,12 +83,12 @@ class CategoryController extends BaseAdminController {
         
         foreach ($translations as $t) {
             $lang = $t->lang;
-            $item["ten"][$lang] = $t->ten;
+            $item["ten"][$lang] = $t->name;
             $item["alias"][$lang] = $t->alias;
-            $item["mo_ta"][$lang] = $t->mo_ta;
-            $item["noi_dung"][$lang] = $t->noi_dung;
+            $item["mo_ta"][$lang] = $t->description;
+            $item["noi_dung"][$lang] = $t->content;
             if (empty($item["hinh_anh"])) {
-                $item["hinh_anh"] = $t->hinh_anh;
+                $item["hinh_anh"] = $t->image;
             }
         }
         
@@ -128,15 +128,15 @@ class CategoryController extends BaseAdminController {
                 CategoryModel::insert([
                     'id_code'   => $id_code,
                     'lang'      => $c,
-                    'ten'       => $request->input('ten')[$c] ?? '',
+                    'name'      => $request->input('ten')[$c] ?? '',
                     'alias'     => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
-                    'mo_ta'     => $request->input('mo_ta')[$c] ?? '',
-                    'noi_dung'  => $request->input('noi_dung')[$c] ?? '',
-                    'hinh_anh'  => $request->input('hinh_anh') ?? '',
-                    'id_loai'   => $id_loai,
+                    'description'=> $request->input('mo_ta')[$c] ?? '',
+                    'content'   => $request->input('noi_dung')[$c] ?? '',
+                    'image'     => $request->input('hinh_anh') ?? '',
+                    'parent_id' => $id_loai,
                     'module'    => $module,
-                    'so_thu_tu' => $so_thu_tu,
-                    'hien_thi'  => $hien_thi
+                    'sort_order'=> $so_thu_tu,
+                    'is_active' => $hien_thi
                 ]);
             }
         }
@@ -183,15 +183,15 @@ class CategoryController extends BaseAdminController {
             $exists = $catQuery->where('id_code', $id)->where('lang', $c)->first();
             
             $data = [
-                'ten'       => $request->input('ten')[$c] ?? '',
+                'name'      => $request->input('ten')[$c] ?? '',
                 'alias'     => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
-                'mo_ta'     => $request->input('mo_ta')[$c] ?? '',
-                'noi_dung'  => $request->input('noi_dung')[$c] ?? '',
-                'hinh_anh'  => $request->input('hinh_anh') ?? '',
-                'id_loai'   => $id_loai,
+                'description'=> $request->input('mo_ta')[$c] ?? '',
+                'content'   => $request->input('noi_dung')[$c] ?? '',
+                'image'     => $request->input('hinh_anh') ?? '',
+                'parent_id' => $id_loai,
                 'module'    => $module,
-                'so_thu_tu' => $so_thu_tu,
-                'hien_thi'  => $hien_thi
+                'sort_order'=> $so_thu_tu,
+                'is_active' => $hien_thi
             ];
             
             if ($exists) {
@@ -213,18 +213,21 @@ class CategoryController extends BaseAdminController {
      */
     public function updateStatusAjax(Request $request) {
         $id = (int)$request->input('id');
-        $field = $request->input('field', 'hien_thi'); // Mặc định là hien_thi
+        $field = $request->input('field', 'is_active'); // Mặc định là is_active
         $value = (int)$request->input('value', 0);
 
         // Danh sách các cột được phép update qua AJAX để bảo mật
-        $allowedFields = ['hien_thi']; 
+        $allowedFields = ['is_active', 'hien_thi']; 
         if (!in_array($field, $allowedFields)) {
             return $this->json(['success' => false, 'message' => 'Trường dữ liệu không hợp lệ']);
         }
 
         if ($id > 0) {
-            CfCodeModel::query()->where('id', $id)->update([$field => $value]);
+            // Update in cf_code (still uses hien_thi)
+            $cfField = $field == 'is_active' ? 'hien_thi' : $field;
+            CfCodeModel::query()->where('id', $id)->update([$cfField => $value]);
             
+            // Update in db_categories (uses is_active)
             $catQuery = CategoryModel::query();
             $catQuery->use_lang = false;
             $catQuery->where('id_code', $id)->update([$field => $value]);
