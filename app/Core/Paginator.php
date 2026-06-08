@@ -46,6 +46,20 @@ class Paginator implements \IteratorAggregate, \Countable, \ArrayAccess {
         return paging($this->total, $this->perPage, $this->currentPage, $url);
     }
 
+    /**
+     * Tương thích ngược với mã cũ (truy cập thuộc tính public)
+     */
+    public function __get($name) {
+        switch ($name) {
+            case 'data': return $this->items;
+            case 'total': return $this->total;
+            case 'per_page': return $this->perPage;
+            case 'current_page': return $this->currentPage;
+            case 'last_page': return $this->lastPage;
+        }
+        return null;
+    }
+
     // --- IteratorAggregate ---
     public function getIterator(): \Traversable {
         return new \ArrayIterator($this->items);

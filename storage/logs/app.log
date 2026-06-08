@@ -12797,3 +12797,68 @@
 [2026-06-08 14:19:21] [INFO]: App kernel booted in modern mode.
 [2026-06-08 14:24:57] [INFO]: App kernel booted in modern mode.
 [2026-06-08 14:28:52] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:09:42] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:10:27] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:10:28] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:10:31] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:10:35] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:10:47] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:10:47] [ERROR]: Cannot access protected property App\Core\Paginator::$total
+#0 C:\laragon\www\source\app\Core\View.php(57): include()
+#1 C:\laragon\www\source\app\Helpers\core.php(213): App\Core\View->render('admin.role.inde...', Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\BaseAdminController.php(22): view('admin.role.inde...', Array)
+#3 C:\laragon\www\source\app\Controllers\Admin\RoleAdminController.php(20): App\Controllers\Admin\BaseAdminController->render('admin.role.inde...', Array)
+#4 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\RoleAdminController->index(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#16 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#17 {main}
+[2026-06-08 15:10:51] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:10:51] [ERROR]: Cannot access protected property App\Core\Paginator::$total
+#0 C:\laragon\www\source\app\Core\View.php(57): include()
+#1 C:\laragon\www\source\app\Helpers\core.php(213): App\Core\View->render('admin.user.inde...', Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\BaseAdminController.php(22): view('admin.user.inde...', Array)
+#3 C:\laragon\www\source\app\Controllers\Admin\UserAdminController.php(25): App\Controllers\Admin\BaseAdminController->render('admin.user.inde...', Array)
+#4 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\UserAdminController->index(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#16 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#17 {main}
+[2026-06-08 15:11:05] [INFO]: App kernel booted in modern mode.
+[2026-06-08 15:11:05] [ERROR]: Cannot access protected property App\Core\Paginator::$total
+#0 C:\laragon\www\source\app\Core\View.php(57): include()
+#1 C:\laragon\www\source\app\Helpers\core.php(213): App\Core\View->render('admin.user.inde...', Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\BaseAdminController.php(22): view('admin.user.inde...', Array)
+#3 C:\laragon\www\source\app\Controllers\Admin\UserAdminController.php(25): App\Controllers\Admin\BaseAdminController->render('admin.user.inde...', Array)
+#4 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\UserAdminController->index(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#16 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#17 {main}
