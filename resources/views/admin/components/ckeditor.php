@@ -7,15 +7,40 @@
  * @param string $id Tên id (nếu rỗng sẽ tự lấy bằng $name)
  * @param string $label Nhãn
  */
-$id = $id ?? $name;
+$name = $name ?? '';
+$value = $value ?? '';
 $label = $label ?? 'Nội dung';
+$help_text = $help_text ?? '';
+$attrs = $attrs ?? [];
 
-// Xử lý ID an toàn nếu name có chứa ngoặc vuông (mảng) VD: noi_dung[vi] -> noi_dung_vi
-$idSafe = str_replace(['[', ']'], ['_', ''], $id);
+// Khởi tạo ID tự động nếu không có
+if (!isset($attrs['id'])) {
+    // Xử lý ID an toàn nếu name có chứa ngoặc vuông (mảng) VD: noi_dung[vi] -> noi_dung_vi
+    $attrs['id'] = str_replace(['[', ']'], ['_', ''], $name);
+}
+$idSafe = $attrs['id'];
+
+$baseClass = 'form-control ckeditor-instance';
+if (isset($attrs['class'])) {
+    $attrs['class'] = $baseClass . ' ' . $attrs['class'];
+} else {
+    $attrs['class'] = $baseClass;
+}
+
+if (!isset($attrs['rows'])) $attrs['rows'] = 5;
+
+$attrString = render_attrs($attrs);
 ?>
 <div class="mb-3">
-    <label for="<?= htmlspecialchars($idSafe) ?>" class="form-label"><?= htmlspecialchars($label) ?></label>
-    <textarea name="<?= htmlspecialchars($name) ?>" id="<?= htmlspecialchars($idSafe) ?>" class="form-control ckeditor-instance" rows="5"><?= htmlspecialchars($value ?? '') ?></textarea>
+    <?php if ($label): ?>
+        <label for="<?= htmlspecialchars($idSafe) ?>" class="form-label fw-bold"><?= htmlspecialchars($label) ?></label>
+    <?php endif; ?>
+    
+    <textarea name="<?= htmlspecialchars($name) ?>" <?= $attrString ?>><?= htmlspecialchars((string)$value) ?></textarea>
+    
+    <?php if ($help_text): ?>
+        <small class="text-muted fst-italic"><?= htmlspecialchars($help_text) ?></small>
+    <?php endif; ?>
 </div>
 
 <!-- Tải CKEditor từ thư viện dùng chung (CHỈ TẢI 1 LẦN DUY NHẤT TRÊN TRANG) -->

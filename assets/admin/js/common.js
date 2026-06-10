@@ -164,4 +164,24 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Khởi tạo trạng thái ban đầu
     updateBulkPanel();
+
+    // ==========================================
+    // 3. TỰ ĐỘNG CHUYỂN TAB KHI CÓ LỖI VALIDATION
+    // ==========================================
+    // Tự động chuyển tab nếu có input bị lỗi HTML5 validation (required) nằm trong tab đang ẩn
+    document.addEventListener('invalid', function(e) {
+        let target = e.target;
+        let tabPane = target.closest('.tab-pane:not(.active)');
+        
+        if (tabPane) {
+            let tabId = tabPane.getAttribute('id');
+            let tabButton = document.querySelector(`[data-bs-target="#${tabId}"]`);
+            
+            if (tabButton && typeof bootstrap !== 'undefined') {
+                let tab = new bootstrap.Tab(tabButton);
+                tab.show();
+                setTimeout(() => target.focus(), 200);
+            }
+        }
+    }, true);
 });

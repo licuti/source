@@ -8,20 +8,36 @@
  * @param string $label Nhãn (Mặc định: 'Chọn hình ảnh')
  * @param string $path Đường dẫn hiển thị ảnh cũ (Mặc định: '/img_data/images/')
  */
-$id = $id ?? $name;
+$name = $name ?? '';
+$value = $value ?? '';
 $label = $label ?? 'Chọn hình ảnh';
 $path = $path ?? '/img_data/images/';
+$help_text = $help_text ?? '';
+$attrs = $attrs ?? [];
+
+if (!isset($attrs['id'])) {
+    $attrs['id'] = $name ?: uniqid('img_');
+}
+$id = $attrs['id'];
+
 $imageSrc = (!empty($value)) ? $path . $value : '/assets/admin/img/no-image.png';
+
+$attrString = render_attrs($attrs);
 ?>
 <div class="mb-3">
-    <label class="form-label"><?= htmlspecialchars($label) ?></label>
-    <div class="input-group">
-        <input type="text" class="form-control" name="<?= htmlspecialchars($name) ?>" id="<?= htmlspecialchars($id) ?>" value="<?= htmlspecialchars($value ?? '') ?>" readonly>
+    <?php if ($label): ?>
+        <label class="form-label fw-bold"><?= htmlspecialchars($label) ?></label>
+    <?php endif; ?>
+    <div class="input-group input-group-sm">
+        <input type="text" class="form-control" name="<?= htmlspecialchars($name) ?>" value="<?= htmlspecialchars($value ?? '') ?>" readonly <?= $attrString ?>>
         <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('<?= htmlspecialchars($id) ?>', '<?= htmlspecialchars($path) ?>')">Chọn ảnh</button>
     </div>
     <div class="mt-2 text-center" style="max-width: 200px; border: 1px dashed #ced4da; padding: 5px; border-radius: 4px; background: #f8f9fa;">
         <img src="<?= $imageSrc ?>" id="preview_<?= htmlspecialchars($id) ?>" alt="Preview" style="max-width: 100%; height: auto;">
     </div>
+    <?php if ($help_text): ?>
+        <small class="text-muted fst-italic"><?= htmlspecialchars($help_text) ?></small>
+    <?php endif; ?>
 </div>
 
 <!-- Đảm bảo CKFinder script được nhúng 1 lần duy nhất -->

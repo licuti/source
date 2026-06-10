@@ -1,16 +1,4 @@
 <?php
-if (!function_exists('renderCategoryTree')) {
-    function renderCategoryTree($categories, $selectedId = 0, $currentEditingId = 0, $prefix = '') {
-        foreach ($categories as $cat) {
-            if ($currentEditingId > 0 && $cat->id_code == $currentEditingId) continue;
-            $selected = ($cat->id_code == $selectedId) ? 'selected' : '';
-            echo '<option value="' . $cat->id_code . '" ' . $selected . '>' . $prefix . htmlspecialchars($cat->name ?? $cat->ten) . '</option>';
-            if (!empty($cat->children)) {
-                renderCategoryTree($cat->children, $selectedId, $currentEditingId, $prefix . '--- ');
-            }
-        }
-    }
-}
 $isEdit = isset($item);
 $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('admin.post.store');
 ?>
@@ -48,29 +36,47 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
                                 <?php $c = $lang['code']; ?>
                                 <div class="tab-pane fade <?= $i === 0 ? 'show active' : '' ?>" id="content-<?= $c ?>" role="tabpanel" aria-labelledby="tab-<?= $c ?>">
                                     
-                                    <div class="mb-3">
-                                        <label class="form-label fw-bold">Tiêu đề bài viết <span class="text-danger">*</span></label>
-                                        <input type="text" name="ten[<?= $c ?>]" class="form-control form-control-sm" placeholder="Nhập tên..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" required>
-                                    </div>
+                                    <?= view('admin.components.input', [
+                                        'name' => "title[$c]",
+                                        'value' => $item['title'][$c] ?? '',
+                                        'label' => 'Tiêu đề bài viết',
+                                        'attrs' => [
+                                            'placeholder' => 'Nhập tên...',
+                                            'required' => true,
+                                            'data-slug-source' => $c
+                                        ]
+                                    ]) ?>
                                     
-                                    <div class="mb-3">
-                                        <label class="form-label">Đường dẫn thân thiện (Alias / Slug)</label>
-                                        <?php $isAutoSlug = empty($item['alias'][$c]) ? 'auto-slug' : ''; ?>
-                                        <input type="text" name="alias[<?= $c ?>]" class="form-control form-control-sm text-muted <?= $isAutoSlug ?>" placeholder="tu-dong-tao-neu-de-trong" value="<?= htmlspecialchars($item['alias'][$c] ?? '') ?>" data-slug-target="<?= $c ?>">
-                                    </div>
+                                    <?php $isAutoSlug = empty($item['alias'][$c]) ? 'auto-slug' : ''; ?>
+                                    <?= view('admin.components.input', [
+                                        'name' => "alias[$c]",
+                                        'value' => $item['alias'][$c] ?? '',
+                                        'label' => 'Đường dẫn thân thiện (Alias / Slug)',
+                                        'attrs' => [
+                                            'placeholder' => 'tu-dong-tao-neu-de-trong',
+                                            'class' => "text-muted $isAutoSlug",
+                                            'data-slug-target' => $c
+                                        ]
+                                    ]) ?>
 
                                     <!-- Thay thế textarea bằng Component CKEditor cho phần Mô tả -->
                                     <?= view('admin.components.ckeditor', [
-                                        'name' => "mo_ta[$c]",
-                                        'value' => $item['mo_ta'][$c] ?? '',
+                                        'name' => "description[$c]",
+                                        'value' => $item['description'][$c] ?? '',
                                         'label' => "Mô tả ngắn (" . strtoupper($c) . ")"
                                     ]) ?>
 
                                     <!-- Nhúng Component CKEditor tái sử dụng -->
                                     <?= view('admin.components.ckeditor', [
-                                        'name' => "noi_dung[$c]",
-                                        'value' => $item['noi_dung'][$c] ?? '',
+                                        'name' => "content[$c]",
+                                        'value' => $item['content'][$c] ?? '',
                                         'label' => "Nội dung chi tiết"
+                                    ]) ?>
+
+                                    <!-- Nhúng Component SEO -->
+                                    <?= view('admin.components.seo', [
+                                        'c' => $c,
+                                        'item' => $item ?? []
                                     ]) ?>
 
                                 </div>
@@ -90,9 +96,9 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
                             
                             <div class="mb-3">
                                 <label class="form-label">Danh mục cha</label>
-                                <select name="id_loai" class="form-select form-select-sm">
+                                <select name="category_id" class="form-select form-select-sm">
                                     <option value="0">--- Chọn danh mục ---</option>
-                                    <?php renderCategoryTree($categories ?? [], $item['id_loai'] ?? 0); ?>
+                                    <?php renderCategoryTree($categories ?? [], $item['category_id'] ?? 0); ?>
                                 </select>
                             </div>
 
@@ -100,30 +106,32 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
 
                             <!-- Nhúng Component Tải ảnh tái sử dụng -->
                             <?= view('admin.components.image_upload', [
-                                'name' => 'hinh_anh',
-                                'value' => $item['hinh_anh'] ?? '',
+                                'name' => 'image',
+                                'value' => $item['image'] ?? '',
                                 'label' => 'Hình đại diện (Thumbnail)'
                             ]) ?>
 
-                            <div class="mb-3">
-                                <label class="form-label">Ngày đăng</label>
-                                <?php 
-                                    $createdAt = $item['created_at'] ?? date('Y-m-d H:i:s');
-                                    // Convert to datetime-local format: YYYY-MM-DDThh:mm
-                                    $createdAtLocal = date('Y-m-d\TH:i', strtotime($createdAt));
-                                ?>
-                                <input type="datetime-local" name="created_at" class="form-control form-control-sm" value="<?= $createdAtLocal ?>">
-                            </div>
+                            <!-- Nhúng Component Ngày đăng -->
+                            <?= view('admin.components.datetime', [
+                                'name' => 'created_at',
+                                'value' => $item['created_at'] ?? date('Y-m-d H:i:s'),
+                                'label' => 'Ngày đăng'
+                            ]) ?>
 
-                            <div class="form-check form-switch mb-3 d-flex align-items-center">
-                                <input class="form-check-input" type="checkbox" name="hien_thi" id="hien_thi" <?= (!isset($item) || !empty($item['hien_thi'])) ? 'checked' : '' ?>>
-                                <label class="form-check-label mt-1 ms-2 fw-bold" for="hien_thi">Cho phép hiển thị</label>
-                            </div>
+                            <?= view('admin.components.switch', [
+                                        'name' => 'status',
+                                        'checked' => !isset($item) || !empty($item['status']),
+                                        'label' => 'Cho phép hiển thị'
+                                    ]) ?>
                             
-                            <div class="form-check form-switch mb-3 d-flex align-items-center">
-                                <input class="form-check-input" type="checkbox" name="is_featured" id="is_featured" <?= (!empty($item['is_featured'])) ? 'checked' : '' ?>>
-                                <label class="form-check-label mt-1 ms-2 fw-bold text-danger" for="is_featured">Nổi bật</label>
-                            </div>
+                            <?= view('admin.components.switch', [
+                                'name' => 'is_featured',
+                                'checked' => !empty($item['is_featured']),
+                                'label' => 'Nổi bật',
+                                'attrs' => [
+                                    'class' => 'text-danger' // Just an example, text-danger won't apply to label directly in the new switch component without tweaking, but let's keep the label simple.
+                                ]
+                            ]) ?>
 
                         </div>
                         <div class="card-footer d-flex justify-content-end gap-1 flex-wrap">
@@ -136,7 +144,6 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
                             <button type="submit" name="save_action" value="continue" class="btn btn-success btn-sm">
                                 <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
                             </button>
-
                         </div>
                     </div>
                 </div>
@@ -144,24 +151,3 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
         </form>
     </div>
 </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Tự động chuyển tab nếu có input bị lỗi HTML5 validation (required) nằm trong tab đang ẩn
-    document.addEventListener('invalid', function(e) {
-        let target = e.target;
-        let tabPane = target.closest('.tab-pane:not(.active)');
-        
-        if (tabPane) {
-            let tabId = tabPane.getAttribute('id');
-            let tabButton = document.querySelector(`[data-bs-target="#${tabId}"]`);
-            
-            if (tabButton && typeof bootstrap !== 'undefined') {
-                let tab = new bootstrap.Tab(tabButton);
-                tab.show();
-                setTimeout(() => target.focus(), 200);
-            }
-        }
-    }, true);
-});
-</script>

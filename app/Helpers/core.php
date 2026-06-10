@@ -16,6 +16,44 @@ if (!function_exists('base_path')) {
     }
 }
 
+if (!function_exists('render_attrs')) {
+    /**
+     * Chuyển đổi mảng các thuộc tính thành chuỗi HTML chuẩn
+     * VD: ['id' => 'my-id', 'required' => true] -> 'id="my-id" required'
+     */
+    function render_attrs($attrs = []) {
+        if (empty($attrs)) return '';
+        $html = [];
+        foreach ($attrs as $key => $value) {
+            if (is_bool($value)) {
+                if ($value) {
+                    $html[] = htmlspecialchars($key);
+                }
+            } elseif ($value !== null && $value !== '') {
+                $html[] = htmlspecialchars($key) . '="' . htmlspecialchars((string)$value) . '"';
+            }
+        }
+        return implode(' ', $html);
+    }
+}
+
+if (!function_exists('renderCategoryTree')) {
+    /**
+     * Hiển thị cây danh mục dạng thẻ <option> cho thẻ <select>
+     * Hỗ trợ đệ quy n cấp và chặn chọn chính nó làm cha
+     */
+    function renderCategoryTree($categories, $selectedId = 0, $currentEditingId = 0, $prefix = '') {
+        foreach ($categories as $cat) {
+            if ($currentEditingId > 0 && $cat->id_code == $currentEditingId) continue;
+            $selected = ($cat->id_code == $selectedId) ? 'selected' : '';
+            echo '<option value="' . $cat->id_code . '" ' . $selected . '>' . $prefix . htmlspecialchars($cat->name ?? $cat->ten) . '</option>';
+            if (!empty($cat->children)) {
+                renderCategoryTree($cat->children, $selectedId, $currentEditingId, $prefix . '--- ');
+            }
+        }
+    }
+}
+
 if (!function_exists('app_path')) {
     function app_path($path = '') {
         return base_path('app' . ($path ? DIRECTORY_SEPARATOR . ltrim($path, '/') : ''));

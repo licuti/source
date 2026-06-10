@@ -5,17 +5,16 @@ use App\Core\Request;
 use App\Models\ModuleModel;
 use CategoryModel;
 use PostModel;
-use CfCodeModel;
 
 class PostController extends BaseAdminController {
     
     /**
      * Helper kiểm tra quyền sở hữu hoặc quyền admin
      */
-    private function canEditPost($created_by) {
+    private function canEditPost($createdBy) {
         $user = user();
         if ($user->is_admin == 1) return true;
-        if ($user->id == $created_by) return true;
+        if ($user->id == $createdBy) return true;
         return false;
     }
 
@@ -31,13 +30,49 @@ class PostController extends BaseAdminController {
     }
 
     /**
+     * Helper gom dữ liệu chung cho thao tác Thêm / Sửa
+     */
+    private function getPostData(Request $request, string $lang, int $categoryId, int $status, int $sortOrder, $createdAt = null): array {
+        $titleInput = $request->input('title', []);
+        $title = $titleInput[$lang] ?? '';
+        $aliasInput = $request->input('alias', []);
+        $alias = empty($aliasInput[$lang]) ? str_slug($title) : $aliasInput[$lang];
+
+        $data = [
+            'title'           => $title,
+            'alias'           => $alias,
+            'description'     => $request->input('description')[$lang] ?? '',
+            'content'         => $request->input('content')[$lang] ?? '',
+            'image'           => $request->input('image') ?? '',
+            'seo_title'       => $request->input('seo_title')[$lang] ?? '',
+            'seo_description' => $request->input('seo_description')[$lang] ?? '',
+            'keyword'         => $request->input('keyword')[$lang] ?? '',
+            'tags'            => $request->input('tags')[$lang] ?? '',
+            'noindex'         => isset($request->input('noindex')[$lang]) ? 1 : 0,
+            'nofollow'        => isset($request->input('nofollow')[$lang]) ? 1 : 0,
+            'seo_head'        => $request->input('seo_head')[$lang] ?? '',
+            'seo_body'        => $request->input('seo_body')[$lang] ?? '',
+            'category_id'     => $categoryId,
+            'sort_order'      => $sortOrder,
+            'status'          => $status,
+            'is_featured'     => $request->input('is_featured') !== null ? 1 : 0,
+        ];
+
+        if ($createdAt) {
+            $data['created_at'] = $createdAt;
+        }
+
+        return $data;
+    }
+
+    /**
      * Hiển thị danh sách bài viết
      */
     public function index(Request $request) {
         $keyword = trim($request->input('keyword', ''));
-        $hien_thi = $request->input('hien_thi', '');
-        $category_id = (int)$request->input('category_id', 0);
-        $page    = (int)$request->input('page', 1);
+        $status = $request->input('status', ''); // Update from hien_thi
+        $categoryId = (int)$request->input('category_id', 0);
+        $page = (int)$request->input('page', 1);
         if ($page < 1) $page = 1;
         $limit = 10;
 
@@ -46,29 +81,25 @@ class PostController extends BaseAdminController {
         // Chỉ lấy 1 ngôn ngữ làm đại diện để đếm và hiển thị (VD: 'vi')
         $postQuery->where('lang', 'vi');
         
-        $user = user();
-        if ($user->is_admin != 1) {
-            $postQuery->where('created_by', $user->id);
-        }
+        $postQuery = $this->applyOwnershipFilter($postQuery);
 
-        if ($hien_thi !== '') {
-            $postQuery->where('status', $hien_thi);
+        if ($status !== '') {
+            $postQuery->where('status', $status);
         }
         
-        if ($category_id > 0) {
-            $postQuery->where('category_id', $category_id);
+        if ($categoryId > 0) {
+            $postQuery->where('category_id', $categoryId);
         }
 
         if ($keyword !== '') {
             $postQuery->whereLike('title', $keyword);
         }
 
-        // 1. Phân trang kiểu Laravel
         $posts = $postQuery->orderBy('sort_order', 'ASC')->orderBy('id', 'DESC')->paginate($limit);
 
         $categories = CategoryModel::getTreeForAdminByModule(config('modules.post'));
 
-        return $this->render('admin.post.index', compact('posts', 'keyword', 'hien_thi', 'category_id', 'categories'));
+        return $this->render('admin.post.index', compact('posts', 'keyword', 'status', 'categoryId', 'categories'));
     }
 
     /**
@@ -102,26 +133,33 @@ class PostController extends BaseAdminController {
             return $this->redirect(route('admin.post.index'));
         }
 
-        // Chuyển hóa dữ liệu để render lên form
+        // Chuyển hóa dữ liệu để render lên form (Dùng English Keys)
         $item = [
-            'id'        => $id, 
-            'id_loai'   => $firstPost->category_id, 
-            'so_thu_tu' => $firstPost->sort_order, 
-            'hien_thi'  => $firstPost->status,
-            'created_at'=> $firstPost->created_at,
+            'id'          => $id, 
+            'category_id' => $firstPost->category_id, 
+            'sort_order'  => $firstPost->sort_order, 
+            'status'      => $firstPost->status,
+            'created_at'  => $firstPost->created_at,
             'is_featured' => $firstPost->is_featured,
-            'hinh_anh'  => $firstPost->image
+            'image'       => $firstPost->image
         ];
         
         foreach ($translations as $t) {
             $lang = $t->lang;
-            $item["ten"][$lang] = $t->title;
+            $item["title"][$lang] = $t->title;
             $item["alias"][$lang] = $t->alias;
-            $item["mo_ta"][$lang] = $t->description;
-            $item["noi_dung"][$lang] = $t->content;
-            $item["is_featured"] = $t->is_featured;
-            if (empty($item["hinh_anh"])) {
-                $item["hinh_anh"] = $t->image;
+            $item["description"][$lang] = $t->description;
+            $item["content"][$lang] = $t->content;
+            $item["seo_title"][$lang] = $t->seo_title;
+            $item["seo_description"][$lang] = $t->seo_description;
+            $item["keyword"][$lang] = $t->keyword;
+            $item["tags"][$lang] = $t->tags;
+            $item["noindex"][$lang] = $t->noindex;
+            $item["nofollow"][$lang] = $t->nofollow;
+            $item["seo_head"][$lang] = $t->seo_head;
+            $item["seo_body"][$lang] = $t->seo_body;
+            if (empty($item["image"])) {
+                $item["image"] = $t->image;
             }
         }
         
@@ -134,53 +172,63 @@ class PostController extends BaseAdminController {
      * Lưu dữ liệu thêm mới
      */
     public function store(Request $request) {
-        $id_loai = (int)$request->input('id_loai', 0);
-        $so_thu_tu = (int)$request->input('so_thu_tu', 0);
-        $hien_thi = $request->input('hien_thi') !== null ? 1 : 0;
+        $titleInput = $request->input('title', []);
+        
+        // Backend Validation: Chặn tiêu đề rỗng
+        if (empty($titleInput['vi'])) {
+            session('error', 'Vui lòng nhập Tiêu đề bài viết (Tiếng Việt).');
+            return $this->redirect(route('admin.post.create'));
+        }
+
+        $categoryId = (int)$request->input('category_id', 0);
+        $sortOrder = (int)$request->input('sort_order', 0);
+        $status = $request->input('status') !== null ? 1 : 0;
         
         $createdAtInput = $request->input('created_at');
         $createdAt = $createdAtInput ? date('Y-m-d H:i:s', strtotime($createdAtInput)) : date('Y-m-d H:i:s');
         
-        $tenInput = $request->input('ten', []);
-        $ten_vi = $tenInput['vi'] ?? '';
+        $userId = user()->id;
+        $now = date('Y-m-d H:i:s');
+        $langs = config('lang', [['code' => 'vi']]);
 
-        // 1. Khởi tạo id_code bằng cách lấy ID lớn nhất + 1 để tránh đụng độ
-        // (Bỏ lưu vào CfCodeModel vì cf_code là bảng danh mục!)
-        $db = \App\Core\Database::getInstance();
-        $maxId = $db->query("SELECT MAX(id_code) as max_id FROM db_posts")->fetch(\PDO::FETCH_ASSOC)['max_id'] ?? 0;
-        $id_code = $maxId + 1;
+        // 1. Tạo bản ghi ngôn ngữ đầu tiên (vi) bằng insertGetId để tránh Race Condition
+        $firstLang = $langs[0]['code'];
+        $firstLangData = $this->getPostData($request, $firstLang, $categoryId, $status, $sortOrder, $createdAt);
+        $firstLangData['id_code'] = 0; // Gán tạm thời
+        $firstLangData['lang'] = $firstLang;
+        $firstLangData['created_by'] = $userId;
+        $firstLangData['updated_at'] = $now;
 
-        if ($id_code) {
-            $user_id = user()->id;
-            $now = date('Y-m-d H:i:s');
-            
-            // 2. Lưu vào bảng ngôn ngữ
-            $langs = config('lang', [['code' => 'vi']]);
-            foreach ($langs as $l) {
+        $insertedId = PostModel::insertGetId($firstLangData);
+
+        if ($insertedId) {
+            // 2. Cập nhật lại id_code cho bản ghi đầu tiên
+            $updateQuery = PostModel::query();
+            $updateQuery->use_lang = false;
+            $updateQuery->where('id', $insertedId)->update(['id_code' => $insertedId]);
+
+            // 3. Thêm các bản ghi dịch thuật còn lại dùng chung id_code
+            foreach ($langs as $index => $l) {
+                if ($index === 0) continue; // Bỏ qua bản ghi đầu tiên đã insert
+                
                 $c = $l['code'];
-                PostModel::insert([
-                    'id_code'     => $id_code,
-                    'lang'        => $c,
-                    'title'       => $request->input('ten')[$c] ?? '',
-                    'alias'       => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
-                    'description' => $request->input('mo_ta')[$c] ?? '',
-                    'content'     => $request->input('noi_dung')[$c] ?? '',
-                    'image'       => $request->input('hinh_anh') ?? '',
-                    'category_id' => $id_loai,
-                    'sort_order'  => $so_thu_tu,
-                    'status'      => $hien_thi,
-                    'is_featured' => $request->input('is_featured') !== null ? 1 : 0,
-                    'created_by'  => $user_id,
-                    'created_at'  => $createdAt,
-                    'updated_at'  => $now
-                ]);
+                $langData = $this->getPostData($request, $c, $categoryId, $status, $sortOrder, $createdAt);
+                $langData['id_code'] = $insertedId;
+                $langData['lang'] = $c;
+                $langData['created_by'] = $userId;
+                $langData['updated_at'] = $now;
+                
+                PostModel::insert($langData);
             }
+
             session('success', 'Thêm bài viết thành công!');
+        } else {
+            session('error', 'Có lỗi xảy ra khi tạo bài viết.');
         }
         
         $saveAction = $request->input('save_action', 'exit');
-        if ($saveAction === 'continue') {
-            return $this->redirect(route('admin.post.edit', ['id' => $id_code]));
+        if ($saveAction === 'continue' && $insertedId) {
+            return $this->redirect(route('admin.post.edit', ['id' => $insertedId]));
         } elseif ($saveAction === 'new') {
             return $this->redirect(route('admin.post.create'));
         }
@@ -193,6 +241,14 @@ class PostController extends BaseAdminController {
     public function update(Request $request, $id) {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
         
+        $titleInput = $request->input('title', []);
+        
+        // Backend Validation: Chặn tiêu đề rỗng
+        if (empty($titleInput['vi'])) {
+            session('error', 'Vui lòng nhập Tiêu đề bài viết (Tiếng Việt).');
+            return $this->redirect(route('admin.post.edit', ['id' => $id]));
+        }
+
         $postQuery = PostModel::query();
         $postQuery->use_lang = false;
         $translations = $postQuery->where('id_code', $id)->get();
@@ -202,22 +258,15 @@ class PostController extends BaseAdminController {
             return $this->redirect(route('admin.post.index'));
         }
 
-        $id_loai = (int)$request->input('id_loai', 0);
-        $so_thu_tu = (int)$request->input('so_thu_tu', 0);
-        $hien_thi = $request->input('hien_thi') !== null ? 1 : 0;
+        $categoryId = (int)$request->input('category_id', 0);
+        $sortOrder = (int)$request->input('sort_order', 0);
+        $status = $request->input('status') !== null ? 1 : 0;
         
         $createdAtInput = $request->input('created_at');
         $createdAt = $createdAtInput ? date('Y-m-d H:i:s', strtotime($createdAtInput)) : null;
-        
-        $tenInput = $request->input('ten', []);
-        $ten_vi = $tenInput['vi'] ?? '';
 
-        // 1. Không cần cập nhật bảng gốc (cf_code) vì bài viết không dùng bảng này
-        // (cf_code đang được dùng cho Danh mục!)
-
-        // 2. Cập nhật hoặc tạo mới bản dịch
         $langs = config('lang', [['code' => 'vi']]);
-        $user_id = user()->id;
+        $userId = user()->id;
         $now = date('Y-m-d H:i:s');
         
         foreach ($langs as $l) {
@@ -227,23 +276,9 @@ class PostController extends BaseAdminController {
             
             $exists = $postQuery->where('id_code', $id)->where('lang', $c)->first();
             
-            $data = [
-                'title'       => $request->input('ten')[$c] ?? '',
-                'alias'       => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
-                'description' => $request->input('mo_ta')[$c] ?? '',
-                'content'     => $request->input('noi_dung')[$c] ?? '',
-                'image'       => $request->input('hinh_anh') ?? '',
-                'category_id' => $id_loai,
-                'sort_order'  => $so_thu_tu,
-                'status'      => $hien_thi,
-                'is_featured' => $request->input('is_featured') !== null ? 1 : 0,
-                'updated_by'  => $user_id,
-                'updated_at'  => $now
-            ];
-            
-            if ($createdAt) {
-                $data['created_at'] = $createdAt;
-            }
+            $data = $this->getPostData($request, $c, $categoryId, $status, $sortOrder, $createdAt);
+            $data['updated_by'] = $userId;
+            $data['updated_at'] = $now;
             
             if ($exists) {
                 $updateQuery = PostModel::query();
@@ -252,7 +287,7 @@ class PostController extends BaseAdminController {
             } else {
                 $data['id_code'] = $id;
                 $data['lang'] = $c;
-                $data['created_by'] = $user_id;
+                $data['created_by'] = $userId;
                 if (!$createdAt) $data['created_at'] = $now;
                 PostModel::insert($data);
             }
@@ -274,10 +309,15 @@ class PostController extends BaseAdminController {
      */
     public function updateStatusAjax(Request $request) {
         $id = (int)$request->input('id');
-        $field = $request->input('field', 'is_active');
+        $field = $request->input('field', 'status');
         $value = (int)$request->input('value', 0);
 
-        $allowedFields = ['is_active', 'status', 'hien_thi', 'is_featured']; 
+        $allowedFields = ['status', 'is_featured']; 
+        // Fallback for legacy ajax requests
+        if ($field === 'is_active' || $field === 'hien_thi') {
+            $field = 'status';
+        }
+
         if (!in_array($field, $allowedFields)) {
             return $this->jsonError('Trường dữ liệu không hợp lệ');
         }
@@ -291,22 +331,11 @@ class PostController extends BaseAdminController {
                 return $this->jsonError('Bạn không có quyền sửa bài viết này!');
             }
 
-            // Chỉ cập nhật bảng db_posts (Không liên quan đến cf_code)
-            
             $updateQuery = PostModel::query();
             $updateQuery->use_lang = false;
             $label = $field === 'is_featured' ? 'Nổi bật' : 'Trạng thái hiển thị';
             
-            // Map legacy fields to status column
-            if ($field === 'is_active' || $field === 'hien_thi' || $field === 'status') {
-                $dbField = 'status';
-                $dbValue = $value ? 1 : 0;
-            } else {
-                $dbField = $field;
-                $dbValue = $value;
-            }
-            
-            $updateQuery->where('id_code', $id)->update([$dbField => $dbValue]);
+            $updateQuery->where('id_code', $id)->update([$field => $value]);
 
             return $this->jsonSuccess($label . ' đã được cập nhật!');
         }
@@ -329,8 +358,6 @@ class PostController extends BaseAdminController {
         }
 
         if ($id > 0) {
-            // Không xóa bảng cf_code vì đây không phải dữ liệu của bài viết
-            
             $delQuery = PostModel::query();
             $delQuery->use_lang = false;
             $delQuery->where('id_code', $id)->delete();
@@ -355,8 +382,6 @@ class PostController extends BaseAdminController {
                 $post = $postQuery->where('id_code', $id)->first();
                 
                 if ($post && $this->canEditPost($post->created_by)) {
-                    // Không xóa bảng cf_code
-                    
                     $delQuery = PostModel::query();
                     $delQuery->use_lang = false;
                     $delQuery->where('id_code', $id)->delete();
@@ -368,3 +393,4 @@ class PostController extends BaseAdminController {
         return $this->json(['success' => false, 'message' => 'Chưa chọn bản ghi nào']);
     }
 }
+
