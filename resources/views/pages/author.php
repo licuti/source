@@ -8,7 +8,7 @@ $row = $row_raw ? (object)$row_raw : null;
 
 // Lấy bài viết liên quan của tác giả này
 $tinlienquan_raw = \App\Models\PostModel::query()
-    ->where('status', 'publish')
+    ->where('status', \App\Models\PostModel::STATUS_PUBLISH)
     ->where('id_user', $id_tacgia)
     ->orderBy('so_thu_tu')
     ->orderBy('id', 'DESC')

@@ -13478,3 +13478,485 @@
 [2026-06-08 17:46:24] [INFO]: App kernel booted in modern mode.
 [2026-06-08 17:56:24] [INFO]: App kernel booted in modern mode.
 [2026-06-08 17:58:27] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:22] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:28] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:29] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:30] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:30] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:30] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:30] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:30] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:48] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:48] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:48] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:48] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:48] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:52] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:54] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:55] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:01:56] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:03:12] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:03:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:03:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:03:24] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:03:25] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:03:25] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:03:25] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:03:33] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:03:34] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:03:34] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:03:34] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:17] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:21] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:21] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:21] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:23] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:23] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:23] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:40] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:55] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:57] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:57] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:57] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:57] [INFO]: App kernel booted in modern mode.
+[2026-06-08 18:04:57] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:11:44] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:11:44] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:11:44] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:11:44] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:11:44] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:13:43] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:13:43] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:13:43] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:13:43] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:13:44] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:13:47] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:13:47] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:13:47] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:13:47] [INFO]: App kernel booted in modern mode.
+[2026-06-09 00:13:47] [INFO]: App kernel booted in modern mode.
+[2026-06-10 14:20:24] [ERROR]: SQLSTATE[HY000] [2002] No connection could be made because the target machine actively refused it
+#0 C:\laragon\www\source\app\Core\Model.php(68): PDO->__construct('mysql:host=loca...', 'root', Object(SensitiveParameterValue))
+#1 C:\laragon\www\source\app\Core\App.php(51): Model::boot(Array)
+#2 C:\laragon\www\source\migrate.php(4): App\Core\App->boot()
+#3 {main}
+[2026-06-10 15:17:35] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:17:35] [ERROR]: Class 'App\Models\PostModel' not found
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\HomeController->index(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-10 15:17:41] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:17:48] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:17:48] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:17:50] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:17:50] [ERROR]: Undefined variable: hien_thi
+#0 C:\laragon\www\source\resources\views\admin\post\index.php(66): App\Core\App->App\Core\{closure}(8, 'Undefined varia...', 'C:\\laragon\\www\\...', 66, Array)
+#1 C:\laragon\www\source\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source\app\Helpers\core.php(252): App\Core\View->render('admin.post.inde...', Array)
+#3 C:\laragon\www\source\app\Controllers\Admin\BaseAdminController.php(22): view('admin.post.inde...', Array)
+#4 C:\laragon\www\source\app\Controllers\Admin\PostController.php(102): App\Controllers\Admin\BaseAdminController->render('admin.post.inde...', Array)
+#5 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->index(Object(App\Core\Request), Array)
+#6 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#7 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-10 15:17:54] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:17:54] [ERROR]: Undefined variable: hien_thi
+#0 C:\laragon\www\source\resources\views\admin\post\index.php(66): App\Core\App->App\Core\{closure}(8, 'Undefined varia...', 'C:\\laragon\\www\\...', 66, Array)
+#1 C:\laragon\www\source\app\Core\View.php(57): include('C:\\laragon\\www\\...')
+#2 C:\laragon\www\source\app\Helpers\core.php(252): App\Core\View->render('admin.post.inde...', Array)
+#3 C:\laragon\www\source\app\Controllers\Admin\BaseAdminController.php(22): view('admin.post.inde...', Array)
+#4 C:\laragon\www\source\app\Controllers\Admin\PostController.php(102): App\Controllers\Admin\BaseAdminController->render('admin.post.inde...', Array)
+#5 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->index(Object(App\Core\Request), Array)
+#6 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#7 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-10 15:28:46] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:28:52] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:28:52] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:28:53] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:28:53] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:28:53] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:28:55] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:28:55] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:28:55] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:28:55] [INFO]: App kernel booted in modern mode.
+[2026-06-10 15:28:55] [INFO]: App kernel booted in modern mode.
+[2026-06-10 16:25:25] [INFO]: App kernel booted in modern mode.
+[2026-06-10 16:25:25] [ERROR]: syntax error, unexpected '?>', expecting function (T_FUNCTION) or const (T_CONST)
+#0 [internal function]: {closure}('App\\Models\\Post...')
+#1 C:\laragon\www\source\app\Controllers\Admin\PostController.php(60): spl_autoload_call('App\\Models\\Post...')
+#2 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->edit(Object(App\Core\Request), '630')
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#14 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#15 {main}
+[2026-06-10 16:25:33] [INFO]: App kernel booted in modern mode.
+[2026-06-10 16:25:33] [ERROR]: syntax error, unexpected '?>', expecting function (T_FUNCTION) or const (T_CONST)
+#0 [internal function]: {closure}('App\\Models\\Post...')
+#1 C:\laragon\www\source\app\Controllers\Admin\PostController.php(28): spl_autoload_call('App\\Models\\Post...')
+#2 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->index(Object(App\Core\Request), Array)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#14 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#15 {main}
+[2026-06-10 16:25:35] [INFO]: App kernel booted in modern mode.
+[2026-06-10 16:25:35] [ERROR]: syntax error, unexpected '?>', expecting function (T_FUNCTION) or const (T_CONST)
+#0 [internal function]: {closure}('App\\Models\\Post...')
+#1 C:\laragon\www\source\app\Controllers\Admin\PostController.php(28): spl_autoload_call('App\\Models\\Post...')
+#2 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->index(Object(App\Core\Request), Array)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#14 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#15 {main}
+[2026-06-10 16:39:49] [INFO]: App kernel booted in modern mode.
+[2026-06-10 16:39:49] [ERROR]: Class 'App\Models\PostModel' not found
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->index(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-10 16:39:51] [INFO]: App kernel booted in modern mode.
+[2026-06-10 16:39:51] [ERROR]: Class 'App\Models\PostModel' not found
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->index(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-10 16:39:51] [INFO]: App kernel booted in modern mode.
+[2026-06-10 16:39:51] [ERROR]: Class 'App\Models\PostModel' not found
+#0 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->index(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-10 16:41:31] [INFO]: App kernel booted in modern mode.
+[2026-06-10 16:41:44] [INFO]: App kernel booted in modern mode.
+[2026-06-10 16:41:44] [ERROR]: Method ownedByUser does not exist.
+#0 C:\laragon\www\source\app\Controllers\Admin\PostController.php(30): Model->__call('ownedByUser', Array)
+#1 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->index(Object(App\Core\Request), Array)
+#2 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#3 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#6 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#13 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#14 {main}
+[2026-06-10 16:43:26] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:12:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:12:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:12:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:12:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:12:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:25:58] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:30] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:32] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:32] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:34] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:34] [ERROR]: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'draft' for column 'status' at row 1
+#0 C:\laragon\www\source\app\Core\Model.php(1074): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(154): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-10 17:31:34] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:35] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:35] [ERROR]: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'draft' for column 'status' at row 1
+#0 C:\laragon\www\source\app\Core\Model.php(1074): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(154): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-10 17:31:35] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:36] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:36] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:37] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:38] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:31:38] [ERROR]: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'draft' for column 'status' at row 1
+#0 C:\laragon\www\source\app\Core\Model.php(1074): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(154): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-10 17:31:39] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:32:02] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:32:03] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:32:04] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:32:04] [ERROR]: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'draft' for column 'status' at row 1
+#0 C:\laragon\www\source\app\Core\Model.php(1074): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(154): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-10 17:32:04] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:32:04] [ERROR]: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'draft' for column 'status' at row 1
+#0 C:\laragon\www\source\app\Core\Model.php(1074): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(154): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-10 17:32:05] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:40:30] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:40:32] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:43:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:43:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:43:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:43:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:43:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:43:32] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:43:34] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:43:34] [ERROR]: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'draft' for column 'status' at row 1
+#0 C:\laragon\www\source\app\Core\Model.php(1074): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(154): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-10 17:43:35] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:43:35] [ERROR]: SQLSTATE[HY000]: General error: 1366 Incorrect integer value: 'draft' for column 'status' at row 1
+#0 C:\laragon\www\source\app\Core\Model.php(1074): PDOStatement->execute(Array)
+#1 C:\laragon\www\source\app\Core\Model.php(274): Model->qbUpdate(Array)
+#2 C:\laragon\www\source\app\Controllers\Admin\PostController.php(154): Model->update(Array)
+#3 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->updateStatusAjax(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source\app\Middleware\StartSession.php(31): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-10 17:46:18] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:46:19] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:46:20] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:46:20] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:46:21] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:46:22] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:46:22] [INFO]: App kernel booted in modern mode.
+[2026-06-10 17:46:24] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:08:03] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:08:03] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:08:04] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:08:04] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:08:04] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:08:04] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:08:04] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:08:04] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:08:04] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:08:04] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:08:04] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:12] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:12] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:12] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:12] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:12] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:29] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:29] [ERROR]: Undefined offset: 0
+#0 C:\laragon\www\source\app\Services\PostService.php(64): App\Core\App->App\Core\{closure}(8, 'Undefined offse...', 'C:\\laragon\\www\\...', 64, Array)
+#1 C:\laragon\www\source\app\Controllers\Admin\PostController.php(120): App\Services\PostService->savePost(Array, Array, 1, 630)
+#2 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->update(Object(App\Core\Request), 630)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#14 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#15 {main}
+[2026-06-10 18:25:34] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:34] [ERROR]: Undefined offset: 0
+#0 C:\laragon\www\source\app\Services\PostService.php(64): App\Core\App->App\Core\{closure}(8, 'Undefined offse...', 'C:\\laragon\\www\\...', 64, Array)
+#1 C:\laragon\www\source\app\Controllers\Admin\PostController.php(120): App\Services\PostService->savePost(Array, Array, 1, 630)
+#2 C:\laragon\www\source\app\Core\Router.php(143): App\Controllers\Admin\PostController->update(Object(App\Core\Request), 630)
+#3 C:\laragon\www\source\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#4 C:\laragon\www\source\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#5 C:\laragon\www\source\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source\app\Core\App.php(160): App\Core\Router->dispatch()
+#14 C:\laragon\www\source\index.php(24): App\Core\App->run()
+#15 {main}
+[2026-06-10 18:25:42] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:42] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:42] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:42] [INFO]: App kernel booted in modern mode.
+[2026-06-10 18:25:42] [INFO]: App kernel booted in modern mode.

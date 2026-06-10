@@ -37,7 +37,7 @@ class NewsController extends Controller {
             $categoryIds = getCategoryTreeIds($row->id_code);
         }
 
-        $query = PostModel::where('status', 'publish');
+        $query = PostModel::where('status', \App\Models\PostModel::STATUS_PUBLISH);
         
         if (!empty($categoryIds)) {
             $query->where('id_loai', $categoryIds, 'IN');
@@ -96,7 +96,7 @@ class NewsController extends Controller {
 
         // Lấy bài viết liên quan
         $category = CategoryModel::where('id_code', $row->id_loai)->first();
-        $related  = PostModel::where('status', 'publish')
+        $related  = PostModel::where('status', \App\Models\PostModel::STATUS_PUBLISH)
             ->where('id_loai', $row->id_loai)
             ->whereRaw("tt.id != {$row->id}")
             ->orderBy('id', 'DESC')

@@ -18,8 +18,25 @@ $label = $label ?? '';
 $help_text = $help_text ?? '';
 $attrs = $attrs ?? [];
 
+// Tự động chuyển đổi name array sang dot notation (VD: title[vi] -> title.vi)
+$dotName = str_replace(['[', ']'], ['.', ''], $name);
+$dotName = rtrim($dotName, '.');
+
+// 1. Tự động lấy giá trị cũ nếu validation thất bại
+$oldValue = old($dotName);
+if ($oldValue !== '' && $oldValue !== null && !is_array($oldValue)) {
+    $value = $oldValue;
+}
+
+// 2. Tự động kiểm tra lỗi validation
+$errorMsg = errors($dotName);
+
 // Mặc định thẻ input luôn có class form-control (hoặc form-control-color nếu type=color)
 $baseClass = $type === 'color' ? 'form-control form-control-color form-control-sm' : 'form-control form-control-sm';
+if ($errorMsg) {
+    $baseClass .= ' is-invalid';
+}
+
 if (isset($attrs['class'])) {
     $attrs['class'] = $baseClass . ' ' . $attrs['class'];
 } else {
@@ -36,7 +53,11 @@ $attrString = render_attrs($attrs);
     
     <input type="<?= htmlspecialchars($type) ?>" name="<?= htmlspecialchars($name) ?>" value="<?= htmlspecialchars((string)$value) ?>" <?= $attrString ?>>
     
-    <?php if ($help_text): ?>
+    <?php if ($errorMsg): ?>
+        <div class="invalid-feedback fw-bold">
+            <i class="fa-solid fa-circle-exclamation"></i> <?= htmlspecialchars($errorMsg) ?>
+        </div>
+    <?php elseif ($help_text): ?>
         <small class="text-muted fst-italic"><?= htmlspecialchars($help_text) ?></small>
     <?php endif; ?>
 </div>

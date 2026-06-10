@@ -5,7 +5,7 @@
     $post_sidebar = \App\Models\PostModel::query()
         ->where('view', '>', 0)
         ->where('id', '!=', $current_id)
-        ->where('status', 'publish')
+        ->where('status', \App\Models\PostModel::STATUS_PUBLISH)
         ->where('lang', $_SESSION['lang'] ?? 'vi')
         ->orderBy('view', 'DESC')
         ->limit(12)

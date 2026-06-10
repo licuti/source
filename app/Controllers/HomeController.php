@@ -12,7 +12,7 @@ class HomeController extends Controller {
      * Xử lý hiển thị trang chủ
      */
     public function index($request) {
-        $latestNews = PostModel::where('status', 'publish')
+        $latestNews = PostModel::where('status', \App\Models\PostModel::STATUS_PUBLISH)
             ->orderBy('id', 'DESC')
             ->limit(4)
             ->get();

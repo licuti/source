@@ -13,14 +13,30 @@ $label = $label ?? 'Nội dung';
 $help_text = $help_text ?? '';
 $attrs = $attrs ?? [];
 
+// Tự động chuyển đổi name array sang dot notation (VD: content[vi] -> content.vi)
+$dotName = str_replace(['[', ']'], ['.', ''], $name);
+$dotName = rtrim($dotName, '.');
+
+// 1. Tự động lấy giá trị cũ nếu validation thất bại
+$oldValue = old($dotName);
+if ($oldValue !== '' && $oldValue !== null && !is_array($oldValue)) {
+    $value = $oldValue;
+}
+
+// 2. Tự động kiểm tra lỗi validation
+$errorMsg = errors($dotName);
+
 // Khởi tạo ID tự động nếu không có
 if (!isset($attrs['id'])) {
-    // Xử lý ID an toàn nếu name có chứa ngoặc vuông (mảng) VD: noi_dung[vi] -> noi_dung_vi
     $attrs['id'] = str_replace(['[', ']'], ['_', ''], $name);
 }
 $idSafe = $attrs['id'];
 
 $baseClass = 'form-control ckeditor-instance';
+if ($errorMsg) {
+    $baseClass .= ' is-invalid';
+}
+
 if (isset($attrs['class'])) {
     $attrs['class'] = $baseClass . ' ' . $attrs['class'];
 } else {
@@ -38,7 +54,11 @@ $attrString = render_attrs($attrs);
     
     <textarea name="<?= htmlspecialchars($name) ?>" <?= $attrString ?>><?= htmlspecialchars((string)$value) ?></textarea>
     
-    <?php if ($help_text): ?>
+    <?php if ($errorMsg): ?>
+        <div class="invalid-feedback fw-bold">
+            <i class="fa-solid fa-circle-exclamation"></i> <?= htmlspecialchars($errorMsg) ?>
+        </div>
+    <?php elseif ($help_text): ?>
         <small class="text-muted fst-italic"><?= htmlspecialchars($help_text) ?></small>
     <?php endif; ?>
 </div>

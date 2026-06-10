@@ -305,6 +305,53 @@ if (!function_exists('hasPermission')) {
     }
 }
 
+if (!function_exists('arr_get')) {
+    /**
+     * Lấy giá trị từ mảng đa chiều bằng dot notation (VD: "title.vi")
+     */
+    function arr_get($array, $key, $default = null) {
+        if (!is_array($array)) return $default;
+        if (array_key_exists($key, $array)) return $array[$key];
+        
+        foreach (explode('.', $key) as $segment) {
+            if (is_array($array) && array_key_exists($segment, $array)) {
+                $array = $array[$segment];
+            } else {
+                return $default;
+            }
+        }
+        return $array;
+    }
+}
+
+if (!function_exists('old')) {
+    /**
+     * Trích xuất dữ liệu cũ từ Session Flash Data (nếu validate thất bại)
+     * Hỗ trợ dot notation, ví dụ: old('title.vi')
+     */
+    function old($key = null, $default = '') {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $oldInput = $_SESSION['_old_input'] ?? [];
+        
+        if ($key === null) return $oldInput;
+        return arr_get($oldInput, $key, $default);
+    }
+}
+
+if (!function_exists('errors')) {
+    /**
+     * Trích xuất thông báo lỗi từ Session Flash Data (nếu validate thất bại)
+     * Trả về mảng tất cả lỗi, hoặc chuỗi lỗi của một field cụ thể
+     */
+    function errors($key = null) {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $errors = $_SESSION['_errors'] ?? [];
+        
+        if ($key === null) return $errors;
+        return $errors[$key] ?? null;
+    }
+}
+
 if (!function_exists('user')) {
     /**
      * Lấy thông tin người dùng đang đăng nhập từ Session

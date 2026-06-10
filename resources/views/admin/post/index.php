@@ -52,10 +52,10 @@ if ($canAdd) {
                             <?php renderCategoryFilter($categories ?? [], $category_id ?? 0); ?>
                         </select>
 
-                        <select name="hien_thi" class="form-select form-select-sm w-auto">
+                        <select name="status" class="form-select form-select-sm w-auto">
                             <option value="">Tất cả trạng thái</option>
-                            <option value="1" <?= ($hien_thi ?? '') === '1' ? 'selected' : '' ?>>Hiển thị</option>
-                            <option value="0" <?= ($hien_thi ?? '') === '0' ? 'selected' : '' ?>>Đã ẩn</option>
+                            <option value="1" <?= ($status ?? '') === '1' ? 'selected' : '' ?>>Hiển thị</option>
+                            <option value="0" <?= ($status ?? '') === '0' ? 'selected' : '' ?>>Đã ẩn</option>
                         </select>
 
                         <div class="input-group input-group-sm w-auto">
@@ -63,7 +63,7 @@ if ($canAdd) {
                             <button type="submit" class="btn btn-primary">Tìm kiếm</button>
                         </div>
                         
-                        <?php if (!empty($keyword) || $hien_thi !== '' || !empty($category_id)): ?>
+                        <?php if (!empty($keyword) || ($status ?? '') !== '' || !empty($category_id)): ?>
                             <a href="<?= route('admin.post.index') ?>" class="btn btn-link btn-sm text-decoration-none text-muted">Hủy lọc</a>
                         <?php endif; ?>
 

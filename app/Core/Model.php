@@ -22,6 +22,15 @@ class Model implements \JsonSerializable {
     protected string $createdAt = 'ngay_dang';
     protected string $updatedAt = 'cap_nhat';
 
+    // ── Hằng số Trạng thái Dùng chung ───────────────────────
+    public const STATUS_PUBLISH = 1;
+    public const STATUS_DRAFT   = 0;
+
+    public const STATUS_LABELS = [
+        self::STATUS_PUBLISH => ['label' => 'Hiển thị',  'icon' => '✅', 'badge' => 'success'],
+        self::STATUS_DRAFT   => ['label' => 'Đang ẩn',  'icon' => '🔒', 'badge' => 'secondary'],
+    ];
+
     // ── Dữ liệu Instance ──────────────────────────────────
     public $attributes = [];
 
@@ -334,6 +343,13 @@ class Model implements \JsonSerializable {
         $qbMethod = 'qb' . ucfirst($method);
         if (method_exists($this, $qbMethod)) {
             return $this->$qbMethod(...$parameters);
+        }
+
+        // Hỗ trợ Query Scope (Ví dụ: scopeOwnedByUser -> ownedByUser)
+        $scopeMethod = 'scope' . ucfirst($method);
+        if (method_exists($this, $scopeMethod)) {
+            array_unshift($parameters, $this);
+            return $this->$scopeMethod(...$parameters) ?? $this;
         }
 
         // Hỗ trợ magic method: withCategory() -> with('category')

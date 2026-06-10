@@ -5,7 +5,7 @@
     
     $allPost = \App\Models\PostModel::query()
         ->where('id_loai', $categoryIds, 'IN')
-        ->where('status', 'publish')
+        ->where('status', \App\Models\PostModel::STATUS_PUBLISH)
         ->orderBy('so_thu_tu')
         ->orderBy('id', 'DESC')
         ->get();

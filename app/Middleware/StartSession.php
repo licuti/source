@@ -27,6 +27,15 @@ class StartSession implements Middleware {
             session_start();
         }
 
+        // 2. Rotate Validation Flash Data (old & errors)
+        // Dữ liệu từ request trước (flash) sẽ được giữ lại cho request hiện tại,
+        // sau đó xóa ngay để không tồn tại sang request tiếp theo.
+        $_SESSION['_old_input'] = $_SESSION['_flash_old_input'] ?? [];
+        $_SESSION['_errors']    = $_SESSION['_flash_errors'] ?? [];
+        
+        unset($_SESSION['_flash_old_input']);
+        unset($_SESSION['_flash_errors']);
+
         // Chuyển sang middleware hoặc router tiếp theo
         return $next($request);
     }
