@@ -23,7 +23,7 @@ class AttributeController extends BaseAdminController {
         // Map giá trị thuộc tính để đếm số lượng
         foreach ($attributes as $attr) {
             $values = AttributeValueModel::query()
-                ->where('id_thuoctinh', $attr->id_code)
+                ->where('attribute_id', $attr->id_code)
                 ->where('lang', 'vi')
                 ->get();
             $attr->value_count = count($values);
@@ -91,7 +91,7 @@ class AttributeController extends BaseAdminController {
         // Lấy danh sách Giá trị thuộc tính (Values)
         $valQuery = AttributeValueModel::query();
         $valQuery->use_lang = false;
-        $allValues = $valQuery->where('id_thuoctinh', $id)->orderBy('id', 'ASC')->get();
+        $allValues = $valQuery->where('attribute_id', $id)->orderBy('id', 'ASC')->get();
         
         // Nhóm value theo id_code để đưa vào Repeater
         $itemValues = [];
@@ -223,7 +223,7 @@ class AttributeController extends BaseAdminController {
     /**
      * Hàm dùng chung xử lý lưu Giá trị thuộc tính (Repeater)
      */
-    private function saveValues($request, $id_thuoctinh, $langs, $isUpdate = false) {
+    private function saveValues($request, $attribute_id, $langs, $isUpdate = false) {
         $val_id_codes = $request->input('val_id_code', []);
         $val_gia_tri = $request->input('val_gia_tri', []);
         $val_ten = $request->input('val_ten', []); // Mảng đa chiều: val_ten[lang][index]
@@ -260,7 +260,7 @@ class AttributeController extends BaseAdminController {
                         ]);
                     } else {
                         AttributeValueModel::insert([
-                            'id_thuoctinh' => $id_thuoctinh,
+                            'attribute_id' => $attribute_id,
                             'gia_tri' => $gia_tri,
                             'ten' => $t,
                             'id_code' => $v_id_code,
@@ -282,7 +282,7 @@ class AttributeController extends BaseAdminController {
                     foreach ($langs as $l) {
                         $c = $l['code'];
                         AttributeValueModel::insert([
-                            'id_thuoctinh' => $id_thuoctinh,
+                            'attribute_id' => $attribute_id,
                             'gia_tri' => $gia_tri,
                             'ten' => $val_ten[$c][$index] ?? '',
                             'id_code' => $new_id_code,
@@ -298,7 +298,7 @@ class AttributeController extends BaseAdminController {
         if ($isUpdate) {
             $valQuery = AttributeValueModel::query();
             $valQuery->use_lang = false;
-            $allOldValues = $valQuery->where('id_thuoctinh', $id_thuoctinh)->get();
+            $allOldValues = $valQuery->where('attribute_id', $attribute_id)->get();
             $old_id_codes = array_unique(array_column($allOldValues, 'id_code'));
             
             $deleted_id_codes = array_diff($old_id_codes, $kept_id_codes);
@@ -330,13 +330,13 @@ class AttributeController extends BaseAdminController {
         // Lấy danh sách Values để xóa
         $valQuery = AttributeValueModel::query();
         $valQuery->use_lang = false;
-        $values = $valQuery->where('id_thuoctinh', $id)->get();
+        $values = $valQuery->where('attribute_id', $id)->get();
         
         $val_id_codes = array_unique(array_column($values, 'id_code'));
         if (!empty($val_id_codes)) {
             $inQuery = implode(',', $val_id_codes);
             $pdo = \App\Core\Model::$pdo;
-            $pdo->exec("DELETE FROM #_thuoctinh_giatri WHERE id_thuoctinh = $id");
+            $pdo->exec("DELETE FROM #_thuoctinh_giatri WHERE attribute_id = $id");
             $pdo->exec("DELETE FROM cf_code WHERE id IN ($inQuery)");
         }
         

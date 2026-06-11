@@ -1,15 +1,21 @@
 <?php
-class ProductVariantAttributeModel extends Model {
-    public $table = '#_sanpham_bienthe_thuoctinh';
+namespace App\Models;
+
+class ProductVariantAttributeModel extends \Model {
+    public $table = '#_product_variant_attributes';
     public bool $use_lang = false;
 
-    // Quan hệ với bảng Thuộc tính gốc (Màu sắc, Kích thước...)
+    /**
+     * Thuộc tính (Màu sắc, Size...)
+     */
     public function attribute() {
-        return $this->belongsTo(AttributeModel::class, 'id_thuoctinh', 'id_code');
+        return $this->belongsTo(AttributeModel::class, 'attribute_id', 'id_code');
     }
 
-    // Quan hệ với bảng Giá trị thuộc tính (Đỏ, Xanh, XL, XXL...)
+    /**
+     * Giá trị thuộc tính (Đỏ, Xanh, XL, XXL...)
+     */
     public function value() {
-        return $this->belongsTo(AttributeValueModel::class, 'id_thuoctinh_giatri', 'id_code');
+        return $this->belongsTo(AttributeValueModel::class, 'attribute_value_id', 'id_code');
     }
 }

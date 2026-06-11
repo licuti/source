@@ -1,6 +1,10 @@
 <?php
-class ProductModel extends Model {
-    public $table = '#_sanpham';
+namespace App\Models;
+
+use CategoryModel;
+
+class ProductModel extends \Model {
+    public $table = '#_products';
 
     // ============================================================
     //  ĐỊNH NGHĨA QUAN HỆ (RELATIONSHIPS)
@@ -10,21 +14,14 @@ class ProductModel extends Model {
      * Mối quan hệ Nhiều-1 với Danh mục
      */
     public function category() {
-        return $this->belongsTo(CategoryModel::class, 'id_loai', 'id_code');
-    }
-
-    /**
-     * Mối quan hệ 1-Nhiều với Album hình ảnh
-     */
-    public function albums() {
-        return $this->hasMany(ProductAlbumModel::class, 'id_sp', 'id_code');
+        return $this->belongsTo(CategoryModel::class, 'category_id', 'id_code');
     }
 
     /**
      * Mối quan hệ 1-Nhiều với các Biến thể sản phẩm
      */
     public function variants() {
-        return $this->hasMany(ProductVariantModel::class, 'id_sanpham', 'id_code');
+        return $this->hasMany(ProductVariantModel::class, 'product_id', 'id_code');
     }
 
     // ============================================================
@@ -36,8 +33,8 @@ class ProductModel extends Model {
      */
     public function getFeatured($limit = 10) {
         return self::query()
-            ->where('tieu_bieu', 1)
-            ->where('hien_thi', 1)
+            ->where('is_featured', 1)
+            ->where('status', 1)
             ->latest()
             ->limit($limit)
             ->with('category', 'variants')
@@ -45,13 +42,13 @@ class ProductModel extends Model {
     }
 
     /**
-     * Lấy chi tiết sản phẩm theo Alias
+     * Lấy chi tiết sản phẩm theo Slug
      */
-    public function getByAlias($alias) {
+    public function getBySlug($slug) {
         return self::query()
-            ->where('alias', $alias)
-            ->where('hien_thi', 1)
-            ->with('category', 'variants', 'albums')
+            ->where('slug', $slug)
+            ->where('status', 1)
+            ->with('category', 'variants')
             ->first();
     }
 
@@ -61,8 +58,8 @@ class ProductModel extends Model {
     public function getByIdCode($id_code) {
         return self::query()
             ->where('id_code', (int)$id_code)
-            ->where('hien_thi', 1)
-            ->with('category', 'variants', 'albums')
+            ->where('status', 1)
+            ->with('category', 'variants')
             ->first();
     }
 
@@ -71,7 +68,7 @@ class ProductModel extends Model {
      */
     public function getLatest($limit = 10) {
         return self::query()
-            ->where('hien_thi', 1)
+            ->where('status', 1)
             ->latest()
             ->limit($limit)
             ->with('category')
@@ -80,7 +77,6 @@ class ProductModel extends Model {
 
     /**
      * Lấy khoảng giá (min/max) cho danh sách danh mục
-     * Giữ nguyên SQL thuần để tối ưu hiệu năng tính toán min/max từ nhiều bảng
      */
     public static function getPriceRange(array $categoryIds): array {
         if (empty($categoryIds)) return ['min' => 0, 'max' => 50000000];
@@ -92,26 +88,26 @@ class ProductModel extends Model {
 
         $sql = "SELECT
             MIN(LEAST(
-                IF(sp.khuyen_mai > 0, sp.khuyen_mai, sp.gia),
+                IF(sp.promotional_price > 0, sp.promotional_price, sp.price),
                 COALESCE(v.min_v, 999999999)
             )) AS abs_min,
             MAX(GREATEST(
-                IF(sp.khuyen_mai > 0, sp.khuyen_mai, sp.gia),
+                IF(sp.promotional_price > 0, sp.promotional_price, sp.price),
                 COALESCE(v.max_v, 0)
             )) AS abs_max
         FROM $tableName sp
         LEFT JOIN (
-            SELECT id_sanpham,
-                   MIN(IF(khuyen_mai > 0, khuyen_mai, gia)) AS min_v,
-                   MAX(IF(khuyen_mai > 0, khuyen_mai, gia)) AS max_v
+            SELECT product_id,
+                   MIN(IF(promotional_price > 0, promotional_price, price)) AS min_v,
+                   MAX(IF(promotional_price > 0, promotional_price, price)) AS max_v
             FROM $tableVariant
-            GROUP BY id_sanpham
-        ) v ON v.id_sanpham = sp.id_code
-        WHERE sp.id_loai IN ($idList) AND sp.hien_thi = 1 $langWhere";
+            GROUP BY product_id
+        ) v ON v.product_id = sp.id_code
+        WHERE sp.category_id IN ($idList) AND sp.status = 1 $langWhere";
 
         $stmt = self::$pdo->prepare($sql);
         $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         return [
             'min' => (float)($row['abs_min'] ?? 0),
