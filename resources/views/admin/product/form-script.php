@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (attrData.values) {
             attrData.values.forEach(val => {
                 const isSelected = preselectedValues.includes(val.id_code.toString()) ? 'selected' : '';
-                optionsHtml += `<option value="${val.id_code}" ${isSelected}>${val.name}</option>`;
+                optionsHtml += `<option value="${val.id_code}" ${isSelected}>${val.title}</option>`;
             });
         }
 
@@ -221,14 +221,14 @@ document.addEventListener('DOMContentLoaded', function() {
         attrsToRender.forEach(attr => {
             let selectedVal = selectedAttributes ? (selectedAttributes[attr.id_code] || '') : '';
             html += `<div class="col-md-3 mb-2">
-                <label class="form-label text-primary fw-bold"><i class="fa-solid fa-tag"></i> ${attr.name}</label>
-                <select name="variants[${variantIndex}][attributes][${attr.id_code}]" class="form-select form-select-sm variant-attr-select" data-attr-name="${attr.name}">
+                <label class="form-label text-primary fw-bold"><i class="fa-solid fa-tag"></i> ${attr.title}</label>
+                <select name="variants[${variantIndex}][attributes][${attr.id_code}]" class="form-select form-select-sm variant-attr-select" data-attr-name="${attr.title}">
                     <option value="">- Chọn -</option>`;
             
             if (attr.values) {
                 attr.values.forEach(val => {
                     const isSelected = selectedVal == val.id_code ? 'selected' : '';
-                    html += `<option value="${val.id_code}" ${isSelected}>${val.name}</option>`;
+                    html += `<option value="${val.id_code}" ${isSelected}>${val.title}</option>`;
                 });
             }
             html += `</select></div>`;
@@ -309,10 +309,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="row">
                         <div class="col-md-2 text-center">
                             <div class="border rounded p-1 mb-2 bg-light">
-                                <img src="${img ? '/' + img : 'https://placehold.co/150x150?text=No+Img'}" class="img-fluid rounded" style="width: 100%; aspect-ratio: 1; object-fit: cover;" id="preview_variant-image-${index}">
+                                <img src="${img ? (img.startsWith('http') || img.startsWith('/') ? img : '/img_data/images/' + img) : 'https://placehold.co/150x150?text=No+Img'}" class="img-fluid rounded" style="width: 100%; aspect-ratio: 1; object-fit: cover;" id="preview_variant-image-${index}">
                             </div>
                             <div class="input-group input-group-sm">
-                                <input type="text" name="variants[${index}][image]" id="variant-image-${index}" class="form-control form-control-sm text-center" value="${img}" placeholder="URL Ảnh" onchange="document.getElementById('preview_variant-image-${index}').src = '/' + this.value;">
+                                <input type="text" name="variants[${index}][image]" id="variant-image-${index}" class="form-control form-control-sm text-center" value="${img}" placeholder="URL Ảnh" onchange="document.getElementById('preview_variant-image-${index}').src = this.value ? (this.value.startsWith('http') || this.value.startsWith('/') ? this.value : '/img_data/images/' + this.value) : 'https://placehold.co/150x150?text=No+Img';">
                                 <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('variant-image-${index}', '/img_data/images/')">
                                     <i class="fa-solid fa-folder-open"></i>
                                 </button>
@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
         Object.keys(initialAttributes).forEach(attrId => {
             const attrObj = allAttributes.find(a => a.id_code == attrId);
             if (attrObj) {
-                addAttributeRow(attrId, attrObj.name, initialAttributes[attrId]);
+                addAttributeRow(attrId, attrObj.title, initialAttributes[attrId]);
             }
         });
     }

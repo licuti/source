@@ -58,7 +58,7 @@
                                     </td>
 
                                     <td>
-                                        <strong><?= htmlspecialchars($item->ten) ?></strong>
+                                        <strong><?= htmlspecialchars($item->title) ?></strong>
                                         <?php
                                         $actions = [];
                                         if (hasPermission('admin.attribute', 'edit')) {

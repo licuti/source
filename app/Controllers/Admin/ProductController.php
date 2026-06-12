@@ -37,7 +37,8 @@ class ProductController extends BaseAdminController {
         if ($categoryId > 0)     $query->where('category_id', $categoryId);
         if ($keyword !== '')     $query->whereLike('title', $keyword);
 
-        $items = $query->orderBy('updated_at', 'DESC')
+        $items = $query->with('variants')
+                       ->orderBy('updated_at', 'DESC')
                        ->orderBy('id', 'DESC')
                        ->paginate(10);
 
@@ -137,12 +138,16 @@ class ProductController extends BaseAdminController {
             return $this->jsonError('Trường dữ liệu không hợp lệ');
         }
 
-        $product = ProductModel::query()->where('id_code', $id)->first();
-        if (!$product) return $this->jsonError('ID không hợp lệ');
+        $query = ProductModel::query();
+        $query->use_lang = false;
+        $product = clone $query;
+        $product = $product->where('id_code', $id)->first();
+        if (!$product) {
+            return $this->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm']);
+        }
 
-        $updateVal = $value == 1 ? 1 : 0;
-        
-        ProductModel::query()->where('id_code', $id)->update([$field => $updateVal]);
+        $updateVal = ($product->{$field} == 1) ? 0 : 1;
+        $query->where('id_code', $id)->update([$field => $updateVal]);
         
         return $this->jsonSuccess('Trạng thái đã được cập nhật!');
     }

@@ -689,6 +689,37 @@ class Model implements \JsonSerializable {
         return (int)$result['total'];
     }
 
+    public function qbSum(string $column): float {
+        if (isset(self::$noLangModels[get_called_class()])) {
+            $this->use_lang = false;
+        }
+
+        try {
+            return $this->executeSum($column);
+        } catch (PDOException $e) {
+            if ($this->use_lang && $e->getCode() == '42S22' && strpos($e->getMessage(), "'lang'") !== false) {
+                $this->use_lang = false;
+                self::$noLangModels[get_called_class()] = true;
+                return $this->executeSum($column);
+            }
+            throw $e;
+        }
+    }
+
+    protected function executeSum(string $column): float {
+        $tableName = $this->tableName();
+        list($whereSql, $params) = $this->buildWhereClause();
+        $statement = "SELECT SUM(`$column`) as total FROM $tableName";
+        if (!empty($this->qb_joins)) $statement .= ' ' . implode(' ', $this->qb_joins);
+        if ($whereSql) $statement .= " WHERE $whereSql";
+        if (!empty($this->qb_group_by)) $statement .= ' GROUP BY ' . implode(', ', $this->qb_group_by);
+        $stmt = self::$pdo->prepare($statement);
+        $stmt->execute($params);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $this->resetQB();
+        return (float)($result['total'] ?? 0);
+    }
+
     public function qbFind($id, string $columns = '*') {
         return $this->qbWhere('id', $id)->first($columns);
     }

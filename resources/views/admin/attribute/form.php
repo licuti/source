@@ -38,14 +38,14 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                                     
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Tên nhóm thuộc tính <span class="text-danger">*</span></label>
-                                        <input type="text" name="ten[<?= $c ?>]" class="form-control form-control-sm" placeholder="VD: Màu sắc, Kích thước..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" <?= $i === 0 ? 'required' : '' ?>>
+                                        <input type="text" name="title[<?= $c ?>]" class="form-control form-control-sm" placeholder="VD: Màu sắc, Kích thước..." value="<?= htmlspecialchars($item['title'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" <?= $i === 0 ? 'required' : '' ?>>
                                     </div>
                                     
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label class="form-label">Đường dẫn thân thiện (Alias)</label>
-                                            <?php $isAutoSlug = empty($item['alias'][$c]) ? 'auto-slug' : ''; ?>
-                                            <input type="text" name="alias[<?= $c ?>]" class="form-control form-control-sm text-muted <?= $isAutoSlug ?>" placeholder="Tự động tạo nếu để trống" value="<?= htmlspecialchars($item['alias'][$c] ?? '') ?>" data-slug-target="<?= $c ?>">
+                                            <label class="form-label">Đường dẫn thân thiện (Slug)</label>
+                                            <?php $isAutoSlug = empty($item['slug'][$c]) ? 'auto-slug' : ''; ?>
+                                            <input type="text" name="slug[<?= $c ?>]" class="form-control form-control-sm text-muted <?= $isAutoSlug ?>" placeholder="Tự động tạo nếu để trống" value="<?= htmlspecialchars($item['slug'][$c] ?? '') ?>" data-slug-target="<?= $c ?>">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label class="form-label">Mô tả ngắn</label>
@@ -85,7 +85,7 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                                             <input type="hidden" name="val_id_code[]" value="<?= $val_id_code ?>">
                                             <?php foreach($langs as $lang): ?>
                                                 <td>
-                                                    <input type="text" name="val_ten[<?= $lang['code'] ?>][]" class="form-control form-control-sm" value="<?= htmlspecialchars($val['ten'][$lang['code']] ?? '') ?>" required placeholder="Nhập tên...">
+                                                    <input type="text" name="val_title[<?= $lang['code'] ?>][]" class="form-control form-control-sm" value="<?= htmlspecialchars($val['title'][$lang['code']] ?? '') ?>" required placeholder="Nhập tên...">
                                                 </td>
                                             <?php endforeach; ?>
                                             <td>
@@ -107,7 +107,7 @@ $action = $isEdit ? route('admin.attribute.update', ['id' => $item['id']]) : rou
                                             <input type="hidden" name="val_id_code[]" value="0">
                                             <?php foreach($langs as $lang): ?>
                                                 <td>
-                                                    <input type="text" name="val_ten[<?= $lang['code'] ?>][]" class="form-control form-control-sm" required placeholder="Nhập tên...">
+                                                    <input type="text" name="val_title[<?= $lang['code'] ?>][]" class="form-control form-control-sm" required placeholder="Nhập tên...">
                                                 </td>
                                             <?php endforeach; ?>
                                             <td>
@@ -206,7 +206,7 @@ document.addEventListener("DOMContentLoaded", function() {
             <input type="hidden" name="val_id_code[]" value="0">`;
             
         langs.forEach(lang => {
-            inputsHtml += `<td><input type="text" name="val_ten[${lang}][]" class="form-control" required placeholder="Nhập tên..."></td>`;
+            inputsHtml += `<td><input type="text" name="val_title[${lang}][]" class="form-control" required placeholder="Nhập tên..."></td>`;
         });
         
         inputsHtml += `<td>

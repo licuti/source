@@ -39,14 +39,15 @@ if (!function_exists('render_attrs')) {
 
 if (!function_exists('renderCategoryTree')) {
     /**
-     * Hiển thị cây danh mục dạng thẻ <option> cho thẻ <select>
+     * Hiển thị cây danh mục dùng thẻ <option> cho thẻ <select>
      * Hỗ trợ đệ quy n cấp và chặn chọn chính nó làm cha
      */
     function renderCategoryTree($categories, $selectedId = 0, $currentEditingId = 0, $prefix = '') {
         foreach ($categories as $cat) {
             if ($currentEditingId > 0 && $cat->id_code == $currentEditingId) continue;
             $selected = ($cat->id_code == $selectedId) ? 'selected' : '';
-            echo '<option value="' . $cat->id_code . '" ' . $selected . '>' . $prefix . htmlspecialchars($cat->name ?? $cat->ten) . '</option>';
+            $catName = $cat->title ?? ($cat->ten ?? ($cat->name ?? ''));
+            echo '<option value="' . $cat->id_code . '" ' . $selected . '>' . $prefix . htmlspecialchars($catName) . '</option>';
             if (!empty($cat->children)) {
                 renderCategoryTree($cat->children, $selectedId, $currentEditingId, $prefix . '--- ');
             }

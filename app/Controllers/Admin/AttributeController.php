@@ -27,7 +27,7 @@ class AttributeController extends BaseAdminController {
                 ->where('lang', 'vi')
                 ->get();
             $attr->value_count = count($values);
-            $attr->values_preview = implode(', ', array_map(function($v) { return $v->ten; }, array_slice($values, 0, 5)));
+            $attr->values_preview = implode(', ', array_map(function($v) { return $v->title; }, array_slice($values, 0, 5)));
         }
 
         return $this->render('admin.attribute.index', compact('attributes'));
@@ -79,8 +79,8 @@ class AttributeController extends BaseAdminController {
         
         foreach ($translations as $t) {
             $lang = $t->lang;
-            $item["ten"][$lang] = $t->ten;
-            $item["alias"][$lang] = $t->alias;
+            $item["title"][$lang] = $t->title;
+            $item["slug"][$lang] = $t->slug;
             $item["mo_ta"][$lang] = $t->mo_ta;
             if (empty($item["loai"])) {
                 $item["loai"] = $t->loai;
@@ -102,7 +102,7 @@ class AttributeController extends BaseAdminController {
                     'gia_tri' => $v->gia_tri
                 ];
             }
-            $itemValues[$v->id_code]['ten'][$v->lang] = $v->ten;
+            $itemValues[$v->id_code]['title'][$v->lang] = $v->title;
         }
 
         $data_type_variation = [
@@ -129,12 +129,12 @@ class AttributeController extends BaseAdminController {
         $loai = $request->input('loai', 'select');
         $hien_thi = $request->input('hien_thi') !== null ? 1 : 0;
         
-        $tenInput = $request->input('ten', []);
-        $ten_vi = $tenInput['vi'] ?? '';
+        $titleInput = $request->input('title', []);
+        $title_vi = $titleInput['vi'] ?? '';
 
         // 1. Lưu Attribute vào bảng gốc cf_code (module 4 = Sản phẩm)
         $id_code = CfCodeModel::insert([
-            'ten' => $ten_vi,
+            'ten' => $title_vi,
             'module' => 4,
             'so_thu_tu' => $so_thu_tu,
             'hien_thi' => $hien_thi
@@ -149,8 +149,8 @@ class AttributeController extends BaseAdminController {
                 AttributeModel::insert([
                     'id_code' => $id_code,
                     'lang' => $c,
-                    'ten' => $request->input('ten')[$c] ?? '',
-                    'alias' => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
+                    'title' => $request->input('title')[$c] ?? '',
+                    'slug' => empty($request->input('slug')[$c]) ? str_slug($request->input('title')[$c] ?? '') : $request->input('slug')[$c],
                     'mo_ta' => $request->input('mo_ta')[$c] ?? '',
                     'loai' => $loai,
                     'sap_xep' => $sap_xep,
@@ -176,12 +176,12 @@ class AttributeController extends BaseAdminController {
         $loai = $request->input('loai', 'select');
         $hien_thi = $request->input('hien_thi') !== null ? 1 : 0;
         
-        $tenInput = $request->input('ten', []);
-        $ten_vi = $tenInput['vi'] ?? '';
+        $titleInput = $request->input('title', []);
+        $title_vi = $titleInput['vi'] ?? '';
 
         // 1. Cập nhật bảng gốc
         CfCodeModel::query()->where('id', $id)->update([
-            'ten' => $ten_vi,
+            'ten' => $title_vi,
             'so_thu_tu' => $so_thu_tu,
             'hien_thi' => $hien_thi
         ]);
@@ -195,8 +195,8 @@ class AttributeController extends BaseAdminController {
             $exists = $attrQuery->where('id_code', $id)->where('lang', $c)->first();
             
             $data = [
-                'ten' => $request->input('ten')[$c] ?? '',
-                'alias' => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
+                'title' => $request->input('title')[$c] ?? '',
+                'slug' => empty($request->input('slug')[$c]) ? str_slug($request->input('title')[$c] ?? '') : $request->input('slug')[$c],
                 'mo_ta' => $request->input('mo_ta')[$c] ?? '',
                 'loai' => $loai,
                 'sap_xep' => $sap_xep
@@ -226,7 +226,7 @@ class AttributeController extends BaseAdminController {
     private function saveValues($request, $attribute_id, $langs, $isUpdate = false) {
         $val_id_codes = $request->input('val_id_code', []);
         $val_gia_tri = $request->input('val_gia_tri', []);
-        $val_ten = $request->input('val_ten', []); // Mảng đa chiều: val_ten[lang][index]
+        $val_title = $request->input('val_title', []); // Mảng đa chiều: val_title[lang][index]
         
         $kept_id_codes = [];
         
@@ -234,19 +234,19 @@ class AttributeController extends BaseAdminController {
         foreach ($val_id_codes as $index => $v_id_code) {
             $v_id_code = (int)$v_id_code;
             $gia_tri = $val_gia_tri[$index] ?? '';
-            $ten_vi = $val_ten['vi'][$index] ?? '';
+            $title_vi = $val_title['vi'][$index] ?? '';
             
-            if (trim($ten_vi) === '') continue; // Skip empty rows
+            if (trim($title_vi) === '') continue; // Skip empty rows
             
             if ($v_id_code > 0) {
                 // Update tồn tại
-                CfCodeModel::query()->where('id', $v_id_code)->update(['ten' => $ten_vi]);
+                CfCodeModel::query()->where('id', $v_id_code)->update(['ten' => $title_vi]);
                 $kept_id_codes[] = $v_id_code;
                 
                 // Cập nhật bản dịch cho Value
                 foreach ($langs as $l) {
                     $c = $l['code'];
-                    $t = $val_ten[$c][$index] ?? '';
+                    $t = $val_title[$c][$index] ?? '';
                     
                     $vq = AttributeValueModel::query();
                     $vq->use_lang = false;
@@ -255,14 +255,14 @@ class AttributeController extends BaseAdminController {
                         $u = AttributeValueModel::query();
                         $u->use_lang = false;
                         $u->where('id', $exists->id)->update([
-                            'ten' => $t,
+                            'title' => $t,
                             'gia_tri' => $gia_tri
                         ]);
                     } else {
                         AttributeValueModel::insert([
                             'attribute_id' => $attribute_id,
                             'gia_tri' => $gia_tri,
-                            'ten' => $t,
+                            'title' => $t,
                             'id_code' => $v_id_code,
                             'lang' => $c,
                             'id_sanpham' => 0
@@ -272,7 +272,7 @@ class AttributeController extends BaseAdminController {
             } else {
                 // Thêm mới Value
                 $new_id_code = CfCodeModel::insert([
-                    'ten' => $ten_vi,
+                    'ten' => $title_vi,
                     'module' => 4, // Sản phẩm
                     'so_thu_tu' => 0,
                     'hien_thi' => 1
@@ -284,7 +284,7 @@ class AttributeController extends BaseAdminController {
                         AttributeValueModel::insert([
                             'attribute_id' => $attribute_id,
                             'gia_tri' => $gia_tri,
-                            'ten' => $val_ten[$c][$index] ?? '',
+                            'title' => $val_title[$c][$index] ?? '',
                             'id_code' => $new_id_code,
                             'lang' => $c,
                             'id_sanpham' => 0

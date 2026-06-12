@@ -25,6 +25,9 @@ if (isset($attrs['class'])) {
 
 // Ensure it acts like a checkbox
 $attrs['type'] = 'checkbox';
+if (!isset($attrs['value'])) {
+    $attrs['value'] = '1';
+}
 if ($checked) {
     $attrs['checked'] = true;
 }

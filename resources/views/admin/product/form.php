@@ -61,12 +61,6 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                         ]
                                     ]) ?>
 
-                                    <?= view('admin.components.input', [
-                                        'name' => "unit[$c]",
-                                        'value' => $item['unit'][$c] ?? '',
-                                        'label' => 'Đơn vị tính (VD: Cái, Hộp, Kg)'
-                                    ]) ?>
-
                                     <?= view('admin.components.ckeditor', [
                                         'name' => "description[$c]",
                                         'value' => $item['description'][$c] ?? '',
@@ -79,15 +73,10 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                         'label' => "Bài viết chi tiết sản phẩm"
                                     ]) ?>
 
-                                    <?= view('admin.components.ckeditor', [
-                                        'name' => "specifications[$c]",
-                                        'value' => $item['specifications'][$c] ?? '',
-                                        'label' => "Thông số kỹ thuật"
-                                    ]) ?>
-
-                                    <?= view('admin.components.seo', [
-                                        'c' => $c,
-                                        'item' => $item ?? []
+                                    <?= view('admin.components.input', [
+                                        'name' => "unit[$c]",
+                                        'value' => $item['unit'][$c] ?? '',
+                                        'label' => 'Đơn vị tính (VD: Cái, Hộp, Kg)'
                                     ]) ?>
 
                                 </div>
@@ -129,6 +118,11 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                 <li class="nav-item" id="nav-item-variants" style="display: none;">
                                     <button class="nav-link text-dark fw-bold border-bottom-0" id="v-pills-variants-tab" data-bs-toggle="pill" data-bs-target="#v-pills-variants" type="button" role="tab" aria-controls="v-pills-variants" aria-selected="false">
                                         <i class="fa-solid fa-layer-group fa-fw text-success"></i> Các biến thể
+                                    </button>
+                                </li>
+                                <li class="nav-item">
+                                    <button class="nav-link text-dark fw-bold border-bottom-0" id="v-pills-gallery-tab" data-bs-toggle="pill" data-bs-target="#v-pills-gallery" type="button" role="tab" aria-controls="v-pills-gallery" aria-selected="false">
+                                        <i class="fa-solid fa-images fa-fw text-warning"></i> Album ảnh
                                     </button>
                                 </li>
                             </ul>
@@ -250,7 +244,7 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                                 <select id="attrSelector" class="form-select w-auto">
                                                     <option value="">-- Chọn thuộc tính để thêm --</option>
                                                     <?php foreach($attributes as $attr): ?>
-                                                        <option value="<?= $attr->id_code ?>" data-name="<?= htmlspecialchars($attr->name) ?>"><?= htmlspecialchars($attr->name) ?></option>
+                                                        <option value="<?= $attr->id_code ?>" data-name="<?= htmlspecialchars($attr->title) ?>"><?= htmlspecialchars($attr->title) ?></option>
                                                     <?php endforeach; ?>
                                                 </select>
                                                 <button type="button" class="btn btn-primary" id="btnAddAttribute">
@@ -284,20 +278,46 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                             </div>
                                         </div>
 
+                                        <!-- TAB ALBUM ẢNH -->
+                                        <div class="tab-pane fade" id="v-pills-gallery" role="tabpanel" aria-labelledby="v-pills-gallery-tab">
+                                            <div class="mb-3">
+                                                <p class="text-muted fst-italic">Tải lên các hình ảnh khác của sản phẩm.</p>
+                                                <?= view('admin.components.gallery_upload', [
+                                                    'name' => 'gallery[]',
+                                                    'values' => $item['gallery'] ?? []
+                                                ]) ?>
+                                            </div>
+                                        </div>
+
                                     </div>
                         </div>
                     </div>
 
-                    <!-- ALBUM ẢNH (GALLERY) -->
-                    <div class="card card-outline card-warning mb-4">
-                        <div class="card-header bg-white">
-                            <h5 class="card-title mb-0 fw-bold"><i class="fa-solid fa-images text-warning"></i> Album hình ảnh</h5>
+                    <!-- TAB ĐA NGÔN NGỮ (SEO) -->
+                    <div class="card card-outline card-success mb-4">
+                        <div class="card-header p-0 pt-1 border-bottom-0 bg-white">
+                            <ul class="nav nav-tabs" id="seoLangTabs" role="tablist">
+                                <?php $i = 0; foreach($langs as $index => $lang): ?>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link <?= $i === 0 ? 'active fw-bold' : '' ?>" id="seo-tab-<?= $lang['code'] ?>" data-bs-toggle="tab" data-bs-target="#seo-content-<?= $lang['code'] ?>" type="button" role="tab" aria-controls="seo-content-<?= $lang['code'] ?>" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>">
+                                        <i class="fa-solid fa-magnifying-glass text-success"></i> SEO <?= htmlspecialchars($lang['name']) ?>
+                                    </button>
+                                </li>
+                                <?php $i++; endforeach; ?>
+                            </ul>
                         </div>
                         <div class="card-body">
-                            <?= view('admin.components.gallery_upload', [
-                                'name' => 'gallery',
-                                'values' => $item['gallery'] ?? []
-                            ]) ?>
+                            <div class="tab-content" id="seoLangTabsContent">
+                                <?php $i = 0; foreach($langs as $index => $lang): ?>
+                                <?php $c = $lang['code']; ?>
+                                <div class="tab-pane fade <?= $i === 0 ? 'show active' : '' ?>" id="seo-content-<?= $c ?>" role="tabpanel" aria-labelledby="seo-tab-<?= $c ?>">
+                                    <?= view('admin.components.seo', [
+                                        'c' => $c,
+                                        'item' => $item ?? []
+                                    ]) ?>
+                                </div>
+                                <?php $i++; endforeach; ?>
+                            </div>
                         </div>
                     </div>
 

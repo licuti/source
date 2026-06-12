@@ -12,16 +12,20 @@ class ProductService {
     /**
      * Trích xuất dữ liệu cho một ngôn ngữ cụ thể từ request
      */
-    private function extractLangData(array $inputData, string $lang, int $categoryId, int $status, ?string $createdAt): array {
+    private function extractLangData(array $inputData, string $lang, int $categoryId, int $status, ?string $createdAt, bool $isUpdate = false): array {
         $title = $inputData['title'][$lang] ?? '';
         $slug = empty($inputData['slug'][$lang]) ? str_slug($title) : $inputData['slug'][$lang];
+
+        // Nếu là thêm mới (!isUpdate) và seo_title rỗng thì lấy theo title
+        // Nếu là cập nhật (isUpdate) thì có gì lưu nấy (để trống thì lưu rỗng)
+        $seoTitle = $inputData['seo_title'][$lang] ?? '';
+        if (!$isUpdate && empty($seoTitle)) {
+            $seoTitle = $title;
+        }
 
         $data = [
             'category_id'       => $categoryId,
             'lang'              => $lang,
-            'id_price'          => 0, // Fallback cho field id_price not null
-            'so_thu_tu'         => 0, // Fallback cho field so_thu_tu not null
-            'gia_flash_sale'    => 0, // Fallback cho field gia_flash_sale not null
             'title'             => $title,
             'slug'              => $slug,
             'sku'               => $inputData['sku'] ?? '',
@@ -40,14 +44,16 @@ class ProductService {
             'length'            => (float)($inputData['length'] ?? 0),
             'width'             => (float)($inputData['width'] ?? 0),
             'height'            => (float)($inputData['height'] ?? 0),
-            'unit'              => $inputData['unit'][$lang] ?? '',
+            'unit'              => is_array($inputData['unit'] ?? '') ? ($inputData['unit'][$lang] ?? '') : ($inputData['unit'] ?? ''),
             'product_type'      => $inputData['product_type'] ?? 'simple',
             'brand_id'          => (int)($inputData['brand_id'] ?? 0),
-            'seo_title'         => $inputData['seo_title'][$lang] ?? '',
+            'seo_title'         => $seoTitle,
             'seo_description'   => $inputData['seo_description'][$lang] ?? '',
-            'seo_keyword'       => $inputData['seo_keyword'][$lang] ?? '',
+            'seo_keyword'       => $inputData['keyword'][$lang] ?? '',
             'seo_head'          => $inputData['seo_head'][$lang] ?? '',
             'seo_body'          => $inputData['seo_body'][$lang] ?? '',
+            'noindex'           => isset($inputData['noindex'][$lang]) ? 1 : 0,
+            'nofollow'          => isset($inputData['nofollow'][$lang]) ? 1 : 0,
             'status'            => $status,
             'is_featured'       => isset($inputData['is_featured']) ? 1 : 0,
             'is_new'            => isset($inputData['is_new']) ? 1 : 0,
@@ -70,17 +76,16 @@ class ProductService {
         $langs = array_values($langs);
         $categoryId = (int)($inputData['category_id'] ?? 0);
         
-        $statusVal = (isset($inputData['status']) && ($inputData['status'] == '1' || $inputData['status'] === 'publish')) ? 1 : 0;
+        $statusVal = (!empty($inputData['status']) && in_array($inputData['status'], [1, '1', 'publish', 'on', 'true', true], true)) ? 1 : 0;
 
         $createdAtInput = $inputData['created_at'] ?? null;
-        // The DB schema specifies created_at as int(11) (Unix timestamp)
-        $createdAt = $createdAtInput ? strtotime($createdAtInput) : time();
-        $now = time();
+        $createdAt = $createdAtInput ? date('Y-m-d H:i:s', strtotime($createdAtInput)) : date('Y-m-d H:i:s');
+        $now = date('Y-m-d H:i:s');
 
         $firstLang = $langs[0]['code'] ?? 'vi';
 
         if (!$idCode) { // INSERT MỚI
-            $firstLangData = $this->extractLangData($inputData, $firstLang, $categoryId, $statusVal, $createdAt);
+            $firstLangData = $this->extractLangData($inputData, $firstLang, $categoryId, $statusVal, $createdAt, false);
             $firstLangData['id_code'] = 0;
             
             // Handle DB fields if using standard timestamp vs UNIX
@@ -96,7 +101,7 @@ class ProductService {
             // Thêm các ngôn ngữ còn lại
             foreach ($langs as $index => $l) {
                 if ($index === 0) continue;
-                $langData = $this->extractLangData($inputData, $l['code'], $categoryId, $statusVal, $createdAt);
+                $langData = $this->extractLangData($inputData, $l['code'], $categoryId, $statusVal, $createdAt, false);
                 $langData['id_code'] = $insertedId;
                 $langData['updated_at'] = $now;
                 ProductModel::insert($langData);
@@ -105,9 +110,11 @@ class ProductService {
         } else { // CẬP NHẬT
             foreach ($langs as $l) {
                 $c = $l['code'];
-                $exists = ProductModel::query()->where('id_code', $idCode)->where('lang', $c)->first();
+                $query = ProductModel::query();
+                $query->use_lang = false;
+                $exists = $query->where('id_code', $idCode)->where('lang', $c)->first();
                 
-                $data = $this->extractLangData($inputData, $c, $categoryId, $statusVal, $createdAt);
+                $data = $this->extractLangData($inputData, $c, $categoryId, $statusVal, $createdAt, true);
                 $data['updated_at'] = $now;
 
                 if ($exists) {
@@ -125,6 +132,9 @@ class ProductService {
         } else {
             $this->deleteVariants($idCode);
         }
+
+        // Đồng bộ tồn kho
+        \App\Services\InventoryService::syncProductStock($idCode);
 
         return $idCode;
     }
@@ -223,7 +233,9 @@ class ProductService {
      * Lấy và chuyển hóa dữ liệu sản phẩm (gom đa ngôn ngữ) để hiển thị lên Form Edit
      */
     public function getProductForEdit(int $idCode): ?array {
-        $translations = ProductModel::query()->where('id_code', $idCode)->get();
+        $query = ProductModel::query();
+        $query->use_lang = false;
+        $translations = $query->where('id_code', $idCode)->get();
         if (count($translations) == 0) return null;
 
         $firstPost = $translations[0];
@@ -265,9 +277,11 @@ class ProductService {
             $item["unit"][$lang] = $t->unit;
             $item["seo_title"][$lang] = $t->seo_title;
             $item["seo_description"][$lang] = $t->seo_description;
-            $item["seo_keyword"][$lang] = $t->seo_keyword;
+            $item["keyword"][$lang] = $t->seo_keyword;
             $item["seo_head"][$lang] = $t->seo_head;
             $item["seo_body"][$lang] = $t->seo_body;
+            $item["noindex"][$lang] = $t->noindex;
+            $item["nofollow"][$lang] = $t->nofollow;
             if (empty($item["thumbnail"]) && !empty($t->thumbnail)) {
                 $item["thumbnail"] = $t->thumbnail;
             }

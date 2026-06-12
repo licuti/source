@@ -259,10 +259,12 @@ if (!function_exists('renderCategoryFilter')) {
     function renderCategoryFilter($categories, $selectedId = 0, $prefix = '') {
         foreach ($categories as $cat) {
             $selected = ($cat->id_code == $selectedId) ? 'selected' : '';
-            echo '<option value="' . $cat->id_code . '" ' . $selected . '>' . $prefix . htmlspecialchars($cat->ten ?? $cat->name) . '</option>';
+            $catName = $cat->title ?? ($cat->ten ?? ($cat->name ?? ''));
+            echo '<option value="' . $cat->id_code . '" ' . $selected . '>' . $prefix . htmlspecialchars($catName) . '</option>';
             if (!empty($cat->children)) {
                 renderCategoryFilter($cat->children, $selectedId, $prefix . '--- ');
             }
         }
     }
 }
+

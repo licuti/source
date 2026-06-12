@@ -1,16 +1,4 @@
 <?php
-if (!function_exists('renderCategoryTree')) {
-    function renderCategoryTree($categories, $selectedId = 0, $currentEditingId = 0, $prefix = '') {
-        foreach ($categories as $cat) {
-            if ($currentEditingId > 0 && $cat->id_code == $currentEditingId) continue;
-            $selected = ($cat->id_code == $selectedId) ? 'selected' : '';
-            echo '<option value="' . $cat->id_code . '" ' . $selected . '>' . $prefix . htmlspecialchars($cat->ten) . '</option>';
-            if (!empty($cat->children)) {
-                renderCategoryTree($cat->children, $selectedId, $currentEditingId, $prefix . '--- ');
-            }
-        }
-    }
-}
 $isEdit = isset($item);
 $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : route('admin.category.store');
 ?>

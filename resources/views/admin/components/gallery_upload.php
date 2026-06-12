@@ -11,6 +11,9 @@
  */
 $name = $name ?? 'gallery[]';
 $values = $values ?? [];
+if (!is_array($values)) {
+    $values = is_string($values) && trim($values) !== '' ? [$values] : [];
+}
 $id = $id ?? uniqid('gallery_');
 $label = $label ?? 'Thư viện ảnh (Gallery)';
 $path = rtrim($path ?? '/img_data/images/', '/') . '/';

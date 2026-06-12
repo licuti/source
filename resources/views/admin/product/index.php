@@ -156,13 +156,34 @@ if ($canAdd) {
                                         
                                         <!-- Giá -->
                                         <td class="text-center align-middle text-danger fw-bold">
-                                            <?php if($item->promotional_price > 0): ?>
-                                                <?= number_format($item->promotional_price, 0, ',', '.') ?>đ
-                                                <br>
-                                                <del class="text-muted small fw-normal"><?= number_format($item->price, 0, ',', '.') ?>đ</del>
-                                            <?php else: ?>
-                                                <?= number_format($item->price, 0, ',', '.') ?>đ
-                                            <?php endif; ?>
+                                            <?php
+                                            if ($item->product_type === 'variable' && !empty($item->variants)) {
+                                                $prices = [];
+                                                foreach ($item->variants as $v) {
+                                                    $p = $v->promotional_price > 0 ? $v->promotional_price : $v->price;
+                                                    if ($p > 0) $prices[] = $p;
+                                                }
+                                                if (count($prices) > 0) {
+                                                    $minPrice = min($prices);
+                                                    $maxPrice = max($prices);
+                                                    if ($minPrice == $maxPrice) {
+                                                        echo number_format($minPrice, 0, ',', '.') . 'đ';
+                                                    } else {
+                                                        echo number_format($minPrice, 0, ',', '.') . 'đ - ' . number_format($maxPrice, 0, ',', '.') . 'đ';
+                                                    }
+                                                } else {
+                                                    echo 'Liên hệ';
+                                                }
+                                            } else {
+                                                if ($item->promotional_price > 0): ?>
+                                                    <?= number_format($item->promotional_price, 0, ',', '.') ?>đ
+                                                    <br>
+                                                    <del class="text-muted small fw-normal"><?= number_format($item->price, 0, ',', '.') ?>đ</del>
+                                                <?php else: ?>
+                                                    <?= $item->price > 0 ? number_format($item->price, 0, ',', '.') . 'đ' : 'Liên hệ' ?>
+                                                <?php endif;
+                                            }
+                                            ?>
                                         </td>
 
                                         <!-- Tồn kho -->
