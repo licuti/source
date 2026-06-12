@@ -52,7 +52,14 @@ class ProductController extends BaseAdminController {
     public function create(Request $request) {
         $langs      = $this->langs;
         $categories = $this->getCategories();
-        $attributes = \App\Models\AttributeModel::query()->with('values')->get();
+        $primaryLang = $this->primaryLang;
+        $attributes = \App\Models\AttributeModel::query()
+            ->where('lang', $primaryLang)
+            ->with([
+                'values' => function($q) use ($primaryLang) {
+                    $q->where('lang', $primaryLang);
+                }
+            ])->get();
         
         return $this->render('admin.product.form', compact('langs', 'categories', 'attributes'));
     }
@@ -71,7 +78,14 @@ class ProductController extends BaseAdminController {
         
         $langs      = $this->langs;
         $categories = $this->getCategories();
-        $attributes = \App\Models\AttributeModel::query()->with('values')->get();
+        $primaryLang = $this->primaryLang;
+        $attributes = \App\Models\AttributeModel::query()
+            ->where('lang', $primaryLang)
+            ->with([
+                'values' => function($q) use ($primaryLang) {
+                    $q->where('lang', $primaryLang);
+                }
+            ])->get();
         
         return $this->render('admin.product.form', compact('langs', 'item', 'categories', 'attributes'));
     }
@@ -169,13 +183,16 @@ class ProductController extends BaseAdminController {
     // ============================================================
 
     private function validateProduct(Request $request): bool {
-        $validator = new Validator($request->all());
+        $validator = new Validator($request->all(), [
+            "title.{$this->primaryLang}" => 'required|max:255'
+        ], [
+            "title.{$this->primaryLang}.required" => 'Tên sản phẩm không được để trống.',
+            "title.{$this->primaryLang}.max"      => 'Tên sản phẩm không được vượt quá 255 ký tự.'
+        ]);
         
-        $validator->rule('required', "title.{$this->primaryLang}")->message("Tên sản phẩm không được để trống");
-        
-        if (!$validator->validate()) {
-            session('error', current(current($validator->errors())));
-            session('old', $request->all());
+        if ($validator->fails()) {
+            session('error', $validator->firstError());
+            // Flash data (old/errors) is handled automatically inside Validator::fails()
             return false;
         }
 

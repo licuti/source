@@ -4,6 +4,7 @@ namespace App\Models;
 class ProductVariantAttributeModel extends \Model {
     public $table = '#_product_variant_attributes';
     public bool $use_lang = false;
+    public bool $timestamps = false;
 
     /**
      * Thuộc tính (Màu sắc, Size...)

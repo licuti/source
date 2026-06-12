@@ -4,6 +4,7 @@ namespace App\Models;
 class ProductVariantModel extends \Model {
     public $table = '#_product_variants';
     public bool $use_lang = false;
+    public bool $timestamps = false;
 
     /**
      * Mối quan hệ 1-Nhiều với bảng trung gian thuộc tính

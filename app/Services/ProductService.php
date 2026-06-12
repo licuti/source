@@ -19,6 +19,9 @@ class ProductService {
         $data = [
             'category_id'       => $categoryId,
             'lang'              => $lang,
+            'id_price'          => 0, // Fallback cho field id_price not null
+            'so_thu_tu'         => 0, // Fallback cho field so_thu_tu not null
+            'gia_flash_sale'    => 0, // Fallback cho field gia_flash_sale not null
             'title'             => $title,
             'slug'              => $slug,
             'sku'               => $inputData['sku'] ?? '',
@@ -64,6 +67,7 @@ class ProductService {
      * Lưu mới hoặc cập nhật sản phẩm đa ngôn ngữ
      */
     public function saveProduct(array $inputData, array $langs, int $userId, ?int $idCode = null) {
+        $langs = array_values($langs);
         $categoryId = (int)($inputData['category_id'] ?? 0);
         
         $statusVal = (isset($inputData['status']) && ($inputData['status'] == '1' || $inputData['status'] === 'publish')) ? 1 : 0;
@@ -73,7 +77,7 @@ class ProductService {
         $createdAt = $createdAtInput ? strtotime($createdAtInput) : time();
         $now = time();
 
-        $firstLang = $langs[0]['code'];
+        $firstLang = $langs[0]['code'] ?? 'vi';
 
         if (!$idCode) { // INSERT MỚI
             $firstLangData = $this->extractLangData($inputData, $firstLang, $categoryId, $statusVal, $createdAt);

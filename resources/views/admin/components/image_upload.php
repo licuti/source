@@ -44,6 +44,10 @@ $attrString = render_attrs($attrs);
 <?php if (!defined('CKFINDER_SCRIPT_LOADED')): ?>
     <?php define('CKFINDER_SCRIPT_LOADED', true); ?>
     <script src="/assets/admin/ckfinder/ckfinder.js"></script>
+<?php endif; ?>
+
+<?php if (!defined('IMAGE_UPLOAD_SCRIPT_LOADED')): ?>
+    <?php define('IMAGE_UPLOAD_SCRIPT_LOADED', true); ?>
     <script>
         function openCKFinder(inputId, basePath) {
             CKFinder.modal({

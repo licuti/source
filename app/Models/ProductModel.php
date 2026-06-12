@@ -5,6 +5,7 @@ use CategoryModel;
 
 class ProductModel extends \Model {
     public $table = '#_products';
+    public bool $timestamps = false;
 
     // ============================================================
     //  ĐỊNH NGHĨA QUAN HỆ (RELATIONSHIPS)
