@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use CategoryModel;
-use ProductModel;
+use App\Models\CategoryModel;
+use App\Models\ProductModel;
 use App\Models\PostModel;
 
 

@@ -171,10 +171,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Lấy giá mặc định từ SP gốc nếu có
             const defaultPrice = document.querySelector('input[name="price"]').value || 0;
             const defaultPromo = document.querySelector('input[name="promotional_price"]').value || 0;
+            const defaultFlash = document.querySelector('input[name="gia_flash_sale"]').value || 0;
             
             addVariantAccordion({
                 price: defaultPrice,
                 promotional_price: defaultPromo,
+                gia_flash_sale: defaultFlash,
                 attributes: variantAttrs
             });
         });
@@ -281,6 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const barcode = variant ? (variant.barcode || '') : '';
         const price = variant ? (variant.price || 0) : 0;
         const promoPrice = variant ? (variant.promotional_price || 0) : 0;
+        const flashPrice = variant ? (variant.gia_flash_sale || 0) : 0;
         const stock = variant ? (variant.stock_quantity || 0) : 0;
         const weight = variant ? (variant.weight || 0) : 0;
         const img = variant ? (variant.image || '') : '';
@@ -348,6 +351,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label text-muted mb-1">Giá khuyến mãi (VNĐ)</label>
                                     <input type="number" name="variants[${index}][promotional_price]" class="form-control form-control-sm text-danger" value="${promoPrice}">
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label text-muted mb-1">Giá Flash Sale (VNĐ)</label>
+                                    <input type="number" name="variants[${index}][gia_flash_sale]" class="form-control form-control-sm text-warning" value="${flashPrice}">
                                 </div>
                             </div>
 

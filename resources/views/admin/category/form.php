@@ -38,26 +38,26 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
                                     
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Tên danh mục <span class="text-danger">*</span></label>
-                                        <input type="text" name="ten[<?= $c ?>]" class="form-control form-control-sm" placeholder="Nhập tên..." value="<?= htmlspecialchars($item['ten'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" required>
+                                        <input type="text" name="title[<?= $c ?>]" class="form-control form-control-sm" placeholder="Nhập tên..." value="<?= htmlspecialchars($item['title'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" required>
                                     </div>
                                     
                                     <div class="mb-3">
                                         <label class="form-label">Đường dẫn thân thiện (Alias / Slug)</label>
-                                        <?php $isAutoSlug = empty($item['alias'][$c]) ? 'auto-slug' : ''; ?>
-                                        <input type="text" name="alias[<?= $c ?>]" class="form-control form-control-sm text-muted <?= $isAutoSlug ?>" placeholder="tu-dong-tao-neu-de-trong" value="<?= htmlspecialchars($item['alias'][$c] ?? '') ?>" data-slug-target="<?= $c ?>">
+                                        <?php $isAutoSlug = empty($item['slug'][$c]) ? 'auto-slug' : ''; ?>
+                                        <input type="text" name="slug[<?= $c ?>]" class="form-control form-control-sm text-muted <?= $isAutoSlug ?>" placeholder="tu-dong-tao-neu-de-trong" value="<?= htmlspecialchars($item['slug'][$c] ?? '') ?>" data-slug-target="<?= $c ?>">
                                     </div>
 
                                     <!-- Thay thế textarea bằng Component CKEditor cho phần Mô tả -->
                                     <?= view('admin.components.ckeditor', [
-                                        'name' => "mo_ta[$c]",
-                                        'value' => $item['mo_ta'][$c] ?? '',
+                                        'name' => "description[$c]",
+                                        'value' => $item['description'][$c] ?? '',
                                         'label' => "Mô tả ngắn (" . strtoupper($c) . ")"
                                     ]) ?>
 
                                     <!-- Nhúng Component CKEditor tái sử dụng -->
                                     <?= view('admin.components.ckeditor', [
-                                        'name' => "noi_dung[$c]",
-                                        'value' => $item['noi_dung'][$c] ?? '',
+                                        'name' => "content[$c]",
+                                        'value' => $item['content'][$c] ?? '',
                                         'label' => "Nội dung chi tiết"
                                     ]) ?>
 
@@ -66,6 +66,34 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
                             </div>
                         </div>
                     </div>
+                    <!-- TAB ĐA NGÔN NGỮ (SEO) -->
+                    <div class="card card-outline card-success mb-4">
+                        <div class="card-header p-0 pt-1 border-bottom-0 bg-white">
+                            <ul class="nav nav-tabs" id="seoLangTabs" role="tablist">
+                                <?php $i = 0; foreach($langs as $index => $lang): ?>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link <?= $i === 0 ? 'active fw-bold' : '' ?>" id="seo-tab-<?= $lang['code'] ?>" data-bs-toggle="tab" data-bs-target="#seo-content-<?= $lang['code'] ?>" type="button" role="tab" aria-controls="seo-content-<?= $lang['code'] ?>" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>">
+                                        <i class="fa-solid fa-magnifying-glass text-success"></i> SEO <?= htmlspecialchars($lang['name']) ?>
+                                    </button>
+                                </li>
+                                <?php $i++; endforeach; ?>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content" id="seoLangTabsContent">
+                                <?php $i = 0; foreach($langs as $index => $lang): ?>
+                                <?php $c = $lang['code']; ?>
+                                <div class="tab-pane fade <?= $i === 0 ? 'show active' : '' ?>" id="seo-content-<?= $c ?>" role="tabpanel" aria-labelledby="seo-tab-<?= $c ?>">
+                                    <?= view('admin.components.seo', [
+                                        'c' => $c,
+                                        'item' => $item ?? []
+                                    ]) ?>
+                                </div>
+                                <?php $i++; endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Cột Phải: Cấu Hình Chung -->
@@ -78,9 +106,9 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
                             
                             <div class="mb-3">
                                 <label class="form-label">Danh mục cha</label>
-                                <select name="id_loai" class="form-select form-select-sm">
+                                <select name="parent_id" class="form-select form-select-sm">
                                     <option value="0">--- Trở thành Danh mục gốc ---</option>
-                                    <?php renderCategoryTree($parentCategories ?? [], $item['id_loai'] ?? 0, $item['id'] ?? 0); ?>
+                                    <?php renderCategoryTree($parentCategories ?? [], $item['parent_id'] ?? 0, $item['id'] ?? 0); ?>
                                 </select>
                             </div>
 
@@ -97,29 +125,51 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
 
                             <!-- Nhúng Component Tải ảnh tái sử dụng -->
                             <?= view('admin.components.image_upload', [
-                                'name' => 'hinh_anh',
-                                'value' => $item['hinh_anh'] ?? '',
+                                'name' => 'image',
+                                'value' => $item['image'] ?? '',
                                 'label' => 'Hình đại diện (Thumbnail)'
                             ]) ?>
 
-                            <div class="mb-3">
-                                <label class="form-label">Số thứ tự hiển thị</label>
-                                <input type="number" name="so_thu_tu" class="form-control form-control-sm" value="<?= $item['so_thu_tu'] ?? 0 ?>">
-                                <small class="form-text text-muted">Số càng nhỏ ưu tiên hiển thị trước.</small>
+                            <?= view('admin.components.image_upload', [
+                                'name' => 'banner',
+                                'value' => $item['banner'] ?? '',
+                                'label' => 'Hình Banner (Tùy chọn)'
+                            ]) ?>
+
+                            <?= view('admin.components.input', [
+                                'type' => 'number',
+                                'name' => 'sort_order',
+                                'value' => $item['sort_order'] ?? 0,
+                                'label' => 'Số thứ tự hiển thị',
+                                'help_text' => 'Số càng nhỏ ưu tiên hiển thị trước.'
+                            ]) ?>
+
+                            <div class="pt-2">
+                                <?= view('admin.components.switch', [
+                                    'name' => 'is_active',
+                                    'checked' => !isset($item) || !empty($item['is_active']),
+                                    'label' => 'Cho phép hiển thị',
+                                    'attrs' => ['id' => 'is_active']
+                                ]) ?>
                             </div>
 
-                            <div class="form-check form-switch mb-3 pt-2">
-                                <input class="form-check-input" type="checkbox" name="hien_thi" id="hien_thi" <?= (!isset($item) || !empty($item['hien_thi'])) ? 'checked' : '' ?>>
-                                <label class="form-check-label mt-1 ms-2 fw-bold" for="hien_thi">Cho phép hiển thị</label>
-                            </div>
+                            <?= view('admin.components.switch', [
+                                'name' => 'is_featured',
+                                'checked' => !empty($item['is_featured']),
+                                'label' => 'Danh mục Nổi bật',
+                                'attrs' => ['id' => 'is_featured']
+                            ]) ?>
+
+                            <?= view('admin.components.datetime', [
+                                'name' => 'created_at',
+                                'value' => $item['created_at'] ?? '',
+                                'label' => 'Ngày tạo'
+                            ]) ?>
 
                         </div>
-                        <div class="card-footer bg-white border-top-0 py-3">
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-save"></i> <?= $isEdit ? 'Lưu cập nhật' : 'Thêm mới' ?></button>
-                                <a href="<?= route('admin.category.index') ?>" class="btn btn-light border btn-sm"><i class="fa-solid fa-arrow-left"></i> Trở về</a>
-                            </div>
-                        </div>
+                        <?= view('admin.components.save_buttons', [
+                            'back_url' => route('admin.category.index')
+                        ]) ?>
                     </div>
                 </div>
             </div>

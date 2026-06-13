@@ -1,5 +1,7 @@
 <?php
-class LanguageModel extends Model {
+namespace App\Models;
+
+class LanguageModel extends \Model {
     public $table = '#_lang';
 
     protected static $current = null;

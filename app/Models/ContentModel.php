@@ -1,5 +1,7 @@
 <?php
-class ContentModel extends Model {
+namespace App\Models;
+
+class ContentModel extends \Model {
     public $table = '#_content';
 }
 ?>

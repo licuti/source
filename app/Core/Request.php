@@ -37,6 +37,11 @@ class Request {
         return $this->inputs[$key] ?? $this->params[$key] ?? $default;
     }
 
+    /** Kiểm tra xem key có tồn tại trong request không */
+    public function has($key) {
+        return isset($this->inputs[$key]) || isset($this->params[$key]);
+    }
+
     /** Lấy route param (slug từ URL pattern) */
     public function param($key, $default = null) {
         return $this->routeParams[$key] ?? $default;

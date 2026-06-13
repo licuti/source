@@ -14,12 +14,7 @@ $action = isset($language) ? route('admin.language.update', ['id' => $language->
 
 <div class="app-content">
     <div class="container-fluid">
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger alert-dismissible fade show">
-                <i class="fa-solid fa-triangle-exclamation"></i> <?= htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <?php endif; ?>
+
         <form action="<?= $action ?>" method="POST" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-9">
@@ -109,14 +104,7 @@ $action = isset($language) ? route('admin.language.update', ['id' => $language->
                                 <label class="form-check-label fw-bold" for="is_rtl">RTL (Từ phải sang trái)</label>
                             </div>
                         </div>
-                        <div class="card-footer d-flex flex-column gap-2">
-                            <button type="submit" class="btn btn-primary btn-sm w-100">
-                                <i class="fa-solid fa-save"></i> <?= isset($language) ? 'Lưu cập nhật' : 'Thêm mới' ?>
-                            </button>
-                            <a href="<?= route('admin.language.index') ?>" class="btn btn-secondary btn-sm w-100">
-                                <i class="fa-solid fa-arrow-left"></i> Quay lại
-                            </a>
-                        </div>
+                        <?= view('admin.components.save_buttons', ['back_url' => route('admin.language.index')]) ?>
                     </div>
                 </div>
             </div>

@@ -42,7 +42,7 @@
         </th>
         <td class="text-center align-middle"><?= $imgHtml ?></td>
         <td class="align-middle">
-            <?= $prefix ?><strong><a href="<?= route('admin.category.edit', ['id' => $item->id_code]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->name) ?></a></strong>
+            <?= $prefix ?><strong><a href="<?= route('admin.category.edit', ['id' => $item->id_code]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->title ?? '') ?></a></strong>
             <?php
             $actions = [];
             if (hasPermission('admin.category', 'edit')) {

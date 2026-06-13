@@ -132,8 +132,8 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                         
                                         <!-- TAB CHUNG -->
                                         <div class="tab-pane fade show active" id="v-pills-general" role="tabpanel" aria-labelledby="v-pills-general-tab">
-                                            <div class="row">
-                                                <div class="col-md-4">
+                                            <div class="row mb-3">
+                                                <div class="col-md-3">
                                                     <?= view('admin.components.input', [
                                                         'name' => 'price',
                                                         'value' => $item['price'] ?? 0,
@@ -141,7 +141,7 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                                         'type' => 'number'
                                                     ]) ?>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
                                                     <?= view('admin.components.input', [
                                                         'name' => 'promotional_price',
                                                         'value' => $item['promotional_price'] ?? 0,
@@ -149,13 +149,39 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                                         'type' => 'number'
                                                     ]) ?>
                                                 </div>
-                                                <div class="col-md-4">
+                                                <div class="col-md-3">
+                                                    <?= view('admin.components.input', [
+                                                        'name' => 'gia_flash_sale',
+                                                        'value' => $item['gia_flash_sale'] ?? 0,
+                                                        'label' => 'Giá Flash Sale (VNĐ)',
+                                                        'type' => 'number'
+                                                    ]) ?>
+                                                </div>
+                                                <div class="col-md-3">
                                                     <?= view('admin.components.input', [
                                                         'name' => 'cost_price',
                                                         'value' => $item['cost_price'] ?? 0,
                                                         'label' => 'Giá vốn (VNĐ)',
                                                         'type' => 'number'
                                                     ]) ?>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Flash Sale Config -->
+                                            <div class="row mb-3 p-3 bg-light border rounded">
+                                                <div class="col-md-4">
+                                                    <div class="form-check form-switch mt-4">
+                                                        <input class="form-check-input" type="checkbox" name="flash_sale" id="flash_sale" <?= ($item['flash_sale'] ?? 0) ? 'checked' : '' ?>>
+                                                        <label class="form-check-label fw-bold" for="flash_sale">Bật Flash Sale</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Giờ bắt đầu</label>
+                                                    <input type="datetime-local" name="flash_sale_start" class="form-control" value="<?= isset($item['flash_sale_start']) ? date('Y-m-d\TH:i', strtotime($item['flash_sale_start'])) : '' ?>">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Giờ kết thúc</label>
+                                                    <input type="datetime-local" name="flash_sale_end" class="form-control" value="<?= isset($item['flash_sale_end']) ? date('Y-m-d\TH:i', strtotime($item['flash_sale_end'])) : '' ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -179,7 +205,7 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <?= view('admin.components.input', [
                                                         'name' => 'stock_quantity',
                                                         'value' => $item['stock_quantity'] ?? 0,
@@ -187,7 +213,15 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                                         'type' => 'number'
                                                     ]) ?>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
+                                                    <?= view('admin.components.input', [
+                                                        'name' => 'low_stock_amount',
+                                                        'value' => $item['low_stock_amount'] ?? 5,
+                                                        'label' => 'Ngưỡng cảnh báo hết hàng',
+                                                        'type' => 'number'
+                                                    ]) ?>
+                                                </div>
+                                                <div class="col-md-4">
                                                     <div class="mb-3">
                                                         <label class="form-label">Trạng thái kho</label>
                                                         <select name="stock_status" class="form-select">
@@ -392,17 +426,9 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                             ]) ?>
 
                         </div>
-                        <div class="card-footer d-flex justify-content-end gap-1 flex-wrap">
-                            <a href="<?= route('admin.product.index') ?>" class="btn btn-secondary btn-sm">
-                                <i class="fa-solid fa-arrow-left"></i> Quay lại
-                            </a>
-                            <button type="submit" name="save_action" value="exit" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-save"></i> Lưu
-                            </button>
-                            <button type="submit" name="save_action" value="continue" class="btn btn-success btn-sm">
-                                <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
-                            </button>
-                        </div>
+                        <?= view('admin.components.save_buttons', [
+                            'back_url' => route('admin.product.index')
+                        ]) ?>
                     </div>
                 </div>
             </div>

@@ -3,7 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Request;
-use TextModel;
+use App\Models\TextModel;
 
 class TextTranslationController extends BaseAdminController
 {

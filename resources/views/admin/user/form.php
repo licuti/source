@@ -152,17 +152,7 @@ $title = $isEdit ? 'Chỉnh sửa Quản trị viên' : 'Thêm Quản trị viê
                                 </div>
                             </div>
                         </div>
-                        <div class="card-footer d-flex justify-content-end gap-1">
-                            <a href="<?= route('admin.user.index') ?>" class="btn btn-secondary btn-sm">
-                                <i class="fa-solid fa-arrow-left"></i> Quay lại
-                            </a>
-                            <button type="submit" name="submit_action" value="save" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-save"></i> Lưu
-                            </button>
-                            <button type="submit" name="submit_action" value="save_and_edit" class="btn btn-success btn-sm">
-                                <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
-                            </button>
-                        </div>
+                        <?= view('admin.components.save_buttons', ['back_url' => route('admin.user.index')]) ?>
                     </div>
                 </div>
             </div>

@@ -57,7 +57,7 @@ class UserAdminController extends BaseAdminController {
 
         $id = UserModel::insertGetId($data);
         
-        if ($request->input('submit_action') == 'save_and_edit') {
+        if ($request->input('save_action') == 'continue') {
             return $this->redirect(route('admin.user.edit', ['id' => $id]))->with('success', 'Đã thêm tài khoản thành công!');
         }
         return $this->redirect(route('admin.user.index'))->with('success', 'Đã thêm tài khoản thành công!');
@@ -96,7 +96,7 @@ class UserAdminController extends BaseAdminController {
 
         $user->update($data);
         
-        if ($request->input('submit_action') == 'save_and_edit') {
+        if ($request->input('save_action') == 'continue') {
             return $this->redirect(route('admin.user.edit', ['id' => $id]))->with('success', 'Đã cập nhật thông tin thành công!');
         }
         return $this->redirect(route('admin.user.index'))->with('success', 'Đã cập nhật thông tin thành công!');

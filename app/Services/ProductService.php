@@ -26,6 +26,11 @@ class ProductService {
         $data = [
             'category_id'       => $categoryId,
             'lang'              => $lang,
+            'gia_flash_sale'    => (int)($inputData['gia_flash_sale'] ?? 0),
+            'flash_sale'        => isset($inputData['flash_sale']) ? 1 : 0,
+            'flash_sale_start'  => !empty($inputData['flash_sale_start']) ? date('Y-m-d H:i:s', strtotime($inputData['flash_sale_start'])) : null,
+            'flash_sale_end'    => !empty($inputData['flash_sale_end']) ? date('Y-m-d H:i:s', strtotime($inputData['flash_sale_end'])) : null,
+            'low_stock_amount'  => (int)($inputData['low_stock_amount'] ?? 5),
             'title'             => $title,
             'slug'              => $slug,
             'sku'               => $inputData['sku'] ?? '',
@@ -118,7 +123,9 @@ class ProductService {
                 $data['updated_at'] = $now;
 
                 if ($exists) {
-                    ProductModel::query()->where('id', $exists->id)->update($data);
+                    $updQuery = ProductModel::query();
+                    $updQuery->use_lang = false;
+                    $updQuery->where('id', $exists->id)->update($data);
                 } else {
                     $data['id_code'] = $idCode;
                     ProductModel::insert($data);
@@ -159,6 +166,7 @@ class ProductService {
                 'barcode'           => trim($variant['barcode'] ?? ''),
                 'price'             => (int)($variant['price'] ?? 0),
                 'promotional_price' => (int)($variant['promotional_price'] ?? 0),
+                'gia_flash_sale'    => (int)($variant['gia_flash_sale'] ?? 0),
                 'stock_quantity'    => (int)($variant['stock_quantity'] ?? 0),
                 'weight'            => (float)($variant['weight'] ?? 0),
                 'image'             => trim($variant['image'] ?? ''),
@@ -224,7 +232,9 @@ class ProductService {
     public function deleteProduct(int $idCode) {
         if ($idCode > 0) {
             $this->deleteVariants($idCode);
-            return ProductModel::query()->where('id_code', $idCode)->delete();
+            $query = ProductModel::query();
+            $query->use_lang = false;
+            return $query->where('id_code', $idCode)->delete();
         }
         return false;
     }
@@ -242,29 +252,33 @@ class ProductService {
         
         $item = [
             'id'                => $idCode, 
-            'category_id'       => $firstPost->category_id, 
-            'brand_id'          => $firstPost->brand_id, 
-            'product_type'      => $firstPost->product_type, 
+            'category_id'       => $firstPost->category_id,
+            'brand_id'          => $firstPost->brand_id,
+            'product_type'      => $firstPost->product_type,
             'sku'               => $firstPost->sku,
             'barcode'           => $firstPost->barcode,
+            'thumbnail'         => $firstPost->thumbnail,
+            'gallery'           => json_decode($firstPost->gallery ?? '[]', true),
             'price'             => $firstPost->price,
             'promotional_price' => $firstPost->promotional_price,
+            'gia_flash_sale'    => $firstPost->gia_flash_sale,
+            'flash_sale'        => $firstPost->flash_sale,
+            'flash_sale_start'  => $firstPost->flash_sale_start,
+            'flash_sale_end'    => $firstPost->flash_sale_end,
             'cost_price'        => $firstPost->cost_price,
             'stock_quantity'    => $firstPost->stock_quantity,
             'stock_status'      => $firstPost->stock_status,
+            'low_stock_amount'  => $firstPost->low_stock_amount ?? 5,
             'weight'            => $firstPost->weight,
             'length'            => $firstPost->length,
             'width'             => $firstPost->width,
             'height'            => $firstPost->height,
-            'status'            => $firstPost->status,
-            'created_at'        => $firstPost->created_at,
             'is_featured'       => $firstPost->is_featured,
             'is_new'            => $firstPost->is_new,
             'is_hot'            => $firstPost->is_hot,
             'is_sale'           => $firstPost->is_sale,
-            'thumbnail'         => $firstPost->thumbnail,
-            'gallery'           => $firstPost->gallery ? json_decode($firstPost->gallery, true) : [],
-            'product_attributes'=> $firstPost->product_attributes ? json_decode($firstPost->product_attributes, true) : [],
+            'status'            => $firstPost->status,
+            'product_attributes'=> json_decode($firstPost->product_attributes ?? '[]', true),
         ];
         
         foreach ($translations as $t) {

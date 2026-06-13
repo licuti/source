@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 
-use ProductModel;
+use App\Models\ProductModel;
 
 /**
  * SearchController

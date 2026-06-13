@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use ProductModel;
-use CategoryModel;
+use App\Models\ProductModel;
+use App\Models\CategoryModel;
 use App\Core\Response;
 
 

@@ -151,17 +151,7 @@ $title = $isEdit ? 'Chỉnh sửa Nhóm quyền' : 'Thêm Nhóm quyền';
                                 <input type="hidden" name="is_active" value="1">
                             <?php endif; ?>
                         </div>
-                        <div class="card-footer d-flex justify-content-end gap-1">
-                            <a href="<?= route('admin.role.index') ?>" class="btn btn-secondary btn-sm">
-                                <i class="fa-solid fa-arrow-left"></i> Quay lại
-                            </a>
-                            <button type="submit" name="save_action" value="save" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-save"></i> Lưu
-                            </button>
-                            <button type="submit" name="save_action" value="save_and_edit" class="btn btn-success btn-sm">
-                                <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
-                            </button>
-                        </div>
+                        <?= view('admin.components.save_buttons', ['back_url' => route('admin.role.index')]) ?>
                     </div>
                 </div>
             </div>

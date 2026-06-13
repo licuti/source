@@ -41,6 +41,8 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 |---|---|---|---|
 | 103 | **Cấu hình Ngôn ngữ** (`language`) | `LanguageSettingController` | 🟢 Hoàn thành |
 | 26 | **Dịch chuỗi ngôn ngữ** (`text`) | `TextTranslationController` | 🟢 Hoàn thành |
+| 54 | **Quản lý Menu Website** (`menu`) | `MenuController` | 🟡 Đang PT |
+| N/A | **Menu Hệ thống (Admin Sidebar)** (`system-menu`) | `MenuAdminController` | 🟢 Hoàn thành |
 | 101 | **Cấu hình Email / SMTP** (`email-smtp`) | `EmailController` | 🟡 Đang PT |
 | 102 | **Tích hợp API / Scripts** (`api-integration`) | `ApiIntegrationController` | 🟡 Đang PT |
 | 104 | **Sao lưu & Cache** (`backup-cache`) | `BackupController` | 🟡 Đang PT |
@@ -50,7 +52,6 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 28 | **Cấu hình SEO cơ bản** (`seo-co-ban`) | `SeoConfigController` | 🔴 Chưa làm |
 | 39 | **Sitemap** (`sitemap`) | `SitemapController` | 🔴 Chưa làm |
 | 53 | **Button Contact** (`button-contact`) | `ContactButtonController` | 🔴 Chưa làm |
-| 54 | **Menu** (`menu`) | `MenuController` | 🔴 Chưa làm |
 
 ### 🟢 Chi tiết: LanguageSettingController (Cấu hình Ngôn ngữ)
 - **`index()`**: Hiển thị danh sách ngôn ngữ, sắp xếp theo `sort_order`.
@@ -74,6 +75,18 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **`scan()`**: Quét toàn bộ file `.php` trong thư mục `app/` và `resources/views/`. Dùng Regex `/__\(\s*['"]([^'"]+)['"]\s*\)/` để tìm tất cả các lời gọi `__('keyword')`. So sánh với DB, tự động thêm các keyword chưa có vào bảng `db_text` với giá trị mặc định là chính key đó.
 - **`scanDirectory()` (private)**: Hàm đệ quy (Recursive) để quét sâu vào tất cả các thư mục con.
 
+### 🟢 Chi tiết: MenuController (Quản lý Menu Website - Frontend)
+- **`index()`**: Hiển thị giao diện quản lý menu chính (kéo thả Nestable). Tải danh sách category, product, post và tổ chức thành cấu trúc cây đệ quy phục vụ kéo thả.
+- **`ajaxCreate()`**: Tạo mới một menu name rỗng trong bảng `#_menus`.
+- **`ajaxSave()`**: Lưu cấu trúc cây vào bảng `#_menu_items`, cập nhật vị trí `#_menu_locations`.
+- **`ajaxDelete()`**: Xóa sạch menu, items và location liên quan.
+
+### 🟢 Chi tiết: MenuAdminController (Quản lý Menu hệ thống Admin Sidebar)
+- **`index()`**: Hiển thị cấu trúc cây menu đa cấp trực quan bằng thư viện kéo thả Nestable.
+- **`store()` / `update()`**: Thêm mới hoặc chỉnh sửa thông tin của một node menu (tên, alias, route_name, icon, parent, permission_level, các thiết lập badge số lượng thông báo...).
+- **`destroy()`**: Xóa một menu đồng thời tự động xóa các menu con trực thuộc nó.
+- **`updateSortAjax()`**: Nhận JSON cấu trúc cây đã thay đổi từ giao diện Nestable kéo thả, cập nhật đồng loạt lại vị trí cha/con (`parent`) và thứ tự hiển thị (`sort_order`) thông qua AJAX.
+
 ---
 
 ## 3. 📦 QUẢN LÝ SẢN PHẨM (Catalog)
@@ -82,7 +95,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 |---|---|---|---|
 | 22 | **Loại danh mục** (`category`) | `CategoryController` | 🟢 Hoàn thành |
 | 49 | **Nhóm thuộc tính** (`attribute`) | `AttributeController` | 🟢 Hoàn thành |
-| 30 | **Sản phẩm** (`san-pham`) | `ProductController` | 🔴 Chưa làm |
+| 30 | **Sản phẩm** (`san-pham`) | `ProductController` | 🟢 Hoàn thành |
 
 ### 🟢 Chi tiết: CategoryController (Loại danh mục)
 - **`index()`**: Hiển thị toàn bộ danh mục ngôn ngữ `vi`, sắp xếp theo `so_thu_tu`. Tạo `parentMap` (mảng `id_code => ten`) để View dễ dàng hiển thị tên danh mục cha.
@@ -113,6 +126,13 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
   - Nếu `id_code = 0`: Thêm mới giá trị (insert vào `cf_code` rồi insert bản dịch).
   - Nếu `isUpdate = true`: So sánh danh sách giá trị cũ và mới, tự động xóa những giá trị đã bị người dùng xóa khỏi form Repeater.
 
+### 🟢 Chi tiết: ProductController (Quản lý Sản phẩm)
+- **`index()`**: Hiển thị danh sách sản phẩm với bộ lọc từ khóa, trạng thái, danh mục, và lọc tồn kho (tất cả, còn hàng, sắp hết hàng, hết hàng) kèm theo phân trang.
+- **`create()` / `edit()`**: Form thêm/sửa tích hợp các Tab ngôn ngữ, cây danh mục, và danh sách các thuộc tính biến thể (Attributes) lấy từ DB để cấu hình biến thể.
+- **`store()` / `update()`**: Gọi qua `ProductService` xử lý lưu trữ dữ liệu sản phẩm, thông tin Flash Sale (giá flash sale, thời gian bắt đầu/kết thúc), mức cảnh báo tồn kho thấp (`low_stock_amount`), và tự động cập nhật trạng thái kho hàng (`stock_status`).
+- **`destroy()` / `destroyMultiple()`**: Xóa một hoặc nhiều sản phẩm kèm theo đồng bộ dọn dẹp các biến thể liên quan.
+- **`updateStatusAjax()`**: Hỗ trợ toggle nhanh trạng thái (`status`, `is_featured`, `is_new`, `is_hot`, `is_sale`) qua AJAX.
+
 ---
 
 ## 4. 🛒 THƯƠNG MẠI ĐIỆN TỬ (E-Commerce)
@@ -134,11 +154,18 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 | ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
 |---|---|---|---|
-| 23 | **Bài viết** (`bai-viet`) | `PostController` | 🔴 Chưa làm |
+| 23 | **Bài viết** (`bai-viet`) | `PostController` | 🟢 Hoàn thành |
 | 24 | **Nội dung** (`noi-dung`) | `PageController` | 🔴 Chưa làm |
 | 36 | **Album ảnh** (`gallery`) | `GalleryController` | 🔴 Chưa làm |
 | 37 | **Videos** (`video`) | `VideoController` | 🔴 Chưa làm |
 | 38 | **Upload file** (`upload-file`) | `FileManagerController` | 🔴 Chưa làm |
+
+### 🟢 Chi tiết: PostController (Quản lý Bài viết)
+- **`index()`**: Liệt kê danh sách bài viết theo ngôn ngữ, phân trang, cho phép tìm kiếm theo từ khóa, lọc theo trạng thái và danh mục. Hỗ trợ phân quyền sở hữu bài viết (`ownedByUser`).
+- **`create()` / `edit()`**: Form thêm/sửa có đầy đủ Tab ngôn ngữ và tab cấu hình chung.
+- **`store()` / `update()`**: Lưu trữ bài viết thông qua `PostService`.
+- **`destroy()` / `destroyMultiple()`**: Xóa đơn lẻ hoặc xóa hàng loạt các bài viết.
+- **`updateStatusAjax()`**: Toggle trạng thái hiển thị nhanh qua Ajax.
 
 ---
 
@@ -154,4 +181,4 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 ---
 
-> **📊 Tổng kết tiến độ:** Hoàn thành **7/33 module** (21%). Hệ thống phân quyền (RBAC) và Quản lý User (Core) đã hoàn thiện 100%. Ưu tiên tiếp theo: Module Sản phẩm và Đơn hàng là cốt lõi của hệ thống E-commerce.
+> **📊 Tổng kết tiến độ:** Hoàn thành **10/33 module** (30%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Sản phẩm và Bài viết đã hoàn thiện 100%. Ưu tiên tiếp theo: Module Đơn hàng và các phần CRM liên quan.

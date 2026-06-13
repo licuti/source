@@ -40,7 +40,7 @@
                     }
                 }
                 
-                $mainModules = \ModuleAdminModel::where('parent', 0)
+                $mainModules = \App\Models\ModuleAdminModel::where('parent', 0)
                     ->where('is_active', 1)
                     ->orderBy('sort_order', 'ASC')
                     ->get();
@@ -48,7 +48,7 @@
                 
                 <?php foreach ($mainModules as $main): ?>
                     <?php
-                    $subModulesRaw = \ModuleAdminModel::where('parent', $main->id)
+                    $subModulesRaw = \App\Models\ModuleAdminModel::where('parent', $main->id)
                         ->where('is_active', 1)
                         ->orderBy('sort_order', 'ASC')
                         ->get();

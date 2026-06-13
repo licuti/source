@@ -26,10 +26,13 @@ class InventoryService {
                 ->where('product_id', $productId)
                 ->sum('stock_quantity');
 
-            // Cập nhật lại tồn kho cho sản phẩm cha ở TẤT CẢ các bản dịch (lang)
+            // Cập nhật lại tồn kho và trạng thái cho sản phẩm cha ở TẤT CẢ các bản dịch (lang)
             ProductModel::query()
                 ->where('id_code', $productId)
-                ->update(['stock_quantity' => (int)$totalStock]);
+                ->update([
+                    'stock_quantity' => (int)$totalStock,
+                    'stock_status'   => $totalStock > 0 ? 'in_stock' : 'out_of_stock'
+                ]);
         }
     }
 

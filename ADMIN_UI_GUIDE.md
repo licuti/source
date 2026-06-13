@@ -308,9 +308,96 @@ Thêm tab ngôn ngữ vào cột trái:
 
 ---
 
-## 3. 🔘 QUY TẮC BUTTON & INPUT
+## 3. 🧩 DANH SÁCH COMPONENT CHUẨN
 
-### 3.1 Kích thước (Size)
+Các component chuẩn dưới đây giúp thống nhất hóa các phần giao diện lặp đi lặp lại. Tất cả form thêm mới hoặc chỉnh sửa bắt buộc sử dụng các component này thay vì viết code HTML thô.
+
+### 3.1 Nút lưu Form (Save Buttons)
+Render ra block các nút ở chân card chứa form (Quay lại, Lưu, Lưu và sửa).
+```php
+<?= view('admin.components.save_buttons', [
+    'back_url' => route('admin.module.index')
+]) ?>
+```
+**Các tham số chính:**
+- `back_url` (string, bắt buộc): Đường dẫn quay lại danh sách.
+- `action_name` (string, tùy chọn, mặc định: `'save_action'`): Tên của thẻ input submit.
+- `exit_value` (string, tùy chọn, mặc định: `'exit'`): Giá trị khi nhấn nút Lưu.
+- `continue_value` (string, tùy chọn, mặc định: `'continue'`): Giá trị khi nhấn nút Lưu và sửa.
+- `buttons` (array, tùy chọn): Dùng để truyền danh sách nút tùy biến nếu không muốn dùng 3 nút mặc định.
+
+### 3.2 Nhập dữ liệu tổng quát (Input)
+Tự động tích hợp cơ chế giữ lại dữ liệu cũ khi validate lỗi (old value) và hiển thị thông báo lỗi tương ứng.
+```php
+<?= view('admin.components.input', [
+    'type' => 'text',
+    'name' => 'title',
+    'value' => $item['title'] ?? '',
+    'label' => 'Tiêu đề'
+]) ?>
+```
+**Các tham số chính:**
+- `type` (string, mặc định: `'text'`): Loại input (text, number, email, color...).
+- `name` (string, bắt buộc): Tên input.
+- `value` (string, bắt buộc): Giá trị ban đầu.
+- `label` (string, tùy chọn): Nhãn hiển thị bên trên.
+- `help_text` (string, tùy chọn): Chú thích hiển thị mờ bên dưới.
+- `attrs` (array, tùy chọn): Các thuộc tính bổ sung như `['required' => true, 'placeholder' => '...']`.
+
+### 3.3 Công tắc Bật/Tắt (Switch)
+Công tắc toggle trạng thái đẹp mắt dựa trên Bootstrap Switch.
+```php
+<?= view('admin.components.switch', [
+    'name' => 'is_active',
+    'checked' => !isset($item) || !empty($item['is_active']),
+    'label' => 'Cho phép hiển thị'
+]) ?>
+```
+
+### 3.4 Soạn thảo văn bản (CKEditor)
+Tích hợp trình soạn thảo văn bản CKEditor có sẵn.
+```php
+<?= view('admin.components.ckeditor', [
+    'name' => 'content',
+    'value' => $item['content'] ?? '',
+    'label' => 'Nội dung chi tiết'
+]) ?>
+```
+
+### 3.5 Tải ảnh (Image Upload)
+Giao diện chọn file ảnh và hiển thị ảnh xem trước (preview) tích hợp sẵn CKFinder.
+```php
+<?= view('admin.components.image_upload', [
+    'name' => 'image',
+    'value' => $item['image'] ?? '',
+    'label' => 'Hình đại diện'
+]) ?>
+```
+
+### 3.6 Ngày giờ (Datetime)
+Trường chọn ngày giờ chuẩn dạng `datetime-local` thân thiện.
+```php
+<?= view('admin.components.datetime', [
+    'name' => 'created_at',
+    'value' => $item['created_at'] ?? date('Y-m-d H:i:s'),
+    'label' => 'Ngày tạo'
+]) ?>
+```
+
+### 3.7 Cấu hình SEO đa ngôn ngữ (SEO Tabs)
+Tự động render form điền Title, Description, Keywords, Tags, Noindex, Nofollow và khối xem trước kết quả tìm kiếm trên Google (Google Search Snippet Preview).
+```php
+<?= view('admin.components.seo', [
+    'c' => $langCode,
+    'item' => $item ?? []
+]) ?>
+```
+
+---
+
+## 4. 🔘 QUY TẮC BUTTON & INPUT
+
+### 4.1 Kích thước (Size)
 
 | Vị trí sử dụng | Class Bootstrap |
 |---|---|
@@ -323,7 +410,7 @@ Thêm tab ngôn ngữ vào cột trái:
 
 > ⚠️ **KHÔNG dùng** `btn` to mặc định (không có `-sm`) ở bất cứ đâu trong admin trừ khi có lý do đặc biệt.
 
-### 3.2 Màu sắc Button theo ngữ nghĩa
+### 4.2 Màu sắc Button theo ngữ nghĩa
 
 | Hành động | Class | Icon |
 |---|---|---|
@@ -340,29 +427,29 @@ Thêm tab ngôn ngữ vào cột trái:
 
 ---
 
-## 4. 🃏 QUY TẮC CARD
+## 5. 🃏 QUY TẮC CARD
 
-### 4.1 Bảng dữ liệu (Index)
+### 5.1 Bảng dữ liệu (Index)
 
 ```html
 <div class="card card-outline card-primary">
 ```
 *(Viền trên màu xanh primary)*
 
-### 4.2 Form thêm/sửa - Cột nội dung chính
+### 5.2 Form thêm/sửa - Cột nội dung chính
 
 ```html
 <div class="card card-outline card-primary mb-4">
 ```
 
-### 4.3 Form thêm/sửa - Cột thiết lập phải (Sidebar)
+### 5.3 Form thêm/sửa - Cột thiết lập phải (Sidebar)
 
 ```html
 <div class="card card-outline card-secondary mb-4">
 ```
 *(Viền màu xám)*
 
-### 4.4 Bộ lọc (Filter)
+### 5.4 Bộ lọc (Filter)
 
 ```html
 <div class="card card-outline card-secondary mb-3">
@@ -370,7 +457,7 @@ Thêm tab ngôn ngữ vào cột trái:
 
 ---
 
-## 5. 📊 QUY TẮC BẢNG DỮ LIỆU (Table)
+## 6. 📊 QUY TẮC BẢNG DỮ LIỆU (Table)
 
 ```html
 <table class="table table-bordered table-hover table-striped align-middle mb-0">
@@ -410,9 +497,9 @@ Thêm tab ngôn ngữ vào cột trái:
 
 ---
 
-## 6. 🔔 THÔNG BÁO (Alerts & Toast)
+## 7. 🔔 THÔNG BÁO (Alerts & Toast)
 
-### 6.1 Flash Message (Session - sau khi redirect)
+### 7.1 Flash Message (Session - sau khi redirect)
 
 Luôn đặt ở đầu nội dung, trước card bộ lọc:
 
@@ -434,7 +521,7 @@ Luôn đặt ở đầu nội dung, trước card bộ lọc:
 <?php endif; ?>
 ```
 
-### 6.2 Toast AJAX (Lưu ngầm không reload trang)
+### 7.2 Toast AJAX (Lưu ngầm không reload trang)
 
 ```html
 <!-- Đặt cuối file, trước </div> đóng cuối -->
@@ -452,7 +539,7 @@ Luôn đặt ở đầu nội dung, trước card bộ lọc:
 
 ---
 
-## 7. 📄 PHÂN TRANG (Pagination)
+## 8. 📄 PHÂN TRANG (Pagination)
 
 Luôn đặt trong `card-footer` và dùng style `bg-white clearfix py-3`. Sử dụng hàm `->links()` thay vì tự viết vòng lặp:
 
@@ -471,9 +558,9 @@ Luôn đặt trong `card-footer` và dùng style `bg-white clearfix py-3`. Sử 
 
 ---
 
-## 8. 🗑️ XÁC NHẬN XÓA (Delete Confirmation)
+## 9. 🗑️ XÁC NHẬN XÓA (Delete Confirmation)
 
-### 8.1 Xóa đơn (inline)
+### 9.1 Xóa đơn (inline)
 
 ```html
 <a href="..." class="btn btn-sm btn-outline-danger"
@@ -482,26 +569,26 @@ Luôn đặt trong `card-footer` và dùng style `bg-white clearfix py-3`. Sử 
 </a>
 ```
 
-### 8.2 Xóa phức tạp (nên dùng modal)
+### 9.2 Xóa phức tạp (nên dùng modal)
 
 Dùng Bootstrap Modal thay cho `confirm()` khi xóa có ảnh hưởng dây chuyền (xóa danh mục kéo theo bài viết con...).
 
 ---
 
-## 9. ✅ CHECKLIST KHI LÀM MODULE MỚI
+## 10. ✅ CHECKLIST KHI LÀM MODULE MỚI
 
 Trước khi hoàn thành một module, hãy kiểm tra lại:
 
 - [ ] Trang Index có dùng **wp-toolbar** bao gồm Bulk Action (trái) và Filter/Search (phải) không?
 - [ ] Trang Index có cột Trạng thái dạng **Ajax Toggle Switch** không?
-- [ ] Form thêm/sửa có dùng component `ckeditor`, `image_upload` thay cho thẻ HTML chay chưa?
-- [ ] Button lưu form dùng name `save_action` với value là `exit` hoặc `continue` chưa?
+- [ ] Form thêm/sửa đã dùng toàn bộ Component chuẩn (`input`, `switch`, `ckeditor`, `image_upload`, `datetime`, `seo`) thay cho thẻ HTML chay chưa?
+- [ ] Footer của Form đã dùng Component `save_buttons` (truyền biến `back_url`) chưa?
 - [ ] Nút thao tác trong bảng có nằm ngay dưới Tên/Tiêu đề qua component `row_actions` không?
 - [ ] File giao diện đã bỏ thẻ form độc lập ở khung lọc cũ và gộp chung vào form trên header chưa?
 
 ---
 
-## 10. 🛡️ QUẢN LÝ QUYỀN TRUY CẬP (RBAC) TRÊN GIAO DIỆN
+## 11. 🛡️ QUẢN LÝ QUYỀN TRUY CẬP (RBAC) TRÊN GIAO DIỆN
 
 Tất cả các nút chức năng (Thêm, Sửa, Xóa) phải được kiểm tra quyền hiển thị bằng hàm `hasPermission()`:
 

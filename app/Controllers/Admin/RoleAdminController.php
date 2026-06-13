@@ -4,7 +4,7 @@ namespace App\Controllers\Admin;
 use App\Core\Request;
 use App\Models\RoleModel;
 use App\Models\RolePermissionModel;
-use ModuleAdminModel;
+use App\Models\ModuleAdminModel;
 
 class RoleAdminController extends BaseAdminController {
     
@@ -42,7 +42,7 @@ class RoleAdminController extends BaseAdminController {
             $this->savePermissions($request, $role_id);
         }
 
-        if ($request->input('save_action') === 'save_and_edit') {
+        if ($request->input('save_action') === 'continue') {
             return $this->redirect(route('admin.role.edit', ['id' => $role_id]))->with('success', 'Thêm nhóm quyền thành công!');
         }
         return $this->redirect(route('admin.role.index'))->with('success', 'Thêm nhóm quyền thành công!');
@@ -80,7 +80,7 @@ class RoleAdminController extends BaseAdminController {
 
         $this->savePermissions($request, $id);
 
-        if ($request->input('save_action') === 'save_and_edit') {
+        if ($request->input('save_action') === 'continue') {
             return $this->redirect(route('admin.role.edit', ['id' => $id]))->with('success', 'Cập nhật nhóm quyền thành công!');
         }
         return $this->redirect(route('admin.role.index'))->with('success', 'Cập nhật nhóm quyền thành công!');

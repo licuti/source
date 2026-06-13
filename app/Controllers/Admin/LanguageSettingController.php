@@ -4,13 +4,20 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\Admin\BaseAdminController;
 use App\Core\Request;
-use LangModel;
+use App\Models\LangModel;
 
 class LanguageSettingController extends BaseAdminController
 {
     public function index(Request $request)
     {
-        $languages = LangModel::orderBy('sort_order', 'ASC')->get();
+        $keyword = trim($request->input('keyword', ''));
+        $query = LangModel::query();
+        
+        if ($keyword !== '') {
+            $query->whereRaw('(`name` LIKE ? OR `code` LIKE ? OR `locale` LIKE ?)', ["%$keyword%", "%$keyword%", "%$keyword%"]);
+        }
+        
+        $languages = $query->orderBy('sort_order', 'ASC')->get();
         return $this->render('admin.language.index', ['languages' => $languages]);
     }
 
@@ -56,7 +63,7 @@ class LanguageSettingController extends BaseAdminController
         $newLang = LangModel::create($insertData);
         $this->generateConfigFile();
 
-        if (($request->all()['submit_action'] ?? '') === 'save_and_edit') {
+        if (($request->all()['save_action'] ?? '') === 'continue') {
             return $this->redirect(route('admin.language.edit', ['id' => $newLang->id]));
         }
         return $this->redirect(route('admin.language.index'));
@@ -117,7 +124,7 @@ class LanguageSettingController extends BaseAdminController
         LangModel::where('id', $id)->update($updateData);
         $this->generateConfigFile();
 
-        if (($data['submit_action'] ?? '') === 'save_and_edit') {
+        if (($data['save_action'] ?? '') === 'continue') {
             return $this->redirect(route('admin.language.edit', ['id' => $id]));
         }
         return $this->redirect(route('admin.language.index'));
@@ -184,5 +191,56 @@ class LanguageSettingController extends BaseAdminController
         $content .= "];\n";
 
         file_put_contents($filePath, $content);
+    }
+
+    /**
+     * Cập nhật trạng thái hiển thị qua AJAX
+     */
+    public function updateStatusAjax(Request $request) {
+        $id    = (int)$request->input('id');
+        $field = $request->input('field', 'is_active');
+        $value = (int)$request->input('value', 0);
+
+        if (!in_array($field, ['is_active'])) {
+            return $this->jsonError('Trường dữ liệu không hợp lệ');
+        }
+
+        $lang = LangModel::find($id);
+        if (!$lang) {
+            return $this->json(['success' => false, 'message' => 'Không tìm thấy ngôn ngữ']);
+        }
+        
+        if ($lang->is_default && $field === 'is_active' && $value === 0) {
+            return $this->json(['success' => false, 'message' => 'Không thể ẩn ngôn ngữ mặc định']);
+        }
+
+        $lang->update([$field => $value]);
+        $this->generateConfigFile();
+
+        return $this->json(['success' => true]);
+    }
+
+    /**
+     * Xóa hàng loạt
+     */
+    public function destroyMultiple(Request $request) {
+        $ids = $request->input('ids', []);
+        
+        if (!empty($ids) && is_array($ids)) {
+            $deletedCount = 0;
+            foreach ($ids as $id) {
+                $lang = LangModel::find($id);
+                if ($lang && !$lang->is_default) {
+                    $lang->delete();
+                    $deletedCount++;
+                }
+            }
+            if ($deletedCount > 0) {
+                $this->generateConfigFile();
+                return $this->json(['success' => true, 'message' => "Đã xóa thành công {$deletedCount} ngôn ngữ."]);
+            }
+            return $this->json(['success' => false, 'message' => 'Không thể xóa các ngôn ngữ đã chọn (có thể là ngôn ngữ mặc định).']);
+        }
+        return $this->json(['success' => false, 'message' => 'Chưa chọn bản ghi nào']);
     }
 }

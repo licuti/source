@@ -43,6 +43,12 @@ $router->group('/admin', function($r) {
     $r->get('/system-menu/delete/{id}', [\App\Controllers\Admin\MenuAdminController::class, 'destroy'])->name('admin.system_menu.destroy');
     $r->post('/system-menu/update-sort-ajax', [\App\Controllers\Admin\MenuAdminController::class, 'updateSortAjax'])->name('admin.system_menu.updateSortAjax');
 
+    // Website Menu Management Routes (Front-end Menu)
+    $r->get('/menu', [\App\Controllers\Admin\MenuController::class, 'index'])->name('admin.menu.index');
+    $r->post('/menu/ajax-create', [\App\Controllers\Admin\MenuController::class, 'ajaxCreate'])->name('admin.menu.ajax_create');
+    $r->post('/menu/ajax-save', [\App\Controllers\Admin\MenuController::class, 'ajaxSave'])->name('admin.menu.ajax_save');
+    $r->post('/menu/ajax-delete', [\App\Controllers\Admin\MenuController::class, 'ajaxDelete'])->name('admin.menu.ajax_delete');
+
     // Category Routes
     $r->get('/category', [\App\Controllers\Admin\CategoryController::class, 'index'])->name('admin.category.index');
     $r->get('/category/create', [\App\Controllers\Admin\CategoryController::class, 'create'])->name('admin.category.create');
@@ -97,6 +103,8 @@ $router->group('/admin', function($r) {
     $r->get('/language/edit/{id}', [\App\Controllers\Admin\LanguageSettingController::class, 'edit'])->name('admin.language.edit');
     $r->post('/language/update/{id}', [\App\Controllers\Admin\LanguageSettingController::class, 'update'])->name('admin.language.update');
     $r->get('/language/delete/{id}', [\App\Controllers\Admin\LanguageSettingController::class, 'destroy'])->name('admin.language.destroy');
+    $r->post('/language/delete-multiple', [\App\Controllers\Admin\LanguageSettingController::class, 'destroyMultiple'])->name('admin.language.destroy_multiple');
+    $r->post('/language/update-status-ajax', [\App\Controllers\Admin\LanguageSettingController::class, 'updateStatusAjax'])->name('admin.language.updateStatusAjax');
 
     // Quản lý Dịch Chuỗi (Text Translations)
     $r->get('/translations', [\App\Controllers\Admin\TextTranslationController::class, 'index'])->name('admin.translation.index');

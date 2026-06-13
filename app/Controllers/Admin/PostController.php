@@ -3,7 +3,7 @@ namespace App\Controllers\Admin;
 
 use App\Core\Request;
 use App\Core\Validator;
-use CategoryModel;
+use App\Models\CategoryModel;
 use App\Models\PostModel;
 use App\Services\PostService;
 

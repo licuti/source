@@ -1,5 +1,7 @@
 <?php
-class SettingModel extends Model {
+namespace App\Models;
+
+class SettingModel extends \Model {
     public $table = '#_thongtin';
     private static $settings_cache = null;
 

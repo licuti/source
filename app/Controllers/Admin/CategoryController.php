@@ -3,8 +3,7 @@ namespace App\Controllers\Admin;
 
 use App\Core\Request;
 use App\Models\ModuleModel;
-use CategoryModel;
-use CfCodeModel;
+use App\Models\CategoryModel;
 
 class CategoryController extends BaseAdminController {
     
@@ -23,7 +22,7 @@ class CategoryController extends BaseAdminController {
             $allCategories = CategoryModel::getAllForAdmin();
             $filtered = [];
             foreach ($allCategories as $cat) {
-                $matchKeyword = $keyword === '' || mb_stripos($cat->name, $keyword) !== false || (string)$cat->id_code === $keyword;
+                $matchKeyword = $keyword === '' || mb_stripos($cat->title, $keyword) !== false || (string)$cat->id_code === $keyword;
                 $matchStatus = $status === '' || (string)$cat->is_active === $status;
                 if ($matchKeyword && $matchStatus) {
                     $filtered[] = $cat;
@@ -64,32 +63,37 @@ class CategoryController extends BaseAdminController {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
         $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
         
-        $cfCode = CfCodeModel::query()->where('id', $id)->first();
-        if (!$cfCode) return $this->redirect(route('admin.category.index'));
-        
         $catQuery = CategoryModel::query();
         $catQuery->use_lang = false; // Fetch all translations
         $translations = $catQuery->where('id_code', $id)->get();
+        if (empty($translations)) return $this->redirect(route('admin.category.index'));
         
+        $first = $translations[0];
         // Chuyển hóa dữ liệu để render lên form
         $item = [
-            'id'        => $id, 
-            'id_loai'   => $cfCode->id_loai, 
-            'module'    => $cfCode->module, 
-            'so_thu_tu' => $cfCode->so_thu_tu, 
-            'hien_thi'  => $cfCode->hien_thi,
-            'hinh_anh'  => ''
+            'id'          => $id, 
+            'parent_id'   => $first->parent_id, 
+            'module'      => $first->module, 
+            'sort_order'  => $first->sort_order, 
+            'is_active'   => $first->is_active,
+            'is_featured' => $first->is_featured,
+            'image'       => $first->image,
+            'banner'      => $first->banner,
+            'created_at'  => $first->created_at,
+            'updated_at'  => $first->updated_at
         ];
         
         foreach ($translations as $t) {
             $lang = $t->lang;
-            $item["ten"][$lang] = $t->name;
-            $item["alias"][$lang] = $t->alias;
-            $item["mo_ta"][$lang] = $t->description;
-            $item["noi_dung"][$lang] = $t->content;
-            if (empty($item["hinh_anh"])) {
-                $item["hinh_anh"] = $t->image;
-            }
+            $item["title"][$lang] = $t->title;
+            $item["slug"][$lang] = $t->slug;
+            $item["description"][$lang] = $t->description;
+            $item["content"][$lang] = $t->content;
+            $item["seo_title"][$lang] = $t->seo_title;
+            $item["keyword"][$lang] = $t->keyword;
+            $item["seo_description"][$lang] = $t->seo_description;
+            $item["seo_head"][$lang] = $t->seo_head;
+            $item["seo_body"][$lang] = $t->seo_body;
         }
         
         $parentCategories = CategoryModel::getTreeForAdmin();
@@ -99,48 +103,62 @@ class CategoryController extends BaseAdminController {
     }
 
     /**
+     * Helper tạo mảng dữ liệu category chung
+     */
+    private function buildCategoryData(Request $request, string $langCode): array {
+        return [
+            'title'          => $request->input('title')[$langCode] ?? '',
+            'slug'           => empty($request->input('slug')[$langCode]) ? str_slug($request->input('title')[$langCode] ?? '') : $request->input('slug')[$langCode],
+            'description'    => $request->input('description')[$langCode] ?? '',
+            'content'        => $request->input('content')[$langCode] ?? '',
+            'seo_title'      => $request->input('seo_title')[$langCode] ?? '',
+            'keyword'        => $request->input('keyword')[$langCode] ?? '',
+            'seo_description'=> $request->input('seo_description')[$langCode] ?? '',
+            'seo_head'       => $request->input('seo_head')[$langCode] ?? '',
+            'seo_body'       => $request->input('seo_body')[$langCode] ?? '',
+            'image'          => $request->input('image', ''),
+            'banner'         => $request->input('banner', ''),
+            'parent_id'      => (int)$request->input('parent_id', 0),
+            'module'         => $request->input('module', 0),
+            'sort_order'     => (int)$request->input('sort_order', 0),
+            'is_active'      => $request->input('is_active') !== null ? 1 : 0,
+            'is_featured'    => $request->input('is_featured') !== null ? 1 : 0,
+        ];
+    }
+
+    /**
      * Lưu dữ liệu thêm mới
      */
     public function store(Request $request) {
-        $id_loai = (int)$request->input('id_loai', 0);
-        $module = $request->input('module', 'san_pham');
-        $so_thu_tu = (int)$request->input('so_thu_tu', 0);
-        $hien_thi = $request->input('hien_thi') !== null ? 1 : 0;
+        $langs = config('lang', [['code' => 'vi']]);
+        $firstLang = $langs[0]['code'];
         
-        $tenInput = $request->input('ten', []);
-        $ten_vi = $tenInput['vi'] ?? '';
-
-        // 1. Lưu vào bảng gốc
-        $id_code = CfCodeModel::insert([
-            'ten'       => $ten_vi,
-            'hinh_anh'  => $request->input('hinh_anh') ?? '',
-            'id_loai'   => $id_loai,
-            'module'    => $module,
-            'so_thu_tu' => $so_thu_tu,
-            'hien_thi'  => $hien_thi
-        ]);
-
-        if ($id_code) {
-            // 2. Lưu vào bảng ngôn ngữ
-            $langs = config('lang', [['code' => 'vi']]);
-            foreach ($langs as $l) {
+        $firstLangData = $this->buildCategoryData($request, $firstLang);
+        $firstLangData['lang'] = $firstLang;
+        $firstLangData['id_code'] = 0;
+        $firstLangData['created_at'] = $request->input('created_at', date('Y-m-d H:i:s'));
+        
+        $insertedId = CategoryModel::insertGetId($firstLangData);
+        if ($insertedId) {
+            $id_code = $insertedId;
+            $catQuery = CategoryModel::query();
+            $catQuery->use_lang = false;
+            $catQuery->where('id', $insertedId)->update(['id_code' => $id_code]);
+            
+            foreach ($langs as $index => $l) {
+                if ($index === 0) continue;
                 $c = $l['code'];
-                CategoryModel::insert([
-                    'id_code'   => $id_code,
-                    'lang'      => $c,
-                    'name'      => $request->input('ten')[$c] ?? '',
-                    'alias'     => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
-                    'description'=> $request->input('mo_ta')[$c] ?? '',
-                    'content'   => $request->input('noi_dung')[$c] ?? '',
-                    'image'     => $request->input('hinh_anh') ?? '',
-                    'parent_id' => $id_loai,
-                    'module'    => $module,
-                    'sort_order'=> $so_thu_tu,
-                    'is_active' => $hien_thi
-                ]);
+                $langData = $this->buildCategoryData($request, $c);
+                $langData['id_code'] = $id_code;
+                $langData['lang'] = $c;
+                $langData['created_at'] = $firstLangData['created_at'];
+                CategoryModel::insert($langData);
             }
         }
         
+        if (($request->input('save_action') ?? '') === 'continue') {
+            return $this->redirect(route('admin.category.edit', ['id' => $id_code ?? 0]));
+        }
         return $this->redirect(route('admin.category.index'));
     }
 
@@ -149,50 +167,27 @@ class CategoryController extends BaseAdminController {
      */
     public function update(Request $request, $id) {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
+        $parent_id = (int)$request->input('parent_id', 0);
         
-        $id_loai = (int)$request->input('id_loai', 0);
-        $module = $request->input('module', 'san_pham');
-        $so_thu_tu = (int)$request->input('so_thu_tu', 0);
-        $hien_thi = $request->input('hien_thi') !== null ? 1 : 0;
-        
-        $tenInput = $request->input('ten', []);
-        $ten_vi = $tenInput['vi'] ?? '';
-
         // Kiểm tra chống loop (cha không thể nhận chính nó làm con)
-        if ($id == $id_loai) {
-            $id_loai = 0;
+        if ($id == $parent_id) {
+            // we won't set it to self, the builder will use the updated value. However, we should just let builder use request->input.
+            // to fix we override $_POST basically
+            $_POST['parent_id'] = 0; 
         }
 
-        // 1. Cập nhật bảng gốc
-        CfCodeModel::query()->where('id', $id)->update([
-            'ten'       => $ten_vi,
-            'hinh_anh'  => $request->input('hinh_anh') ?? '',
-            'id_loai'   => $id_loai,
-            'module'    => $module,
-            'so_thu_tu' => $so_thu_tu,
-            'hien_thi'  => $hien_thi
-        ]);
-
-        // 2. Cập nhật hoặc tạo mới bản dịch
         $langs = config('lang', [['code' => 'vi']]);
         foreach ($langs as $l) {
             $c = $l['code'];
             $catQuery = CategoryModel::query();
-            $catQuery->use_lang = false; // Bỏ qua bộ lọc ngôn ngữ toàn cục
-            
+            $catQuery->use_lang = false; 
             $exists = $catQuery->where('id_code', $id)->where('lang', $c)->first();
             
-            $data = [
-                'name'      => $request->input('ten')[$c] ?? '',
-                'alias'     => empty($request->input('alias')[$c]) ? str_slug($request->input('ten')[$c] ?? '') : $request->input('alias')[$c],
-                'description'=> $request->input('mo_ta')[$c] ?? '',
-                'content'   => $request->input('noi_dung')[$c] ?? '',
-                'image'     => $request->input('hinh_anh') ?? '',
-                'parent_id' => $id_loai,
-                'module'    => $module,
-                'sort_order'=> $so_thu_tu,
-                'is_active' => $hien_thi
-            ];
+            $data = $this->buildCategoryData($request, $c);
+            // created_at is only updated here if the user changed it in the UI.
+            if ($request->input('created_at')) {
+                $data['created_at'] = $request->input('created_at');
+            }
             
             if ($exists) {
                 $updateQuery = CategoryModel::query();
@@ -205,6 +200,9 @@ class CategoryController extends BaseAdminController {
             }
         }
         
+        if (($request->input('save_action') ?? '') === 'continue') {
+            return $this->redirect(route('admin.category.edit', ['id' => $id]));
+        }
         return $this->redirect(route('admin.category.index'));
     }
 
@@ -217,17 +215,13 @@ class CategoryController extends BaseAdminController {
         $value = (int)$request->input('value', 0);
 
         // Danh sách các cột được phép update qua AJAX để bảo mật
-        $allowedFields = ['is_active', 'hien_thi']; 
+        $allowedFields = ['is_active', 'is_featured']; 
         if (!in_array($field, $allowedFields)) {
             return $this->json(['success' => false, 'message' => 'Trường dữ liệu không hợp lệ']);
         }
 
         if ($id > 0) {
-            // Update in cf_code (still uses hien_thi)
-            $cfField = $field == 'is_active' ? 'hien_thi' : $field;
-            CfCodeModel::query()->where('id', $id)->update([$cfField => $value]);
-            
-            // Update in db_categories (uses is_active)
+            // Update in db_categories
             $catQuery = CategoryModel::query();
             $catQuery->use_lang = false;
             $catQuery->where('id_code', $id)->update([$field => $value]);
@@ -249,8 +243,6 @@ class CategoryController extends BaseAdminController {
 
         if (!empty($ids)) {
             foreach ($ids as $delId) {
-                CfCodeModel::query()->where('id', $delId)->delete();
-                
                 $catQuery = CategoryModel::query();
                 $catQuery->use_lang = false;
                 $catQuery->where('id_code', $delId)->delete();
@@ -276,8 +268,6 @@ class CategoryController extends BaseAdminController {
             $allIdsToDelete = array_unique($allIdsToDelete);
 
             foreach ($allIdsToDelete as $delId) {
-                CfCodeModel::query()->where('id', $delId)->delete();
-                
                 $catQuery = CategoryModel::query();
                 $catQuery->use_lang = false;
                 $catQuery->where('id_code', $delId)->delete();

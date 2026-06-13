@@ -1,5 +1,7 @@
 <?php
-class ContactModel extends Model {
+namespace App\Models;
+
+class ContactModel extends \Model {
     public $table = '#_lienhe';
     public bool $use_lang = false;
 

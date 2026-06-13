@@ -1,6 +1,11 @@
 <?php
-class CategoryModel extends Model {
+namespace App\Models;
+
+class CategoryModel extends \Model {
     public $table = '#_categories';
+    public bool $timestamps = true;
+    protected string $createdAt = 'created_at';
+    protected string $updatedAt = 'updated_at';
     
     // Lưu trữ mảng Category trên RAM trong 1 vòng đời request để dùng nhiều lần mà không cần Query
     protected static $cachedCategories = null;

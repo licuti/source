@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 
 use App\Core\Response;
-use ContactModel;
+use App\Models\ContactModel;
 
 /**
  * ContactController

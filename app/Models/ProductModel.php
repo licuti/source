@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-use CategoryModel;
+use App\Models\CategoryModel;
 
 class ProductModel extends \Model {
     public $table = '#_products';

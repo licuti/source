@@ -134,17 +134,7 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
                             ]) ?>
 
                         </div>
-                        <div class="card-footer d-flex justify-content-end gap-1 flex-wrap">
-                            <a href="<?= route('admin.post.index') ?>" class="btn btn-secondary btn-sm">
-                                <i class="fa-solid fa-arrow-left"></i> Quay lại
-                            </a>
-                            <button type="submit" name="save_action" value="exit" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-save"></i> Lưu
-                            </button>
-                            <button type="submit" name="save_action" value="continue" class="btn btn-success btn-sm">
-                                <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
-                            </button>
-                        </div>
+                        <?= view('admin.components.save_buttons', ['back_url' => route('admin.post.index')]) ?>
                     </div>
                 </div>
             </div>

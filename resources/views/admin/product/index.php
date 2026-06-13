@@ -57,6 +57,13 @@ if ($canAdd) {
                             <option value="0" <?= ($status ?? '') === '0' ? 'selected' : '' ?>>Đã ẩn</option>
                         </select>
 
+                        <select name="stock_filter" class="form-select form-select-sm w-auto">
+                            <option value="all">Tất cả tồn kho</option>
+                            <option value="in_stock" <?= ($stockFilter ?? 'all') === 'in_stock' ? 'selected' : '' ?>>Còn hàng</option>
+                            <option value="low_stock" <?= ($stockFilter ?? 'all') === 'low_stock' ? 'selected' : '' ?>>Sắp hết hàng</option>
+                            <option value="out_of_stock" <?= ($stockFilter ?? 'all') === 'out_of_stock' ? 'selected' : '' ?>>Hết hàng</option>
+                        </select>
+
                         <div class="input-group input-group-sm w-auto">
                             <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm sản phẩm..." value="<?= htmlspecialchars($keyword ?? '') ?>">
                             <button type="submit" class="btn btn-primary">Tìm kiếm</button>
@@ -88,14 +95,14 @@ if ($canAdd) {
                                 </th>
                                 <th style="width: 100px;" class="text-center">Hình ảnh</th>
                                 <th>Tên sản phẩm</th>
-                                <th style="width: 150px;" class="text-center">Giá bán</th>
+                                <th style="width: 250px;" class="text-center">Giá bán</th>
                                 <th style="width: 100px;" class="text-center">Tồn kho</th>
                                 <th style="width: 100px;" class="text-center">Nổi bật</th>
                                 <th style="width: 120px;" class="text-center">Hiển thị</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if(!empty($items)): ?>
+                            <?php if(count($items) > 0): ?>
                                 <?php foreach($items as $item): ?>
                                     <?php 
                                     $rowCanEdit = $canEdit;
@@ -188,7 +195,14 @@ if ($canAdd) {
 
                                         <!-- Tồn kho -->
                                         <td class="text-center align-middle">
-                                            <?= $item->stock_quantity ?>
+                                            <div class="fw-bold mb-1"><?= $item->stock_quantity ?></div>
+                                            <?php if ($item->stock_quantity <= 0 || $item->stock_status === 'out_of_stock'): ?>
+                                                <span class="badge bg-danger">Hết hàng</span>
+                                            <?php elseif ($item->stock_quantity <= ($item->low_stock_amount ?? 5)): ?>
+                                                <span class="badge bg-warning text-dark">Sắp hết hàng</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-success">Còn hàng</span>
+                                            <?php endif; ?>
                                         </td>
                                         
                                         <!-- is_featured -->
@@ -228,12 +242,12 @@ if ($canAdd) {
             </div>
 
             <!-- FOOTER: PHÂN TRANG -->
-            <div class="card-footer bg-white clearfix py-3">
+            <div class="card-footer clearfix">
                 <div class="row align-items-center">
-                    <div class="col-md-4 text-muted small">
+                    <div class="col-md-6 text-muted small">
                         Hiển thị <?= count($items) ?> / <?= $items->total() ?> mục
                     </div>
-                    <div class="col-md-8 text-end pagination-right-sm">
+                    <div class="col-md-6 text-end pagination-right-sm">
                         <?= $items->links() ?>
                     </div>
                 </div>

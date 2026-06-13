@@ -3,9 +3,9 @@ namespace App\Controllers\Admin;
 
 use App\Core\Request;
 use App\Models\ModuleModel;
-use AttributeModel;
-use AttributeValueModel;
-use CfCodeModel;
+use App\Models\AttributeModel;
+use App\Models\AttributeValueModel;
+use App\Models\CfCodeModel;
 use PDO;
 
 class AttributeController extends BaseAdminController {

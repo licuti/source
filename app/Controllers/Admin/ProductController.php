@@ -3,7 +3,7 @@ namespace App\Controllers\Admin;
 
 use App\Core\Request;
 use App\Core\Validator;
-use CategoryModel;
+use App\Models\CategoryModel;
 use App\Models\ProductModel;
 use App\Services\ProductService;
 
@@ -29,6 +29,7 @@ class ProductController extends BaseAdminController {
         $keyword    = trim($request->input('keyword', ''));
         $status     = $request->input('status', '');
         $categoryId = (int)$request->input('category_id', 0);
+        $stockFilter = $request->input('stock_filter', 'all');
         $page       = max(1, (int)$request->input('page', 1));
 
         $query = ProductModel::query()->where('lang', $this->primaryLang);
@@ -37,6 +38,14 @@ class ProductController extends BaseAdminController {
         if ($categoryId > 0)     $query->where('category_id', $categoryId);
         if ($keyword !== '')     $query->whereLike('title', $keyword);
 
+        if ($stockFilter === 'out_of_stock') {
+            $query->whereRaw('(stock_status = "out_of_stock" OR stock_quantity <= 0)');
+        } elseif ($stockFilter === 'low_stock') {
+            $query->whereRaw('(stock_quantity > 0 AND stock_quantity <= low_stock_amount)');
+        } elseif ($stockFilter === 'in_stock') {
+            $query->whereRaw('(stock_quantity > low_stock_amount)');
+        }
+
         $items = $query->with('variants')
                        ->orderBy('updated_at', 'DESC')
                        ->orderBy('id', 'DESC')
@@ -44,7 +53,7 @@ class ProductController extends BaseAdminController {
 
         $categories = $this->getCategories();
 
-        return $this->render('admin.product.index', compact('items', 'keyword', 'status', 'categoryId', 'categories'));
+        return $this->render('admin.product.index', compact('items', 'keyword', 'status', 'categoryId', 'stockFilter', 'categories'));
     }
 
     /**

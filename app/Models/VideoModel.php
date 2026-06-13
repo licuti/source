@@ -1,5 +1,7 @@
 <?php
-class VideoModel extends Model {
+namespace App\Models;
+
+class VideoModel extends \Model {
     public $table = '#_video';
 }
 ?>

@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 
 use App\Models\PostModel;
-use CategoryModel;
+use App\Models\CategoryModel;
 
 /**
  * NewsController

@@ -57,6 +57,12 @@ if (hasPermission('admin.category', 'add')) {
                                 Hủy lọc
                             </a>
                         <?php endif; ?>
+
+                        <?php if (hasPermission('admin.category', 'add')): ?>
+                            <a href="<?= route('admin.category.create') ?>" class="btn btn-success btn-sm">
+                                <i class="fas fa-plus me-1"></i> Thêm mới
+                            </a>
+                        <?php endif; ?>
                     </form>
                 </div>
             </div>
