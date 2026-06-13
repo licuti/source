@@ -45,6 +45,10 @@ $router->group('/admin', function($r) {
 
     // Website Menu Management Routes (Front-end Menu)
     $r->get('/menu', [\App\Controllers\Admin\MenuController::class, 'index'])->name('admin.menu.index');
+    $r->post('/menu/store', [\App\Controllers\Admin\MenuController::class, 'ajaxCreate'])->name('admin.menu.store');
+    $r->post('/menu/delete', [\App\Controllers\Admin\MenuController::class, 'ajaxDelete'])->name('admin.menu.delete');
+    $r->post('/menu/save', [\App\Controllers\Admin\MenuController::class, 'ajaxSave'])->name('admin.menu.save');
+    $r->get('/menu/search-source', [\App\Controllers\Admin\MenuController::class, 'ajaxSearchSource'])->name('admin.menu.searchSource');
     $r->post('/menu/ajax-create', [\App\Controllers\Admin\MenuController::class, 'ajaxCreate'])->name('admin.menu.ajax_create');
     $r->post('/menu/ajax-save', [\App\Controllers\Admin\MenuController::class, 'ajaxSave'])->name('admin.menu.ajax_save');
     $r->post('/menu/ajax-delete', [\App\Controllers\Admin\MenuController::class, 'ajaxDelete'])->name('admin.menu.ajax_delete');
