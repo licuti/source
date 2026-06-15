@@ -20,6 +20,7 @@ class MenuService {
         switch ($type) {
             case 'category':
                 $query = CategoryModel::query();
+                $query->use_lang = false;
                 if ($lang !== 'all') $query->where('lang', $lang);
                 if ($keyword) $query->whereLike('title', $keyword);
                 
@@ -36,8 +37,9 @@ class MenuService {
                 }
                 break;
 
-            case 'sanpham':
+            case 'product':
                 $query = ProductModel::query();
+                $query->use_lang = false;
                 if ($lang !== 'all') $query->where('lang', $lang);
                 if ($keyword) $query->whereLike('title', $keyword);
                 
@@ -49,13 +51,14 @@ class MenuService {
                         'url' => $item->slug,
                         'lang' => $item->lang,
                         'type' => 'Sản phẩm',
-                        'object_type' => 'sanpham'
+                        'object_type' => 'product'
                     ];
                 }
                 break;
 
-            case 'tintuc':
+            case 'post':
                 $query = PostModel::query();
+                $query->use_lang = false;
                 if ($lang !== 'all') $query->where('lang', $lang);
                 if ($keyword) $query->whereLike('title', $keyword);
                 
@@ -67,7 +70,7 @@ class MenuService {
                         'url' => $item->slug,
                         'lang' => $item->lang,
                         'type' => 'Bài viết',
-                        'object_type' => 'tintuc'
+                        'object_type' => 'post'
                     ];
                 }
                 break;

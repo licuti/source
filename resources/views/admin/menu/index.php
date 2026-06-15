@@ -43,12 +43,13 @@ $breadcrumbActions = [];
 	.language-selector label { margin-right: 15px; font-weight: normal; cursor: pointer; }
 
 	.menu-header { display: flex; justify-content: space-between; align-items: center; }
-	.menu-selector { display: flex; align-items: center; gap: 10px; width: 100%; }
+	.menu-selector { display: flex; align-items: center; gap: 10px; margin-left: auto; }
 	.menu-name-input { font-size: 16px; padding: 5px 10px; max-width: 300px; border: 1px solid #ddd; border-radius: 4px;}
 
 	.dd { max-width: 100%; }
-	.dd-handle { display: flex; justify-content: space-between; align-items: center; height: 40px; padding: 5px 10px; background: #fafafa; border: 1px solid #ccc; color: #333; font-weight: bold; border-radius: 4px; }
-	.dd-item > button { height: 40px; margin-left: 5px; margin-top: 0; }
+	.dd-handle { display: flex; justify-content: space-between; align-items: center; height: 40px; padding: 5px 10px 5px 35px; background: #fafafa; border: 1px solid #ccc; color: #333; font-weight: bold; border-radius: 4px; font-size: 14px; margin: 0; }
+	.dd-item{ margin-top: 4px; }
+    .dd-item > button { position: absolute; left: 5px; top: 10px; z-index: 10; margin: 0; padding: 0; }
 	.handle-left { display: flex; align-items: center; gap: 10px; }
 	.item-type { font-size: 12px; color: #666; font-weight: normal; }
 	.handle-actions { display: flex; align-items: center; gap: 5px; }
@@ -64,7 +65,26 @@ $breadcrumbActions = [];
 	.item-remove { color: #dc3232; cursor: pointer; text-decoration: underline; }
 	.item-cancel { color: #0073aa; cursor: pointer; text-decoration: underline; }
 
-	.menu-empty { margin-top: 8px; padding: 15px; color: #666; text-align: center; background: #fafafa; border: 1px dashed #ccc; display: none; border-radius: 4px;}
+	.dd-empty {
+		margin: 15px 0; 
+		padding: 40px 20px; 
+		color: #6c757d; 
+		text-align: center; 
+		background: #f8f9fa; 
+		border: 2px dashed #ced4da; 
+		border-radius: 8px; 
+		font-size: 14px;
+		min-height: 100px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-image: none !important;
+	}
+	.dd-empty::before {
+		content: "Chưa có mục nào. Hãy kéo thả các mục từ cột bên trái vào đây!";
+		display: block;
+	}
+
 	.menu-locations { margin-top: 16px; background: #f8f9fa; padding: 15px; border-radius: 4px; border: 1px solid #eee; }
     .menu-locations h3 { font-size: 15px; margin-bottom: 10px; margin-top: 0; }
 	.menu-locations label { display: block; margin-bottom: 5px; font-weight:normal;}
@@ -126,7 +146,7 @@ $breadcrumbActions = [];
                 </div>
 
                 <!-- SẢN PHẨM -->
-                <div class="source-box source-ajax" data-type="sanpham" data-title="Sản phẩm">
+                <div class="source-box source-ajax" data-type="product" data-title="Sản phẩm">
                     <h3>Sản phẩm</h3>
                     <div class="source-content">
                         <input type="text" class="source-search" placeholder="Tìm kiếm...">
@@ -140,7 +160,7 @@ $breadcrumbActions = [];
                 </div>
 
                 <!-- BÀI VIẾT -->
-                <div class="source-box source-ajax" data-type="tintuc" data-title="Bài viết">
+                <div class="source-box source-ajax" data-type="post" data-title="Bài viết">
                     <h3>Bài viết</h3>
                     <div class="source-content">
                         <input type="text" class="source-search" placeholder="Tìm kiếm...">
@@ -169,14 +189,13 @@ $breadcrumbActions = [];
                         <?php endforeach ?>
                     </select>
                     <button type="button" class="btn btn-secondary btn-sm" id="select-menu-btn">Chọn</button>
-                    <span style="margin: 0 10px; font-size: 14px;">hoặc</span>
+                    <span style="font-size: 14px;">hoặc</span>
                     <a href="#" id="create-new-menu" style="text-decoration:underline; color:#0073aa; font-size: 14px;">tạo menu mới</a>
                 </div>
             </div>
 
             <div class="card-body">
                 <?php if ($current_menu_id > 0): ?>
-                <div>
                     <div class="mb-3 d-flex align-items-center gap-3">
                         <label style="font-weight:bold; margin-bottom:0; white-space:nowrap;">Tên menu</label>
                         <input type="text" id="menu-name" class="menu-name-input form-control form-control-sm" value="<?= htmlspecialchars($current_menu->name) ?>">
@@ -187,7 +206,6 @@ $breadcrumbActions = [];
                         <p style="font-size:13px; color:#666; margin-bottom:15px;">Kéo thả từng mục để sắp xếp thứ tự. Kéo sang phải để tạo menu con.</p>
                         
                         <div class="dd" id="menu-editor">
-                            <div id="menu-empty" class="menu-empty">Chưa có mục nào trong menu</div>
                             <ol class="dd-list"></ol>
                         </div>
 
@@ -206,7 +224,7 @@ $breadcrumbActions = [];
                                         }
                                     }
                                 ?>
-                                <label>
+                                <label class="menu-location-item" data-lang="<?= $value->lang ?>" style="display: block;">
                                     <input type="checkbox" class="menu-location" value="<?= $value->location_name.'_'.$value->lang ?>" <?= $is_active_lang ? 'checked' : '' ?>>
                                     <?php 
                                         echo htmlspecialchars($value->location_label);					                
@@ -226,12 +244,12 @@ $breadcrumbActions = [];
 
                         <div class="menu-footer">
                             <div class="menu-footer-left">
+                                <a href="#" id="delete-selected-items" style="color:#dc3232; text-decoration:underline;">Xóa mục đã chọn</a>
                                 <a href="#" id="delete-menu" style="color:#dc3232; text-decoration:underline;">Xóa menu</a>
                             </div>
-                            <button type="button" class="btn btn-primary" id="save-menu-button">Lưu Menu</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="save-menu-button">Lưu Menu</button>
                         </div>
                     </div>
-                </div>
                 <?php else: ?>
                     <div class="text-center text-muted py-5">
                         <p>Vui lòng chọn một menu để chỉnh sửa hoặc tạo mới.</p>
@@ -315,6 +333,10 @@ $breadcrumbActions = [];
 </template>
 
 <script src="https://cdn.jsdelivr.net/npm/nestable2@1.6.0/jquery.nestable.min.js"></script>
+<?php if (!defined('CKFINDER_SCRIPT_LOADED')): ?>
+    <?php define('CKFINDER_SCRIPT_LOADED', true); ?>
+    <script src="/assets/admin/ckfinder/ckfinder.js"></script>
+<?php endif; ?>
 <script>
     $(document).ready(function () {
         var menuEditor = $('#menu-editor');
@@ -323,8 +345,6 @@ $breadcrumbActions = [];
         var idCounter = 1000;
         function generateId() { return idCounter++; }
 
-        menuEditor.nestable({ maxDepth: 5, callback: function () { refreshUI(); } });
-        
         menuEditor.on('mousedown touchstart', '.handle-actions button, .item-select, .item-settings, .item-settings *', function (e) {
             e.stopPropagation();
         });
@@ -387,11 +407,20 @@ $breadcrumbActions = [];
         });
 
         $('input[name="lang"]').on('change', function () {
+            var currentLang = $(this).val();
+
+            // Lọc Ajax Source (luôn load lại tất cả hộp)
             $('.source-box.source-ajax').each(function() {
-                if($(this).hasClass('active')) {
-                    loadAjaxSource($(this));
-                }
+                loadAjaxSource($(this));
             });
+
+            // Lọc menu location
+            if (currentLang === 'all') {
+                $('.menu-location-item').show();
+            } else {
+                $('.menu-location-item').hide();
+                $('.menu-location-item[data-lang="' + currentLang + '"]').show();
+            }
         });
 
         $('.source-box h3').click(function () {
@@ -406,6 +435,15 @@ $breadcrumbActions = [];
             }
         });
 
+        // [HƯỚNG DẪN THÊM FIELD MỚI CHO MENU ITEM]
+        // Để thêm 1 trường dữ liệu mới (ví dụ 'badge'):
+        // 1. Thêm tên trường 'badge' vào mảng MENU_FIELDS bên dưới.
+        // 2. Thêm HTML: <input class="item-input" data-name="badge"> vào bên trong <template id="menu-item-template">.
+        // 3. Trong DB: Thêm cột `badge` vào bảng `menu_items`.
+        // 4. Trong Model: Thêm 'badge' vào $allowedFields của MenuItemModel (nếu có dùng).
+        // 5. Trong MenuService.php -> flattenMenuTree(): Thêm `'badge' => $item['badge'] ?? ''` vào mảng $itemData.
+        const MENU_FIELDS = ['label', 'url', 'class', 'style', 'block', 'target', 'image', 'type', 'object_type', 'object_id'];
+
         function createMenuItem(options = {}) {
             const newId = options.id || generateId();
             const $tpl = $($('#menu-item-template').html());
@@ -417,8 +455,7 @@ $breadcrumbActions = [];
             $tpl.find('.item-title').text(options.label || 'Mục chưa đặt tên');
             $tpl.find('.item-type').text(typeName);
 
-            const fields = ['label', 'url', 'class', 'style', 'block', 'target', 'image', 'type', 'object_type', 'object_id'];
-            fields.forEach(function (f) {
+            MENU_FIELDS.forEach(function (f) {
                 if (options[f] !== undefined) $tpl.data(f, options[f]);
                 $tpl.find('.item-input[data-name="' + f + '"]').val(options[f] || '');
             });
@@ -433,27 +470,26 @@ $breadcrumbActions = [];
 
             var hiddenInputId = 'image-' + newId;
             $tpl.find('.item-image-input').attr('id', hiddenInputId);
-            $tpl.find('.item-image-picker').addClass('iframe-btn').attr(
-                'href','/admin/filemanager/dialog.php?type=1&field_id=' + encodeURIComponent(hiddenInputId) + '&relative_url=1&multiple=0'
-            );
-
-            if ($.fn.fancybox) {
-                $tpl.find('.iframe-btn').fancybox({
-                    type: 'iframe',
-                    autoScale: false,
-                    afterClose: function () {
-                        var href = this.href || $(this.element).attr('href');
-                        if (!href) return;
-                        var params = new URLSearchParams(href.split('?')[1]);
-                        var field_id = params.get('field_id');
-                        if (field_id) {
-                            var val = $('#' + field_id).val();
-                            $('#' + field_id).closest('.settings-col').find('.item-image-preview').attr('src', val);
-                            $('#' + field_id).trigger('change');
-                        }
+            $tpl.find('.item-image-picker').on('click', function() {
+                CKFinder.modal({
+                    chooseFiles: true,
+                    width: 800,
+                    height: 600,
+                    onInit: function(finder) {
+                        finder.on('files:choose', function(evt) {
+                            var file = evt.data.files.first();
+                            var url = file.getUrl();
+                            $tpl.find('.item-image-input').val(url).trigger('change');
+                            $tpl.find('.item-image-preview').attr('src', url);
+                        });
+                        finder.on('file:choose:resizedImage', function(evt) {
+                            var url = evt.data.resizedUrl;
+                            $tpl.find('.item-image-input').val(url).trigger('change');
+                            $tpl.find('.item-image-preview').attr('src', url);
+                        });
                     }
                 });
-            }
+            });
 
             return $tpl;
         }
@@ -461,7 +497,7 @@ $breadcrumbActions = [];
         $('#add-custom-link').click(function () {
             var label = $('#c-menu-item-name').val().trim();
             var url = $('#c-menu-item-url').val().trim() || '#';
-            if (!label) return alert('Vui lòng nhập tên đường dẫn.');
+            if (!label) return AppNotify.warning('Vui lòng nhập tên đường dẫn.');
             var $item = createMenuItem({ label: label, url: url, type: 'Tùy chỉnh', object_type: 'custom' });
             menuEditor.find('.dd-list').first().append($item);
             $('#c-menu-item-name').val('');
@@ -512,7 +548,7 @@ $breadcrumbActions = [];
                         if (res.status === 'success') {
                             window.location.href = "<?= route('admin.menu.index') ?>?menu=" + res.menu_id;
                         } else {
-                            alert('Lỗi: ' + res.message);
+                            AppNotify.error('Lỗi: ' + res.message);
                         }
                     }
                 });
@@ -529,8 +565,11 @@ $breadcrumbActions = [];
         });
 
         menuEditor.on('click', '.item-remove', function () {
-            if (confirm('Xóa mục này?')) $(this).closest('.dd-item').remove();
-            refreshUI();
+            var $btn = $(this);
+            AppNotify.confirm('Bạn có chắc chắn muốn xóa mục này khỏi cấu trúc menu không?', function() {
+                $btn.closest('.dd-item').remove();
+                refreshUI();
+            });
         });
 
         menuEditor.on('input change', '.item-input', function () {
@@ -545,7 +584,7 @@ $breadcrumbActions = [];
         $('#delete-menu').click(function (e) {
             e.preventDefault();
             var menuId = $('#menu-selector').val();
-            if (confirm('Bạn có chắc chắn muốn xóa menu này không? (Bao gồm tất cả liên kết bên trong)')) {
+            AppNotify.confirm('Bạn có chắc chắn muốn xóa menu này không? (Bao gồm tất cả liên kết bên trong)', function() {
                 $.ajax({
                     url: '<?= route('admin.menu.delete') ?>',
                     type: 'POST',
@@ -555,11 +594,21 @@ $breadcrumbActions = [];
                         if (res.status === 'success') {
                             window.location.href = '<?= route('admin.menu.index') ?>';
                         } else {
-                            alert('Lỗi: ' + res.message);
+                            AppNotify.error('Lỗi: ' + res.message);
                         }
                     }
                 });
-            }
+            });
+        });
+
+        $('#delete-selected-items').click(function(e) {
+            e.preventDefault();
+            var $checked = menuEditor.find('.item-select:checked');
+            if ($checked.length === 0) return AppNotify.warning('Chưa chọn mục nào để xóa.');
+            AppNotify.confirm('Bạn có chắc chắn muốn xóa ' + $checked.length + ' mục đã chọn khỏi menu?', function() {
+                $checked.closest('.dd-item').remove();
+                refreshUI();
+            });
         });
 
         $('#save-menu-button').click(function () {
@@ -582,10 +631,9 @@ $breadcrumbActions = [];
                 data: { json_data: JSON.stringify(payload) },
                 success: function (res) {
                     if (res.status === 'success') {
-                        alert(res.message);
-                        location.reload();
+                        AppNotify.success(res.message);
                     } else {
-                        alert('Lỗi: ' + res.message);
+                        AppNotify.error('Lỗi: ' + res.message);
                     }
                 }
             });
@@ -595,18 +643,13 @@ $breadcrumbActions = [];
             var out = [];
             $list.children('li.dd-item').each(function () {
                 var $item = $(this);
-                var data = {
-                    label: $item.data('label'),
-                    url: $item.data('url'),
-                    class: $item.data('class'),
-                    style: $item.data('style'),
-                    block: $item.data('block'),
-                    target: $item.data('target'),
-                    image: $item.data('image'),
-                    type: $item.data('type'),
-                    object_type: $item.data('object_type'),
-                    object_id: $item.data('object_id')
-                };
+                var data = {};
+                
+                // Tự động map dữ liệu từ mảng cấu hình chung
+                MENU_FIELDS.forEach(function(f) {
+                    data[f] = $item.data(f);
+                });
+
                 var $subList = $item.children('ol.dd-list');
                 if ($subList.length) data.children = serializeMenu($subList);
                 out.push(data);
@@ -616,7 +659,15 @@ $breadcrumbActions = [];
 
         function refreshUI() {
             var hasItems = menuEditor.find('li.dd-item').length > 0;
-            $('#menu-empty').toggle(!hasItems);
+            if (hasItems) {
+                // Xóa thẻ .dd-empty do Nestable tự sinh ra nếu có item
+                menuEditor.find('> .dd-empty').remove();
+            } else {
+                // Thêm lại thẻ .dd-empty nếu không có item nào
+                if (menuEditor.find('> .dd-empty').length === 0) {
+                    menuEditor.append('<div class="dd-empty"></div>');
+                }
+            }
         }
 
         // BUILD TREE TỪ DB LÚC MỚI TẢI TRANG
@@ -640,5 +691,12 @@ $breadcrumbActions = [];
             buildMenuTree(menuDataFromPHP, menuEditor.find('.dd-list').first());
             refreshUI();
         }
+
+        menuEditor.nestable({ maxDepth: 5, callback: function () { refreshUI(); } });
+
+        // Lần đầu tải trang: Tự động tải AJAX cho các hộp dữ liệu để có sẵn kết quả
+        $('.source-box.source-ajax').each(function() {
+            loadAjaxSource($(this));
+        });
     });
 </script>

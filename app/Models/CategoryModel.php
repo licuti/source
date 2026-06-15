@@ -128,5 +128,17 @@ class CategoryModel extends \Model {
         }
         return $branch;
     }
+
+    /**
+     * Tự động cập nhật đường dẫn (URL) trong Menu nếu Danh mục thay đổi slug
+     */
+    public function saved() {
+        if (!empty($this->attributes['slug']) && !empty($this->id)) {
+            $menuItemModel = new \App\Models\MenuItemModel();
+            $menuItemModel->where('object_type', 'category')
+                          ->where('object_id', $this->id)
+                          ->update(['url' => $this->attributes['slug']]);
+        }
+    }
 }
 ?>

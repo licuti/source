@@ -115,4 +115,15 @@ class ProductModel extends \Model {
             'max' => (float)($row['abs_max'] ?? 50000000),
         ];
     }
+    /**
+     * Tự động cập nhật đường dẫn (URL) trong Menu nếu Sản phẩm thay đổi slug
+     */
+    public function saved() {
+        if (!empty($this->attributes['slug']) && !empty($this->id)) {
+            $menuItemModel = new \App\Models\MenuItemModel();
+            $menuItemModel->where('object_type', 'product')
+                          ->where('object_id', $this->id)
+                          ->update(['url' => $this->attributes['slug']]);
+        }
+    }
 }

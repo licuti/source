@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 13, 2026 at 12:19 AM
+-- Generation Time: Jun 15, 2026 at 12:28 AM
 -- Server version: 8.0.30
 -- PHP Version: 7.4.9
 
@@ -1693,7 +1693,6 @@ CREATE TABLE `db_menus` (
 INSERT INTO `db_menus` (`id`, `name`) VALUES
 (2, 'Menu Header - Tiếng Việt'),
 (3, 'Menu Header - Tiếng Anh'),
-(4, 'Danh mục sản phẩm Sidebar'),
 (5, 'Menu SideBar');
 
 -- --------------------------------------------------------
@@ -1724,10 +1723,13 @@ CREATE TABLE `db_menu_items` (
 --
 
 INSERT INTO `db_menu_items` (`id`, `menu_id`, `parent_id`, `sort_order`, `label`, `url`, `class`, `style`, `block`, `target`, `image`, `type`, `object_type`, `object_id`) VALUES
-(631, 2, 0, 0, 'Sản phẩm', 'san-pham', '', 'default', '', '_self', '', 'Danh mục', 'category', 105),
-(632, 2, 0, 1, 'Hình ảnh', 'hinh-anh', '', 'default', '', '_self', '', 'Danh mục', 'category', 234),
-(633, 2, 0, 2, 'Trang chủ', 'trang-chu', '', 'default', '', '_self', '', 'Danh mục', 'category', 211),
-(634, 2, 0, 3, 'Tin tức', 'tin-tuc', '', 'default', '', '_self', '', 'Danh mục', 'category', 163);
+(641, 3, 0, 1, 'Trang chủ', 'trang-chu', '', 'default', '', '_self', '', 'Danh mục', 'category', 211),
+(642, 3, 0, 2, 'Giỏ hàng', 'gio-hang', '', 'default', '', '_self', '', 'Danh mục', 'category', 149),
+(672, 2, 0, 1, 'Trang chủ', 'trang-chu', '', 'default', '', '_self', '/img_data/images/14.png', 'Danh mục', 'category', 211),
+(673, 2, 672, 1, 'Sản phẩm', 'san-pham', '', 'default', '', '_self', '/img_data/images/14.png', 'Danh mục', 'category', 105),
+(674, 2, 672, 2, 'Hình ảnh', 'hinh-anh', '', 'default', '', '_self', '/img_data/images/14.png', 'Danh mục', 'category', 234),
+(675, 2, 0, 2, 'Trang chủ', 'trang-chu', '', 'default', '', '_self', '', 'Danh mục', 'category', 211),
+(676, 2, 0, 3, 'Tin tức', 'tin-tuc', '', 'default', '', '_self', '', 'Danh mục', 'category', 163);
 
 -- --------------------------------------------------------
 
@@ -14480,7 +14482,7 @@ ALTER TABLE `db_menus`
 -- AUTO_INCREMENT for table `db_menu_items`
 --
 ALTER TABLE `db_menu_items`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=635;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=677;
 
 --
 -- AUTO_INCREMENT for table `db_module`

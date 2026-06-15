@@ -37,5 +37,16 @@ class PostModel extends \Model {
         }
         return $query;
     }
+    /**
+     * Tự động cập nhật đường dẫn (URL) trong Menu nếu Bài viết thay đổi alias
+     */
+    public function saved() {
+        if (!empty($this->attributes['alias']) && !empty($this->id)) {
+            $menuItemModel = new \App\Models\MenuItemModel();
+            $menuItemModel->where('object_type', 'post')
+                          ->where('object_id', $this->id)
+                          ->update(['url' => $this->attributes['alias']]);
+        }
+    }
 }
 ?>

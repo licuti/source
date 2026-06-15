@@ -121,8 +121,8 @@ Mọi trang danh sách phải tuân theo cấu trúc 3 phần sau:
                                             'delete' => [
                                                 'label' => 'Xóa', 
                                                 'url' => route('admin.module.destroy', ['id' => $item->id]), 
-                                                'class' => 'text-danger btn-delete',
-                                                'attributes' => 'onclick="return confirm(\'Bạn có chắc muốn xóa?\')"'
+                                                'class' => 'text-danger confirm-delete',
+                                                'attributes' => 'data-confirm="Bạn có chắc muốn xóa?"'
                                             ]
                                         ];
                                         echo view('admin.components.row_actions', ['actions' => $actions]);
@@ -499,42 +499,40 @@ Tự động render form điền Title, Description, Keywords, Tags, Noindex, No
 
 ## 7. 🔔 THÔNG BÁO (Alerts & Toast)
 
+Hệ thống sử dụng thư viện **Toastr** và **SweetAlert2** được bọc qua lớp vỏ unified **`AppNotify`** (định nghĩa tại [notify.js](file:///c:/laragon/www/source/assets/admin/js/notify.js) và tự động tích hợp trong layout chính [main.php](file:///c:/laragon/www/source/resources/views/admin/layouts/main.php)). 
+
+**KHÔNG** sử dụng `alert()` hay `confirm()` mặc định của trình duyệt hoặc tự dựng giao diện Toast/Alert bằng Bootstrap class.
+
 ### 7.1 Flash Message (Session - sau khi redirect)
 
-Luôn đặt ở đầu nội dung, trước card bộ lọc:
+Các thông báo chuyển trang (Flash Session) đã được xử lý tự động trong layout chính [main.php](file:///c:/laragon/www/source/resources/views/admin/layouts/main.php). Trong Controller, bạn chỉ cần thiết lập session flash bình thường:
 
 ```php
-<?php if (isset($_SESSION['success'])): ?>
-    <div class="alert alert-success alert-dismissible fade show">
-        <i class="fa-solid fa-check-circle"></i>
-        <?= htmlspecialchars($_SESSION['success']); unset($_SESSION['success']); ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-<?php endif; ?>
+// Thông báo thành công
+session()->setFlash('success', 'Cập nhật dữ liệu thành công!');
 
-<?php if (isset($_SESSION['error'])): ?>
-    <div class="alert alert-danger alert-dismissible fade show">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        <?= htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-<?php endif; ?>
+// Thông báo lỗi
+session()->setFlash('error', 'Có lỗi xảy ra, vui lòng thử lại.');
 ```
 
-### 7.2 Toast AJAX (Lưu ngầm không reload trang)
+Layout sẽ tự động bắt sự kiện và hiển thị Toast đẹp mắt ngay sau khi tải trang.
 
-```html
-<!-- Đặt cuối file, trước </div> đóng cuối -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-    <div id="saveToast" class="toast align-items-center text-white bg-success border-0" role="alert">
-        <div class="d-flex">
-            <div class="toast-body">
-                <i class="fa-solid fa-check-circle me-2"></i> <span id="toastMessage">Đã lưu thành công!</span>
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    </div>
-</div>
+### 7.2 Toast & Alert qua Javascript / AJAX Callback
+
+Khi viết mã Javascript hoặc xử lý kết quả trả về từ AJAX, hãy gọi trực tiếp các phương thức của `AppNotify`:
+
+```javascript
+// Toast thông báo thành công
+AppNotify.success('Đã cập nhật trạng thái thành công!', 'Thành công');
+
+// Toast thông báo lỗi
+AppNotify.error('Không thể lưu dữ liệu, vui lòng kiểm tra lại!', 'Lỗi');
+
+// Toast cảnh báo
+AppNotify.warning('Vui lòng chọn ít nhất một mục.');
+
+// Toast thông tin
+AppNotify.info('Hệ thống đang đồng bộ dữ liệu...');
 ```
 
 ---
@@ -560,18 +558,47 @@ Luôn đặt trong `card-footer` và dùng style `bg-white clearfix py-3`. Sử 
 
 ## 9. 🗑️ XÁC NHẬN XÓA (Delete Confirmation)
 
-### 9.1 Xóa đơn (inline)
+Mọi hành động có tính chất phá hủy hoặc thay đổi lớn (như xóa dữ liệu, khôi phục cài đặt) **BẮT BUỘC** phải sử dụng hộp thoại xác nhận. Sử dụng `AppNotify.confirm()` thay thế hoàn toàn cho `confirm()` mặc định của trình duyệt để đảm bảo giao diện đẹp và nhất quán.
+
+Có hai cách triển khai:
+
+### 9.1 Sử dụng Class / Data-attribute tự động (Khuyên dùng)
+
+Hệ thống đã tích hợp sẵn trình bắt sự kiện toàn cục trong [common.js](file:///c:/laragon/www/source/assets/admin/js/common.js). Bạn chỉ cần gắn class `confirm-delete` hoặc `btn-confirm-delete` và thuộc tính `data-confirm` vào thẻ HTML:
 
 ```html
-<a href="..." class="btn btn-sm btn-outline-danger"
-   onclick="return confirm('Bạn có chắc muốn xóa mục này không?')">
+<!-- Nút xóa chuyển hướng (href) -->
+<a href="<?= route('admin.module.destroy', ['id' => $item->id]) ?>" 
+   class="btn btn-sm btn-outline-danger confirm-delete"
+   data-confirm="Bạn có chắc chắn muốn xóa mục này không?">
     <i class="fa-solid fa-trash"></i>
 </a>
+
+<!-- Nút submit form (gắn class vào button, click sẽ xác nhận và submit form cha) -->
+<button type="submit" class="btn btn-danger btn-confirm-delete"
+        data-confirm="Bạn có chắc chắn muốn xóa nhóm này không?">
+    Xóa nhóm
+</button>
 ```
 
-### 9.2 Xóa phức tạp (nên dùng modal)
+### 9.2 Sử dụng thủ công trong mã Javascript / AJAX
 
-Dùng Bootstrap Modal thay cho `confirm()` khi xóa có ảnh hưởng dây chuyền (xóa danh mục kéo theo bài viết con...).
+Gọi trực tiếp hàm `AppNotify.confirm(message, callback)` và thực thi logic xóa trong callback:
+
+```javascript
+AppNotify.confirm('Bạn có chắc chắn muốn xóa mục này?', function() {
+    // Gọi AJAX hoặc redirect trang
+    $.ajax({
+        url: '/admin/module/delete',
+        type: 'POST',
+        data: { id: itemId },
+        success: function(res) {
+            AppNotify.success('Đã xóa thành công!');
+            location.reload();
+        }
+    });
+});
+```
 
 ---
 

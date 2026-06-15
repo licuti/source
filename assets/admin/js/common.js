@@ -7,6 +7,15 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
+    // Helper wrapper cho hệ thống thông báo (Sử dụng AppNotify nếu có, nếu không fallback alert/confirm)
+    const notify = typeof AppNotify !== 'undefined' ? AppNotify : {
+        success: function(msg) { alert(msg); },
+        error: function(msg) { alert('Lỗi: ' + msg); },
+        warning: function(msg) { alert('Cảnh báo: ' + msg); },
+        info: function(msg) { alert('Thông báo: ' + msg); },
+        confirm: function(msg, cb) { if (confirm(msg)) cb(); }
+    };
+
     // ==========================================
     // 1. AJAX TOGGLE STATUS (Siêu linh hoạt)
     // ==========================================
@@ -41,15 +50,9 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(data => {
                 el.disabled = false;
                 if (data.success) {
-                    if (typeof AppNotify !== 'undefined') {
-                        AppNotify.success(data.message || 'Đã cập nhật thành công!');
-                    }
+                    notify.success(data.message || 'Đã cập nhật thành công!');
                 } else {
-                    if (typeof AppNotify !== 'undefined') {
-                        AppNotify.error(data.message || 'Không thể cập nhật trạng thái.');
-                    } else {
-                        alert('Lỗi: ' + (data.message || 'Không thể cập nhật trạng thái.'));
-                    }
+                    notify.error(data.message || 'Không thể cập nhật trạng thái.');
                     el.checked = originalState; // Hoàn tác nếu lỗi
                 }
             })
@@ -57,11 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 console.error(err);
                 el.disabled = false;
                 el.checked = originalState;
-                if (typeof AppNotify !== 'undefined') {
-                    AppNotify.error('Lỗi kết nối máy chủ.');
-                } else {
-                    alert('Lỗi kết nối máy chủ.');
-                }
+                notify.error('Lỗi kết nối máy chủ.');
             });
         });
     });
@@ -111,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const confirmMsg = selectedOption.getAttribute('data-confirm');
             
             if (!selectedOption.value) {
-                alert('Vui lòng chọn một thao tác!');
+                notify.warning('Vui lòng chọn một thao tác!');
                 return;
             }
 
@@ -123,42 +122,45 @@ document.addEventListener("DOMContentLoaded", function() {
             const checked = document.querySelectorAll('.row-check:checked');
             if (checked.length === 0) return;
 
+            const executeAction = () => {
+                const ids = Array.from(checked).map(cb => cb.value);
+                const formData = new FormData();
+                ids.forEach(id => formData.append('ids[]', id));
+                formData.append('action', selectedOption.value); 
+
+                const oldText = this.innerHTML;
+                this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+                this.disabled = true;
+
+                fetch(url, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    this.innerHTML = oldText;
+                    this.disabled = false;
+                    if (data.success) {
+                        notify.success(data.message || 'Thao tác thành công! Trang sẽ tải lại.');
+                        setTimeout(() => window.location.reload(), 1000);
+                    } else {
+                        notify.error(data.message || 'Không thể thực hiện thao tác.');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    this.innerHTML = oldText;
+                    this.disabled = false;
+                    notify.error('Lỗi kết nối máy chủ.');
+                });
+            };
+
             // Nếu có cảnh báo confirm
             if (confirmMsg && confirmMsg.trim() !== '') {
-                if (!confirm(confirmMsg)) return;
+                notify.confirm(confirmMsg, executeAction);
+            } else {
+                executeAction();
             }
-
-            const ids = Array.from(checked).map(cb => cb.value);
-            const formData = new FormData();
-            ids.forEach(id => formData.append('ids[]', id));
-            // Gửi thêm action code nếu Controller cần dùng chung 1 URL xử lý
-            formData.append('action', selectedOption.value); 
-
-            const oldText = this.innerHTML;
-            this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
-            this.disabled = true;
-
-            fetch(url, {
-                method: 'POST',
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                this.innerHTML = oldText;
-                this.disabled = false;
-                if (data.success) {
-                    alert(data.message || 'Thao tác thành công! Trang sẽ tải lại.');
-                    window.location.reload();
-                } else {
-                    alert('Lỗi: ' + (data.message || 'Không thể thực hiện thao tác.'));
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                this.innerHTML = oldText;
-                this.disabled = false;
-                alert('Lỗi kết nối máy chủ.');
-            });
         });
     }
 
@@ -184,4 +186,29 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
     }, true);
+
+    // ==========================================
+    // 4. GLOBAL CONFIRM ACTION (Hộp thoại xác nhận hệ thống)
+    // ==========================================
+    document.addEventListener('click', function(e) {
+        const target = e.target.closest('.confirm-delete, .btn-confirm-delete, [data-confirm-notify]');
+        if (!target) return;
+
+        e.preventDefault();
+        const href = target.getAttribute('href');
+        const formId = target.getAttribute('data-form-id');
+        const confirmMsg = target.getAttribute('data-confirm-notify') || target.getAttribute('data-confirm') || 'Bạn có chắc chắn muốn thực hiện thao tác này?';
+
+        notify.confirm(confirmMsg, function() {
+            if (href && href !== '#' && href !== 'javascript:void(0);') {
+                window.location.href = href;
+            } else if (formId) {
+                const form = document.getElementById(formId);
+                if (form) form.submit();
+            } else {
+                const parentForm = target.closest('form');
+                if (parentForm) parentForm.submit();
+            }
+        });
+    });
 });
