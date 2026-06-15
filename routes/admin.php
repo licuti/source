@@ -63,6 +63,28 @@ $router->group('/admin', function($r) {
     $r->post('/category/delete-multiple', [\App\Controllers\Admin\CategoryController::class, 'destroyMultiple'])->name('admin.category.destroy_multiple');
     $r->post('/category/update-status-ajax', [\App\Controllers\Admin\CategoryController::class, 'updateStatusAjax'])->name('admin.category.updateStatusAjax');
 
+    // Blocks (Khối giao diện) Routes
+    $r->get('/blocks', [\App\Controllers\Admin\BlockController::class, 'index'])->name('admin.block.index');
+    $r->get('/blocks/create', [\App\Controllers\Admin\BlockController::class, 'create'])->name('admin.block.create');
+    $r->post('/blocks/store', [\App\Controllers\Admin\BlockController::class, 'store'])->name('admin.block.store');
+    $r->get('/blocks/edit/{id}', [\App\Controllers\Admin\BlockController::class, 'edit'])->name('admin.block.edit');
+    $r->post('/blocks/update/{id}', [\App\Controllers\Admin\BlockController::class, 'update'])->name('admin.block.update');
+    $r->get('/blocks/delete/{id}', [\App\Controllers\Admin\BlockController::class, 'destroy'])->name('admin.block.destroy');
+    $r->post('/blocks/delete-multiple', [\App\Controllers\Admin\BlockController::class, 'destroyMultiple'])->name('admin.block.destroy_multiple');
+    $r->post('/blocks/update-status-ajax', [\App\Controllers\Admin\BlockController::class, 'updateStatusAjax'])->name('admin.block.update_status_ajax');
+
+    // Block Items (Mục con của khối) Routes
+    $r->get('/blocks/{block_id}/items', [\App\Controllers\Admin\BlockItemController::class, 'index'])->name('admin.block_item.index');
+    $r->get('/blocks/{block_id}/items/create', [\App\Controllers\Admin\BlockItemController::class, 'create'])->name('admin.block_item.create');
+    $r->post('/blocks/{block_id}/items/store', [\App\Controllers\Admin\BlockItemController::class, 'store'])->name('admin.block_item.store');
+    $r->get('/blocks/{block_id}/items/edit/{id}', [\App\Controllers\Admin\BlockItemController::class, 'edit'])->name('admin.block_item.edit');
+    $r->post('/blocks/{block_id}/items/update/{id}', [\App\Controllers\Admin\BlockItemController::class, 'update'])->name('admin.block_item.update');
+    $r->get('/blocks/{block_id}/items/delete/{id}', [\App\Controllers\Admin\BlockItemController::class, 'destroy'])->name('admin.block_item.destroy');
+    $r->post('/blocks/{block_id}/items/delete-multiple', [\App\Controllers\Admin\BlockItemController::class, 'destroyMultiple'])->name('admin.block_item.destroy_multiple');
+    $r->post('/blocks/{block_id}/items/update-status-ajax', [\App\Controllers\Admin\BlockItemController::class, 'updateStatusAjax'])->name('admin.block_item.update_status_ajax');
+    $r->post('/blocks/{block_id}/items/sort', [\App\Controllers\Admin\BlockItemController::class, 'updateSort'])->name('admin.block_item.update_sort');
+
+
     // Post Routes
     $r->get('/post', [\App\Controllers\Admin\PostController::class, 'index'])->name('admin.post.index');
     $r->get('/post/create', [\App\Controllers\Admin\PostController::class, 'create'])->name('admin.post.create');

@@ -155,7 +155,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
 |---|---|---|---|
 | 23 | **Bài viết** (`bai-viet`) | `PostController` | 🟢 Hoàn thành |
-| 24 | **Nội dung** (`noi-dung`) | `PageController` | 🔴 Chưa làm |
+| 24 | **Khối Giao Diện (Blocks)** (`noi-dung`) | `BlockController` | ⏸️ Tạm ngưng (Chưa hoàn thiện 100%) |
 | 36 | **Album ảnh** (`gallery`) | `GalleryController` | 🔴 Chưa làm |
 | 37 | **Videos** (`video`) | `VideoController` | 🔴 Chưa làm |
 | 38 | **Upload file** (`upload-file`) | `FileManagerController` | 🔴 Chưa làm |
