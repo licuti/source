@@ -57,11 +57,7 @@ $breadcrumbActions = [];
 	.handle-actions button:hover { color: #000; }
 
 	.item-settings { display: none; padding: 15px; border: 1px solid #ccc; border-top: none; background: #fff; border-radius: 0 0 4px 4px; }
-	.settings-row { display: flex; gap: 15px; margin-bottom: 10px; }
-	.settings-col { flex: 1; }
-	.item-settings label { display: block; font-size: 12px; font-weight: normal; color: #666; margin-bottom: 4px; }
-	.item-settings input[type="text"], .item-settings select { width: 100%; padding: 5px; border: 1px solid #ddd; font-size: 13px; border-radius: 4px;}
-	.settings-actions { margin-top: 15px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+	.settings-actions { margin-top: 15px; display: flex; align-items: center; gap: 8px; font-size: 14px; }
 	.item-remove { color: #dc3232; cursor: pointer; text-decoration: underline; }
 	.item-cancel { color: #0073aa; cursor: pointer; text-decoration: underline; }
 
@@ -84,13 +80,11 @@ $breadcrumbActions = [];
 		content: "Chưa có mục nào. Hãy kéo thả các mục từ cột bên trái vào đây!";
 		display: block;
 	}
-
-	.menu-locations { margin-top: 16px; background: #f8f9fa; padding: 15px; border-radius: 4px; border: 1px solid #eee; }
-    .menu-locations h3 { font-size: 15px; margin-bottom: 10px; margin-top: 0; }
-	.menu-locations label { display: block; margin-bottom: 5px; font-weight:normal;}
-	.menu-footer { margin-top: 20px; display: flex; justify-content: space-between; gap: 10px; border-top: 1px solid #eee; padding-top: 15px; }
-	.menu-footer-left { display: flex; align-items: center; gap: 1rem; }
-
+	.menu-locations label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: normal;
+    }
     .loading-text { font-style: italic; color: #888; font-size: 12px; text-align: center; padding: 10px; }
 </style>
 
@@ -107,7 +101,7 @@ $breadcrumbActions = [];
                 <?php $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]); ?>
                 <?php if (count($langs) > 1): ?>
                 <div class="language-selector">
-                    <h3 style="font-size: 15px; margin-bottom: 10px;">Ngôn ngữ</h3>
+                    <h3 class="mb-3 fs-6">Ngôn ngữ</h3>
                     <?php foreach ($langs as $key => $lg): ?>
                         <label><input type="radio" name="lang" value="<?= $lg['code'] ?>"> <?= $lg['name'] ?></label>
                     <?php endforeach ?>
@@ -182,15 +176,15 @@ $breadcrumbActions = [];
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h3 class="card-title">Cấu trúc menu</h3>
                 <div class="menu-selector">
-                    <label class="mb-0" style="font-weight: normal; font-size: 14px;">Chọn menu để sửa:</label>
-                    <select id="menu-selector" class="form-select form-select-sm" style="width: auto; display:inline-block;">
+                    <label class="mb-0" style="font-size: 14px;">Chọn menu để sửa:</label>
+                    <select id="menu-selector" class="form-select form-select-sm d-inline-block" style="width: auto;">
                         <?php foreach ($menus as $m): ?>
                             <option value="<?= $m->id ?>" <?= $m->id == $current_menu_id ? 'selected' : '' ?>><?= htmlspecialchars($m->name) ?></option>
                         <?php endforeach ?>
                     </select>
                     <button type="button" class="btn btn-secondary btn-sm" id="select-menu-btn">Chọn</button>
                     <span style="font-size: 14px;">hoặc</span>
-                    <a href="#" id="create-new-menu" style="text-decoration:underline; color:#0073aa; font-size: 14px;">tạo menu mới</a>
+                    <a href="#" id="create-new-menu" class="text-primary" style="font-size: 14px;">tạo menu mới</a>
                 </div>
             </div>
 
@@ -201,16 +195,16 @@ $breadcrumbActions = [];
                         <input type="text" id="menu-name" class="menu-name-input form-control form-control-sm" value="<?= htmlspecialchars($current_menu->name) ?>">
                     </div>
 
-                    <div style="border: 1px solid #dee2e6; border-radius: 4px; padding:15px; margin-top: 20px;">
-                        <h4 class="mb-2" style="font-size: 16px;">Sắp xếp liên kết</h4>
-                        <p style="font-size:13px; color:#666; margin-bottom:15px;">Kéo thả từng mục để sắp xếp thứ tự. Kéo sang phải để tạo menu con.</p>
+                    <div class="border rounded-2 p-3">
+                        <h3 class="mb-2 fs-6">Sắp xếp liên kết</h3>
+                        <p class="text-secondary" style="font-size: 14px;">Kéo thả từng mục để sắp xếp thứ tự. Kéo sang phải để tạo menu con.</p>
                         
                         <div class="dd" id="menu-editor">
                             <ol class="dd-list"></ol>
                         </div>
 
-                        <div class="menu-locations mt-4">
-                            <h3>Vị trí hiển thị</h3>
+                        <div class="menu-locations bg-light border rounded-2 mt-4 p-3">
+                            <h3 class="mb-3 fs-6">Vị trí hiển thị</h3>
                             <?php 
                             $count_lang = count($langs);
                             ?>
@@ -242,10 +236,10 @@ $breadcrumbActions = [];
                             <?php endforeach ?>
                         </div>
 
-                        <div class="menu-footer">
-                            <div class="menu-footer-left">
-                                <a href="#" id="delete-selected-items" style="color:#dc3232; text-decoration:underline;">Xóa mục đã chọn</a>
-                                <a href="#" id="delete-menu" style="color:#dc3232; text-decoration:underline;">Xóa menu</a>
+                        <div class="menu-footer d-flex justify-content-between gap-2 border-top mt-4 pt-3">
+                            <div class="d-flex gap-3">
+                                <a href="#" id="delete-selected-items" class="text-danger">Xóa mục đã chọn</a>
+                                <a href="#" id="delete-menu" class="text-danger">Xóa menu</a>
                             </div>
                             <button type="button" class="btn btn-primary btn-sm" id="save-menu-button">Lưu Menu</button>
                         </div>
@@ -276,51 +270,59 @@ $breadcrumbActions = [];
             </div>
         </div>
         <div class="item-settings">
-            <p style="font-size:12px; margin-top:0;">Các cài đặt nâng cao cho mục menu này.</p>
-            <div class="settings-row">
-                <div class="settings-col">
-                    <label>Tiêu đề</label>
-                    <input type="text" class="item-input" data-name="label">
+            <p style="font-size:12px;">Các cài đặt nâng cao cho mục menu này.</p>
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <label class="form-label" style="font-size: 12px;">Tiêu đề</label>
+                    <input type="text" class="form-control form-control-sm item-input" data-name="label">
                 </div>
-                <div class="settings-col item-url-col">
-                    <label>URL</label>
-                    <input type="text" class="item-input" data-name="url">
+                <div class="col-md-6 mb-2 item-url-col">
+                    <label class="form-label" style="font-size: 12px;">URL</label>
+                    <input type="text" class="form-control form-control-sm item-input" data-name="url">
                 </div>
-            </div>
-            <div class="settings-row">
-                <div class="settings-col">
-                    <label>Class tùy chỉnh</label>
-                    <input type="text" class="item-input" data-name="class" placeholder="vd: menu-item--custom">
+                <div class="col-md-6 mb-2">
+                    <label class="form-label" style="font-size: 12px;">Class tùy chỉnh</label>
+                    <input type="text" class="form-control form-control-sm item-input" data-name="class" placeholder="vd: menu-item--custom">
                 </div>
-                <div class="settings-col">
-                    <label>Kiểu menu</label>
-                    <select class="item-input" data-name="style">
+                <div class="col-md-6 mb-2">
+                    <label class="form-label" style="font-size: 12px;">Thuộc tính Rel</label>
+                    <select class="form-control form-control-sm item-input" data-name="rel">
+                        <option value="">-- Trống --</option>
+                        <option value="nofollow">nofollow</option>
+                        <option value="noopener">noopener</option>
+                        <option value="noreferrer">noreferrer</option>
+                        <option value="sponsored">sponsored</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <label class="form-label" style="font-size: 12px;">Kiểu menu</label>
+                    <select class="form-control form-control-sm item-input" data-name="style">
                         <option value="default">Mặc định</option>
                     </select>
                 </div>
-            </div>
-            <div class="settings-row">
-                <div class="settings-col">
-                    <label>Block tùy chỉnh</label>
-                    <select class="item-input" data-name="block">
+                <div class="col-md-6 mb-2">
+                    <label class="form-label" style="font-size: 12px;">Block tùy chỉnh</label>
+                    <select class="form-control form-control-sm item-input" data-name="block">
                         <option value="">-- Không chọn --</option>
                     </select>
                 </div>
-                <div class="settings-col">
-                    <label>Target</label>
-                    <select class="item-input" data-name="target">
+                <div class="col-md-6 mb-2">
+                    <label class="form-label" style="font-size: 12px;">Target</label>
+                    <select class="form-control form-control-sm item-input" data-name="target">
                         <option value="_self">Cửa sổ hiện tại</option>
                         <option value="_blank">Cửa sổ mới (_blank)</option>
                     </select>
                 </div>
-            </div>
-            <div class="settings-row">
-                <div class="settings-col">
-                    <label>Ảnh</label>
-                    <input type="text" class="item-input item-image-input" data-name="image" placeholder="Đường dẫn ảnh..." style="margin-bottom: 5px;">
-                    <button type="button" class="btn btn-outline-secondary btn-sm item-image-picker" style="font-size: 12px;"><i class="fa fa-upload"></i> Chọn hình ảnh</button>
-                    <div class="image-preview" style="margin-top: 10px; max-width: 100px;">
-                        <img src="/admin/img/no-image.png" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;" class="item-image-preview" onerror="this.src='/admin/img/no-image.png'">
+                <div class="col-md-6 mb-2">
+                    <label class="form-label" style="font-size: 12px;">Ảnh</label>
+                    <div class="input-group input-group-sm mb-2">
+                        <input type="text" class="form-control item-input item-image-input" data-name="image" placeholder="Đường dẫn ảnh...">
+                        <button type="button" class="btn btn-outline-secondary item-image-picker" title="Chọn hình ảnh">
+                            <i class="fa fa-upload"></i>
+                        </button>
+                    </div>
+                    <div class="image-preview" style="max-width: 100px;">
+                        <img src="/admin/img/no-image.png" class="item-image-preview w-100 border rounded-2" onerror="this.src='/admin/img/no-image.png'">
                     </div>
                 </div>
             </div>
@@ -442,7 +444,7 @@ $breadcrumbActions = [];
         // 3. Trong DB: Thêm cột `badge` vào bảng `menu_items`.
         // 4. Trong Model: Thêm 'badge' vào $allowedFields của MenuItemModel (nếu có dùng).
         // 5. Trong MenuService.php -> flattenMenuTree(): Thêm `'badge' => $item['badge'] ?? ''` vào mảng $itemData.
-        const MENU_FIELDS = ['label', 'url', 'class', 'style', 'block', 'target', 'image', 'type', 'object_type', 'object_id'];
+        const MENU_FIELDS = ['label', 'url', 'class', 'rel', 'style', 'block', 'target', 'image', 'type', 'object_type', 'object_id'];
 
         function createMenuItem(options = {}) {
             const newId = options.id || generateId();

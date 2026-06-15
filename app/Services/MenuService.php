@@ -208,6 +208,7 @@ class MenuService {
                 'label'       => $item['label'] ?? '',
                 'url'         => $item['url'] ?? '',
                 'class'       => $item['class'] ?? '',
+                'rel'         => $item['rel'] ?? '',
                 'style'       => $item['style'] ?? 'default',
                 'block'       => $item['block'] ?? '',
                 'target'      => $item['target'] ?? '_self',

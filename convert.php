@@ -1,0 +1,1 @@
+<?php $pdo = new PDO("mysql:host=localhost;dbname=phuongnamv_db_new;charset=utf8mb4", "root", ""); $pdo->exec("ALTER TABLE db_content CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"); echo "Converted to utf8mb4.";
