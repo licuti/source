@@ -68,39 +68,11 @@ if(isset($firstItem)) {
                                     <div class="tab-pane fade <?= $i === 0 ? 'show active' : '' ?>"
                                          id="pane-<?= $c ?>" role="tabpanel">
                                         
-                                        <?php foreach($schema as $field): 
-                                            $fieldName = htmlspecialchars($field['name']);
-                                            $fieldLabel = htmlspecialchars($field['label']);
-                                            $fieldType = $field['type'] ?? 'text';
-                                            $fieldValue = $payloads[$c][$fieldName] ?? '';
-                                            $inputName = "data_payload[$c][$fieldName]";
-                                        ?>
-                                            <?php if($fieldType === 'text' || $fieldType === 'number' || $fieldType === 'link'): ?>
-                                                <?= view('admin.components.input', [
-                                                    'type' => $fieldType === 'number' ? 'number' : 'text',
-                                                    'name' => $inputName,
-                                                    'value' => $fieldValue,
-                                                    'label' => $fieldLabel
-                                                ]) ?>
-                                            <?php elseif($fieldType === 'textarea'): ?>
-                                                <div class="mb-3">
-                                                    <label class="form-label fw-bold"><?= $fieldLabel ?></label>
-                                                    <textarea name="<?= $inputName ?>" class="form-control" rows="3"><?= htmlspecialchars($fieldValue) ?></textarea>
-                                                </div>
-                                            <?php elseif($fieldType === 'richtext'): ?>
-                                                <?= view('admin.components.ckeditor', [
-                                                    'name' => $inputName,
-                                                    'value' => $fieldValue,
-                                                    'label' => $fieldLabel
-                                                ]) ?>
-                                            <?php elseif($fieldType === 'image'): ?>
-                                                <?= view('admin.components.image_upload', [
-                                                    'name' => $inputName,
-                                                    'value' => $fieldValue,
-                                                    'label' => $fieldLabel
-                                                ]) ?>
-                                            <?php endif; ?>
-                                        <?php endforeach; ?>
+                                        <?= view('admin.components.dynamic_form_renderer', [
+                                            'schema' => $schema,
+                                            'payload' => $payloads[$c] ?? [],
+                                            'input_prefix' => "data_payload[$c]"
+                                        ]) ?>
                                         
                                     </div>
                                     <?php $i++; endforeach; ?>

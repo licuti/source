@@ -212,24 +212,10 @@ $title = "Quản lý Items: " . htmlspecialchars($block->name);
             <div class="card-footer bg-white clearfix py-3">
                 <div class="row align-items-center">
                     <div class="col-md-4 text-muted small">
-                        Hiển thị <?= count($items ?? []) ?> / <?= $totalRows ?? 0 ?> mục
+                        Hiển thị <?= count($items) ?> / <?= $items->total() ?> mục
                     </div>
                     <div class="col-md-8 text-end pagination-right-sm">
-                        <?php if (isset($totalPages) && $totalPages > 1): ?>
-                            <ul class="pagination pagination-sm m-0 justify-content-end">
-                                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                    <a class="page-link" href="?page=<?= $page - 1 ?>&keyword=<?= urlencode($keyword ?? '') ?>&status=<?= urlencode($status ?? '') ?>">&laquo;</a>
-                                </li>
-                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                    <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                                        <a class="page-link" href="?page=<?= $i ?>&keyword=<?= urlencode($keyword ?? '') ?>&status=<?= urlencode($status ?? '') ?>"><?= $i ?></a>
-                                    </li>
-                                <?php endfor; ?>
-                                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
-                                    <a class="page-link" href="?page=<?= $page + 1 ?>&keyword=<?= urlencode($keyword ?? '') ?>&status=<?= urlencode($status ?? '') ?>">&raquo;</a>
-                                </li>
-                            </ul>
-                        <?php endif; ?>
+                        <?= $items->links() ?>
                     </div>
                 </div>
             </div>

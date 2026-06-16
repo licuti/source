@@ -41,3 +41,7 @@ This project is indexed by GitNexus as **source** (13352 symbols, 32138 relation
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
 
 <!-- gitnexus:end -->
+
+## Development Notes & Best Practices
+- **Multi-language Global Scope:** The system uses a global scope (`WHERE lang = 'vi'`) in the Model to automatically filter records by language. When performing bulk updates, AJAX toggles (status/sort), or modifying records across all languages, you MUST use `->withoutLang()` (e.g. `BlockModel::withoutLang()->where(...)`) before executing the `update()` or `first()` to ensure all language variants are properly synchronized.
+- **Pagination State Loss:** The system's custom Query Builder does NOT use `limit/offset` chain functions natively without state loss during `count()`. Always use `$query->qbPaginate($limit)` which natively snapshots and restores the `WHERE`, `JOIN`, and `ORDER` statements before and after counting total rows. Do not write manual pagination HTML in views; use `$items->links()`.

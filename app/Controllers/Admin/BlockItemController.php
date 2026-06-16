@@ -7,10 +7,17 @@ use App\Models\BlockItemModel;
 
 class BlockItemController extends BaseAdminController {
     
+    private array $langs;
+
+    public function __construct() {
+        parent::__construct();
+        $this->langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+    }
+    
     public function index(Request $request, $params) {
         $block_id = is_array($params) ? ($params['block_id'] ?? $params[1] ?? $params[0] ?? 0) : $params;
         
-        $block = BlockModel::query()->where('id_code', $block_id)->first();
+        $block = BlockModel::where('id_code', $block_id)->first();
         if (!$block) {
             return $this->redirect(route('admin.block.index'))->with('error', 'Khối không tồn tại!');
         }
@@ -21,8 +28,7 @@ class BlockItemController extends BaseAdminController {
         if ($page < 1) $page = 1;
         $limit = 10;
 
-        $query = BlockItemModel::query()
-            ->where('block_id', $block_id)
+        $query = BlockItemModel::where('block_id', $block_id)
             ->where('lang', config('app.locale', 'vi'));
         
         if ($status !== '') {
@@ -35,39 +41,25 @@ class BlockItemController extends BaseAdminController {
             $query->where('data_payload', 'LIKE', "%{$keyword}%");
         }
 
-        $countQuery = BlockItemModel::query()
-            ->where('block_id', $block_id)
-            ->where('lang', config('app.locale', 'vi'));
-        if ($status !== '') {
-            $countQuery->where('is_active', $status);
-        }
-        if ($keyword !== '') {
-            $countQuery->where('data_payload', 'LIKE', "%{$keyword}%");
-        }
-
-        $totalRows = $countQuery->count();
-        $totalPages = max(1, ceil($totalRows / $limit));
-        $offset = ($page - 1) * $limit;
-
         $query->orderBy('sort_order', 'ASC')->orderBy('id', 'DESC');
-        $items = $query->limit($limit, $offset)->get();
+        $items = $query->paginate($limit);
 
-        return $this->render('admin.block_item.index', compact('items', 'block', 'keyword', 'status', 'page', 'totalPages', 'totalRows'));
+        return $this->render('admin.block_item.index', compact('items', 'block', 'keyword', 'status'));
     }
 
     public function create(Request $request, $params) {
         $block_id = is_array($params) ? ($params['block_id'] ?? $params[1] ?? $params[0] ?? 0) : $params;
         
-        $block = BlockModel::query()->where('id_code', $block_id)->first();
+        $block = BlockModel::where('id_code', $block_id)->first();
         if (!$block) return $this->redirect(route('admin.block.index'));
 
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $langs = $this->langs;
         return $this->render('admin.block_item.form', compact('langs', 'block'));
     }
 
     public function store(Request $request, $params) {
         $block_id = is_array($params) ? ($params['block_id'] ?? $params[1] ?? $params[0] ?? 0) : $params;
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $langs = $this->langs;
         
         $sort_order = (int)$request->input('sort_order', 0);
         $is_active = $request->input('is_active') ? 1 : 0;
@@ -76,7 +68,7 @@ class BlockItemController extends BaseAdminController {
         $dynamicData = $request->input('data_payload', []);
         
         // Find max id_code
-        $maxIdCodeRow = BlockItemModel::query()->orderBy('id_code', 'DESC')->first();
+        $maxIdCodeRow = BlockItemModel::orderBy('id_code', 'DESC')->first();
         $newIdCode = $maxIdCodeRow ? $maxIdCodeRow->id_code + 1 : 1;
 
         foreach ($langs as $l) {
@@ -105,14 +97,12 @@ class BlockItemController extends BaseAdminController {
         $block_id = is_array($params) ? ($params['block_id'] ?? $params[1] ?? $params[0] ?? 0) : $params;
         $id_code = is_array($params) ? ($params['id'] ?? $params[2] ?? $params[1] ?? 0) : 0;
 
-        $block = BlockModel::query()->where('id_code', $block_id)->first();
+        $block = BlockModel::where('id_code', $block_id)->first();
         if (!$block) return $this->redirect(route('admin.block.index'));
 
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $langs = $this->langs;
         
-        $q = BlockItemModel::query();
-        $q->use_lang = false;
-        $translations = $q->where('id_code', $id_code)->get();
+        $translations = BlockItemModel::withoutLang()->where('id_code', $id_code)->get();
         if (empty($translations)) {
             return $this->redirect(route('admin.block_item.index', ['block_id' => $block_id]))->with('error', 'Không tìm thấy mục!');
         }
@@ -134,7 +124,7 @@ class BlockItemController extends BaseAdminController {
         $block_id = is_array($params) ? ($params['block_id'] ?? $params[1] ?? $params[0] ?? 0) : $params;
         $id_code = is_array($params) ? ($params['id'] ?? $params[2] ?? $params[1] ?? 0) : 0;
 
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $langs = $this->langs;
         
         $sort_order = (int)$request->input('sort_order', 0);
         $is_active = $request->input('is_active') ? 1 : 0;
@@ -151,13 +141,9 @@ class BlockItemController extends BaseAdminController {
                 'is_active' => $is_active,
             ];
 
-            $qExisting = BlockItemModel::query();
-            $qExisting->use_lang = false;
-            $existing = $qExisting->where('id_code', $id_code)->where('lang', $c)->first();
+            $existing = BlockItemModel::withoutLang()->where('id_code', $id_code)->where('lang', $c)->first();
             if ($existing) {
-                $qUpdate = BlockItemModel::query();
-                $qUpdate->use_lang = false;
-                $qUpdate->where('id', $existing->id)->update($data);
+                BlockItemModel::withoutLang()->where('id', $existing->id)->update($data);
             } else {
                 $data['block_id'] = $block_id;
                 $data['id_code'] = $id_code;
@@ -177,7 +163,7 @@ class BlockItemController extends BaseAdminController {
         $block_id = is_array($params) ? ($params['block_id'] ?? $params[1] ?? $params[0] ?? 0) : $params;
         $id_code = is_array($params) ? ($params['id'] ?? $params[2] ?? $params[1] ?? 0) : 0;
         
-        BlockItemModel::query()->where('id_code', $id_code)->delete();
+        BlockItemModel::withoutLang()->where('id_code', $id_code)->delete();
         
         return $this->redirect(route('admin.block_item.index', ['block_id' => $block_id]))->with('success', 'Đã xóa mục thành công!');
     }
@@ -190,7 +176,7 @@ class BlockItemController extends BaseAdminController {
             return $this->json(['success' => false, 'message' => 'Không có mục nào được chọn.']);
         }
 
-        BlockItemModel::query()->whereIn('id_code', $ids)->delete();
+        BlockItemModel::withoutLang()->whereIn('id_code', $ids)->delete();
 
         return $this->json(['success' => true, 'message' => 'Xóa thành công các mục đã chọn!']);
     }
@@ -201,7 +187,7 @@ class BlockItemController extends BaseAdminController {
         $value = $request->input('value');
         
         if ($field === 'is_active') {
-            BlockItemModel::query()->where('id_code', $id_code)->update(['is_active' => $value]);
+            BlockItemModel::withoutLang()->where('id_code', $id_code)->update(['is_active' => $value]);
             return $this->json(['success' => true, 'message' => 'Cập nhật trạng thái thành công!']);
         }
         return $this->json(['success' => false, 'message' => 'Trường không hợp lệ!']);
@@ -218,10 +204,10 @@ class BlockItemController extends BaseAdminController {
 
         // Cập nhật sort_order theo vị trí trong mảng $ids
         foreach ($ids as $index => $id_code) {
-            BlockItemModel::query()
-                ->where('block_id', $block_id)
-                ->where('id_code', $id_code)
-                ->update(['sort_order' => $index + 1]);
+            BlockItemModel::withoutLang()
+              ->where('block_id', $block_id)
+              ->where('id_code', $id_code)
+              ->update(['sort_order' => $index + 1]);
         }
 
         return $this->json(['success' => true, 'message' => 'Cập nhật thứ tự thành công!']);

@@ -66,6 +66,24 @@ class Model implements \JsonSerializable {
     protected string $qb_having    = '';
     protected string $qb_select    = '*'; // SELECT columns
     protected string $qb_limit     = '';
+    
+    /**
+     * Tắt tính năng Global Scope đa ngôn ngữ cho Query hiện tại
+     * Cho phép viết: Model::withoutLang()->where(...)
+     */
+    public function qbWithoutLang(): self {
+        $this->use_lang = false;
+        return $this;
+    }
+
+    /**
+     * Bật lại tính năng Global Scope đa ngôn ngữ cho Query hiện tại
+     * Cho phép viết: Model::withLang()->where(...)
+     */
+    public function qbWithLang(): self {
+        $this->use_lang = true;
+        return $this;
+    }
 
     // ============================================================
     //  KHỞI TẠO & KẾT NỐI
@@ -832,6 +850,7 @@ class Model implements \JsonSerializable {
             'where_raw' => $this->qb_where_raw,
             'params'    => $this->qb_params,
             'joins'     => $this->qb_joins,
+            'order'     => $this->qb_order,
             'group_by'  => $this->qb_group_by,
             'with'      => $this->qb_with,
         ];

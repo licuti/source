@@ -48,7 +48,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 104 | **Sao lưu & Cache** (`backup-cache`) | `BackupController` | 🟡 Đang PT |
 | 105 | **Chế độ bảo trì** (`maintenance`) | `MaintenanceController` | 🟡 Đang PT |
 | 106 trong group 43 | **Cổng thanh toán** (`payment`) | `PaymentSettingController` | 🟡 Đang PT |
-| 25 | **Thông tin website - liên hệ** (`thongtin-lienhe`) | `CompanyInfoController` | 🔴 Chưa làm |
+| 25 | **Cấu hình Website** (`setting`) | `SettingController` | 🟡 Đang phát triển |
 | 28 | **Cấu hình SEO cơ bản** (`seo-co-ban`) | `SeoConfigController` | 🔴 Chưa làm |
 | 39 | **Sitemap** (`sitemap`) | `SitemapController` | 🔴 Chưa làm |
 | 53 | **Button Contact** (`button-contact`) | `ContactButtonController` | 🔴 Chưa làm |
@@ -155,7 +155,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
 |---|---|---|---|
 | 23 | **Bài viết** (`bai-viet`) | `PostController` | 🟢 Hoàn thành |
-| 24 | **Khối Giao Diện (Blocks)** (`noi-dung`) | `BlockController` | ⏸️ Tạm ngưng (Chưa hoàn thiện 100%) |
+| 24 | **Khối Giao Diện (Blocks)** (`noi-dung`) | `BlockController` | 🟢 Hoàn thành |
 | 36 | **Album ảnh** (`gallery`) | `GalleryController` | 🔴 Chưa làm |
 | 37 | **Videos** (`video`) | `VideoController` | 🔴 Chưa làm |
 | 38 | **Upload file** (`upload-file`) | `FileManagerController` | 🔴 Chưa làm |
@@ -181,4 +181,4 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 ---
 
-> **📊 Tổng kết tiến độ:** Hoàn thành **10/33 module** (30%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Sản phẩm và Bài viết đã hoàn thiện 100%. Ưu tiên tiếp theo: Module Đơn hàng và các phần CRM liên quan.
+> **📊 Tổng kết tiến độ:** Hoàn thành **11/33 module** (33%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Sản phẩm, Bài viết và Khối giao diện động đã hoàn thiện 100%. Ưu tiên tiếp theo: Module Đơn hàng và các phần CRM liên quan.

@@ -68,7 +68,6 @@ $title = "Quản lý khối nội dung (Blocks)";
                                         <input class="form-check-input check-all" type="checkbox" title="Chọn tất cả">
                                     </div>
                                 </th>
-                                <th style="width: 60px;" class="text-center">STT</th>
                                 <th>Tên khối (Name)</th>
                                 <th>Mã gọi (Alias)</th>
                                 <th style="width: 120px;" class="text-center">Trạng thái</th>
@@ -83,9 +82,6 @@ $title = "Quản lý khối nội dung (Blocks)";
                                             <input class="form-check-input row-check" type="checkbox" value="<?= $item->id_code ?>">
                                         </div>
                                     </th>
-                                    <td class="text-center align-middle">
-                                        <?= $item->sort_order ?>
-                                    </td>
                                     <td class="align-middle">
                                         <strong><a href="<?= route('admin.block.edit', ['id' => $item->id_code]) ?>" class="text-dark text-decoration-none">
                                             <?= htmlspecialchars($item->name ?: 'Khối nội dung ' . $item->id_code) ?>
@@ -124,7 +120,7 @@ $title = "Quản lý khối nội dung (Blocks)";
                                         <div class="form-check form-switch d-flex justify-content-center">
                                             <input class="form-check-input ajax-toggle-status" type="checkbox" 
                                                 data-id="<?= $item->id_code ?>" data-field="is_active" 
-                                                data-url="<?= route('admin.block.updateStatusAjax') ?>" 
+                                                data-url="<?= route('admin.block.update_status_ajax') ?>" 
                                                 <?= $item->is_active ? 'checked' : '' ?>>
                                         </div>
                                     </td>
@@ -132,7 +128,7 @@ $title = "Quản lý khối nội dung (Blocks)";
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="5" class="text-center py-5 text-muted">
+                                    <td colspan="4" class="text-center py-5 text-muted">
                                         <i class="fa-regular fa-file-lines fs-1 mb-2"></i><br>
                                         Chưa có dữ liệu nào.
                                     </td>
@@ -143,27 +139,13 @@ $title = "Quản lý khối nội dung (Blocks)";
                 </div>
             
             <!-- FOOTER: PHÂN TRANG -->
-            <div class="card-footer bg-white clearfix py-3">
+            <div class="card-footer bg-white clearfix">
                 <div class="row align-items-center">
                     <div class="col-md-4 text-muted small">
-                        Hiển thị <?= count($items ?? []) ?> / <?= $totalRows ?? 0 ?> mục
+                        Hiển thị <?= count($items) ?> / <?= $items->total() ?> mục
                     </div>
                     <div class="col-md-8 text-end pagination-right-sm">
-                        <?php if (isset($totalPages) && $totalPages > 1): ?>
-                            <ul class="pagination pagination-sm m-0 justify-content-end">
-                                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
-                                    <a class="page-link" href="?page=<?= $page - 1 ?>&keyword=<?= urlencode($keyword ?? '') ?>&status=<?= urlencode($status ?? '') ?>">&laquo;</a>
-                                </li>
-                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                                    <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
-                                        <a class="page-link" href="?page=<?= $i ?>&keyword=<?= urlencode($keyword ?? '') ?>&status=<?= urlencode($status ?? '') ?>"><?= $i ?></a>
-                                    </li>
-                                <?php endfor; ?>
-                                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
-                                    <a class="page-link" href="?page=<?= $page + 1 ?>&keyword=<?= urlencode($keyword ?? '') ?>&status=<?= urlencode($status ?? '') ?>">&raquo;</a>
-                                </li>
-                            </ul>
-                        <?php endif; ?>
+                        <?= $items->links() ?>
                     </div>
                 </div>
             </div>

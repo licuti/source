@@ -6,6 +6,13 @@ use App\Models\BlockModel;
 
 class BlockController extends BaseAdminController {
     
+    private array $langs;
+
+    public function __construct() {
+        parent::__construct();
+        $this->langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+    }
+    
     public function index(Request $request) {
         $keyword = trim($request->input('keyword', ''));
         $status  = $request->input('status', '');
@@ -13,7 +20,7 @@ class BlockController extends BaseAdminController {
         if ($page < 1) $page = 1;
         $limit = 10;
 
-        $query = BlockModel::query()->where('lang', config('app.locale', 'vi'));
+        $query = BlockModel::where('lang', config('app.locale', 'vi'));
         
         if ($keyword !== '') {
             $query->where(function($q) use ($keyword) {
@@ -25,34 +32,19 @@ class BlockController extends BaseAdminController {
             $query->where('is_active', $status);
         }
 
-        $countQuery = BlockModel::query()->where('lang', config('app.locale', 'vi'));
-        if ($keyword !== '') {
-            $countQuery->where(function($q) use ($keyword) {
-                $q->where('name', 'LIKE', "%{$keyword}%")
-                  ->orWhere('alias', 'LIKE', "%{$keyword}%");
-            });
-        }
-        if ($status !== '') {
-            $countQuery->where('is_active', $status);
-        }
-
-        $totalRows = $countQuery->count();
-        $totalPages = max(1, ceil($totalRows / $limit));
-        $offset = ($page - 1) * $limit;
-
         $query->orderBy('sort_order', 'ASC')->orderBy('id', 'DESC');
-        $items = $query->limit($limit, $offset)->get();
+        $items = $query->paginate($limit);
 
-        return $this->render('admin.block.index', compact('items', 'keyword', 'status', 'page', 'totalPages', 'totalRows'));
+        return $this->render('admin.block.index', compact('items', 'keyword', 'status'));
     }
 
     public function create(Request $request) {
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $langs = $this->langs;
         return $this->render('admin.block.form', compact('langs'));
     }
 
     public function store(Request $request) {
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $langs = $this->langs;
         
         $nameArr = $request->input('name', []);
         $alias = $request->input('alias', '');
@@ -63,7 +55,7 @@ class BlockController extends BaseAdminController {
         $imageArr = $request->input('image', []);
         
         // Find max id_code
-        $maxIdCodeRow = BlockModel::query()->orderBy('id_code', 'DESC')->first();
+        $maxIdCodeRow = BlockModel::orderBy('id_code', 'DESC')->first();
         $newIdCode = $maxIdCodeRow ? $maxIdCodeRow->id_code + 1 : 1;
 
         foreach ($langs as $l) {
@@ -90,12 +82,10 @@ class BlockController extends BaseAdminController {
     }
 
     public function edit(Request $request, $params) {
-        $id_code = is_array($params) ? ($params['id'] ?? $params[1] ?? $params[0] ?? 0) : $params;
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $id_code = is_array($params) ? ($params['id'] ?? $params[0] ?? 0) : $params;
+        $langs = $this->langs;
         
-        $q = BlockModel::query();
-        $q->use_lang = false;
-        $translations = $q->where('id_code', $id_code)->get();
+        $translations = BlockModel::withoutLang()->where('id_code', $id_code)->get();
         if (empty($translations)) {
             return $this->redirect(route('admin.block.index'))->with('error', 'Không tìm thấy khối giao diện!');
         }
@@ -115,8 +105,8 @@ class BlockController extends BaseAdminController {
     }
 
     public function update(Request $request, $params) {
-        $id_code = is_array($params) ? ($params['id'] ?? $params[1] ?? $params[0] ?? 0) : $params;
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $id_code = is_array($params) ? ($params['id'] ?? $params[0] ?? 0) : $params;
+        $langs = $this->langs;
         
         $nameArr = $request->input('name', []);
         $alias = $request->input('alias', '');
@@ -139,13 +129,9 @@ class BlockController extends BaseAdminController {
                 'is_active' => $is_active,
             ];
 
-            $qExisting = BlockModel::query();
-            $qExisting->use_lang = false;
-            $existing = $qExisting->where('id_code', $id_code)->where('lang', $c)->first();
+            $existing = BlockModel::withoutLang()->where('id_code', $id_code)->where('lang', $c)->first();
             if ($existing) {
-                $qUpdate = BlockModel::query();
-                $qUpdate->use_lang = false;
-                $qUpdate->where('id', $existing->id)->update($data);
+                BlockModel::withoutLang()->where('id', $existing->id)->update($data);
             } else {
                 $data['id_code'] = $id_code;
                 $data['lang'] = $c;
@@ -165,8 +151,8 @@ class BlockController extends BaseAdminController {
         
         // Cảnh báo: Việc xóa Block sẽ làm mồ côi các Block Items. Chúng ta nên xóa luôn các Items?
         // Hiện tại cứ xóa Block trước
-        BlockModel::query()->where('id_code', $id_code)->delete();
-        \App\Models\BlockItemModel::query()->where('block_id', $id_code)->delete();
+        BlockModel::withoutLang()->where('id_code', $id_code)->delete();
+        \App\Models\BlockItemModel::withoutLang()->where('block_id', $id_code)->delete();
         
         return $this->redirect(route('admin.block.index'))->with('success', 'Đã xóa khối và tất cả các items thuộc khối!');
     }
@@ -177,8 +163,8 @@ class BlockController extends BaseAdminController {
             return $this->json(['success' => false, 'message' => 'Không có mục nào được chọn.']);
         }
 
-        BlockModel::query()->whereIn('id_code', $ids)->delete();
-        \App\Models\BlockItemModel::query()->whereIn('block_id', $ids)->delete();
+        BlockModel::withoutLang()->whereIn('id_code', $ids)->delete();
+        \App\Models\BlockItemModel::withoutLang()->whereIn('block_id', $ids)->delete();
 
         return $this->json(['success' => true, 'message' => 'Xóa thành công các khối đã chọn!']);
     }
@@ -189,7 +175,7 @@ class BlockController extends BaseAdminController {
         $value = $request->input('value');
         
         if (in_array($field, ['is_active', 'sort_order'])) {
-            BlockModel::query()->where('id_code', $id_code)->update([$field => $value]);
+            BlockModel::withoutLang()->where('id_code', $id_code)->update([$field => $value]);
             return $this->json(['success' => true, 'message' => 'Cập nhật thành công!']);
         }
         return $this->json(['success' => false, 'message' => 'Trường không hợp lệ!']);

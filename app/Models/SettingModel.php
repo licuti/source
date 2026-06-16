@@ -2,8 +2,14 @@
 namespace App\Models;
 
 class SettingModel extends \Model {
-    public $table = '#_thongtin';
+    public $table = '#_settings';
+    public bool $timestamps = false; // Let DB handle created_at / updated_at
     private static $settings_cache = null;
+
+    protected array $casts = [
+        'schema_config' => 'json',
+        'data_payload' => 'json'
+    ];
 
     /**
      * Lấy toàn bộ cấu hình website
@@ -11,10 +17,28 @@ class SettingModel extends \Model {
     public function getAll() {
         if (self::$settings_cache === null) {
             $lang = defined('LANG') ? LANG : 'vi';
-            $record = static::where('lang', $lang)->first();
-            self::$settings_cache = $record ? $record->toArray() : [];
+            $record = static::withoutLang()->where('lang', $lang)->first();
+            
+            if ($record) {
+                $data = $record->toArray();
+                $payload = $record->data_payload;
+                if (is_array($payload)) {
+                    $data = array_merge($data, $payload);
+                }
+                self::$settings_cache = $data;
+            } else {
+                self::$settings_cache = [];
+            }
         }
         return self::$settings_cache;
+    }
+
+    public function setSchemaConfigAttribute($value) {
+        $this->attributes['schema_config'] = is_string($value) ? $value : json_encode(empty($value) ? new \stdClass() : $value, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function setDataPayloadAttribute($value) {
+        $this->attributes['data_payload'] = is_string($value) ? $value : json_encode(empty($value) ? new \stdClass() : $value, JSON_UNESCAPED_UNICODE);
     }
 
     /**
@@ -29,7 +53,7 @@ class SettingModel extends \Model {
      * Helper: Lấy URL logo
      */
     public function getLogo() {
-        $logo = $this->getValue('icon_share');
+        $logo = $this->getValue('logo_image');
         return (defined('URLPATH') ? URLPATH : '') . 'img_data/images/' . $logo;
     }
 }

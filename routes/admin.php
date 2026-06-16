@@ -35,6 +35,10 @@ $router->group('/admin', function($r) {
     // Dashboard (Yêu cầu đăng nhập, sẽ bị AdminAuthMiddleware kiểm tra)
     $r->get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
+    // Cấu hình Website (Settings)
+    $r->get('/settings', [\App\Controllers\Admin\SettingController::class, 'index'])->name('admin.setting.index');
+    $r->post('/settings', [\App\Controllers\Admin\SettingController::class, 'update'])->name('admin.setting.update');
+
     // System Sidebar Menu Management Routes (Drag & Drop)
     $r->get('/system-menu', [\App\Controllers\Admin\MenuAdminController::class, 'index'])->name('admin.system_menu.index');
     $r->post('/system-menu/store', [\App\Controllers\Admin\MenuAdminController::class, 'store'])->name('admin.system_menu.store');
