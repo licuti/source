@@ -1,7 +1,6 @@
 <?php
 $title = isset($firstItem) ? "Sửa Khối giao diện" : "Thêm Khối giao diện mới";
 
-$name = $_POST['name'] ?? ($firstItem->name ?? '');
 $alias = $_POST['alias'] ?? ($firstItem->alias ?? '');
 $sort_order = $_POST['sort_order'] ?? ($firstItem->sort_order ?? 0);
 $is_active = isset($firstItem) ? $firstItem->is_active : 1;
@@ -32,21 +31,80 @@ if (is_array($schemaStr) || is_object($schemaStr)) {
             
             <div class="row">
                 <div class="col-md-9">
+                    <!-- LANGUAGE TABS -->
                     <div class="card card-outline card-primary mb-4">
+                        <?php if (count($langs) > 1): ?>
+                        <div class="card-header p-0 pt-1 border-bottom-0 bg-white">
+                            <ul class="nav nav-tabs" id="langTabs" role="tablist">
+                                <?php $i = 0; foreach($langs as $lang): ?>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link <?= $i === 0 ? 'active fw-bold' : '' ?>"
+                                        data-bs-toggle="tab" data-bs-target="#pane-<?= $lang['code'] ?>"
+                                        type="button" role="tab">
+                                        <i class="fa-solid fa-language text-primary"></i> <?= htmlspecialchars($lang['name']) ?>
+                                    </button>
+                                </li>
+                                <?php $i++; endforeach; ?>
+                            </ul>
+                        </div>
+                        <?php else: ?>
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0 fw-bold">Thông tin chính</h5>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <div class="card-body">
+                            <div class="tab-content" id="langTabsContent">
+                                <?php $i = 0; foreach($langs as $lang): 
+                                    $c = $lang['code'];
+                                    $l_name = $_POST['name'][$c] ?? ($firstItem->lang_data[$c]['name'] ?? '');
+                                    $l_desc = $_POST['description'][$c] ?? ($firstItem->lang_data[$c]['description'] ?? '');
+                                    $l_image = $_POST['image'][$c] ?? ($firstItem->lang_data[$c]['image'] ?? '');
+                                ?>
+                                <div class="tab-pane fade <?= $i === 0 ? 'show active' : '' ?>" id="pane-<?= $c ?>" role="tabpanel">
+                                    <?= view('admin.components.input', [
+                                        'name' => "name[$c]",
+                                        'value' => $l_name,
+                                        'label' => 'Tên khối (Name) - ' . $lang['name'],
+                                        'help_text' => 'Chỉ hiển thị trong Admin để dễ quản lý',
+                                        'attrs' => ['required' => ($i === 0), 'placeholder' => 'Vd: Slide Trang Chủ']
+                                    ]) ?>
+                                    
+                                    <?= view('admin.components.ckeditor', [
+                                        'name' => "description[$c]",
+                                        'value' => $l_desc,
+                                        'label' => 'Mô tả (Description) - ' . $lang['name'],
+                                        'help_text' => 'Mô tả chi tiết về khối'
+                                    ]) ?>
+                                    
+                                    <div class="mb-3">
+                                        <?= view('admin.components.image_upload', [
+                                            'name' => "image[$c]",
+                                            'value' => $l_image,
+                                            'label' => 'Ảnh đại diện khối - ' . $lang['name'],
+                                            'help_text' => 'Hiển thị minh họa cho khối'
+                                        ]) ?>
+                                    </div>
+                                </div>
+                                <?php $i++; endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SCHEMA BUILDER -->
+                    <div class="card card-outline card-info mb-4">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                            <h5 class="card-title mb-0 fw-bold"><i class="fa-solid fa-layer-group text-primary"></i> Thông tin Khối & Cấu hình Fields</h5>
+                            <h5 class="card-title mb-0 fw-bold"><i class="fa-solid fa-layer-group text-info"></i> Cấu hình Fields cho Item</h5>
                         </div>
                         <div class="card-body">
                             <p class="text-muted small mb-4">
                                 Khối giao diện (Blocks) định nghĩa một cấu trúc dữ liệu gồm nhiều item lặp lại (VD: Slider, Đối tác). <br>
                                 Vui lòng sử dụng <strong>Cấu hình Fields</strong> để xác định xem mỗi item bên trong khối này sẽ cần nhập những trường nào.
                             </p>
-                            
-                            <!-- Schema Builder UI -->
                             <div class="schema-builder-wrapper">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="fw-bold mb-0">Các trường dữ liệu cho Item</h6>
-                                    <button type="button" class="btn btn-sm btn-primary" onclick="SchemaBuilder.addField()">
+                                    <button type="button" class="btn btn-sm btn-info text-white" onclick="SchemaBuilder.addField()">
                                         <i class="fa-solid fa-plus"></i> Thêm Field
                                     </button>
                                 </div>
@@ -76,21 +134,13 @@ if (is_array($schemaStr) || is_object($schemaStr)) {
                         <div class="card-header bg-white"><h5 class="card-title mb-0 fw-bold"><i class="fa-solid fa-gears text-secondary"></i> Thiết lập</h5></div>
                         <div class="card-body bg-light">
                             <?= view('admin.components.input', [
-                                'name' => 'name',
-                                'value' => $name,
-                                'label' => 'Tên khối (Name)',
-                                'help_text' => 'Chỉ hiển thị trong Admin để dễ quản lý',
-                                'attrs' => ['required' => true, 'placeholder' => 'Vd: Slide Trang Chủ']
-                            ]) ?>
-                            
-                            <?= view('admin.components.input', [
                                 'name' => 'alias',
                                 'value' => $alias,
                                 'label' => 'Mã gọi (Alias)',
                                 'help_text' => 'Dùng để lập trình viên gọi ra ở Frontend',
                                 'attrs' => ['required' => true, 'placeholder' => 'Vd: home_slider']
                             ]) ?>
-
+                            
                             <?= view('admin.components.input', [
                                 'type' => 'number',
                                 'name' => 'sort_order',

@@ -146,10 +146,24 @@ $title = "Quản lý khối nội dung (Blocks)";
             <div class="card-footer bg-white clearfix py-3">
                 <div class="row align-items-center">
                     <div class="col-md-4 text-muted small">
-                        Hiển thị <?= count($items ?? []) ?> / <?= method_exists($items, 'total') ? $items->total() : 0 ?> mục
+                        Hiển thị <?= count($items ?? []) ?> / <?= $totalRows ?? 0 ?> mục
                     </div>
                     <div class="col-md-8 text-end pagination-right-sm">
-                        <?= method_exists($items, 'links') ? $items->links() : '' ?>
+                        <?php if (isset($totalPages) && $totalPages > 1): ?>
+                            <ul class="pagination pagination-sm m-0 justify-content-end">
+                                <li class="page-item <?= ($page <= 1) ? 'disabled' : '' ?>">
+                                    <a class="page-link" href="?page=<?= $page - 1 ?>&keyword=<?= urlencode($keyword ?? '') ?>&status=<?= urlencode($status ?? '') ?>">&laquo;</a>
+                                </li>
+                                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                                    <li class="page-item <?= ($i == $page) ? 'active' : '' ?>">
+                                        <a class="page-link" href="?page=<?= $i ?>&keyword=<?= urlencode($keyword ?? '') ?>&status=<?= urlencode($status ?? '') ?>"><?= $i ?></a>
+                                    </li>
+                                <?php endfor; ?>
+                                <li class="page-item <?= ($page >= $totalPages) ? 'disabled' : '' ?>">
+                                    <a class="page-link" href="?page=<?= $page + 1 ?>&keyword=<?= urlencode($keyword ?? '') ?>&status=<?= urlencode($status ?? '') ?>">&raquo;</a>
+                                </li>
+                            </ul>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -231,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(res => res.json())
         .then(res => {
-            if(res.status === 'success') {
+            if(res.success) {
                 AppNotify.success('Cập nhật thành công');
             } else {
                 AppNotify.error(res.message || 'Lỗi cập nhật');

@@ -35,12 +35,21 @@ class BlockItemController extends BaseAdminController {
             $query->where('data_payload', 'LIKE', "%{$keyword}%");
         }
 
-        $query->orderBy('sort_order', 'ASC')->orderBy('id', 'DESC');
+        $countQuery = BlockItemModel::query()
+            ->where('block_id', $block_id)
+            ->where('lang', config('app.locale', 'vi'));
+        if ($status !== '') {
+            $countQuery->where('is_active', $status);
+        }
+        if ($keyword !== '') {
+            $countQuery->where('data_payload', 'LIKE', "%{$keyword}%");
+        }
 
-        $totalRows = $query->count();
+        $totalRows = $countQuery->count();
         $totalPages = max(1, ceil($totalRows / $limit));
         $offset = ($page - 1) * $limit;
 
+        $query->orderBy('sort_order', 'ASC')->orderBy('id', 'DESC');
         $items = $query->limit($limit, $offset)->get();
 
         return $this->render('admin.block_item.index', compact('items', 'block', 'keyword', 'status', 'page', 'totalPages', 'totalRows'));
@@ -101,7 +110,9 @@ class BlockItemController extends BaseAdminController {
 
         $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
         
-        $translations = BlockItemModel::query()->where('id_code', $id_code)->get();
+        $q = BlockItemModel::query();
+        $q->use_lang = false;
+        $translations = $q->where('id_code', $id_code)->get();
         if (empty($translations)) {
             return $this->redirect(route('admin.block_item.index', ['block_id' => $block_id]))->with('error', 'Không tìm thấy mục!');
         }
@@ -140,9 +151,13 @@ class BlockItemController extends BaseAdminController {
                 'is_active' => $is_active,
             ];
 
-            $existing = BlockItemModel::query()->where('id_code', $id_code)->where('lang', $c)->first();
+            $qExisting = BlockItemModel::query();
+            $qExisting->use_lang = false;
+            $existing = $qExisting->where('id_code', $id_code)->where('lang', $c)->first();
             if ($existing) {
-                BlockItemModel::query()->where('id', $existing->id)->update($data);
+                $qUpdate = BlockItemModel::query();
+                $qUpdate->use_lang = false;
+                $qUpdate->where('id', $existing->id)->update($data);
             } else {
                 $data['block_id'] = $block_id;
                 $data['id_code'] = $id_code;

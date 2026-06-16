@@ -25,12 +25,22 @@ class BlockController extends BaseAdminController {
             $query->where('is_active', $status);
         }
 
-        $query->orderBy('sort_order', 'ASC')->orderBy('id', 'DESC');
+        $countQuery = BlockModel::query()->where('lang', config('app.locale', 'vi'));
+        if ($keyword !== '') {
+            $countQuery->where(function($q) use ($keyword) {
+                $q->where('name', 'LIKE', "%{$keyword}%")
+                  ->orWhere('alias', 'LIKE', "%{$keyword}%");
+            });
+        }
+        if ($status !== '') {
+            $countQuery->where('is_active', $status);
+        }
 
-        $totalRows = $query->count();
+        $totalRows = $countQuery->count();
         $totalPages = max(1, ceil($totalRows / $limit));
         $offset = ($page - 1) * $limit;
 
+        $query->orderBy('sort_order', 'ASC')->orderBy('id', 'DESC');
         $items = $query->limit($limit, $offset)->get();
 
         return $this->render('admin.block.index', compact('items', 'keyword', 'status', 'page', 'totalPages', 'totalRows'));
@@ -44,11 +54,13 @@ class BlockController extends BaseAdminController {
     public function store(Request $request) {
         $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
         
-        $name = $request->input('name', '');
+        $nameArr = $request->input('name', []);
         $alias = $request->input('alias', '');
         $schema_config = $request->input('schema_config', '[]');
         $sort_order = (int)$request->input('sort_order', 0);
         $is_active = $request->input('is_active') ? 1 : 0;
+        $descriptionArr = $request->input('description', []);
+        $imageArr = $request->input('image', []);
         
         // Find max id_code
         $maxIdCodeRow = BlockModel::query()->orderBy('id_code', 'DESC')->first();
@@ -59,8 +71,10 @@ class BlockController extends BaseAdminController {
             $data = [
                 'id_code' => $newIdCode,
                 'lang' => $c,
-                'name' => $name,
+                'name' => $nameArr[$c] ?? '',
                 'alias' => $alias,
+                'description' => $descriptionArr[$c] ?? '',
+                'image' => $imageArr[$c] ?? '',
                 'schema_config' => $schema_config,
                 'sort_order' => $sort_order,
                 'is_active' => $is_active,
@@ -79,12 +93,23 @@ class BlockController extends BaseAdminController {
         $id_code = is_array($params) ? ($params['id'] ?? $params[1] ?? $params[0] ?? 0) : $params;
         $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
         
-        $translations = BlockModel::query()->where('id_code', $id_code)->get();
+        $q = BlockModel::query();
+        $q->use_lang = false;
+        $translations = $q->where('id_code', $id_code)->get();
         if (empty($translations)) {
             return $this->redirect(route('admin.block.index'))->with('error', 'Không tìm thấy khối giao diện!');
         }
         
         $firstItem = $translations[0];
+        $langData = [];
+        foreach($translations as $t) {
+            $langData[$t->lang] = [
+                'name' => $t->name,
+                'description' => $t->description,
+                'image' => $t->image,
+            ];
+        }
+        $firstItem->lang_data = $langData;
 
         return $this->render('admin.block.form', compact('langs', 'firstItem'));
     }
@@ -93,26 +118,34 @@ class BlockController extends BaseAdminController {
         $id_code = is_array($params) ? ($params['id'] ?? $params[1] ?? $params[0] ?? 0) : $params;
         $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
         
-        $name = $request->input('name', '');
+        $nameArr = $request->input('name', []);
         $alias = $request->input('alias', '');
         $schema_config = $request->input('schema_config', '[]');
         $sort_order = (int)$request->input('sort_order', 0);
         $is_active = $request->input('is_active') ? 1 : 0;
+        $descriptionArr = $request->input('description', []);
+        $imageArr = $request->input('image', []);
 
         foreach ($langs as $l) {
             $c = $l['code'];
             
             $data = [
-                'name' => $name,
+                'name' => $nameArr[$c] ?? '',
                 'alias' => $alias,
+                'description' => $descriptionArr[$c] ?? '',
+                'image' => $imageArr[$c] ?? '',
                 'schema_config' => $schema_config,
                 'sort_order' => $sort_order,
                 'is_active' => $is_active,
             ];
 
-            $existing = BlockModel::query()->where('id_code', $id_code)->where('lang', $c)->first();
+            $qExisting = BlockModel::query();
+            $qExisting->use_lang = false;
+            $existing = $qExisting->where('id_code', $id_code)->where('lang', $c)->first();
             if ($existing) {
-                BlockModel::query()->where('id', $existing->id)->update($data);
+                $qUpdate = BlockModel::query();
+                $qUpdate->use_lang = false;
+                $qUpdate->where('id', $existing->id)->update($data);
             } else {
                 $data['id_code'] = $id_code;
                 $data['lang'] = $c;
@@ -155,9 +188,9 @@ class BlockController extends BaseAdminController {
         $field = $request->input('field');
         $value = $request->input('value');
         
-        if ($field === 'is_active') {
-            BlockModel::query()->where('id_code', $id_code)->update(['is_active' => $value]);
-            return $this->json(['success' => true, 'message' => 'Cập nhật trạng thái thành công!']);
+        if (in_array($field, ['is_active', 'sort_order'])) {
+            BlockModel::query()->where('id_code', $id_code)->update([$field => $value]);
+            return $this->json(['success' => true, 'message' => 'Cập nhật thành công!']);
         }
         return $this->json(['success' => false, 'message' => 'Trường không hợp lệ!']);
     }
