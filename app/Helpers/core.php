@@ -562,3 +562,20 @@ if (!function_exists('hasPermission')) {
         }
     }
 }
+
+if (!function_exists('setting')) {
+    /**
+     * Lấy giá trị từ Cấu hình Website
+     * 
+     * @param string|null $key Tên biến cấu hình cần lấy (nếu null, trả về toàn bộ mảng cấu hình)
+     * @param mixed $default Giá trị mặc định nếu không tìm thấy key
+     * @return mixed
+     */
+    function setting($key = null, $default = '') {
+        $settingModel = new \App\Models\SettingModel();
+        if ($key === null) {
+            return $settingModel->getAll();
+        }
+        return $settingModel->getValue($key, $default);
+    }
+}

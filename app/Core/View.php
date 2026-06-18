@@ -38,6 +38,11 @@ class View
             $data['row'] = $GLOBALS['row'];
         }
 
+        // Inject global '$setting' (Cấu hình website) for all views
+        if (!isset($data['setting']) && function_exists('setting')) {
+            $data['setting'] = setting();
+        }
+
         $data = array_merge($this->data, $data);
 
         // Export to global scope for legacy including as well
