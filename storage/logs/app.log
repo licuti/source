@@ -24611,3 +24611,650 @@
 [2026-06-17 17:22:32] [INFO]: App kernel booted in modern mode.
 [2026-06-17 17:22:34] [INFO]: App kernel booted in modern mode.
 [2026-06-17 17:22:59] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:14:07] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:14:07] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'ten' in 'field list'
+#0 C:\laragon\www\source-develop\app\Core\Model.php(647): PDOStatement->execute(Array)
+#1 C:\laragon\www\source-develop\app\Core\Model.php(616): Model->executeGet('ten, id_code')
+#2 C:\laragon\www\source-develop\app\Core\Model.php(363): Model->qbGet('ten, id_code')
+#3 C:\laragon\www\source-develop\app\Core\Model.php(746): Model->__call('get', Array)
+#4 C:\laragon\www\source-develop\app\Core\Model.php(363): Model->qbFirst('ten, id_code')
+#5 C:\laragon\www\source-develop\app\Controllers\HomeController.php(22): Model->__call('first', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\HomeController->index(Object(App\Core\Request), Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-18 02:14:30] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:14:30] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'ten' in 'field list'
+#0 C:\laragon\www\source-develop\app\Core\Model.php(647): PDOStatement->execute(Array)
+#1 C:\laragon\www\source-develop\app\Core\Model.php(616): Model->executeGet('ten, id_code')
+#2 C:\laragon\www\source-develop\app\Core\Model.php(363): Model->qbGet('ten, id_code')
+#3 C:\laragon\www\source-develop\app\Core\Model.php(746): Model->__call('get', Array)
+#4 C:\laragon\www\source-develop\app\Core\Model.php(363): Model->qbFirst('ten, id_code')
+#5 C:\laragon\www\source-develop\app\Controllers\HomeController.php(22): Model->__call('first', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\HomeController->index(Object(App\Core\Request), Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#8 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#16 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#17 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#18 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#19 {main}
+[2026-06-18 02:14:37] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:14:45] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:14:45] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:14:54] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:14:55] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:14:55] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:14:55] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:14:57] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:15:24] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:15:27] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:26:08] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:26:09] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:26:10] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:29:34] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:29:37] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:29:37] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:29:37] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:29:37] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:29:37] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:29:37] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:29:37] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:29:37] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:29:37] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:29:39] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:29:39] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:29:39] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:29:39] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:29:39] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:29:39] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:29:39] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:29:39] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:30:19] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:30:20] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:30:20] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:30:20] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:30:20] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:30:20] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:30:20] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:30:20] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:30:20] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:30:21] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:30:21] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:30:21] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:30:21] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:30:21] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:30:21] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:30:21] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:30:21] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:30:21] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(57): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(82): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(61): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 02:30:30] [INFO]: App kernel booted in modern mode.
+[2026-06-18 02:30:52] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:10:17] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:11:06] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:11:17] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:11:21] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:12:56] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:12:59] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:13:19] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:13:53] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:16:50] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:17:02] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:17:06] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:17:17] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:17:35] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:17:43] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:18:09] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:21:02] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:21:02] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:21:02] [ERROR]: Call to undefined method App\Core\View::layout()
+#0 C:\laragon\www\source-develop\app\Core\View.php(62): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('admin.backup.in...', Array)
+#2 C:\laragon\www\source-develop\app\Controllers\Admin\BaseAdminController.php(22): view('admin.backup.in...', Array)
+#3 C:\laragon\www\source-develop\app\Controllers\Admin\BackupController.php(12): App\Controllers\Admin\BaseAdminController->render('admin.backup.in...')
+#4 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\Admin\BackupController->index(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#16 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#17 {main}
+[2026-06-18 09:21:04] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:21:52] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:21:53] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:22:08] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:22:21] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:23:12] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:23:12] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:23:12] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(62): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(87): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(66): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 09:23:12] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:23:12] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(62): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(87): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(66): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 09:23:14] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:23:46] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:23:46] [ERROR]: Class 'ModuleAdminModel' not found
+#0 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\Admin\MenuAdminController->index(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-18 09:23:55] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:23:55] [ERROR]: Class 'ModuleAdminModel' not found
+#0 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\Admin\MenuAdminController->index(Object(App\Core\Request), Array)
+#1 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-18 09:24:06] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:24:08] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:24:19] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:24:20] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:24:20] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:24:20] [ERROR]: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'sap_xep' in 'order clause'
+#0 C:\laragon\www\source-develop\app\Core\Model.php(647): PDOStatement->execute(Array)
+#1 C:\laragon\www\source-develop\app\Core\Model.php(616): Model->executeGet('*')
+#2 C:\laragon\www\source-develop\app\Core\Model.php(363): Model->qbGet()
+#3 C:\laragon\www\source-develop\app\Controllers\Admin\AttributeController.php(21): Model->__call('get', Array)
+#4 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\Admin\AttributeController->index(Object(App\Core\Request), Array)
+#5 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#15 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#16 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#17 {main}
+[2026-06-18 09:24:22] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:49:39] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:49:39] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:49:39] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:49:40] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:49:46] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:49:53] [INFO]: App kernel booted in modern mode.
+[2026-06-18 09:49:53] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:07:46] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:07:47] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:07:50] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:07:50] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:14:28] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:14:30] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:14:30] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:14:30] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:14:30] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(62): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(87): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(66): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 10:14:30] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(62): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(87): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(66): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 10:14:57] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:14:57] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:14:57] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(62): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(87): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(66): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 10:14:57] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:14:57] [ERROR]: Class 'CategoryModel' not found
+#0 C:\laragon\www\source-develop\app\Core\View.php(62): include()
+#1 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('partials/header', Array)
+#2 C:\laragon\www\source-develop\resources\views\layouts\main.php(42): view('partials/header')
+#3 C:\laragon\www\source-develop\app\Core\View.php(87): include('C:\\laragon\\www\\...')
+#4 C:\laragon\www\source-develop\app\Core\View.php(66): App\Core\View->renderLayout('layouts/main', Array)
+#5 C:\laragon\www\source-develop\app\Helpers\core.php(253): App\Core\View->render('pages/404', Array)
+#6 C:\laragon\www\source-develop\app\Core\Router.php(78): view('pages/404', Array)
+#7 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#15 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#18 {main}
+[2026-06-18 10:18:16] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:18:22] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:19:49] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:20:46] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:23:23] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:25:50] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:27:00] [INFO]: App kernel booted in modern mode.
+[2026-06-18 10:28:45] [INFO]: App kernel booted in modern mode.

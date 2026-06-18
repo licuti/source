@@ -109,6 +109,16 @@ $router->group('/admin', function($r) {
     $r->post('/product/delete-multiple', [\App\Controllers\Admin\ProductController::class, 'destroyMultiple'])->name('admin.product.destroy_multiple');
     $r->post('/product/update-status-ajax', [\App\Controllers\Admin\ProductController::class, 'updateStatusAjax'])->name('admin.product.updateStatusAjax');
 
+    // Shop / Marketplace Routes
+    $r->get('/shop', [\App\Controllers\Admin\ShopController::class, 'index'])->name('admin.shop.index');
+    $r->get('/shop/create', [\App\Controllers\Admin\ShopController::class, 'create'])->name('admin.shop.create');
+    $r->post('/shop/store', [\App\Controllers\Admin\ShopController::class, 'store'])->name('admin.shop.store');
+    $r->get('/shop/edit/{id}', [\App\Controllers\Admin\ShopController::class, 'edit'])->name('admin.shop.edit');
+    $r->post('/shop/update/{id}', [\App\Controllers\Admin\ShopController::class, 'update'])->name('admin.shop.update');
+    $r->post('/shop/delete/{id}', [\App\Controllers\Admin\ShopController::class, 'destroy'])->name('admin.shop.destroy');
+    $r->post('/shop/delete-multiple', [\App\Controllers\Admin\ShopController::class, 'destroyMultiple'])->name('admin.shop.destroyMultiple');
+    $r->post('/shop/update-status-ajax', [\App\Controllers\Admin\ShopController::class, 'updateStatusAjax'])->name('admin.shop.updateStatusAjax');
+
     // Attribute Routes
     $r->get('/attribute', [\App\Controllers\Admin\AttributeController::class, 'index'])->name('admin.attribute.index');
     $r->get('/attribute/create', [\App\Controllers\Admin\AttributeController::class, 'create'])->name('admin.attribute.create');
