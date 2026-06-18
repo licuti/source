@@ -56,4 +56,32 @@ class SettingModel extends \Model {
         $logo = $this->getValue('logo_image');
         return (defined('URLPATH') ? URLPATH : '') . 'img_data/images/' . $logo;
     }
+
+    /**
+     * Lấy toàn bộ các field thuộc một nhóm (Tab) cụ thể
+     * Tiện lợi cho việc render động danh sách (Vd: Mạng xã hội, Liên hệ)
+     */
+    public function getGroup($tabName) {
+        $settings = $this->getAll();
+        $schema = isset($settings['schema_config']) ? $settings['schema_config'] : [];
+        if (is_string($schema)) {
+            $schema = json_decode($schema, true) ?: [];
+        }
+        
+        $result = [];
+        foreach ($schema as $field) {
+            $tab = !empty($field['tab']) ? trim($field['tab']) : 'Thông tin chung';
+            if ($tab === $tabName) {
+                $name = $field['name'] ?? '';
+                if ($name) {
+                    $result[$name] = [
+                        'label' => $field['label'] ?? '',
+                        'type'  => $field['type'] ?? 'text',
+                        'value' => $settings[$name] ?? ''
+                    ];
+                }
+            }
+        }
+        return $result;
+    }
 }

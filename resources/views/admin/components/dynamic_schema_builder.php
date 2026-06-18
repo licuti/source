@@ -33,6 +33,7 @@
                                     <th style="width: 40px">#</th>
                                     <th>Tên hiển thị (Label)</th>
                                     <th>Mã biến (Name)</th>
+                                    <th>Nhóm / Tab</th>
                                     <th>Loại field (Type)</th>
                                     <th style="width: 100px" class="text-center">Thao tác</th>
                                 </tr>
@@ -115,6 +116,12 @@ const SchemaBuilder = {
                                 <div class="form-text">Viết liền không dấu, chỉ dùng chữ, số và dấu gạch dưới.</div>
                             </div>
                             <div class="mb-3">
+                                <label class="form-label fw-bold">Nhóm / Tab hiển thị</label>
+                                <input type="text" class="form-control" id="fieldTab" list="existingTabs" placeholder="Vd: Thông tin liên hệ">
+                                <datalist id="existingTabs"></datalist>
+                                <div class="form-text">Tên Tab để nhóm các trường lại với nhau. Để trống nếu muốn gom vào Mặc định.</div>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label fw-bold">Loại (Type) <span class="text-danger">*</span></label>
                                 <select class="form-select" id="fieldType" required>
                                     <option value="text">Text (Văn bản ngắn)</option>
@@ -140,8 +147,21 @@ const SchemaBuilder = {
     renderTable() {
         const tbody = document.getElementById('schemaFieldsBody');
         tbody.innerHTML = '';
+        
+        // Populate existingTabs datalist
+        const datalist = document.getElementById('existingTabs');
+        if (datalist) {
+            datalist.innerHTML = '';
+            const uniqueTabs = [...new Set(this.schema.map(f => f.tab).filter(t => t))];
+            uniqueTabs.forEach(tab => {
+                const option = document.createElement('option');
+                option.value = tab;
+                datalist.appendChild(option);
+            });
+        }
+
         if(this.schema.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">Chưa có field nào. Vui lòng thêm field.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">Chưa có field nào. Vui lòng thêm field.</td></tr>`;
             return;
         }
 
@@ -151,6 +171,7 @@ const SchemaBuilder = {
                 <td class="text-center align-middle cursor-move"><i class="fa-solid fa-grip-vertical text-muted"></i></td>
                 <td class="align-middle fw-bold">${field.label}</td>
                 <td class="align-middle text-primary"><code>${field.name}</code></td>
+                <td class="align-middle text-muted">${field.tab || 'Mặc định'}</td>
                 <td class="align-middle"><span class="badge bg-secondary">${field.type}</span></td>
                 <td class="text-center align-middle">
                     <button type="button" class="btn btn-sm btn-light text-primary me-1" onclick="SchemaBuilder.editField(${index})" title="Sửa"><i class="fa-solid fa-pen"></i></button>
@@ -196,6 +217,7 @@ const SchemaBuilder = {
         document.getElementById('fieldIndex').value = index;
         document.getElementById('fieldLabel').value = field.label;
         document.getElementById('fieldName').value = field.name;
+        document.getElementById('fieldTab').value = field.tab || '';
         document.getElementById('fieldType').value = field.type;
         document.getElementById('fieldModalTitle').innerText = 'Sửa Field';
         this.modal.show();
@@ -205,6 +227,7 @@ const SchemaBuilder = {
         const index = parseInt(document.getElementById('fieldIndex').value);
         const label = document.getElementById('fieldLabel').value.trim();
         const name = document.getElementById('fieldName').value.trim();
+        const tab = document.getElementById('fieldTab').value.trim();
         const type = document.getElementById('fieldType').value;
 
         if(!label || !name) {
@@ -217,7 +240,7 @@ const SchemaBuilder = {
             return;
         }
 
-        const fieldData = { label, name, type };
+        const fieldData = { label, name, tab, type };
 
         if(index === -1) {
             // Check duplicate name
