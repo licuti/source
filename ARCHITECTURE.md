@@ -86,7 +86,8 @@ Tương tác trực tiếp với từng bảng Database cụ thể (23+ Models).
 - **Nhóm Sản phẩm**: `ProductModel`, `ProductVariantModel`, `ProductAlbumModel`.
 - **Nhóm Nội dung**: `CategoryModel`, `NewsModel`, `PageModel`, `BinhLuanModel`.
 - **Nhóm Hệ thống**: `SettingModel`, `TextModel` (Dịch), `LanguageModel`, `MenuModel`, `ModuleModel`.
-- **Nhóm Khác**: `ContactModel`, `OrderModel`, `CouponModel`, `VideoModel`, `AlbumModel`, `ButtonContactModel`.
+- **Nhóm Marketplace / Bán hàng**: `ShopModel`, `OrderModel`, `OrderItemModel`, `CheckoutSessionModel`, `CouponModel`.
+- **Nhóm Khác**: `ContactModel`, `VideoModel`, `AlbumModel`, `ButtonContactModel`.
 
 ---
 
@@ -121,8 +122,14 @@ AI Agent phải đặc biệt lưu ý cơ chế khóa ngoại trong hệ thống
 | `db_sanpham` | `db_sanpham_hinhanh` | `id_code` -> `id_sanpham` | Lấy album ảnh sản phẩm. |
 | `db_tintuc` | `db_category` | `id_loai` -> `id_code` | Nối bài viết với danh mục. |
 | `db_menu` | (Chính nó) | `id_loai` -> `id_code` | Cấu trúc menu đa cấp. |
+| **`db_shops`** | `db_users` | `user_id` -> `id` | Định danh tài khoản chủ sở hữu gian hàng. |
+| **`db_sanpham`** | `db_shops` | `shop_id` -> `id` | Phân loại sản phẩm theo gian hàng (Marketplace). |
+| **`db_orders`** | `db_shops` | `shop_id` -> `id` | Phân rã đơn hàng (Order Splitting) cho từng Shop. |
+| **`db_orders`** | `db_checkout_sessions` | `session_id` -> `id` | Nhóm các đơn hàng con vào chung một phiên thanh toán. |
 
-> **⚠️ CẢNH BÁO:** Luôn sử dụng **`id_code`** để định danh thực thể. Cột `id` chỉ dùng cho mục đích kỹ thuật của từng dòng ngôn ngữ.
+> **⚠️ CẢNH BÁO QUAN TRỌNG VỀ ĐƠN HÀNG:** Hệ thống sử dụng cơ chế **Tách đơn hàng (Order Splitting)**. Khi khách đặt mua nhiều món từ nhiều Shop, hệ thống sinh ra MỘT `db_checkout_sessions` (để thanh toán tổng) nhưng tách ra thành NHIỀU `db_orders` (mỗi shop 1 order để tự vận hành). KHÔNG lưu đơn hàng vào các bảng cũ (`db_dathang`).
+
+> **⚠️ CẢNH BÁO VỀ ĐA NGÔN NGỮ:** Luôn sử dụng **`id_code`** để định danh thực thể đối với các bảng hỗ trợ đa ngôn ngữ (Shop, Bài viết, Sản phẩm). Cột `id` thuần túy chỉ dùng cho mục đích kỹ thuật của từng dòng ngôn ngữ.
 
 ---
 
