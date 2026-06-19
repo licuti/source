@@ -166,4 +166,19 @@ $router->group('/admin', function($r) {
 
     $r->get('/payment', [\App\Controllers\Admin\PaymentSettingController::class, 'index'])->name('admin.payment.index');
     $r->post('/payment/save', [\App\Controllers\Admin\PaymentSettingController::class, 'save'])->name('admin.payment.save');
+
+    // Shipping Configuration Routes
+    $r->get('/shipping', [\App\Controllers\Admin\ShippingController::class, 'index'])->name('admin.shipping.index');
+    $r->get('/shipping/create', [\App\Controllers\Admin\ShippingController::class, 'createMethod'])->name('admin.shipping.create_method');
+    $r->post('/shipping/store', [\App\Controllers\Admin\ShippingController::class, 'storeMethod'])->name('admin.shipping.store_method');
+    $r->get('/shipping/edit/{id}', [\App\Controllers\Admin\ShippingController::class, 'editMethod'])->name('admin.shipping.edit_method');
+    $r->post('/shipping/update/{id}', [\App\Controllers\Admin\ShippingController::class, 'updateMethod'])->name('admin.shipping.update_method');
+    $r->post('/shipping/delete', [\App\Controllers\Admin\ShippingController::class, 'destroyMethod'])->name('admin.shipping.destroy_method');
+    
+    $r->get('/shipping/{methodId}/rates', [\App\Controllers\Admin\ShippingController::class, 'rates'])->name('admin.shipping.rates');
+    $r->get('/shipping/{methodId}/rates/create', [\App\Controllers\Admin\ShippingController::class, 'createRate'])->name('admin.shipping.create_rate');
+    $r->post('/shipping/{methodId}/rates/store', [\App\Controllers\Admin\ShippingController::class, 'storeRate'])->name('admin.shipping.store_rate');
+    $r->get('/shipping/{methodId}/rates/edit/{rateId}', [\App\Controllers\Admin\ShippingController::class, 'editRate'])->name('admin.shipping.edit_rate');
+    $r->post('/shipping/{methodId}/rates/update/{rateId}', [\App\Controllers\Admin\ShippingController::class, 'updateRate'])->name('admin.shipping.update_rate');
+    $r->post('/shipping/rates/delete', [\App\Controllers\Admin\ShippingController::class, 'destroyRate'])->name('admin.shipping.destroy_rate');
 });
