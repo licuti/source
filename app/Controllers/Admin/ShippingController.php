@@ -146,6 +146,7 @@ class ShippingController extends BaseAdminController
 
     public function storeRate(Request $request, $params = [])
     {
+        // TODO: Kiểm tra lại lỗi lưu form bị đẩy ra ngoài Frontend 404 (URL sai hoặc route config sai)
         $methodId = is_array($params) ? ($params['methodId'] ?? 0) : $params;
         $data = [
             'shipping_method_id' => $methodId,
