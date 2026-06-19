@@ -102,8 +102,17 @@ $title = $isEdit ? 'Chỉnh sửa Phương thức' : 'Thêm Phương thức Vậ
                                     <option value="0" <?= ($isEdit && !$item->is_active) ? 'selected' : '' ?>>Đã tắt</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-success w-100"><i class="fas fa-save me-1"></i> Lưu thay đổi</button>
-                            <a href="<?= route('admin.shipping.index') ?>" class="btn btn-outline-secondary w-100 mt-2">Hủy bỏ</a>
+                        </div>
+                        <div class="card-footer d-flex justify-content-end gap-1 flex-wrap">
+                            <a href="<?= route('admin.shipping.index') ?>" class="btn btn-secondary btn-sm">
+                                <i class="fa-solid fa-arrow-left"></i> Quay lại
+                            </a>
+                            <button type="submit" name="save_action" value="exit" class="btn btn-primary btn-sm">
+                                <i class="fa-solid fa-save"></i> Lưu
+                            </button>
+                            <button type="submit" name="save_action" value="continue" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
+                            </button>
                         </div>
                     </div>
                 </div>

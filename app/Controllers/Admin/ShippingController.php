@@ -44,7 +44,12 @@ class ShippingController extends BaseAdminController
             $data['api_config'] = null;
         }
 
-        ShippingMethodModel::create($data);
+        $method = ShippingMethodModel::create($data);
+        
+        $saveAction = Request::input('save_action', 'exit');
+        if ($saveAction === 'continue') {
+            return redirect(route('admin.shipping.edit_method', $method->id))->with('success', 'Thêm phương thức thành công!');
+        }
         return redirect(route('admin.shipping.index'))->with('success', 'Thêm phương thức thành công!');
     }
 
@@ -77,6 +82,11 @@ class ShippingController extends BaseAdminController
         }
 
         $method->update($data);
+
+        $saveAction = Request::input('save_action', 'exit');
+        if ($saveAction === 'continue') {
+            return redirect(route('admin.shipping.edit_method', $id))->with('success', 'Cập nhật phương thức thành công!');
+        }
         return redirect(route('admin.shipping.index'))->with('success', 'Cập nhật phương thức thành công!');
     }
 
@@ -152,7 +162,12 @@ class ShippingController extends BaseAdminController
         if (empty($data['district_code'])) $data['district_code'] = null;
         if (empty($data['ward_code'])) $data['ward_code'] = null;
 
-        ShippingRateModel::create($data);
+        $rate = ShippingRateModel::create($data);
+
+        $saveAction = Request::input('save_action', 'exit');
+        if ($saveAction === 'continue') {
+            return redirect(route('admin.shipping.edit_rate', [$methodId, $rate->id]))->with('success', 'Thêm biểu phí thành công!');
+        }
         return redirect(route('admin.shipping.rates', $methodId))->with('success', 'Thêm biểu phí thành công!');
     }
 
@@ -208,6 +223,11 @@ class ShippingController extends BaseAdminController
         if (empty($data['ward_code'])) $data['ward_code'] = null;
 
         $rate->update($data);
+
+        $saveAction = Request::input('save_action', 'exit');
+        if ($saveAction === 'continue') {
+            return redirect(route('admin.shipping.edit_rate', [$methodId, $rateId]))->with('success', 'Cập nhật biểu phí thành công!');
+        }
         return redirect(route('admin.shipping.rates', $methodId))->with('success', 'Cập nhật biểu phí thành công!');
     }
 
