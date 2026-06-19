@@ -22,7 +22,7 @@ $title = 'Bảng giá cước Vùng - ' . htmlspecialchars($method->name);
             <div class="card-header wp-toolbar">
                 <div class="d-flex flex-wrap justify-content-end align-items-center gap-3">
                     <form action="" method="GET" class="d-flex align-items-center flex-wrap gap-2 m-0">
-                        <a href="<?= route('admin.shipping.create_rate', $method->id) ?>" class="btn btn-success btn-sm">
+                        <a href="<?= route('admin.shipping.create_rate', ['methodId' => $method->id]) ?>" class="btn btn-success btn-sm">
                             <i class="fas fa-plus me-1"></i> Thêm mới
                         </a>
                     </form>

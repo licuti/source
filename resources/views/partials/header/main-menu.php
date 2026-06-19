@@ -6,7 +6,7 @@
 $current_lang = $_SESSION['app_locale'] ?? 'vi';
 
 // 1. Tìm menu_id được gán cho vị trí 'primary' theo ngôn ngữ
-$location = \MenuLocationModel::where('location_name', 'primary')
+$location = \App\Models\MenuLocationModel::where('location_name', 'primary')
     ->where('lang', $current_lang)
     ->first();
 
@@ -15,7 +15,7 @@ $menu_id = $location->menu_id ?? 0;
 // 2. Lấy các mục menu cấp cao nhất (parent_id = 0)
 $main_menu_items = [];
 if ($menu_id > 0) {
-    $main_menu_items = \MenuItemModel::where('menu_id', $menu_id)
+    $main_menu_items = \App\Models\MenuItemModel::where('menu_id', $menu_id)
         ->where('parent_id', 0)
         ->orderBy('sort_order', 'ASC')
         ->get();
