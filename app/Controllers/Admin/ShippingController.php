@@ -12,7 +12,6 @@ class ShippingController extends BaseAdminController
     public function __construct()
     {
         parent::__construct();
-        $this->checkPermission('quan-ly-van-chuyen');
     }
 
     public function index()
