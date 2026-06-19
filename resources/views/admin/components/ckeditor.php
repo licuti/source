@@ -49,7 +49,7 @@ $attrString = render_attrs($attrs);
 ?>
 <div class="mb-3">
     <?php if ($label): ?>
-        <label for="<?= htmlspecialchars($idSafe) ?>" class="form-label fw-bold"><?= htmlspecialchars($label) ?></label>
+        <label for="<?= htmlspecialchars($idSafe) ?>" class="form-label fw-bold"><?= $label ?></label>
     <?php endif; ?>
     
     <textarea name="<?= htmlspecialchars($name) ?>" <?= $attrString ?>><?= htmlspecialchars((string)$value) ?></textarea>

@@ -26,7 +26,7 @@ $attrString = render_attrs($attrs);
 ?>
 <div class="mb-3">
     <?php if ($label): ?>
-        <label class="form-label fw-bold"><?= htmlspecialchars($label) ?></label>
+        <label class="form-label fw-bold"><?= $label ?></label>
     <?php endif; ?>
     <div class="input-group input-group-sm">
         <input type="text" class="form-control" name="<?= htmlspecialchars($name) ?>" value="<?= htmlspecialchars($value ?? '') ?>" readonly <?= $attrString ?>>

@@ -43,7 +43,7 @@ $attrString = render_attrs($attrs);
     <div class="form-check form-switch d-flex align-items-center">
         <input name="<?= htmlspecialchars($name) ?>" <?= $attrString ?>>
         <?php if ($label): ?>
-            <label class="form-check-label mt-1 ms-2 fw-bold" for="<?= htmlspecialchars($id) ?>"><?= htmlspecialchars($label) ?></label>
+            <label class="form-check-label mt-1 ms-2 fw-bold" for="<?= htmlspecialchars($id) ?>"><?= $label ?></label>
         <?php endif; ?>
     </div>
     <?php if ($help_text): ?>

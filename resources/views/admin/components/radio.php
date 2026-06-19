@@ -32,7 +32,7 @@ $attrs['type'] = 'radio';
 
 <div class="mb-3">
     <?php if ($label): ?>
-        <label class="form-label fw-bold d-block"><?= htmlspecialchars($label) ?></label>
+        <label class="form-label fw-bold d-block"><?= $label ?></label>
     <?php endif; ?>
     
     <div>

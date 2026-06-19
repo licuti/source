@@ -28,7 +28,7 @@ $attrString = render_attrs($attrs);
 
 <div class="mb-3 gallery-component" id="gallery_wrap_<?= $id ?>">
     <?php if ($label): ?>
-        <label class="form-label fw-bold"><?= htmlspecialchars($label) ?></label>
+        <label class="form-label fw-bold"><?= $label ?></label>
     <?php endif; ?>
     
     <div class="mb-2">
