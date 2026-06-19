@@ -9,14 +9,14 @@ $title = $isEdit ? 'Chỉnh sửa Cước Vận Chuyển' : 'Thêm Cước Vận
     'bitems' => [
         ['name' => 'Bảng điều khiển', 'url' => route('admin.dashboard')],
         ['name' => 'Cấu hình vận chuyển', 'url' => route('admin.shipping.index')],
-        ['name' => 'Bảng giá', 'url' => route('admin.shipping.rates', $method->id)],
+        ['name' => 'Bảng giá', 'url' => route('admin.shipping.rates', ['methodId' => $method->id])],
         ['name' => $title, 'url' => '']
     ]
 ]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
-        <form action="<?= $isEdit ? route('admin.shipping.update_rate', [$method->id, $item->id]) : route('admin.shipping.store_rate', $method->id) ?>" method="POST">
+        <form action="<?= $isEdit ? route('admin.shipping.update_rate', ['methodId' => $method->id, 'rateId' => $item->id]) : route('admin.shipping.store_rate', ['methodId' => $method->id]) ?>" method="POST">
             <?= csrf_field() ?>
             <div class="row">
                 

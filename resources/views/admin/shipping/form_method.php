@@ -15,7 +15,7 @@ $title = $isEdit ? 'Chỉnh sửa Phương thức' : 'Thêm Phương thức Vậ
 
 <div class="app-content">
     <div class="container-fluid">
-        <form action="<?= $isEdit ? route('admin.shipping.update_method', $item->id) : route('admin.shipping.store_method') ?>" method="POST">
+        <form action="<?= $isEdit ? route('admin.shipping.update_method', ['id' => $item->id]) : route('admin.shipping.store_method') ?>" method="POST">
             <?= csrf_field() ?>
             <div class="row">
                 

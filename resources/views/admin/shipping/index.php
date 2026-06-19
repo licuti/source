@@ -54,20 +54,20 @@ $title = 'Cấu hình Hãng / Phương thức Vận chuyển';
                                 <tr class="wp-row">
                                     <td class="text-center text-muted fw-bold align-middle"><?= $item->sort_order ?></td>
                                     <td class="align-middle">
-                                        <strong><a href="<?= route('admin.shipping.edit_method', $item->id) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->name) ?></a></strong>
+                                        <strong><a href="<?= route('admin.shipping.edit_method', ['id' => $item->id]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->name) ?></a></strong>
                                         
                                         <?php 
                                         $actions = [];
                                         if (!$item->is_api) {
                                             $actions['rates'] = [
                                                 'label' => 'Bảng giá',
-                                                'url' => route('admin.shipping.rates', $item->id),
+                                                'url' => route('admin.shipping.rates', ['methodId' => $item->id]),
                                                 'class' => 'text-info'
                                             ];
                                         }
                                         $actions['edit'] = [
                                             'label' => 'Chỉnh sửa', 
-                                            'url' => route('admin.shipping.edit_method', $item->id), 
+                                            'url' => route('admin.shipping.edit_method', ['id' => $item->id]), 
                                             'class' => 'text-primary'
                                         ];
                                         $actions['delete'] = [

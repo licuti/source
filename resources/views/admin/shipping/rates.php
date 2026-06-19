@@ -8,10 +8,10 @@ $title = 'Bảng giá cước Vùng - ' . htmlspecialchars($method->name);
     'bitems' => [
         ['name' => 'Bảng điều khiển', 'url' => route('admin.dashboard')],
         ['name' => 'Cấu hình vận chuyển', 'url' => route('admin.shipping.index')],
-        ['name' => 'Bảng giá cước', 'url' => '']
+        ['name' => 'Bảng giá ('.$method->name.')', 'url' => '']
     ],
     'actions' => [
-        ['label' => 'Thêm biểu phí', 'icon' => 'fa-plus', 'url' => route('admin.shipping.create_rate', $method->id), 'class' => 'btn-success btn-sm'],
+        ['label' => 'Thêm Cước phí', 'icon' => 'fa-plus', 'url' => route('admin.shipping.create_rate', ['methodId' => $method->id]), 'class' => 'btn-success btn-sm'],
         ['label' => 'Quay lại', 'icon' => 'fa-arrow-left', 'url' => route('admin.shipping.index'), 'class' => 'btn-secondary btn-sm'],
     ]
 ]) ?>
@@ -61,7 +61,7 @@ $title = 'Bảng giá cước Vùng - ' . htmlspecialchars($method->name);
                                         <?php else: ?>
                                             <span class="badge bg-secondary"><?= $item->country_code ?></span>
                                             <span class="fw-bold ms-1 text-primary">
-                                                <a href="<?= route('admin.shipping.edit_rate', [$method->id, $item->id]) ?>" class="text-decoration-none">
+                                                <a href="<?= route('admin.shipping.edit_rate', ['methodId' => $method->id, 'rateId' => $item->id]) ?>" class="text-decoration-none">
                                                     <?= $item->province_code ? htmlspecialchars($item->province_code) : 'Tất cả Tỉnh/Thành' ?>
                                                 </a>
                                             </span>
@@ -71,7 +71,7 @@ $title = 'Bảng giá cước Vùng - ' . htmlspecialchars($method->name);
                                         $actions = [
                                             'edit' => [
                                                 'label' => 'Chỉnh sửa', 
-                                                'url' => route('admin.shipping.edit_rate', [$method->id, $item->id]), 
+                                                'url' => route('admin.shipping.edit_rate', ['methodId' => $method->id, 'rateId' => $item->id]), 
                                                 'class' => 'text-primary'
                                             ],
                                             'delete' => [
