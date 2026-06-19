@@ -28,14 +28,22 @@ $title = $isEdit ? 'Chỉnh sửa Phương thức' : 'Thêm Phương thức Vậ
                         <div class="card-body">
                             
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Tên hiển thị <span class="text-danger">*</span></label>
-                                <input type="text" name="name" class="form-control" value="<?= $isEdit ? htmlspecialchars($item->name) : '' ?>" required placeholder="VD: Giao hàng tiêu chuẩn, Giao Hàng Nhanh">
+                                <?= view('admin.components.input', [
+                                    'name' => 'name',
+                                    'value' => $item->name ?? '',
+                                    'label' => 'Tên hiển thị <span class="text-danger">*</span>',
+                                    'attrs' => ['required' => true, 'placeholder' => 'VD: Giao hàng tiêu chuẩn, Giao Hàng Nhanh']
+                                ]) ?>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label fw-bold">Mã hãng (Carrier Code) <span class="text-danger">*</span></label>
-                                <input type="text" name="carrier_code" class="form-control" value="<?= $isEdit ? htmlspecialchars($item->carrier_code) : 'custom' ?>" required placeholder="custom, ghn, ghtk, viettelpost...">
-                                <small class="text-muted">Dùng 'custom' cho phương thức giao hàng tự định cấu hình bảng giá.</small>
+                                <?= view('admin.components.input', [
+                                    'name' => 'carrier_code',
+                                    'value' => $item->carrier_code ?? 'custom',
+                                    'label' => 'Mã hãng (Carrier Code) <span class="text-danger">*</span>',
+                                    'help_text' => "Dùng 'custom' cho phương thức giao hàng tự định cấu hình bảng giá.",
+                                    'attrs' => ['required' => true, 'placeholder' => 'custom, ghn, ghtk, viettelpost...']
+                                ]) ?>
                             </div>
 
                             <div class="row mb-3">
@@ -47,8 +55,12 @@ $title = $isEdit ? 'Chỉnh sửa Phương thức' : 'Thêm Phương thức Vậ
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold">Thứ tự hiển thị</label>
-                                    <input type="number" name="sort_order" class="form-control" value="<?= $isEdit ? $item->sort_order : 0 ?>">
+                                    <?= view('admin.components.input', [
+                                        'type' => 'number',
+                                        'name' => 'sort_order',
+                                        'value' => $item->sort_order ?? 0,
+                                        'label' => 'Thứ tự hiển thị'
+                                    ]) ?>
                                 </div>
                             </div>
 
@@ -97,23 +109,18 @@ $title = $isEdit ? 'Chỉnh sửa Phương thức' : 'Thêm Phương thức Vậ
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
-                                <select name="is_active" class="form-select">
-                                    <option value="1" <?= (!$isEdit || $item->is_active) ? 'selected' : '' ?>>Đang hoạt động</option>
-                                    <option value="0" <?= ($isEdit && !$item->is_active) ? 'selected' : '' ?>>Đã tắt</option>
-                                </select>
+                                <?= view('admin.components.switch', [
+                                    'name' => 'is_active',
+                                    'checked' => !isset($item) || !empty($item->is_active),
+                                    'label' => 'Đang hoạt động'
+                                ]) ?>
                             </div>
                         </div>
-                        <div class="card-footer d-flex justify-content-end gap-1 flex-wrap">
-                            <a href="<?= route('admin.shipping.index') ?>" class="btn btn-secondary btn-sm">
-                                <i class="fa-solid fa-arrow-left"></i> Quay lại
-                            </a>
-                            <button type="submit" name="save_action" value="exit" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-save"></i> Lưu
-                            </button>
-                            <button type="submit" name="save_action" value="continue" class="btn btn-success btn-sm">
-                                <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
-                            </button>
-                        </div>
+                        
+                        <?= view('admin.components.save_buttons', [
+                            'back_url' => route('admin.shipping.index')
+                        ]) ?>
+
                     </div>
                 </div>
 

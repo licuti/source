@@ -103,8 +103,12 @@ $title = $isEdit ? 'Chỉnh sửa Cước Vận Chuyển' : 'Thêm Cước Vận
                                     <small class="text-muted">Nếu đơn hàng nặng hơn "Khối lượng miễn phí", mỗi kg dư ra sẽ cộng thêm mức phí này.</small>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold">Thời gian giao hàng dự kiến</label>
-                                    <input type="text" name="estimated_time" class="form-control" value="<?= $isEdit ? htmlspecialchars($item->estimated_time ?? '') : '' ?>" placeholder="VD: 2-3 ngày, Nhận trong ngày">
+                                    <?= view('admin.components.input', [
+                                        'name' => 'estimated_time',
+                                        'value' => $item->estimated_time ?? '',
+                                        'label' => 'Thời gian giao hàng dự kiến',
+                                        'attrs' => ['placeholder' => 'VD: 2-3 ngày, Nhận trong ngày']
+                                    ]) ?>
                                 </div>
                             </div>
 
@@ -119,29 +123,25 @@ $title = $isEdit ? 'Chỉnh sửa Cước Vận Chuyển' : 'Thêm Cước Vận
                             <h6 class="card-title mb-0 fw-bold">Trạng thái</h6>
                         </div>
                         <div class="card-body">
-                            <div class="mb-3">
-                                <select name="is_active" class="form-select">
-                                    <option value="1" <?= (!$isEdit || $item->is_active) ? 'selected' : '' ?>>Đang hoạt động</option>
-                                    <option value="0" <?= ($isEdit && !$item->is_active) ? 'selected' : '' ?>>Đã tắt</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold small text-muted">Độ ưu tiên</label>
-                                <input type="number" name="priority" class="form-control form-control-sm" value="<?= $isEdit ? $item->priority : '0' ?>">
-                                <div class="form-text" style="font-size: 0.75rem;">Số lớn hiển thị trước, ghi đè vùng giao nhau.</div>
-                            </div>
+                            <?= view('admin.components.switch', [
+                                'name' => 'is_active',
+                                'checked' => !isset($item) || !empty($item->is_active),
+                                'label' => 'Kích hoạt biểu phí này'
+                            ]) ?>
+                            
+                            <?= view('admin.components.input', [
+                                'type' => 'number',
+                                'name' => 'priority',
+                                'value' => $item->priority ?? 0,
+                                'label' => 'Độ ưu tiên',
+                                'help_text' => 'Số lớn hiển thị trước, ghi đè vùng giao nhau.'
+                            ]) ?>
                         </div>
-                        <div class="card-footer d-flex justify-content-end gap-1 flex-wrap">
-                            <a href="<?= route('admin.shipping.rates', $method->id) ?>" class="btn btn-secondary btn-sm">
-                                <i class="fa-solid fa-arrow-left"></i> Quay lại
-                            </a>
-                            <button type="submit" name="save_action" value="exit" class="btn btn-primary btn-sm">
-                                <i class="fa-solid fa-save"></i> Lưu
-                            </button>
-                            <button type="submit" name="save_action" value="continue" class="btn btn-success btn-sm">
-                                <i class="fa-solid fa-pen-to-square"></i> Lưu và sửa
-                            </button>
-                        </div>
+                        
+                        <?= view('admin.components.save_buttons', [
+                            'back_url' => route('admin.shipping.rates', $method->id)
+                        ]) ?>
+
                     </div>
                 </div>
 
