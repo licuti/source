@@ -1,8 +1,8 @@
 <?php
 $params = $_GET;
 
-$pageCart = \CategoryModel::where('id', 122)->first();
-$home = \CategoryModel::where('id', 172)->first();
+$pageCart = \App\Models\CategoryModel::where('id', 122)->first();
+$home = \App\Models\CategoryModel::where('id', 172)->first();
 
 // Lấy cấu hình ngôn ngữ/tiền tệ hiện tại cho JS
 $current_lang_oc = defined('_lang') ? _lang : ($_SESSION['lang'] ?? 'vi');
