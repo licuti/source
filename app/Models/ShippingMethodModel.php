@@ -8,7 +8,7 @@ class ShippingMethodModel extends \Model
     protected string $createdAt = 'created_at';
     protected string $updatedAt = 'updated_at';
     // Thuộc tính cast JSON
-    protected $casts = [
+    protected array $casts = [
         'api_config' => 'json'
     ];
 }
