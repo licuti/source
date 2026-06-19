@@ -19,8 +19,8 @@ class Model implements \JsonSerializable {
     public $table     = '';
     public bool $use_lang = true;
     public bool $timestamps = true;
-    protected string $createdAt = 'ngay_dang';
-    protected string $updatedAt = 'cap_nhat';
+    protected string $createdAt = 'created_at';
+    protected string $updatedAt = 'updated_at';
 
     // ── Hằng số Trạng thái Dùng chung ───────────────────────
     public const STATUS_PUBLISH = 1;
