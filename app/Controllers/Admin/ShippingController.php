@@ -48,21 +48,23 @@ class ShippingController extends BaseAdminController
         
         $saveAction = $request->input('save_action', 'exit');
         if ($saveAction === 'continue') {
-            return $this->redirect(route('admin.shipping.edit_method', $method->id))->with('success', 'Thêm phương thức thành công!');
+            return $this->redirect(route('admin.shipping.edit_method', ['id' => $method->id]))->with('success', 'Thêm phương thức thành công!');
         }
         return $this->redirect(route('admin.shipping.index'))->with('success', 'Thêm phương thức thành công!');
     }
 
-    public function editMethod($id)
+    public function editMethod(Request $request, $params = [])
     {
+        $id = is_array($params) ? ($params['id'] ?? 0) : $params;
         $method = ShippingMethodModel::find($id);
         if (!$method || $method->shop_id != 0) return $this->redirect(route('admin.shipping.index'));
         
         return view('admin.shipping.form_method', ['item' => $method]);
     }
 
-    public function updateMethod(Request $request, $id)
+    public function updateMethod(Request $request, $params = [])
     {
+        $id = is_array($params) ? ($params['id'] ?? 0) : $params;
         $method = ShippingMethodModel::find($id);
         if (!$method || $method->shop_id != 0) return $this->redirect(route('admin.shipping.index'));
 
@@ -85,7 +87,7 @@ class ShippingController extends BaseAdminController
 
         $saveAction = $request->input('save_action', 'exit');
         if ($saveAction === 'continue') {
-            return $this->redirect(route('admin.shipping.edit_method', $id))->with('success', 'Cập nhật phương thức thành công!');
+            return $this->redirect(route('admin.shipping.edit_method', ['id' => $id]))->with('success', 'Cập nhật phương thức thành công!');
         }
         return $this->redirect(route('admin.shipping.index'))->with('success', 'Cập nhật phương thức thành công!');
     }
@@ -105,8 +107,9 @@ class ShippingController extends BaseAdminController
 
     // --- R A T E S ---
 
-    public function rates($methodId)
+    public function rates(Request $request, $params = [])
     {
+        $methodId = is_array($params) ? ($params['methodId'] ?? 0) : $params;
         $method = ShippingMethodModel::find($methodId);
         if (!$method) return $this->redirect(route('admin.shipping.index'));
 
@@ -122,8 +125,9 @@ class ShippingController extends BaseAdminController
         ]);
     }
 
-    public function createRate($methodId)
+    public function createRate(Request $request, $params = [])
     {
+        $methodId = is_array($params) ? ($params['methodId'] ?? 0) : $params;
         $method = ShippingMethodModel::find($methodId);
         if (!$method) return $this->redirect(route('admin.shipping.index'));
         
@@ -142,8 +146,9 @@ class ShippingController extends BaseAdminController
         ]);
     }
 
-    public function storeRate(Request $request, $methodId)
+    public function storeRate(Request $request, $params = [])
     {
+        $methodId = is_array($params) ? ($params['methodId'] ?? 0) : $params;
         $data = [
             'shipping_method_id' => $methodId,
             'country_code' => $request->input('country_code', 'VN'),
@@ -166,13 +171,16 @@ class ShippingController extends BaseAdminController
 
         $saveAction = $request->input('save_action', 'exit');
         if ($saveAction === 'continue') {
-            return $this->redirect(route('admin.shipping.edit_rate', [$methodId, $rate->id]))->with('success', 'Thêm biểu phí thành công!');
+            return $this->redirect(route('admin.shipping.edit_rate', ['methodId' => $methodId, 'rateId' => $rate->id]))->with('success', 'Thêm biểu phí thành công!');
         }
-        return $this->redirect(route('admin.shipping.rates', $methodId))->with('success', 'Thêm biểu phí thành công!');
+        return $this->redirect(route('admin.shipping.rates', ['methodId' => $methodId]))->with('success', 'Thêm biểu phí thành công!');
     }
 
-    public function editRate($methodId, $rateId)
+    public function editRate(Request $request, $params = [])
     {
+        $methodId = is_array($params) ? ($params['methodId'] ?? 0) : 0;
+        $rateId = is_array($params) ? ($params['rateId'] ?? 0) : 0;
+        
         $method = ShippingMethodModel::find($methodId);
         $rate = ShippingRateModel::find($rateId);
         if (!$method || !$rate) return $this->redirect(route('admin.shipping.index'));
@@ -200,8 +208,11 @@ class ShippingController extends BaseAdminController
         ]);
     }
 
-    public function updateRate(Request $request, $methodId, $rateId)
+    public function updateRate(Request $request, $params = [])
     {
+        $methodId = is_array($params) ? ($params['methodId'] ?? 0) : 0;
+        $rateId = is_array($params) ? ($params['rateId'] ?? 0) : 0;
+
         $rate = ShippingRateModel::find($rateId);
         if (!$rate) return $this->redirect(route('admin.shipping.index'));
 
@@ -226,9 +237,9 @@ class ShippingController extends BaseAdminController
 
         $saveAction = $request->input('save_action', 'exit');
         if ($saveAction === 'continue') {
-            return $this->redirect(route('admin.shipping.edit_rate', [$methodId, $rateId]))->with('success', 'Cập nhật biểu phí thành công!');
+            return $this->redirect(route('admin.shipping.edit_rate', ['methodId' => $methodId, 'rateId' => $rateId]))->with('success', 'Cập nhật biểu phí thành công!');
         }
-        return $this->redirect(route('admin.shipping.rates', $methodId))->with('success', 'Cập nhật biểu phí thành công!');
+        return $this->redirect(route('admin.shipping.rates', ['methodId' => $methodId]))->with('success', 'Cập nhật biểu phí thành công!');
     }
 
     public function destroyRate(Request $request)
