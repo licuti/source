@@ -90,9 +90,9 @@ class ShippingController extends BaseAdminController
         return $this->redirect(route('admin.shipping.index'))->with('success', 'Cập nhật phương thức thành công!');
     }
 
-    public function destroyMethod()
+    public function destroyMethod(Request $request)
     {
-        $id = Request::input('id');
+        $id = $request->input('id');
         $method = ShippingMethodModel::find($id);
         if ($method && $method->shop_id == 0) {
             // Xóa cả rates liên quan
@@ -231,9 +231,9 @@ class ShippingController extends BaseAdminController
         return $this->redirect(route('admin.shipping.rates', $methodId))->with('success', 'Cập nhật biểu phí thành công!');
     }
 
-    public function destroyRate()
+    public function destroyRate(Request $request)
     {
-        $id = Request::input('id');
+        $id = $request->input('id');
         $rate = ShippingRateModel::find($id);
         if ($rate) {
             $rate->delete();
