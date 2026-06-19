@@ -98,11 +98,14 @@ class ShippingController extends BaseAdminController
     public function rates($methodId)
     {
         $method = ShippingMethodModel::find($methodId);
-        if (!$method || $method->shop_id != 0 || $method->is_api == 1) {
-            return redirect(route('admin.shipping.index'));
-        }
+        if (!$method) return redirect(route('admin.shipping.index'));
 
-        $rates = ShippingRateModel::where('shipping_method_id', $methodId)->get();
+        // Query raw để dễ order priority
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT * FROM db_shipping_rates WHERE shipping_method_id = ? ORDER BY priority DESC, id DESC");
+        $stmt->execute([$methodId]);
+        $rates = $stmt->fetchAll(\PDO::FETCH_OBJ);
+
         return view('admin.shipping.rates', [
             'method' => $method,
             'rates' => $rates
@@ -140,6 +143,8 @@ class ShippingController extends BaseAdminController
             'base_fee' => Request::input('base_fee', 0),
             'extra_fee_per_kg' => Request::input('extra_fee_per_kg', 0),
             'free_weight_kg' => Request::input('free_weight_kg', 0),
+            'estimated_time' => Request::input('estimated_time', ''),
+            'priority' => Request::input('priority', 0),
             'is_active' => Request::input('is_active') !== null ? 1 : 0,
         ];
         
@@ -193,6 +198,8 @@ class ShippingController extends BaseAdminController
             'base_fee' => Request::input('base_fee', 0),
             'extra_fee_per_kg' => Request::input('extra_fee_per_kg', 0),
             'free_weight_kg' => Request::input('free_weight_kg', 0),
+            'estimated_time' => Request::input('estimated_time', ''),
+            'priority' => Request::input('priority', 0),
             'is_active' => Request::input('is_active') !== null ? 1 : 0,
         ];
 

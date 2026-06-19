@@ -39,14 +39,15 @@ $title = 'Bảng giá cước Vùng - ' . htmlspecialchars($method->name);
                                 <th>Phường/Xã</th>
                                 <th class="text-end">Phí cơ bản</th>
                                 <th class="text-end">Phụ thu (VNĐ/kg)</th>
-                                <th class="text-end">Khối lượng miễn phí (Kg)</th>
+                                <th>Thời gian</th>
+                                <th class="text-center">Ưu tiên</th>
                                 <th width="100" class="text-center">Trạng thái</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($rates)): ?>
                             <tr>
-                                <td colspan="7" class="text-center py-5 text-muted">
+                                <td colspan="8" class="text-center py-5 text-muted">
                                     <i class="fa-regular fa-file-lines fs-1 mb-2"></i><br>
                                     Chưa có bảng giá cước nào cho phương thức này.
                                 </td>
@@ -86,8 +87,14 @@ $title = 'Bảng giá cước Vùng - ' . htmlspecialchars($method->name);
                                     <td class="align-middle text-muted"><?= $item->district_code ? htmlspecialchars($item->district_code) : 'Tất cả Quận/Huyện' ?></td>
                                     <td class="align-middle text-muted"><?= $item->ward_code ? htmlspecialchars($item->ward_code) : 'Tất cả Phường/Xã' ?></td>
                                     <td class="text-end fw-bold text-success align-middle"><?= number_format($item->base_fee) ?> đ</td>
-                                    <td class="text-end align-middle"><?= number_format($item->extra_fee_per_kg) ?> đ</td>
-                                    <td class="text-end align-middle"><?= $item->free_weight_kg ?> kg</td>
+                                    <td class="text-end align-middle">
+                                        <?= number_format($item->extra_fee_per_kg) ?> đ/kg
+                                        <?php if ($item->free_weight_kg > 0): ?>
+                                            <br><small class="text-muted">Miễn phí <?= $item->free_weight_kg ?>kg đầu</small>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td class="align-middle text-muted"><?= htmlspecialchars($item->estimated_time ?? '-') ?></td>
+                                    <td class="text-center align-middle"><span class="badge bg-secondary"><?= $item->priority ?></span></td>
                                     <td class="text-center align-middle">
                                         <div class="form-check form-switch d-flex justify-content-center">
                                             <input class="form-check-input ajax-toggle-status" type="checkbox" 

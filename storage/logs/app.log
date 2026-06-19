@@ -25754,3 +25754,92 @@
 #16 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
 #17 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
 #18 {main}
+[2026-06-19 02:26:14] [INFO]: App kernel booted in modern mode.
+[2026-06-19 02:26:18] [INFO]: App kernel booted in modern mode.
+[2026-06-19 02:26:18] [ERROR]: Call to undefined method App\Controllers\Admin\ShippingController::checkPermission()
+#0 C:\laragon\www\source-develop\app\Core\Router.php(140): App\Controllers\Admin\ShippingController->__construct()
+#1 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-19 02:26:59] [INFO]: App kernel booted in modern mode.
+[2026-06-19 02:26:59] [ERROR]: Call to undefined method App\Controllers\Admin\ShippingController::checkPermission()
+#0 C:\laragon\www\source-develop\app\Core\Router.php(140): App\Controllers\Admin\ShippingController->__construct()
+#1 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#2 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#3 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#4 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#5 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#7 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#8 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#10 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#11 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#12 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#13 {main}
+[2026-06-19 02:33:26] [INFO]: App kernel booted in modern mode.
+[2026-06-19 02:33:26] [ERROR]: Class 'App\Core\Model' not found
+#0 C:\laragon\www\source-develop\app\autoload.php(18): require_once()
+#1 [internal function]: {closure}('App\\Models\\Ship...')
+#2 C:\laragon\www\source-develop\app\Controllers\Admin\ShippingController.php(19): spl_autoload_call('App\\Models\\Ship...')
+#3 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\Admin\ShippingController->index(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-19 02:34:20] [INFO]: App kernel booted in modern mode.
+[2026-06-19 02:34:20] [ERROR]: Class 'App\Core\Model' not found
+#0 C:\laragon\www\source-develop\app\autoload.php(18): require_once()
+#1 [internal function]: {closure}('App\\Models\\Ship...')
+#2 C:\laragon\www\source-develop\app\Controllers\Admin\ShippingController.php(19): spl_autoload_call('App\\Models\\Ship...')
+#3 C:\laragon\www\source-develop\app\Core\Router.php(143): App\Controllers\Admin\ShippingController->index(Object(App\Core\Request), Array)
+#4 C:\laragon\www\source-develop\app\Core\Router.php(74): App\Core\Router->execute(Array, Array)
+#5 C:\laragon\www\source-develop\app\Core\Router.php(127): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#6 C:\laragon\www\source-develop\app\Middleware\AdminAuthMiddleware.php(95): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#7 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\AdminAuthMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#8 C:\laragon\www\source-develop\app\Middleware\LanguageMiddleware.php(104): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#9 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\LanguageMiddleware->handle(Object(App\Core\Request), Object(Closure))
+#10 C:\laragon\www\source-develop\app\Middleware\StartSession.php(40): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#11 C:\laragon\www\source-develop\app\Core\Router.php(130): App\Middleware\StartSession->handle(Object(App\Core\Request), Object(Closure))
+#12 C:\laragon\www\source-develop\app\Core\Router.php(133): App\Core\Router->App\Core\{closure}(Object(App\Core\Request))
+#13 C:\laragon\www\source-develop\app\Core\Router.php(79): App\Core\Router->runMiddleware(Object(App\Core\Request), Object(Closure))
+#14 C:\laragon\www\source-develop\app\Core\App.php(160): App\Core\Router->dispatch()
+#15 C:\laragon\www\source-develop\index.php(24): App\Core\App->run()
+#16 {main}
+[2026-06-19 02:36:47] [INFO]: App kernel booted in modern mode.
+[2026-06-19 02:36:47] [ERROR]: Access level to App\Models\ShippingMethodModel::$table must be public (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-19 02:45:38] [INFO]: App kernel booted in modern mode.
+[2026-06-19 02:45:38] [ERROR]: Type of App\Models\ShippingMethodModel::$casts must be array (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-19 02:46:14] [INFO]: App kernel booted in modern mode.
+[2026-06-19 02:46:14] [ERROR]: Type of App\Models\ShippingMethodModel::$casts must be array (as in class Model)
+#0 [internal function]: {closure}()
+#1 {main}
+[2026-06-19 02:51:34] [INFO]: App kernel booted in modern mode.
+[2026-06-19 02:55:06] [INFO]: App kernel booted in modern mode.
+[2026-06-19 02:55:13] [INFO]: App kernel booted in modern mode.
+[2026-06-19 03:08:55] [INFO]: App kernel booted in modern mode.
+[2026-06-19 03:09:04] [INFO]: App kernel booted in modern mode.
+[2026-06-19 03:09:08] [INFO]: App kernel booted in modern mode.

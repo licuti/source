@@ -102,6 +102,10 @@ $title = $isEdit ? 'Chỉnh sửa Cước Vận Chuyển' : 'Thêm Cước Vận
                                     </div>
                                     <small class="text-muted">Nếu đơn hàng nặng hơn "Khối lượng miễn phí", mỗi kg dư ra sẽ cộng thêm mức phí này.</small>
                                 </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Thời gian giao hàng dự kiến</label>
+                                    <input type="text" name="estimated_time" class="form-control" value="<?= $isEdit ? htmlspecialchars($item->estimated_time ?? '') : '' ?>" placeholder="VD: 2-3 ngày, Nhận trong ngày">
+                                </div>
                             </div>
 
                         </div>
@@ -120,6 +124,11 @@ $title = $isEdit ? 'Chỉnh sửa Cước Vận Chuyển' : 'Thêm Cước Vận
                                     <option value="1" <?= (!$isEdit || $item->is_active) ? 'selected' : '' ?>>Đang hoạt động</option>
                                     <option value="0" <?= ($isEdit && !$item->is_active) ? 'selected' : '' ?>>Đã tắt</option>
                                 </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-muted">Độ ưu tiên</label>
+                                <input type="number" name="priority" class="form-control form-control-sm" value="<?= $isEdit ? $item->priority : '0' ?>">
+                                <div class="form-text" style="font-size: 0.75rem;">Số lớn hiển thị trước, ghi đè vùng giao nhau.</div>
                             </div>
                             <button type="submit" class="btn btn-success w-100"><i class="fas fa-save me-1"></i> Lưu thay đổi</button>
                             <a href="<?= route('admin.shipping.rates', $method->id) ?>" class="btn btn-outline-secondary w-100 mt-2">Hủy bỏ</a>
