@@ -14,7 +14,10 @@ $values = $values ?? [];
 if (!is_array($values)) {
     $values = is_string($values) && trim($values) !== '' ? [$values] : [];
 }
-$id = $id ?? uniqid('gallery_');
+if (!isset($attrs['id'])) {
+    $attrs['id'] = $name ? str_replace(['[', ']'], ['_', ''], $name) : uniqid('gallery_');
+}
+$id = $attrs['id'];
 $label = $label ?? 'Thư viện ảnh (Gallery)';
 $path = rtrim($path ?? '/img_data/images/', '/') . '/';
 $help_text = $help_text ?? 'Bạn có thể chọn nhiều ảnh, kéo thả để sắp xếp thứ tự.';

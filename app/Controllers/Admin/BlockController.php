@@ -158,7 +158,11 @@ class BlockController extends BaseAdminController {
     }
 
     public function destroyMultiple(Request $request) {
-        $ids = $request->input('ids', []);
+        $idsRaw = $request->input('ids', '');
+        $ids = json_decode($idsRaw, true);
+        if (!$ids || !is_array($ids)) {
+            $ids = $request->input('ids', []);
+        }
         if (empty($ids)) {
             return $this->json(['success' => false, 'message' => 'Không có mục nào được chọn.']);
         }

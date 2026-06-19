@@ -70,31 +70,20 @@ $title = "Quản lý Gian hàng (Shops)";
                                     <input type="checkbox" id="checkAll" class="form-check-input">
                                 </th>
                                 <th class="text-center" style="width: 70px;">ID</th>
-                                <th class="text-center" style="width: 90px;">STT</th>
                                 <th style="width: 100px;">Logo</th>
                                 <th>Thông tin Gian hàng</th>
                                 <th>Liên hệ</th>
                                 <th class="text-center" style="width: 120px;">Trạng thái</th>
-                                <th class="text-center" style="width: 120px;">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (isset($items) && count($items) > 0): ?>
                                 <?php foreach ($items as $item): ?>
-                                    <tr>
+                                    <tr class="wp-row">
                                         <td class="text-center">
                                             <input type="checkbox" class="form-check-input check-item" value="<?= $item->id_code ?>">
                                         </td>
                                         <td class="text-center"><?= $item->id_code ?></td>
-                                        <td class="text-center">
-                                            <input type="number" 
-                                                class="form-control form-control-sm text-center ajax-update" 
-                                                data-url="<?= route('admin.shop.updateStatusAjax') ?>"
-                                                data-id="<?= $item->id_code ?>" 
-                                                data-field="sort_order" 
-                                                value="<?= $item->sort_order ?>" 
-                                                style="width: 60px; margin: 0 auto;">
-                                        </td>
                                         <td>
                                             <?php if ($item->logo): ?>
                                                 <img src="<?= (defined('URLPATH') ? URLPATH : '') . 'img_data/images/' . $item->logo ?>" alt="Logo" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
@@ -105,42 +94,46 @@ $title = "Quản lý Gian hàng (Shops)";
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <strong><?= htmlspecialchars($item->name) ?></strong><br>
+                                            <strong><a href="<?= route('admin.shop.edit', ['id' => $item->id_code]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->name) ?></a></strong><br>
                                             <small class="text-muted"><i class="fas fa-link"></i> /shop/<?= $item->slug ?></small>
+                                            <?php 
+                                            $actions = [];
+                                            if(hasPermission('admin.shop', 'can_edit')) {
+                                                $actions['edit'] = [
+                                                    'label' => 'Chỉnh sửa', 
+                                                    'url' => route('admin.shop.edit', ['id' => $item->id_code]), 
+                                                    'class' => 'text-primary'
+                                                ];
+                                            }
+                                            if(hasPermission('admin.shop', 'can_delete')) {
+                                                $actions['delete'] = [
+                                                    'label' => 'Xóa', 
+                                                    'url' => route('admin.shop.destroy', ['id' => $item->id_code]), 
+                                                    'class' => 'text-danger confirm-delete',
+                                                    'attributes' => 'data-confirm="Bạn có chắc chắn muốn xóa gian hàng này?"'
+                                                ];
+                                            }
+                                            echo view('admin.components.row_actions', ['actions' => $actions]);
+                                            ?>
                                         </td>
                                         <td>
                                             <?php if($item->phone): ?><div style="font-size: 13px;"><i class="fas fa-phone me-1 text-muted"></i> <?= htmlspecialchars($item->phone) ?></div><?php endif; ?>
                                             <?php if($item->email): ?><div style="font-size: 13px;"><i class="fas fa-envelope me-1 text-muted"></i> <?= htmlspecialchars($item->email) ?></div><?php endif; ?>
                                         </td>
                                         <td class="text-center">
-                                            <select class="form-select form-select-sm ajax-update <?= $item->status == 1 ? 'border-success text-success' : ($item->status == 2 ? 'border-warning text-warning' : 'border-danger text-danger') ?>" 
-                                                data-url="<?= route('admin.shop.updateStatusAjax') ?>"
-                                                data-id="<?= $item->id_code ?>" 
-                                                data-field="status">
-                                                <option value="1" <?= $item->status == 1 ? 'selected' : '' ?>>Hoạt động</option>
-                                                <option value="2" <?= $item->status == 2 ? 'selected' : '' ?>>Chờ duyệt</option>
-                                                <option value="0" <?= $item->status == 0 ? 'selected' : '' ?>>Bị khóa</option>
-                                            </select>
-                                        </td>
-                                        <td class="text-center">
-                                            <?php if(hasPermission('admin.shop', 'can_edit')): ?>
-                                                <a href="<?= route('admin.shop.edit', ['id' => $item->id_code]) ?>" class="btn btn-sm btn-primary" title="Sửa">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                            <?php endif; ?>
-                                            <?php if(hasPermission('admin.shop', 'can_delete')): ?>
-                                                <form action="<?= route('admin.shop.destroy', ['id' => $item->id_code]) ?>" method="POST" class="d-inline form-delete">
-                                                    <button type="submit" class="btn btn-sm btn-danger" title="Xóa">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                            <?php if($item->status == 1): ?>
+                                                <span class="badge bg-success">Hoạt động</span>
+                                            <?php elseif($item->status == 2): ?>
+                                                <span class="badge bg-warning text-dark">Chờ duyệt</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-danger">Bị khóa</span>
                                             <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="8" class="text-center py-4 text-muted">
+                                    <td colspan="6" class="text-center py-4 text-muted">
                                         <i class="fas fa-inbox fa-3x mb-3 text-light"></i>
                                         <p>Không có gian hàng nào được tìm thấy.</p>
                                     </td>

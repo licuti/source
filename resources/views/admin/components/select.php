@@ -44,7 +44,7 @@ $attrString = render_attrs($attrs);
         <?php endif; ?>
         
         <?php foreach ($options as $optValue => $optLabel): ?>
-            <?php $selected = in_array((string)$optValue, array_map('stringval', $valueArray)) ? 'selected' : ''; ?>
+            <?php $selected = in_array((string)$optValue, array_map('strval', $valueArray)) ? 'selected' : ''; ?>
             <option value="<?= htmlspecialchars((string)$optValue) ?>" <?= $selected ?>><?= htmlspecialchars($optLabel) ?></option>
         <?php endforeach; ?>
     </select>

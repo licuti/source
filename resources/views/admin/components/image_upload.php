@@ -16,7 +16,7 @@ $help_text = $help_text ?? '';
 $attrs = $attrs ?? [];
 
 if (!isset($attrs['id'])) {
-    $attrs['id'] = $name ?: uniqid('img_');
+    $attrs['id'] = $name ? str_replace(['[', ']'], ['_', ''], $name) : uniqid('img_');
 }
 $id = $attrs['id'];
 
@@ -32,7 +32,7 @@ $attrString = render_attrs($attrs);
         <input type="text" class="form-control" name="<?= htmlspecialchars($name) ?>" value="<?= htmlspecialchars($value ?? '') ?>" readonly <?= $attrString ?>>
         <button class="btn btn-outline-secondary" type="button" onclick="openCKFinder('<?= htmlspecialchars($id) ?>', '<?= htmlspecialchars($path) ?>')">Chọn ảnh</button>
     </div>
-    <div class="mt-2 text-center" style="max-width: 300px; border: 1px dashed #ced4da; padding: 5px; border-radius: 4px; background: #f8f9fa;">
+    <div class="mt-2 text-center" style="max-width: 400px; border: 1px dashed #ced4da; padding: 5px; border-radius: 4px; background: #f8f9fa;">
         <img src="<?= $imageSrc ?>" id="preview_<?= htmlspecialchars($id) ?>" alt="Preview" style="max-width: 100%; height: auto;">
     </div>
     <?php if ($help_text): ?>

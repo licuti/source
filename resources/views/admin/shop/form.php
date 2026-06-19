@@ -56,15 +56,19 @@ $title = $isEdit ? "Cập nhật Gian hàng: " . htmlspecialchars($firstItem->na
                                             <?php endif; ?>
                                         </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">Địa chỉ</label>
-                                            <input type="text" name="address[<?= $c ?>]" class="form-control" value="<?= htmlspecialchars($v_addr) ?>" placeholder="VD: Số 123 Đường ABC, Quận XYZ, TP.HCM">
-                                        </div>
+                                        <?= view('admin.components.input', [
+                                            'name' => "address[$c]",
+                                            'value' => $v_addr,
+                                            'label' => 'Địa chỉ',
+                                            'attrs' => ['placeholder' => 'VD: Số 123 Đường ABC, Quận XYZ, TP.HCM']
+                                        ]) ?>
 
-                                        <div class="mb-3">
-                                            <label class="form-label fw-bold">Giới thiệu ngắn</label>
-                                            <textarea name="description[<?= $c ?>]" class="form-control" rows="4" placeholder="Mô tả ngắn gọn về cửa hàng, sản phẩm dịch vụ..."><?= htmlspecialchars($v_desc) ?></textarea>
-                                        </div>
+                                        <?= view('admin.components.textarea', [
+                                            'name' => "description[$c]",
+                                            'value' => $v_desc,
+                                            'label' => 'Giới thiệu ngắn',
+                                            'attrs' => ['rows' => 4, 'placeholder' => 'Mô tả ngắn gọn về cửa hàng, sản phẩm dịch vụ...']
+                                        ]) ?>
 
                                     </div>
                                 <?php $i++; endforeach; ?>
@@ -74,24 +78,82 @@ $title = $isEdit ? "Cập nhật Gian hàng: " . htmlspecialchars($firstItem->na
                     
                     <div class="card card-outline card-secondary shadow-sm mb-4">
                         <div class="card-header">
-                            <h3 class="card-title">Cài đặt nâng cao (Dùng chung)</h3>
+                            <h3 class="card-title">Cài đặt & Liên hệ (Dùng chung)</h3>
                         </div>
                         <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Đường dẫn thân thiện (Slug)</label>
-                                <input type="text" name="slug" class="form-control" value="<?= $isEdit ? htmlspecialchars($firstItem->slug) : '' ?>" placeholder="VD: shopee-mall (Để trống sẽ tự tạo từ Tên gian hàng)">
-                                <small class="text-muted">Dùng làm đường dẫn URL cho gian hàng: <code>/shop/ten-gian-hang</code></small>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <?= view('admin.components.input', [
+                                        'name' => 'phone',
+                                        'value' => $isEdit ? $firstItem->phone : '',
+                                        'label' => 'Số điện thoại (Hotline)'
+                                    ]) ?>
+                                </div>
+                                <div class="col-md-6">
+                                    <?= view('admin.components.input', [
+                                        'type' => 'email',
+                                        'name' => 'email',
+                                        'value' => $isEdit ? $firstItem->email : '',
+                                        'label' => 'Email'
+                                    ]) ?>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Bản đồ Google Map (Iframe)</label>
-                                <textarea name="map_iframe" class="form-control" rows="4" placeholder='<iframe src="https://www.google.com/maps/embed?pb=..." ...></iframe>'><?= $isEdit ? htmlspecialchars($firstItem->map_iframe) : '' ?></textarea>
-                            </div>
+                            
+                            <?= view('admin.components.input', [
+                                'name' => 'slug',
+                                'value' => $isEdit ? $firstItem->slug : '',
+                                'label' => 'Đường dẫn thân thiện (Slug)',
+                                'help_text' => 'Dùng làm đường dẫn URL cho gian hàng: /shop/ten-gian-hang',
+                                'attrs' => ['placeholder' => 'VD: shopee-mall (Để trống sẽ tự tạo từ Tên gian hàng)']
+                            ]) ?>
+                            
+                            <?= view('admin.components.textarea', [
+                                'name' => 'map_iframe',
+                                'value' => $isEdit ? $firstItem->map_iframe : '',
+                                'label' => 'Bản đồ Google Map (Iframe)',
+                                'attrs' => [
+                                    'rows' => 4,
+                                    'placeholder' => '<iframe src="https://www.google.com/maps/embed?pb=..." ...></iframe>'
+                                ]
+                            ]) ?>
                         </div>
                     </div>
                 </div>
 
                 <!-- Cột PHẢI: Thiết lập & Đăng -->
                 <div class="col-md-3">
+                    
+                    <!-- Nút Lưu (Chuyển lên đầu) -->
+                    <div class="card card-outline card-success shadow-sm mb-4">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fa-solid fa-gears text-secondary"></i> Tùy chọn hiển thị
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                                <?= view('admin.components.select', [
+                                    'name' => 'status',
+                                    'value' => $isEdit ? $firstItem->status : 1,
+                                    'label' => 'Trạng thái duyệt',
+                                    'options' => [
+                                        1 => 'Hoạt động (Đã duyệt)',
+                                        2 => 'Chờ duyệt',
+                                        0 => 'Đang khóa'
+                                    ]
+                                ]) ?>
+                            <div class="mb-0">
+                                <?= view('admin.components.input', [
+                                    'type' => 'number',
+                                    'name' => 'sort_order',
+                                    'value' => $isEdit ? $firstItem->sort_order : 0,
+                                    'label' => 'Số thứ tự',
+                                    'attrs' => ['min' => '0']
+                                ]) ?>
+                            </div>
+                        </div>
+                        <?= view('admin.components.save_buttons', ['back_url' => route('admin.shop.index')]) ?>
+                    </div>
+
                     <!-- Ảnh đại diện -->
                     <div class="card card-outline card-success shadow-sm mb-4">
                         <div class="card-header">
@@ -102,7 +164,6 @@ $title = $isEdit ? "Cập nhật Gian hàng: " . htmlspecialchars($firstItem->na
                                 <?= view('admin.components.image_upload', [
                                     'name' => 'logo',
                                     'value' => $isEdit ? $firstItem->logo : '',
-                                    'path' => 'images',
                                     'label' => 'Logo Shop',
                                     'help_text' => 'Nên dùng ảnh tỷ lệ 1:1 (VD: 500x500px)'
                                 ]) ?>
@@ -112,7 +173,6 @@ $title = $isEdit ? "Cập nhật Gian hàng: " . htmlspecialchars($firstItem->na
                                 <?= view('admin.components.image_upload', [
                                     'name' => 'banner',
                                     'value' => $isEdit ? $firstItem->banner : '',
-                                    'path' => 'images',
                                     'label' => 'Ảnh Bìa (Banner)',
                                     'help_text' => 'Nên dùng ảnh ngang (VD: 1200x400px)'
                                 ]) ?>
@@ -120,45 +180,6 @@ $title = $isEdit ? "Cập nhật Gian hàng: " . htmlspecialchars($firstItem->na
                         </div>
                     </div>
 
-                    <!-- Thông tin liên hệ -->
-                    <div class="card card-outline card-info shadow-sm mb-4">
-                        <div class="card-header">
-                            <h3 class="card-title">Thông tin liên hệ</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Số điện thoại (Hotline)</label>
-                                <input type="text" name="phone" class="form-control" value="<?= $isEdit ? htmlspecialchars($firstItem->phone) : '' ?>">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Email</label>
-                                <input type="email" name="email" class="form-control" value="<?= $isEdit ? htmlspecialchars($firstItem->email) : '' ?>">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Trạng thái -->
-                    <div class="card card-outline card-warning shadow-sm mb-4">
-                        <div class="card-header">
-                            <h3 class="card-title">Tùy chọn hiển thị</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Trạng thái duyệt</label>
-                                <select name="status" class="form-select">
-                                    <option value="1" <?= ($isEdit && $firstItem->status == 1) || !$isEdit ? 'selected' : '' ?>>Hoạt động (Đã duyệt)</option>
-                                    <option value="2" <?= ($isEdit && $firstItem->status == 2) ? 'selected' : '' ?>>Chờ duyệt</option>
-                                    <option value="0" <?= ($isEdit && $firstItem->status == 0) ? 'selected' : '' ?>>Đang khóa</option>
-                                </select>
-                            </div>
-                            <div class="mb-0">
-                                <label class="form-label fw-bold">Số thứ tự</label>
-                                <input type="number" name="sort_order" class="form-control" value="<?= $isEdit ? $firstItem->sort_order : 0 ?>" min="0">
-                            </div>
-                        </div>
-                        <!-- Component Save Buttons ở dưới cùng -->
-                        <?= view('admin.components.save_buttons', ['list_url' => route('admin.shop.index')]) ?>
-                    </div>
 
                 </div>
             </div>
