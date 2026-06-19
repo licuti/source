@@ -25,20 +25,20 @@ class ShippingController extends BaseAdminController
         return view('admin.shipping.form_method');
     }
 
-    public function storeMethod()
+    public function storeMethod(Request $request)
     {
         $data = [
             'shop_id' => 0,
-            'name' => Request::input('name'),
-            'carrier_code' => Request::input('carrier_code'),
-            'is_api' => Request::input('is_api') ? 1 : 0,
-            'is_active' => Request::input('is_active') !== null ? 1 : 0,
-            'sort_order' => Request::input('sort_order', 0),
+            'name' => $request->input('name'),
+            'carrier_code' => $request->input('carrier_code'),
+            'is_api' => $request->input('is_api') ? 1 : 0,
+            'is_active' => $request->input('is_active') !== null ? 1 : 0,
+            'sort_order' => $request->input('sort_order', 0),
         ];
 
         // Xử lý API Config JSON
         if ($data['is_api']) {
-            $apiKeys = Request::input('api_keys', []);
+            $apiKeys = $request->input('api_keys', []);
             $data['api_config'] = !empty($apiKeys) ? json_encode($apiKeys) : null;
         } else {
             $data['api_config'] = null;
@@ -46,7 +46,7 @@ class ShippingController extends BaseAdminController
 
         $method = ShippingMethodModel::create($data);
         
-        $saveAction = Request::input('save_action', 'exit');
+        $saveAction = $request->input('save_action', 'exit');
         if ($saveAction === 'continue') {
             return redirect(route('admin.shipping.edit_method', $method->id))->with('success', 'Thêm phương thức thành công!');
         }
@@ -61,21 +61,21 @@ class ShippingController extends BaseAdminController
         return view('admin.shipping.form_method', ['item' => $method]);
     }
 
-    public function updateMethod($id)
+    public function updateMethod(Request $request, $id)
     {
         $method = ShippingMethodModel::find($id);
         if (!$method || $method->shop_id != 0) return redirect(route('admin.shipping.index'));
 
         $data = [
-            'name' => Request::input('name'),
-            'carrier_code' => Request::input('carrier_code'),
-            'is_api' => Request::input('is_api') ? 1 : 0,
-            'is_active' => Request::input('is_active') !== null ? 1 : 0,
-            'sort_order' => Request::input('sort_order', 0),
+            'name' => $request->input('name'),
+            'carrier_code' => $request->input('carrier_code'),
+            'is_api' => $request->input('is_api') ? 1 : 0,
+            'is_active' => $request->input('is_active') !== null ? 1 : 0,
+            'sort_order' => $request->input('sort_order', 0),
         ];
 
         if ($data['is_api']) {
-            $apiKeys = Request::input('api_keys', []);
+            $apiKeys = $request->input('api_keys', []);
             $data['api_config'] = !empty($apiKeys) ? json_encode($apiKeys) : null;
         } else {
             $data['api_config'] = null;
@@ -83,7 +83,7 @@ class ShippingController extends BaseAdminController
 
         $method->update($data);
 
-        $saveAction = Request::input('save_action', 'exit');
+        $saveAction = $request->input('save_action', 'exit');
         if ($saveAction === 'continue') {
             return redirect(route('admin.shipping.edit_method', $id))->with('success', 'Cập nhật phương thức thành công!');
         }
@@ -142,20 +142,20 @@ class ShippingController extends BaseAdminController
         ]);
     }
 
-    public function storeRate($methodId)
+    public function storeRate(Request $request, $methodId)
     {
         $data = [
             'shipping_method_id' => $methodId,
-            'country_code' => Request::input('country_code', 'VN'),
-            'province_code' => Request::input('province_code'),
-            'district_code' => Request::input('district_code'),
-            'ward_code' => Request::input('ward_code'),
-            'base_fee' => Request::input('base_fee', 0),
-            'extra_fee_per_kg' => Request::input('extra_fee_per_kg', 0),
-            'free_weight_kg' => Request::input('free_weight_kg', 0),
-            'estimated_time' => Request::input('estimated_time', ''),
-            'priority' => Request::input('priority', 0),
-            'is_active' => Request::input('is_active') !== null ? 1 : 0,
+            'country_code' => $request->input('country_code', 'VN'),
+            'province_code' => $request->input('province_code'),
+            'district_code' => $request->input('district_code'),
+            'ward_code' => $request->input('ward_code'),
+            'base_fee' => $request->input('base_fee', 0),
+            'extra_fee_per_kg' => $request->input('extra_fee_per_kg', 0),
+            'free_weight_kg' => $request->input('free_weight_kg', 0),
+            'estimated_time' => $request->input('estimated_time', ''),
+            'priority' => $request->input('priority', 0),
+            'is_active' => $request->input('is_active') !== null ? 1 : 0,
         ];
         
         if (empty($data['province_code'])) $data['province_code'] = null;
@@ -164,7 +164,7 @@ class ShippingController extends BaseAdminController
 
         $rate = ShippingRateModel::create($data);
 
-        $saveAction = Request::input('save_action', 'exit');
+        $saveAction = $request->input('save_action', 'exit');
         if ($saveAction === 'continue') {
             return redirect(route('admin.shipping.edit_rate', [$methodId, $rate->id]))->with('success', 'Thêm biểu phí thành công!');
         }
@@ -200,22 +200,22 @@ class ShippingController extends BaseAdminController
         ]);
     }
 
-    public function updateRate($methodId, $rateId)
+    public function updateRate(Request $request, $methodId, $rateId)
     {
         $rate = ShippingRateModel::find($rateId);
         if (!$rate) return redirect(route('admin.shipping.index'));
 
         $data = [
-            'country_code' => Request::input('country_code', 'VN'),
-            'province_code' => Request::input('province_code'),
-            'district_code' => Request::input('district_code'),
-            'ward_code' => Request::input('ward_code'),
-            'base_fee' => Request::input('base_fee', 0),
-            'extra_fee_per_kg' => Request::input('extra_fee_per_kg', 0),
-            'free_weight_kg' => Request::input('free_weight_kg', 0),
-            'estimated_time' => Request::input('estimated_time', ''),
-            'priority' => Request::input('priority', 0),
-            'is_active' => Request::input('is_active') !== null ? 1 : 0,
+            'country_code' => $request->input('country_code', 'VN'),
+            'province_code' => $request->input('province_code'),
+            'district_code' => $request->input('district_code'),
+            'ward_code' => $request->input('ward_code'),
+            'base_fee' => $request->input('base_fee', 0),
+            'extra_fee_per_kg' => $request->input('extra_fee_per_kg', 0),
+            'free_weight_kg' => $request->input('free_weight_kg', 0),
+            'estimated_time' => $request->input('estimated_time', ''),
+            'priority' => $request->input('priority', 0),
+            'is_active' => $request->input('is_active') !== null ? 1 : 0,
         ];
 
         if (empty($data['province_code'])) $data['province_code'] = null;
@@ -224,7 +224,7 @@ class ShippingController extends BaseAdminController
 
         $rate->update($data);
 
-        $saveAction = Request::input('save_action', 'exit');
+        $saveAction = $request->input('save_action', 'exit');
         if ($saveAction === 'continue') {
             return redirect(route('admin.shipping.edit_rate', [$methodId, $rateId]))->with('success', 'Cập nhật biểu phí thành công!');
         }
