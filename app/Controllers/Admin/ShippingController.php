@@ -113,11 +113,11 @@ class ShippingController extends BaseAdminController
         $method = ShippingMethodModel::find($methodId);
         if (!$method) return $this->redirect(route('admin.shipping.index'));
 
-        // Query raw để dễ order priority
-        global $pdo;
-        $stmt = $pdo->prepare("SELECT * FROM db_shipping_rates WHERE shipping_method_id = ? ORDER BY priority DESC, id DESC");
-        $stmt->execute([$methodId]);
-        $rates = $stmt->fetchAll(\PDO::FETCH_OBJ);
+        // Dùng Query Builder để tránh lỗi kết nối PDO khi dùng raw query
+        $rates = ShippingRateModel::where('shipping_method_id', $methodId)
+                                  ->orderBy('priority', 'DESC')
+                                  ->orderBy('id', 'DESC')
+                                  ->get();
 
         return view('admin.shipping.rates', [
             'method' => $method,
@@ -134,10 +134,8 @@ class ShippingController extends BaseAdminController
         // Lấy danh sách quốc gia tạm thời (hoặc có model Country)
         $countries = ['VN' => 'Việt Nam', 'US' => 'Hoa Kỳ', 'JP' => 'Nhật Bản', '*' => 'Toàn cầu (Khác)'];
         
-        // Lấy danh sách tỉnh thành VN
-        global $pdo; // Lấy instance PDO để select db_thanhpho
-        $stmt = $pdo->query("SELECT code, ten FROM db_thanhpho ORDER BY ten ASC");
-        $provinces = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        // Load available provinces
+        $provinces = \App\Models\ProvinceModel::orderBy('ten', 'ASC')->get(['code', 'ten']);
 
         return view('admin.shipping.form_rate', [
             'method' => $method,
@@ -186,17 +184,15 @@ class ShippingController extends BaseAdminController
         if (!$method || !$rate) return $this->redirect(route('admin.shipping.index'));
 
         $countries = ['VN' => 'Việt Nam', 'US' => 'Hoa Kỳ', 'JP' => 'Nhật Bản', '*' => 'Toàn cầu (Khác)'];
-        
-        global $pdo;
-        $stmt = $pdo->query("SELECT code, ten FROM db_thanhpho ORDER BY ten ASC");
-        $provinces = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        // Load available provinces
+        $provinces = \App\Models\ProvinceModel::orderBy('ten', 'ASC')->get(['code', 'ten']);
 
         // Load districts if province exists
         $districts = [];
         if ($rate->province_code) {
-            $stmtD = $pdo->prepare("SELECT code, ten FROM db_huyen WHERE code_tinh = ? ORDER BY ten ASC");
-            $stmtD->execute([$rate->province_code]);
-            $districts = $stmtD->fetchAll(\PDO::FETCH_ASSOC);
+            $districts = \App\Models\DistrictModel::where('code_tinh', $rate->province_code)
+                                                  ->orderBy('ten', 'ASC')
+                                                  ->get(['code', 'ten']);
         }
 
         return view('admin.shipping.form_rate', [
