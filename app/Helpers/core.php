@@ -436,7 +436,7 @@ if (!function_exists('__')) {
      * Helper gọi bản dịch đa ngôn ngữ từ TextModel
      */
     function __($key) {
-        return \TextModel::translate($key);
+        return \App\Models\TextModel::translate($key);
     }
 }
 

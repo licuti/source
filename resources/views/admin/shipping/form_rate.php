@@ -139,7 +139,7 @@ $title = $isEdit ? 'Chỉnh sửa Cước Vận Chuyển' : 'Thêm Cước Vận
                         </div>
                         
                         <?= view('admin.components.save_buttons', [
-                            'back_url' => route('admin.shipping.rates', $method->id)
+                            'back_url' => route('admin.shipping.rates', ['methodId' => $method->id])
                         ]) ?>
 
                     </div>
