@@ -4,6 +4,7 @@ namespace App\Models;
 
 class ShippingRateModel extends \Model
 {
-    protected $table = 'db_shipping_rates';
-    protected $primaryKey = 'id';
+    public $table = 'db_shipping_rates';
+    protected string $createdAt = 'created_at';
+    protected string $updatedAt = 'updated_at';
 }

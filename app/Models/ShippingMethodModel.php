@@ -4,9 +4,9 @@ namespace App\Models;
 
 class ShippingMethodModel extends \Model
 {
-    protected $table = 'db_shipping_methods';
-    protected $primaryKey = 'id';
-    
+    public $table = 'db_shipping_methods';
+    protected string $createdAt = 'created_at';
+    protected string $updatedAt = 'updated_at';
     // Thuộc tính cast JSON
     protected $casts = [
         'api_config' => 'json'
