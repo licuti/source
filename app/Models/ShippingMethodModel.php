@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use App\Core\Model;
-
-class ShippingMethodModel extends Model
+class ShippingMethodModel extends \Model
 {
     protected $table = 'db_shipping_methods';
     protected $primaryKey = 'id';
