@@ -84,7 +84,7 @@ if (!$isEdit) {
                     <div class="card card-outline card-info mb-4">
                         <div class="card-header bg-white d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0 fw-bold">Cấu hình API Keys (Dùng chung)</h5>
-                            <button type="button" class="btn btn-sm btn-outline-info" id="btn-add-key">
+                            <button type="button" class="btn btn-sm btn-primary shadow-sm" id="btn-add-key">
                                 <i class="fa-solid fa-plus me-1"></i> Thêm tham số
                             </button>
                         </div>
@@ -101,16 +101,14 @@ if (!$isEdit) {
                                 if (!empty($apiConfig)): 
                                     foreach ($apiConfig as $key => $val):
                                 ?>
-                                    <div class="row mb-2 api-key-row">
-                                        <div class="col-4">
-                                            <input type="text" class="form-control form-control-sm" placeholder="Tên biến (Key)" value="<?= htmlspecialchars($key) ?>" onchange="updateApiInputName(this)">
-                                        </div>
-                                        <div class="col-7">
-                                            <input type="text" name="api_keys[<?= htmlspecialchars($key) ?>]" class="form-control form-control-sm" placeholder="Giá trị (Value)" value="<?= htmlspecialchars($val) ?>">
-                                        </div>
-                                        <div class="col-1 text-end">
-                                            <button type="button" class="btn btn-sm btn-outline-danger btn-remove-key"><i class="fa-solid fa-trash"></i></button>
-                                        </div>
+                                    <div class="input-group mb-3 api-key-row shadow-sm rounded">
+                                        <span class="input-group-text bg-light text-secondary border-end-0"><i class="fa-solid fa-key"></i></span>
+                                        <input type="text" class="form-control border-start-0 fw-bold text-primary bg-light" style="max-width: 250px;" placeholder="Tên biến (Key)" value="<?= htmlspecialchars($key) ?>" onchange="updateApiInputName(this)">
+                                        
+                                        <span class="input-group-text bg-white text-secondary"><i class="fa-solid fa-code"></i></span>
+                                        <input type="text" name="api_keys[<?= htmlspecialchars($key) ?>]" class="form-control bg-white" placeholder="Nhập giá trị cấu hình..." value="<?= htmlspecialchars($val) ?>">
+                                        
+                                        <button type="button" class="btn btn-outline-danger btn-remove-key px-3" title="Xóa tham số"><i class="fa-solid fa-trash-can"></i></button>
                                     </div>
                                 <?php 
                                     endforeach;
@@ -171,23 +169,26 @@ if (!$isEdit) {
 document.addEventListener('DOMContentLoaded', function() {
     $('#btn-add-key').click(function() {
         let html = `
-            <div class="row mb-2 api-key-row">
-                <div class="col-4">
-                    <input type="text" class="form-control form-control-sm" placeholder="Tên biến (Key)" onchange="updateApiInputName(this)">
-                </div>
-                <div class="col-7">
-                    <input type="text" class="form-control form-control-sm" placeholder="Giá trị (Value)">
-                </div>
-                <div class="col-1 text-end">
-                    <button type="button" class="btn btn-sm btn-outline-danger btn-remove-key"><i class="fa-solid fa-trash"></i></button>
-                </div>
+            <div class="input-group mb-3 api-key-row shadow-sm rounded" style="display:none;">
+                <span class="input-group-text bg-light text-secondary border-end-0"><i class="fa-solid fa-key"></i></span>
+                <input type="text" class="form-control border-start-0 fw-bold text-primary bg-light" style="max-width: 250px;" placeholder="Tên biến (Key)" onchange="updateApiInputName(this)">
+                
+                <span class="input-group-text bg-white text-secondary"><i class="fa-solid fa-code"></i></span>
+                <input type="text" class="form-control bg-white" placeholder="Nhập giá trị cấu hình...">
+                
+                <button type="button" class="btn btn-outline-danger btn-remove-key px-3" title="Xóa tham số"><i class="fa-solid fa-trash-can"></i></button>
             </div>
         `;
-        $('#api-keys-container').append(html);
+        let $newRow = $(html);
+        $('#api-keys-container').append($newRow);
+        $newRow.fadeIn(200);
     });
 
     $(document).on('click', '.btn-remove-key', function() {
-        $(this).closest('.api-key-row').remove();
+        let $row = $(this).closest('.api-key-row');
+        $row.fadeOut(200, function() {
+            $(this).remove();
+        });
     });
 });
 
