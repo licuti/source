@@ -166,6 +166,24 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                                     ]) ?>
                                                 </div>
                                             </div>
+
+                                            <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                    <label class="form-label">Nhóm Thuế áp dụng</label>
+                                                    <select name="tax_class_id" class="form-select">
+                                                        <option value="0">-- Không chịu thuế --</option>
+                                                        <?php 
+                                                            $taxClasses = \App\Models\TaxClassModel::where('lang', config('app.locale', 'vi'))->where('is_active', 1)->get();
+                                                            foreach ($taxClasses as $tc): 
+                                                                $selected = ($item['tax_class_id'] ?? 0) == $tc->id_code ? 'selected' : '';
+                                                                // auto select default if new item
+                                                                if (empty($item) && $tc->is_default) $selected = 'selected';
+                                                        ?>
+                                                            <option value="<?= $tc->id_code ?>" <?= $selected ?>><?= htmlspecialchars($tc->name) ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+                                            </div>
                                             
                                             <!-- Flash Sale Config -->
                                             <div class="row mb-3 p-3 bg-light border rounded">

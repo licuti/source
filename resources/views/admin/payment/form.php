@@ -135,6 +135,30 @@ if (!$isEdit) {
                                     'attrs' => ['required' => true, 'placeholder' => 'Ví dụ: bank, cod, vnpay']
                                 ]) ?>
                             </div>
+                            
+                            <div class="mb-4">
+                                <?= view('admin.components.image_upload', [
+                                    'name' => 'logo',
+                                    'value' => $item['logo'] ?? '',
+                                    'label' => 'Logo phương thức'
+                                ]); ?>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">Phí giao dịch (Tùy chọn)</label>
+                                <div class="input-group input-group-sm mb-2">
+                                    <span class="input-group-text bg-light border-end-0 text-muted" style="width: 40px;"><i class="fa-solid fa-calculator text-center w-100"></i></span>
+                                    <select name="fee_type" class="form-select border-start-0 ps-0">
+                                        <option value="fixed" <?= ($item['fee_type'] ?? 'fixed') === 'fixed' ? 'selected' : '' ?>>Cố định (VND/USD)</option>
+                                        <option value="percent" <?= ($item['fee_type'] ?? '') === 'percent' ? 'selected' : '' ?>>Phần trăm (%)</option>
+                                    </select>
+                                </div>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-light border-end-0 text-muted" style="width: 40px;"><i class="fa-solid fa-money-bill-wave text-center w-100"></i></span>
+                                    <input type="number" step="0.01" min="0" name="fee_value" class="form-control border-start-0 ps-0" placeholder="0.00" value="<?= $item['fee_value'] ?? '0' ?>">
+                                </div>
+                                <div class="form-text">Ví dụ: Phí cố định 5000, hoặc phí 2.5%.</div>
+                            </div>
 
                             <div class="mb-3 border-top pt-3">
                                 <?= view('admin.components.switch', [

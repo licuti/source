@@ -36,13 +36,16 @@ class PaymentController extends BaseAdminController
             'api_config' => !empty($apiKeys) ? json_encode($apiKeys) : null,
             'is_active' => $request->input('is_active') !== null ? 1 : 0,
             'sort_order' => $request->input('sort_order', 0),
+            'logo' => $request->input('logo'),
+            'fee_type' => $request->input('fee_type', 'fixed'),
+            'fee_value' => floatval($request->input('fee_value', 0)),
         ];
     }
 
     public function store(Request $request)
     {
-        $langs = config('lang', [['code' => 'vi']]);
-        $firstLang = $langs[0]['code'];
+        $langs = config('lang', ['vi' => ['code' => 'vi']]);
+        $firstLang = current($langs)['code'];
         
         $firstLangData = $this->buildMethodData($request, $firstLang);
         $firstLangData['lang'] = $firstLang;
@@ -61,9 +64,9 @@ class PaymentController extends BaseAdminController
             $pmQuery->use_lang = false;
             $pmQuery->where('id', $insertedId)->update(['id_code' => $id_code]);
             
-            foreach ($langs as $index => $l) {
-                if ($index === 0) continue;
+            foreach ($langs as $l) {
                 $c = $l['code'];
+                if ($c === $firstLang) continue;
                 $langData = $this->buildMethodData($request, $c);
                 $langData['id_code'] = $id_code;
                 $langData['lang'] = $c;
@@ -99,6 +102,9 @@ class PaymentController extends BaseAdminController
             'api_config' => $baseItem->api_config,
             'is_active' => $baseItem->is_active,
             'sort_order' => $baseItem->sort_order,
+            'logo' => $baseItem->logo,
+            'fee_type' => $baseItem->fee_type,
+            'fee_value' => $baseItem->fee_value,
             'name' => [],
             'description' => []
         ];
@@ -121,7 +127,7 @@ class PaymentController extends BaseAdminController
         $baseItem = PaymentMethodModel::find($id);
         if (!$baseItem) return $this->redirect(route('admin.payment.index'));
 
-        $langs = config('lang', [['code' => 'vi']]);
+        $langs = config('lang', ['vi' => ['code' => 'vi']]);
         $code = $request->input('code');
 
         // Ensure unique code

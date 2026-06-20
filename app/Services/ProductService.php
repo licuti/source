@@ -45,6 +45,7 @@ class ProductService {
             'cost_price'        => (int)($inputData['cost_price'] ?? 0),
             'stock_quantity'    => (int)($inputData['stock_quantity'] ?? 0),
             'stock_status'      => $inputData['stock_status'] ?? 'in_stock',
+            'tax_class_id'      => (int)($inputData['tax_class_id'] ?? 0),
             'weight'            => (float)($inputData['weight'] ?? 0),
             'length'            => (float)($inputData['length'] ?? 0),
             'width'             => (float)($inputData['width'] ?? 0),
@@ -273,11 +274,13 @@ class ProductService {
             'length'            => $firstPost->length,
             'width'             => $firstPost->width,
             'height'            => $firstPost->height,
+            'brand_id'          => $firstPost->brand_id,
             'is_featured'       => $firstPost->is_featured,
             'is_new'            => $firstPost->is_new,
             'is_hot'            => $firstPost->is_hot,
             'is_sale'           => $firstPost->is_sale,
             'status'            => $firstPost->status,
+            'tax_class_id'      => $firstPost->tax_class_id,
             'product_attributes'=> json_decode($firstPost->product_attributes ?? '[]', true),
         ];
         

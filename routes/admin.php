@@ -109,6 +109,24 @@ $router->group('/admin', function($r) {
     $r->post('/product/delete-multiple', [\App\Controllers\Admin\ProductController::class, 'destroyMultiple'])->name('admin.product.destroy_multiple');
     $r->post('/product/update-status-ajax', [\App\Controllers\Admin\ProductController::class, 'updateStatusAjax'])->name('admin.product.updateStatusAjax');
 
+    // Tax Class Routes
+    $r->get('/tax-class', [\App\Controllers\Admin\TaxClassController::class, 'index'])->name('admin.tax_class.index');
+    $r->get('/tax-class/create', [\App\Controllers\Admin\TaxClassController::class, 'create'])->name('admin.tax_class.create');
+    $r->post('/tax-class/store', [\App\Controllers\Admin\TaxClassController::class, 'store'])->name('admin.tax_class.store');
+    $r->get('/tax-class/edit/{id}', [\App\Controllers\Admin\TaxClassController::class, 'edit'])->name('admin.tax_class.edit');
+    $r->post('/tax-class/update/{id}', [\App\Controllers\Admin\TaxClassController::class, 'update'])->name('admin.tax_class.update');
+    $r->post('/tax-class/delete/{id}', [\App\Controllers\Admin\TaxClassController::class, 'destroy'])->name('admin.tax_class.destroy');
+    $r->post('/tax-class/update-status-ajax', [\App\Controllers\Admin\TaxClassController::class, 'updateStatusAjax'])->name('admin.tax_class.updateStatusAjax');
+
+    // Tax Rate Routes
+    $r->get('/tax-rate', [\App\Controllers\Admin\TaxRateController::class, 'index'])->name('admin.tax_rate.index');
+    $r->get('/tax-rate/create', [\App\Controllers\Admin\TaxRateController::class, 'create'])->name('admin.tax_rate.create');
+    $r->post('/tax-rate/store', [\App\Controllers\Admin\TaxRateController::class, 'store'])->name('admin.tax_rate.store');
+    $r->get('/tax-rate/edit/{id}', [\App\Controllers\Admin\TaxRateController::class, 'edit'])->name('admin.tax_rate.edit');
+    $r->post('/tax-rate/update/{id}', [\App\Controllers\Admin\TaxRateController::class, 'update'])->name('admin.tax_rate.update');
+    $r->post('/tax-rate/delete/{id}', [\App\Controllers\Admin\TaxRateController::class, 'destroy'])->name('admin.tax_rate.destroy');
+    $r->post('/tax-rate/update-status-ajax', [\App\Controllers\Admin\TaxRateController::class, 'updateStatusAjax'])->name('admin.tax_rate.updateStatusAjax');
+
     // Shop / Marketplace Routes
     $r->get('/shop', [\App\Controllers\Admin\ShopController::class, 'index'])->name('admin.shop.index');
     $r->get('/shop/create', [\App\Controllers\Admin\ShopController::class, 'create'])->name('admin.shop.create');
