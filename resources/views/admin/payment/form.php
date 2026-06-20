@@ -144,14 +144,6 @@ if (!$isEdit) {
                                 ]) ?>
                             </div>
 
-                            <div class="mb-3">
-                                <?= view('admin.components.input', [
-                                    'name' => 'sort_order',
-                                    'value' => $item['sort_order'] ?? 0,
-                                    'label' => 'Sắp xếp',
-                                    'attrs' => ['type' => 'number']
-                                ]) ?>
-                            </div>
                         </div>
                         
                         <?= view('admin.components.save_buttons', [

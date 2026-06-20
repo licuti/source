@@ -171,6 +171,7 @@ $router->group('/admin', function($r) {
     $r->post('/payment/update/{id}', [\App\Controllers\Admin\PaymentController::class, 'update'])->name('admin.payment.update');
     $r->post('/payment/destroy', [\App\Controllers\Admin\PaymentController::class, 'destroy'])->name('admin.payment.destroy');
     $r->post('/payment/update-status-ajax', [\App\Controllers\Admin\PaymentController::class, 'updateStatusAjax'])->name('admin.payment.updateStatusAjax');
+    $r->post('/payment/update-sort', [\App\Controllers\Admin\PaymentController::class, 'updateSortAjax'])->name('admin.payment.update_sort');
 
     // Shipping Configuration Routes
     $r->get('/shipping', [\App\Controllers\Admin\ShippingController::class, 'index'])->name('admin.shipping.index');

@@ -187,4 +187,25 @@ class PaymentController extends BaseAdminController
         }
         return $this->json(['success' => false, 'message' => 'Trường không hợp lệ hoặc lỗi!']);
     }
+
+    public function updateSortAjax(Request $request)
+    {
+        $ids = $request->input('ids');
+        if (is_array($ids) && !empty($ids)) {
+            $query = PaymentMethodModel::query();
+            $query->use_lang = false;
+            foreach ($ids as $index => $id) {
+                // Sắp xếp cập nhật trên bản gốc (id_code), hoặc cập nhật tất cả (ở đây do index hiển thị list vi, id là của vi)
+                // Cẩn thận: if $id in JS is the ID of the 'vi' record, we should find its id_code first to update all languages
+                $method = PaymentMethodModel::find($id);
+                if ($method) {
+                    $upQuery = PaymentMethodModel::query();
+                    $upQuery->use_lang = false;
+                    $upQuery->where('id_code', $method->id_code)->update(['sort_order' => $index]);
+                }
+            }
+            return Response::json(['success' => true]);
+        }
+        return Response::json(['success' => false]);
+    }
 }

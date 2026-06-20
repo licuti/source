@@ -32,14 +32,13 @@ $title = 'Cổng thanh toán';
                     <table class="table table-striped table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th width="50" class="text-center">ID</th>
+                                <th width="40" class="text-center"><i class="fa-solid fa-arrows-up-down text-muted"></i></th>
                                 <th>Tên phương thức</th>
                                 <th>Mã hệ thống (Code)</th>
-                                <th class="text-center">Sắp xếp</th>
                                 <th width="120" class="text-center">Trạng thái</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="sortable-items">
                             <?php if (empty($methods)): ?>
                             <tr>
                                 <td colspan="5" class="text-center py-5 text-muted">
@@ -49,8 +48,10 @@ $title = 'Cổng thanh toán';
                             </tr>
                             <?php else: ?>
                                 <?php foreach ($methods as $item): ?>
-                                <tr class="wp-row">
-                                    <td class="text-center text-muted"><?= $item->id ?></td>
+                                <tr class="wp-row" data-id="<?= $item->id ?>">
+                                    <td class="text-center align-middle">
+                                        <i class="fa-solid fa-grip-vertical text-muted cursor-move handle" style="cursor: grab;"></i>
+                                    </td>
                                     <td class="align-middle">
                                         <strong class="text-primary">
                                             <a href="<?= route('admin.payment.edit', ['id' => $item->id]) ?>" class="text-decoration-none">
@@ -77,9 +78,7 @@ $title = 'Cổng thanh toán';
                                     <td class="align-middle">
                                         <span class="badge bg-secondary"><?= htmlspecialchars($item->code) ?></span>
                                     </td>
-                                    <td class="text-center align-middle">
-                                        <span class="badge bg-light text-dark border"><?= $item->sort_order ?></span>
-                                    </td>
+
                                     <td class="text-center align-middle">
                                         <div class="form-check form-switch d-flex justify-content-center">
                                             <input class="form-check-input ajax-toggle-status" type="checkbox" 
@@ -101,22 +100,67 @@ $title = 'Cổng thanh toán';
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    $('.btn-delete-payment').click(function(e) {
+    // Xóa phương thức
+    $(document).on('click', '.btn-delete-payment', function(e) {
         e.preventDefault();
-        let id = $(this).data('id');
-        AppNotify.confirm('Bạn có chắc chắn muốn xóa phương thức thanh toán này không?', function() {
-            $.post('<?= route('admin.payment.destroy') ?>', { 
-                id: id, 
-                _token: '<?= csrf_token() ?>' 
+        const id = $(this).data('id');
+        if (confirm('Bạn có chắc muốn xóa cổng thanh toán này? Các ngôn ngữ liên quan cũng sẽ bị xóa.')) {
+            $.post('<?= route("admin.payment.destroy") ?>', {
+                id: id,
+                _token: '<?= csrf_token() ?>'
             }, function(res) {
                 if (res.success) {
-                    AppNotify.success(res.message);
-                    setTimeout(() => location.reload(), 1000);
+                    location.reload();
                 } else {
-                    AppNotify.error(res.message);
+                    alert(res.message);
                 }
             });
-        });
+        }
     });
+
+    // Khởi tạo Sortable
+    if (typeof Sortable === 'undefined') {
+        let script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js';
+        script.onload = initSortable;
+        document.head.appendChild(script);
+    } else {
+        initSortable();
+    }
+
+    function initSortable() {
+        const el = document.getElementById('sortable-items');
+        if (!el) return;
+        
+        new Sortable(el, {
+            handle: '.handle',
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            onEnd: function() {
+                let ids = [];
+                $('#sortable-items tr').each(function() {
+                    let id = $(this).data('id');
+                    if (id) ids.push(id);
+                });
+
+                if (ids.length > 0) {
+                    $.post('<?= route("admin.payment.update_sort") ?>', {
+                        ids: ids,
+                        _token: '<?= csrf_token() ?>'
+                    }, function(res) {
+                        if(res.success) {
+                            toastr.success('Đã cập nhật thứ tự.');
+                        } else {
+                            toastr.error('Lỗi khi cập nhật thứ tự.');
+                        }
+                    });
+                }
+            }
+        });
+    }
 });
 </script>
+
+<style>
+.sortable-ghost { opacity: 0.4; background-color: #f8f9fa; }
+</style>
