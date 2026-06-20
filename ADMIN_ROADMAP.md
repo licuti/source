@@ -53,11 +53,6 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 39 | **Sitemap** (`sitemap`) | `SitemapController` | 🔴 Chưa làm |
 | 53 | **Button Contact** (`button-contact`) | `ContactButtonController` | 🔴 Chưa làm |
 
-### 🟢 Chi tiết: PaymentController (Cổng thanh toán)
-- **Chức năng:** Quản lý các phương thức thanh toán (CRUD), bật/tắt trạng thái qua AJAX.
-- **Kiến trúc đa ngôn ngữ:** Các trường văn bản (Tên, Mô tả) được lưu riêng biệt theo từng ngôn ngữ (qua cơ chế `id_code` + `lang`).
-- **Cấu hình API:** Cho phép tạo động danh sách API Keys (Ví dụ: `TMN_CODE`, `SECRET_KEY`) lưu dưới dạng JSON dùng chung cho mọi ngôn ngữ của phương thức đó.
-
 ### 🟢 Chi tiết: LanguageSettingController (Cấu hình Ngôn ngữ)
 - **`index()`**: Hiển thị danh sách ngôn ngữ, sắp xếp theo `sort_order`.
 - **`create()`**: Hiển thị form thêm ngôn ngữ mới.
@@ -186,9 +181,17 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 ---
 
+### 🟢 Chi tiết: PaymentController (Cổng thanh toán)
+- **Kiến trúc giao diện:** Form thiết kế tối ưu trải nghiệm chia thành 2 phần rõ rệt: (1) Cấu hình nội dung đa ngôn ngữ (Tên, Mô tả ngắn, Hướng dẫn thanh toán) dùng tab chuyển đổi linh hoạt. (2) Cấu hình hệ thống dùng chung (Logo, Tỷ lệ phí giao dịch, Cấu hình kết nối API).
+- **Quản lý API Keys động:** Cho phép Admin tự do tạo thêm hoặc xóa bớt các cặp Key - Value cấu hình kết nối API (ví dụ: `TMN_CODE`, `SECRET_KEY`, `ENDPOINT`) theo dạng Repeater field. Dữ liệu được mã hóa thành chuỗi JSON và lưu vào một trường duy nhất, giúp linh hoạt tích hợp bất kỳ cổng thanh toán nào mà không cần sửa cấu trúc Database.
+- **`store()` / `update()`:** Xử lý lưu trữ theo mô hình đa ngôn ngữ 2 cấp chuẩn của dự án: Lưu thông tin cấu hình chung và sinh `id_code`, sau đó duyệt qua danh sách ngôn ngữ để lưu các bản dịch độc lập.
+- Tích hợp tính năng bật/tắt trạng thái (`is_active`) nhanh qua AJAX trên danh sách.
+
 ### 🟢 Chi tiết: ShippingController (Cấu hình vận chuyển)
-- **Chức năng:** Quản lý các phương thức vận chuyển và bảng giá chi tiết theo vùng (Quốc gia / Tỉnh / Huyện / Xã).
-- **Cơ chế hoạt động:** Cho phép cấu hình phí cơ bản, phí phụ thu theo kg, điều kiện miễn phí vận chuyển và thời gian giao hàng dự kiến. Hỗ trợ thay đổi thứ tự ưu tiên (Priority) để áp dụng phí chính xác khi có nhiều biểu phí trùng lặp vùng. Tự động kiểm tra trạng thái bật/tắt qua AJAX.
+- **Kiến trúc dữ liệu:** Tách biệt hoàn toàn Phương thức/Đơn vị vận chuyển (Shipping Method) và Bảng giá theo vùng (Shipping Rates). Một phương thức (VD: Giao hàng tiêu chuẩn) có thể có nhiều bảng giá áp dụng cho các khu vực khác nhau.
+- **`rates()` / `createRate()`:** Quản lý không giới hạn số lượng biểu phí cho mỗi phương thức. Form thiết lập bảng giá hỗ trợ phân vùng chi tiết từ cấp Quốc gia -> Tỉnh/Thành phố -> Quận/Huyện -> Phường/Xã với các Dropdown tự động load qua AJAX động theo cấp bậc.
+- **Cấu hình linh hoạt:** Cho phép thiết lập Phí cơ bản, Phụ thu quá ký (`extra_fee_per_kg`), Số kg miễn phí (`free_weight_kg`), Thời gian giao hàng dự kiến (`estimated_time`).
+- **Độ ưu tiên (Priority):** Cho phép gắn chỉ số ưu tiên (`priority`). Khi khách hàng thanh toán, hệ thống sẽ đối chiếu địa chỉ giao hàng với các bảng giá theo mức độ phủ sóng (Xã -> Huyện -> Tỉnh -> Quốc gia) và ưu tiên chọn biểu phí có mức độ khớp sâu nhất hoặc `priority` cao nhất để tính ra mức cước chính xác.
 
 ---
 
