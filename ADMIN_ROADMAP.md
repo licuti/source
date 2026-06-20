@@ -144,10 +144,10 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 | ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
 |---|---|---|---|
-| 106 | **Cổng thanh toán** (`payment`) | `PaymentSettingController` | 🟡 Đang PT |
+| 106 | **Cổng thanh toán** (`payment`) | `PaymentController` | 🟢 Hoàn thành |
 | 32 | **Quản lý đơn hàng** (`quan-ly-don-hang`) | `OrderController` | 🔴 Chưa làm |
 | 45 | **Thống kê doanh thu** (`doanh-thu`) | `RevenueController` | 🔴 Chưa làm |
-| 55 | **Cấu hình vận chuyển** (`quan-ly-van-chuyen`) | `ShippingController` | 🔴 Chưa làm |
+| 55 | **Cấu hình vận chuyển** (`quan-ly-van-chuyen`) | `ShippingController` | 🟢 Hoàn thành |
 | 56 | **Quản lý thuế** (`quan-ly-thue`) | `TaxController` | 🔴 Chưa làm |
 | 46 | **Mã khuyến mãi** (`ma-khuyen-mai`) | `PromoCodeController` | 🔴 Chưa làm |
 | 47 | **Flash Sale** (`flash-sale`) | `FlashSaleController` | 🔴 Chưa làm |
@@ -186,4 +186,10 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 ---
 
-> **📊 Tổng kết tiến độ:** Hoàn thành **11/33 module** (33%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Sản phẩm, Bài viết và Khối giao diện động đã hoàn thiện 100%. Ưu tiên tiếp theo: Module Đơn hàng và các phần CRM liên quan.
+### 🟢 Chi tiết: ShippingController (Cấu hình vận chuyển)
+- **Chức năng:** Quản lý các phương thức vận chuyển và bảng giá chi tiết theo vùng (Quốc gia / Tỉnh / Huyện / Xã).
+- **Cơ chế hoạt động:** Cho phép cấu hình phí cơ bản, phí phụ thu theo kg, điều kiện miễn phí vận chuyển và thời gian giao hàng dự kiến. Hỗ trợ thay đổi thứ tự ưu tiên (Priority) để áp dụng phí chính xác khi có nhiều biểu phí trùng lặp vùng. Tự động kiểm tra trạng thái bật/tắt qua AJAX.
+
+---
+
+> **📊 Tổng kết tiến độ:** Hoàn thành **13/33 module** (39%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Sản phẩm, Bài viết, Thanh toán, Vận chuyển và Khối giao diện động đã hoàn thiện 100%. Ưu tiên tiếp theo: Module Đơn hàng và các phần CRM liên quan.
