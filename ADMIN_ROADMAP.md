@@ -47,7 +47,6 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 102 | **Tích hợp API / Scripts** (`api-integration`) | `ApiIntegrationController` | 🟡 Đang PT |
 | 104 | **Sao lưu & Cache** (`backup-cache`) | `BackupController` | 🟡 Đang PT |
 | 105 | **Chế độ bảo trì** (`maintenance`) | `MaintenanceController` | 🟡 Đang PT |
-| 106 trong group 43 | **Cổng thanh toán** (`payment`) | `PaymentController` | 🟢 Hoàn thành |
 | 25 | **Cấu hình Website** (`setting`) | `SettingController` | 🟡 Đang phát triển |
 | 28 | **Cấu hình SEO cơ bản** (`seo-co-ban`) | `SeoConfigController` | 🔴 Chưa làm |
 | 39 | **Sitemap** (`sitemap`) | `SitemapController` | 🔴 Chưa làm |
@@ -89,7 +88,26 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 ---
 
-## 3. 📦 QUẢN LÝ SẢN PHẨM (Catalog)
+## 3. 📰 QUẢN LÝ BÀI VIẾT (Content)
+
+| ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
+|---|---|---|---|
+| 23 | **Bài viết** (`bai-viet`) | `PostController` | 🟢 Hoàn thành |
+| 24 | **Khối Giao Diện (Blocks)** (`noi-dung`) | `BlockController` | 🟢 Hoàn thành |
+| 36 | **Album ảnh** (`gallery`) | `GalleryController` | 🔴 Chưa làm |
+| 37 | **Videos** (`video`) | `VideoController` | 🔴 Chưa làm |
+| 38 | **Upload file** (`upload-file`) | `FileManagerController` | 🔴 Chưa làm |
+
+### 🟢 Chi tiết: PostController (Quản lý Bài viết)
+- **`index()`**: Liệt kê danh sách bài viết theo ngôn ngữ, phân trang, cho phép tìm kiếm theo từ khóa, lọc theo trạng thái và danh mục. Hỗ trợ phân quyền sở hữu bài viết (`ownedByUser`).
+- **`create()` / `edit()`**: Form thêm/sửa có đầy đủ Tab ngôn ngữ và tab cấu hình chung.
+- **`store()` / `update()`**: Lưu trữ bài viết thông qua `PostService`.
+- **`destroy()` / `destroyMultiple()`**: Xóa đơn lẻ hoặc xóa hàng loạt các bài viết.
+- **`updateStatusAjax()`**: Toggle trạng thái hiển thị nhanh qua Ajax.
+
+---
+
+## 4. 📦 QUẢN LÝ SẢN PHẨM (Catalog)
 
 | ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
 |---|---|---|---|
@@ -135,7 +153,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 ---
 
-## 4. 🛒 THƯƠNG MẠI ĐIỆN TỬ (E-Commerce)
+## 5. 🛒 THƯƠNG MẠI ĐIỆN TỬ (E-Commerce)
 
 | ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
 |---|---|---|---|
@@ -146,40 +164,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 56 | **Quản lý thuế** (`quan-ly-thue`) | `TaxController` | 🔴 Chưa làm |
 | 46 | **Mã khuyến mãi** (`ma-khuyen-mai`) | `PromoCodeController` | 🔴 Chưa làm |
 | 47 | **Flash Sale** (`flash-sale`) | `FlashSaleController` | 🔴 Chưa làm |
-| 51 | **Đăng nhận nhận ưu đãi** (`coupon`) | `CouponController` | 🔴 Chưa làm |
-
----
-
-## 5. 📰 QUẢN LÝ BÀI VIẾT (Content)
-
-| ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
-|---|---|---|---|
-| 23 | **Bài viết** (`bai-viet`) | `PostController` | 🟢 Hoàn thành |
-| 24 | **Khối Giao Diện (Blocks)** (`noi-dung`) | `BlockController` | 🟢 Hoàn thành |
-| 36 | **Album ảnh** (`gallery`) | `GalleryController` | 🔴 Chưa làm |
-| 37 | **Videos** (`video`) | `VideoController` | 🔴 Chưa làm |
-| 38 | **Upload file** (`upload-file`) | `FileManagerController` | 🔴 Chưa làm |
-
-### 🟢 Chi tiết: PostController (Quản lý Bài viết)
-- **`index()`**: Liệt kê danh sách bài viết theo ngôn ngữ, phân trang, cho phép tìm kiếm theo từ khóa, lọc theo trạng thái và danh mục. Hỗ trợ phân quyền sở hữu bài viết (`ownedByUser`).
-- **`create()` / `edit()`**: Form thêm/sửa có đầy đủ Tab ngôn ngữ và tab cấu hình chung.
-- **`store()` / `update()`**: Lưu trữ bài viết thông qua `PostService`.
-- **`destroy()` / `destroyMultiple()`**: Xóa đơn lẻ hoặc xóa hàng loạt các bài viết.
-- **`updateStatusAjax()`**: Toggle trạng thái hiển thị nhanh qua Ajax.
-
----
-
-## 6. 👥 KHÁCH HÀNG & TƯƠNG TÁC (Customers & CRM)
-
-| ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
-|---|---|---|---|
-| 41 | **Thành viên** (`thanh-vien`) | `CustomerController` | 🔴 Chưa làm |
-| 42 | **Công tác viên** (`cong-tac-vien`) | `AffiliateController` | 🔴 Chưa làm |
-| 33 | **Khách hàng liên hệ** (`lien-he`) | `ContactController` | 🔴 Chưa làm |
-| 48 | **Quản lý bình luận** (`binh-luan`) | `CommentController` | 🔴 Chưa làm |
-| 50 | **Đăng ký nhận tin** (`newsletter`) | `NewsletterController` | 🔴 Chưa làm |
-
----
+| 51 | **Đăng ký nhận ưu đãi** (`coupon`) | `CouponController` | 🔴 Chưa làm |
 
 ### 🟢 Chi tiết: PaymentController (Cổng thanh toán)
 - **Kiến trúc giao diện:** Form thiết kế tối ưu trải nghiệm chia thành 2 phần rõ rệt: (1) Cấu hình nội dung đa ngôn ngữ (Tên, Mô tả ngắn, Hướng dẫn thanh toán) dùng tab chuyển đổi linh hoạt. (2) Cấu hình hệ thống dùng chung (Logo, Tỷ lệ phí giao dịch, Cấu hình kết nối API).
@@ -195,4 +180,16 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 ---
 
-> **📊 Tổng kết tiến độ:** Hoàn thành **13/33 module** (39%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Sản phẩm, Bài viết, Thanh toán, Vận chuyển và Khối giao diện động đã hoàn thiện 100%. Ưu tiên tiếp theo: Module Đơn hàng và các phần CRM liên quan.
+## 6. 👥 KHÁCH HÀNG & TƯƠNG TÁC (Customers & CRM)
+
+| ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
+|---|---|---|---|
+| 41 | **Thành viên** (`thanh-vien`) | `CustomerController` | 🔴 Chưa làm |
+| 42 | **Cộng tác viên** (`cong-tac-vien`) | `AffiliateController` | 🔴 Chưa làm |
+| 33 | **Khách hàng liên hệ** (`lien-he`) | `ContactController` | 🔴 Chưa làm |
+| 48 | **Quản lý bình luận** (`binh-luan`) | `CommentController` | 🔴 Chưa làm |
+| 50 | **Đăng ký nhận tin** (`newsletter`) | `NewsletterController` | 🔴 Chưa làm |
+
+---
+
+> **📊 Tổng kết tiến độ:** Hoàn thành **13/33 module** (39%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Bài viết, Quản lý Sản phẩm, Thanh toán, Vận chuyển và Khối giao diện động đã hoàn thiện 100%. Ưu tiên tiếp theo: Module Đơn hàng và các phần CRM liên quan.
