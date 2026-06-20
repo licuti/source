@@ -48,11 +48,16 @@ $title = $isEdit ? 'Chỉnh sửa Phương thức' : 'Thêm Phương thức Vậ
 
                             <div class="row mb-3">
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold">Loại cấu hình phí</label>
-                                    <select name="is_api" id="is_api" class="form-select">
-                                        <option value="0" <?= ($isEdit && !$item->is_api) ? 'selected' : '' ?>>Tự cấu hình Bảng giá theo Vùng (Rates)</option>
-                                        <option value="1" <?= ($isEdit && $item->is_api) ? 'selected' : '' ?>>Gọi API tự động từ Hãng (GHN, GHTK...)</option>
-                                    </select>
+                                    <?= view('admin.components.select', [
+                                        'name' => 'is_api',
+                                        'value' => $item->is_api ?? 0,
+                                        'label' => 'Loại cấu hình phí',
+                                        'options' => [
+                                            '0' => 'Tự cấu hình Bảng giá theo Vùng (Rates)',
+                                            '1' => 'Gọi API tự động từ Hãng (GHN, GHTK...)'
+                                        ],
+                                        'attrs' => ['id' => 'is_api', 'class' => 'form-select']
+                                    ]) ?>
                                 </div>
                                 <div class="col-md-6">
                                     <?= view('admin.components.input', [

@@ -47,11 +47,16 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 102 | **Tích hợp API / Scripts** (`api-integration`) | `ApiIntegrationController` | 🟡 Đang PT |
 | 104 | **Sao lưu & Cache** (`backup-cache`) | `BackupController` | 🟡 Đang PT |
 | 105 | **Chế độ bảo trì** (`maintenance`) | `MaintenanceController` | 🟡 Đang PT |
-| 106 trong group 43 | **Cổng thanh toán** (`payment`) | `PaymentSettingController` | 🟡 Đang PT |
+| 106 trong group 43 | **Cổng thanh toán** (`payment`) | `PaymentController` | 🟢 Hoàn thành |
 | 25 | **Cấu hình Website** (`setting`) | `SettingController` | 🟡 Đang phát triển |
 | 28 | **Cấu hình SEO cơ bản** (`seo-co-ban`) | `SeoConfigController` | 🔴 Chưa làm |
 | 39 | **Sitemap** (`sitemap`) | `SitemapController` | 🔴 Chưa làm |
 | 53 | **Button Contact** (`button-contact`) | `ContactButtonController` | 🔴 Chưa làm |
+
+### 🟢 Chi tiết: PaymentController (Cổng thanh toán)
+- **Chức năng:** Quản lý các phương thức thanh toán (CRUD), bật/tắt trạng thái qua AJAX.
+- **Kiến trúc đa ngôn ngữ:** Các trường văn bản (Tên, Mô tả) được lưu riêng biệt theo từng ngôn ngữ (qua cơ chế `id_code` + `lang`).
+- **Cấu hình API:** Cho phép tạo động danh sách API Keys (Ví dụ: `TMN_CODE`, `SECRET_KEY`) lưu dưới dạng JSON dùng chung cho mọi ngôn ngữ của phương thức đó.
 
 ### 🟢 Chi tiết: LanguageSettingController (Cấu hình Ngôn ngữ)
 - **`index()`**: Hiển thị danh sách ngôn ngữ, sắp xếp theo `sort_order`.

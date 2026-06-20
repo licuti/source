@@ -90,6 +90,7 @@ $title = 'Cấu hình Hãng / Phương thức Vận chuyển';
                                     <td class="text-center align-middle">
                                         <div class="form-check form-switch d-flex justify-content-center">
                                             <input class="form-check-input ajax-toggle-status" type="checkbox" 
+                                                data-url="<?= route('admin.shipping.updateStatusAjax') ?>"
                                                 data-id="<?= $item->id ?>" data-table="db_shipping_methods" data-field="is_active"
                                                 <?= $item->is_active ? 'checked' : '' ?>>
                                         </div>
@@ -123,18 +124,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Handle AJAX toggle switch explicitly if admin layout script doesn't hook to data-table
-    $('.ajax-toggle-status').change(function() {
-        let el = $(this);
-        let id = el.data('id');
-        let table = el.data('table');
-        let field = el.data('field');
-        let status = el.is(':checked') ? 1 : 0;
-        
-        // Cần custom endpoint để update status cho bảng tự do?
-        // Wait, ADMIN_UI_GUIDE uses admin.module.updateStatusAjax but that is specific to its controller.
-        // I will just use standard location API or build a custom JS if needed. 
-        // For now, let's keep it simple. If it fails, the user will see.
-    });
+    // Common JS now handles the AJAX toggle automatically because we added data-url!
 });
 </script>

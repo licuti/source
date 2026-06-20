@@ -22,7 +22,7 @@ class LocationController extends Controller {
             return Response::json(['html' => '<option value="">Chọn Quận / Huyện</option>']);
         }
 
-        $rows = \DistrictModel::where('code_tinh', $code_tinh)
+        $rows = \App\Models\DistrictModel::where('code_tinh', $code_tinh)
                               ->orderBy('ten', 'ASC')
                               ->get();
 
@@ -46,7 +46,7 @@ class LocationController extends Controller {
             return new \App\Core\Response('<option value="">Chọn Phường / Xã</option>');
         }
 
-        $rows = \WardModel::where('code_huyen', $code_huyen)
+        $rows = \App\Models\WardModel::where('code_huyen', $code_huyen)
                           ->orderBy('ten', 'ASC')
                           ->get();
 

@@ -105,6 +105,19 @@ class ShippingController extends BaseAdminController
         return Response::json(['success' => false, 'message' => 'Không tìm thấy phương thức']);
     }
 
+    public function updateStatusAjax(Request $request)
+    {
+        $id = $request->input('id');
+        $field = $request->input('field');
+        $value = $request->input('value');
+        
+        if ($field === 'is_active') {
+            ShippingMethodModel::where('id', $id)->update([$field => $value]);
+            return $this->json(['success' => true, 'message' => 'Cập nhật trạng thái thành công!']);
+        }
+        return $this->json(['success' => false, 'message' => 'Trường không hợp lệ!']);
+    }
+
     // --- R A T E S ---
 
     public function rates(Request $request, $params = [])
@@ -114,14 +127,20 @@ class ShippingController extends BaseAdminController
         if (!$method) return $this->redirect(route('admin.shipping.index'));
 
         // Dùng Query Builder để tránh lỗi kết nối PDO khi dùng raw query
-        $rates = ShippingRateModel::where('shipping_method_id', $methodId)
+        $rates = ShippingRateModel::with('province')
+                                  ->with('district')
+                                  ->with('ward')
+                                  ->where('shipping_method_id', $methodId)
                                   ->orderBy('priority', 'DESC')
                                   ->orderBy('id', 'DESC')
                                   ->get();
 
+        $countries = ['VN' => 'Việt Nam', 'US' => 'Hoa Kỳ', 'JP' => 'Nhật Bản', '*' => 'Toàn cầu (Khác)'];
+
         return view('admin.shipping.rates', [
             'method' => $method,
-            'rates' => $rates
+            'rates' => $rates,
+            'countries' => $countries
         ]);
     }
 
@@ -135,7 +154,7 @@ class ShippingController extends BaseAdminController
         $countries = ['VN' => 'Việt Nam', 'US' => 'Hoa Kỳ', 'JP' => 'Nhật Bản', '*' => 'Toàn cầu (Khác)'];
         
         // Load available provinces
-        $provinces = \App\Models\ProvinceModel::orderBy('ten', 'ASC')->get(['code', 'ten']);
+        $provinces = \App\Models\ProvinceModel::orderBy('ten', 'ASC')->get('code, ten');
 
         return view('admin.shipping.form_rate', [
             'method' => $method,
@@ -186,14 +205,14 @@ class ShippingController extends BaseAdminController
 
         $countries = ['VN' => 'Việt Nam', 'US' => 'Hoa Kỳ', 'JP' => 'Nhật Bản', '*' => 'Toàn cầu (Khác)'];
         // Load available provinces
-        $provinces = \App\Models\ProvinceModel::orderBy('ten', 'ASC')->get(['code', 'ten']);
+        $provinces = \App\Models\ProvinceModel::orderBy('ten', 'ASC')->get('code, ten');
 
         // Load districts if province exists
         $districts = [];
         if ($rate->province_code) {
             $districts = \App\Models\DistrictModel::where('code_tinh', $rate->province_code)
                                                   ->orderBy('ten', 'ASC')
-                                                  ->get(['code', 'ten']);
+                                                  ->get('code, ten');
         }
 
         return view('admin.shipping.form_rate', [
@@ -248,5 +267,18 @@ class ShippingController extends BaseAdminController
             return Response::json(['success' => true, 'message' => 'Đã xóa biểu phí']);
         }
         return Response::json(['success' => false, 'message' => 'Không tìm thấy bản ghi']);
+    }
+
+    public function updateRateStatusAjax(Request $request)
+    {
+        $id = $request->input('id');
+        $field = $request->input('field');
+        $value = $request->input('value');
+        
+        if ($field === 'is_active') {
+            ShippingRateModel::where('id', $id)->update([$field => $value]);
+            return $this->json(['success' => true, 'message' => 'Cập nhật trạng thái biểu phí thành công!']);
+        }
+        return $this->json(['success' => false, 'message' => 'Trường không hợp lệ!']);
     }
 }

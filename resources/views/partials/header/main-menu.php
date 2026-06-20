@@ -28,7 +28,7 @@ if ($menu_id > 0) {
     </li>
     <?php foreach ($main_menu_items as $item): ?>
         <?php
-        $children = \MenuItemModel::where('parent_id', $item->id)
+        $children = \App\Models\MenuModel::where('parent_id', $item->id)
             ->orderBy('sort_order', 'ASC')
             ->get();
         ?>

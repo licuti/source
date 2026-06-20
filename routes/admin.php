@@ -164,8 +164,13 @@ $router->group('/admin', function($r) {
     $r->get('/maintenance', [\App\Controllers\Admin\MaintenanceController::class, 'index'])->name('admin.maintenance.index');
     $r->post('/maintenance/save', [\App\Controllers\Admin\MaintenanceController::class, 'save'])->name('admin.maintenance.save');
 
-    $r->get('/payment', [\App\Controllers\Admin\PaymentSettingController::class, 'index'])->name('admin.payment.index');
-    $r->post('/payment/save', [\App\Controllers\Admin\PaymentSettingController::class, 'save'])->name('admin.payment.save');
+    $r->get('/payment', [\App\Controllers\Admin\PaymentController::class, 'index'])->name('admin.payment.index');
+    $r->get('/payment/create', [\App\Controllers\Admin\PaymentController::class, 'create'])->name('admin.payment.create');
+    $r->post('/payment/store', [\App\Controllers\Admin\PaymentController::class, 'store'])->name('admin.payment.store');
+    $r->get('/payment/edit/{id}', [\App\Controllers\Admin\PaymentController::class, 'edit'])->name('admin.payment.edit');
+    $r->post('/payment/update/{id}', [\App\Controllers\Admin\PaymentController::class, 'update'])->name('admin.payment.update');
+    $r->post('/payment/destroy', [\App\Controllers\Admin\PaymentController::class, 'destroy'])->name('admin.payment.destroy');
+    $r->post('/payment/update-status-ajax', [\App\Controllers\Admin\PaymentController::class, 'updateStatusAjax'])->name('admin.payment.updateStatusAjax');
 
     // Shipping Configuration Routes
     $r->get('/shipping', [\App\Controllers\Admin\ShippingController::class, 'index'])->name('admin.shipping.index');
@@ -174,6 +179,7 @@ $router->group('/admin', function($r) {
     $r->get('/shipping/edit/{id}', [\App\Controllers\Admin\ShippingController::class, 'editMethod'])->name('admin.shipping.edit_method');
     $r->post('/shipping/update/{id}', [\App\Controllers\Admin\ShippingController::class, 'updateMethod'])->name('admin.shipping.update_method');
     $r->post('/shipping/delete', [\App\Controllers\Admin\ShippingController::class, 'destroyMethod'])->name('admin.shipping.destroy_method');
+    $r->post('/shipping/update-status-ajax', [\App\Controllers\Admin\ShippingController::class, 'updateStatusAjax'])->name('admin.shipping.updateStatusAjax');
     
     $r->get('/shipping/{methodId}/rates', [\App\Controllers\Admin\ShippingController::class, 'rates'])->name('admin.shipping.rates');
     $r->get('/shipping/{methodId}/rates/create', [\App\Controllers\Admin\ShippingController::class, 'createRate'])->name('admin.shipping.create_rate');
@@ -181,4 +187,5 @@ $router->group('/admin', function($r) {
     $r->get('/shipping/{methodId}/rates/edit/{rateId}', [\App\Controllers\Admin\ShippingController::class, 'editRate'])->name('admin.shipping.edit_rate');
     $r->post('/shipping/{methodId}/rates/update/{rateId}', [\App\Controllers\Admin\ShippingController::class, 'updateRate'])->name('admin.shipping.update_rate');
     $r->post('/shipping/rates/delete', [\App\Controllers\Admin\ShippingController::class, 'destroyRate'])->name('admin.shipping.destroy_rate');
+    $r->post('/shipping/rates/update-status-ajax', [\App\Controllers\Admin\ShippingController::class, 'updateRateStatusAjax'])->name('admin.shipping.updateRateStatusAjax');
 });

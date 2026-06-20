@@ -44,7 +44,7 @@ $title = $isEdit ? 'Chỉnh sửa Cước Vận Chuyển' : 'Thêm Cước Vận
                                     <select name="province_code" id="province_code" class="form-select select2">
                                         <option value="">-- Áp dụng Toàn quốc --</option>
                                         <?php foreach ($provinces as $prov): ?>
-                                            <option value="<?= $prov['code'] ?>" <?= ($isEdit && $item->province_code === $prov['code']) ? 'selected' : '' ?>><?= $prov['ten'] ?></option>
+                                            <option value="<?= $prov->code ?>" <?= ($isEdit && $item->province_code === $prov->code) ? 'selected' : '' ?>><?= htmlspecialchars($prov->ten) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -57,7 +57,7 @@ $title = $isEdit ? 'Chỉnh sửa Cước Vận Chuyển' : 'Thêm Cước Vận
                                         <option value="">-- Áp dụng Toàn Tỉnh --</option>
                                         <?php if ($isEdit && !empty($districts)): ?>
                                             <?php foreach ($districts as $dist): ?>
-                                                <option value="<?= $dist['code'] ?>" <?= ($item->district_code === $dist['code']) ? 'selected' : '' ?>><?= $dist['ten'] ?></option>
+                                                <option value="<?= $dist->code ?>" <?= ($item->district_code === $dist->code) ? 'selected' : '' ?>><?= htmlspecialchars($dist->ten) ?></option>
                                             <?php endforeach; ?>
                                         <?php endif; ?>
                                     </select>
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
         $('#ward_code').html('<option value="">-- Áp dụng Toàn Quận --</option>');
         
         if (provinceCode) {
-            $.post('/location/district', { code_tinh: provinceCode, _token: '<?= csrf_token() ?>' }, function(res) {
+            $.post('/ajax/location/district', { code_tinh: provinceCode, _token: '<?= csrf_token() ?>' }, function(res) {
                 districtSelect.html(res);
             });
         }
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
         wardSelect.html('<option value="">-- Áp dụng Toàn Quận --</option>');
         
         if (districtCode) {
-            $.post('/location/ward', { code_huyen: districtCode, _token: '<?= csrf_token() ?>' }, function(res) {
+            $.post('/ajax/location/ward', { code_huyen: districtCode, _token: '<?= csrf_token() ?>' }, function(res) {
                 wardSelect.html(res);
             });
         }

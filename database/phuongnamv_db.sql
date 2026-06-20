@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 19, 2026 at 10:36 AM
--- Server version: 5.7.44
+-- Generation Time: Jun 20, 2026 at 12:29 AM
+-- Server version: 8.0.30
 -- PHP Version: 7.4.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -28,14 +28,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `cf_code` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` varchar(255) NOT NULL,
   `hinh_anh` varchar(255) DEFAULT NULL,
-  `id_loai` int(11) NOT NULL,
-  `module` int(11) NOT NULL,
-  `so_thu_tu` int(11) NOT NULL,
-  `hien_thi` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `id_loai` int NOT NULL,
+  `module` int NOT NULL,
+  `so_thu_tu` int NOT NULL,
+  `hien_thi` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `cf_code`
@@ -70,10 +70,10 @@ INSERT INTO `cf_code` (`id`, `ten`, `hinh_anh`, `id_loai`, `module`, `so_thu_tu`
 --
 
 CREATE TABLE `cf_parent` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` text NOT NULL,
-  `type` int(11) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `type` int NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `cf_parent`
@@ -165,7 +165,7 @@ INSERT INTO `cf_parent` (`id`, `ten`, `type`) VALUES
 --
 
 CREATE TABLE `db_album` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` varchar(255) NOT NULL,
   `alias` varchar(255) NOT NULL,
   `hinh_anh` varchar(255) NOT NULL,
@@ -173,15 +173,15 @@ CREATE TABLE `db_album` (
   `title` varchar(255) NOT NULL,
   `keyword` text NOT NULL,
   `des` text NOT NULL,
-  `ngay_dang` int(11) NOT NULL,
-  `tieu_bieu` int(11) NOT NULL DEFAULT '0',
-  `cap_nhat` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `id_loai` int(11) NOT NULL,
-  `so_thu_tu` int(11) NOT NULL,
-  `hien_thi` tinyint(4) NOT NULL,
+  `ngay_dang` int NOT NULL,
+  `tieu_bieu` int NOT NULL DEFAULT '0',
+  `cap_nhat` int NOT NULL,
+  `id_code` int NOT NULL,
+  `id_loai` int NOT NULL,
+  `so_thu_tu` int NOT NULL,
+  `hien_thi` tinyint NOT NULL,
   `lang` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -190,12 +190,12 @@ CREATE TABLE `db_album` (
 --
 
 CREATE TABLE `db_album_hinhanh` (
-  `id` int(11) NOT NULL,
-  `id_album` int(11) NOT NULL,
-  `id_loai` int(11) DEFAULT NULL,
+  `id` int NOT NULL,
+  `id_album` int NOT NULL,
+  `id_loai` int DEFAULT NULL,
   `hinh_anh` varchar(255) NOT NULL,
-  `stt` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `stt` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_album_hinhanh`
@@ -212,15 +212,15 @@ INSERT INTO `db_album_hinhanh` (`id`, `id_album`, `id_loai`, `hinh_anh`, `stt`) 
 --
 
 CREATE TABLE `db_attributes` (
-  `id` int(11) NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sort_by` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `product_id` int(11) DEFAULT '0'
+  `id` int NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sort_by` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id_code` int NOT NULL,
+  `lang` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `product_id` int DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -244,15 +244,15 @@ INSERT INTO `db_attributes` (`id`, `title`, `slug`, `description`, `type`, `sort
 --
 
 CREATE TABLE `db_attribute_values` (
-  `id` int(11) NOT NULL,
-  `attribute_id` int(11) NOT NULL,
-  `value` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mo_ta` text COLLATE utf8mb4_unicode_ci,
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `product_id` int(11) DEFAULT '0'
+  `id` int NOT NULL,
+  `attribute_id` int NOT NULL,
+  `value` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mo_ta` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `id_code` int NOT NULL,
+  `lang` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `product_id` int DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -292,20 +292,20 @@ INSERT INTO `db_attribute_values` (`id`, `attribute_id`, `value`, `title`, `slug
 --
 
 CREATE TABLE `db_binhluan` (
-  `id` int(11) NOT NULL,
-  `id_sanpham` int(11) NOT NULL DEFAULT '0',
-  `id_tin` int(11) DEFAULT NULL,
-  `id_user` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL,
+  `id_sanpham` int NOT NULL DEFAULT '0',
+  `id_tin` int DEFAULT NULL,
+  `id_user` int NOT NULL DEFAULT '0',
   `ho_ten` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `dien_thoai` varchar(255) DEFAULT NULL,
   `tieu_de` text,
   `noi_dung` text,
-  `danh_gia` int(11) NOT NULL DEFAULT '0',
-  `parent` int(11) DEFAULT '0',
+  `danh_gia` int NOT NULL DEFAULT '0',
+  `parent` int DEFAULT '0',
   `ngay` datetime NOT NULL,
-  `trang_thai` int(11) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `trang_thai` int NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_binhluan`
@@ -327,10 +327,10 @@ INSERT INTO `db_binhluan` (`id`, `id_sanpham`, `id_tin`, `id_user`, `ho_ten`, `e
 --
 
 CREATE TABLE `db_binhluan_media` (
-  `id` int(11) NOT NULL,
-  `id_binhluan` int(11) NOT NULL DEFAULT '0',
-  `loai` enum('image','video') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'image',
-  `ten_file` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int NOT NULL,
+  `id_binhluan` int NOT NULL DEFAULT '0',
+  `loai` enum('image','video') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'image',
+  `ten_file` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ngay` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -351,15 +351,15 @@ INSERT INTO `db_binhluan_media` (`id`, `id_binhluan`, `loai`, `ten_file`, `ngay`
 --
 
 CREATE TABLE `db_blocks` (
-  `id` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `alias` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int NOT NULL,
+  `id_code` int NOT NULL,
+  `lang` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `schema_config` json DEFAULT NULL,
-  `sort_order` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
@@ -380,12 +380,12 @@ INSERT INTO `db_blocks` (`id`, `id_code`, `lang`, `name`, `alias`, `description`
 --
 
 CREATE TABLE `db_block_items` (
-  `id` int(11) NOT NULL,
-  `block_id` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int NOT NULL,
+  `block_id` int NOT NULL,
+  `id_code` int NOT NULL,
+  `lang` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `data_payload` json DEFAULT NULL,
-  `sort_order` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
@@ -408,15 +408,15 @@ INSERT INTO `db_block_items` (`id`, `block_id`, `id_code`, `lang`, `data_payload
 --
 
 CREATE TABLE `db_button_contact` (
-  `id` int(11) NOT NULL,
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `link` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `target` char(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `color_background` char(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `color_background_alpha` char(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `color_text` char(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sort` int(11) NOT NULL DEFAULT '0'
+  `id` int NOT NULL,
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `link` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `target` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `color_background` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `color_background_alpha` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `color_text` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sort` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -435,22 +435,22 @@ INSERT INTO `db_button_contact` (`id`, `image`, `name`, `link`, `target`, `color
 --
 
 CREATE TABLE `db_categories` (
-  `id` int(11) NOT NULL,
-  `parent_id` int(11) NOT NULL DEFAULT '0',
-  `id_code` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL,
+  `parent_id` int NOT NULL DEFAULT '0',
+  `id_code` int NOT NULL DEFAULT '0',
   `slug` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `description` text,
   `content` text,
   `image` varchar(255) DEFAULT NULL,
   `banner` varchar(255) DEFAULT NULL,
-  `sort_order` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
   `is_active` tinyint(1) NOT NULL DEFAULT '0',
   `is_featured` tinyint(1) DEFAULT '0',
-  `module` int(11) NOT NULL DEFAULT '0',
+  `module` int NOT NULL DEFAULT '0',
   `lang` varchar(5) DEFAULT NULL,
-  `nofollow` int(11) NOT NULL DEFAULT '0',
-  `noindex` int(11) NOT NULL DEFAULT '0',
+  `nofollow` int NOT NULL DEFAULT '0',
+  `noindex` int NOT NULL DEFAULT '0',
   `seo_title` varchar(255) DEFAULT NULL,
   `keyword` varchar(255) DEFAULT NULL,
   `seo_description` text,
@@ -458,7 +458,7 @@ CREATE TABLE `db_categories` (
   `seo_body` text,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_categories`
@@ -505,15 +505,15 @@ INSERT INTO `db_categories` (`id`, `parent_id`, `id_code`, `slug`, `title`, `des
 --
 
 CREATE TABLE `db_checkout_sessions` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `session_code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_id` int(10) UNSIGNED DEFAULT '0',
-  `customer_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `customer_phone` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `customer_email` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `shipping_address` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `session_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `user_id` int UNSIGNED DEFAULT '0',
+  `customer_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `customer_phone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `customer_email` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `shipping_address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `total_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
-  `payment_method` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payment_method` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `payment_status` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -526,7 +526,7 @@ CREATE TABLE `db_checkout_sessions` (
 --
 
 CREATE TABLE `db_coupon` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ho_ten` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `sdt` varchar(20) DEFAULT NULL,
@@ -536,10 +536,10 @@ CREATE TABLE `db_coupon` (
   `noi_dung` text,
   `ngay_hoi` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `tra_loi` text,
-  `ngay_traloi` int(11) NOT NULL,
+  `ngay_traloi` int NOT NULL,
   `nguoi_traloi` varchar(255) DEFAULT NULL,
   `trang_thai` tinyint(1) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -548,9 +548,9 @@ CREATE TABLE `db_coupon` (
 --
 
 CREATE TABLE `db_dathang_backup` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ma_dh` varchar(100) NOT NULL,
-  `id_thanhvien` int(11) NOT NULL DEFAULT '0',
+  `id_thanhvien` int NOT NULL DEFAULT '0',
   `ho_ten` varchar(100) NOT NULL,
   `dien_thoai` varchar(50) NOT NULL,
   `email` varchar(200) NOT NULL,
@@ -561,17 +561,17 @@ CREATE TABLE `db_dathang_backup` (
   `dia_chi` text NOT NULL,
   `loi_nhan` text NOT NULL,
   `thanh_toan` text NOT NULL,
-  `phi_vanchuyen` int(11) DEFAULT '0',
+  `phi_vanchuyen` int DEFAULT '0',
   `ma_giamgia` varchar(100) DEFAULT NULL,
-  `so_tien_giam` int(11) NOT NULL DEFAULT '0',
+  `so_tien_giam` int NOT NULL DEFAULT '0',
   `vat_amount` double DEFAULT '0',
   `ngay_dathang` date NOT NULL,
-  `tinhtrang_donhang` int(11) NOT NULL COMMENT '0: chưa xác thực, 1: đã xác thực',
-  `trangthai_xuly` int(11) NOT NULL DEFAULT '0' COMMENT '0:chưa xem, 1:đang xử lý, 2: đang giao, 3 đã giao, 4: trả hàng',
-  `trangthai_thanhtoan` int(11) DEFAULT '0',
+  `tinhtrang_donhang` int NOT NULL COMMENT '0: chưa xác thực, 1: đã xác thực',
+  `trangthai_xuly` int NOT NULL DEFAULT '0' COMMENT '0:chưa xem, 1:đang xử lý, 2: đang giao, 3 đã giao, 4: trả hàng',
+  `trangthai_thanhtoan` int DEFAULT '0',
   `ngay_capnhat` date DEFAULT NULL,
   `ngay_thanhtoan` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_dathang_backup`
@@ -588,19 +588,19 @@ INSERT INTO `db_dathang_backup` (`id`, `ma_dh`, `id_thanhvien`, `ho_ten`, `dien_
 --
 
 CREATE TABLE `db_dathang_chitiet_backup` (
-  `id` int(11) NOT NULL,
-  `id_ctv` int(11) DEFAULT NULL,
-  `id_dh` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL,
+  `id_ctv` int DEFAULT NULL,
+  `id_dh` int NOT NULL DEFAULT '0',
   `ma_dh` varchar(100) DEFAULT NULL,
   `ten_sp` text,
   `thuoc_tinh` text,
   `ghi_chu` text,
-  `gia_goc` int(11) NOT NULL DEFAULT '0',
-  `gia_ban` int(11) NOT NULL DEFAULT '0',
-  `so_luong` int(11) NOT NULL DEFAULT '0',
-  `id_sp` int(11) NOT NULL DEFAULT '0',
+  `gia_goc` int NOT NULL DEFAULT '0',
+  `gia_ban` int NOT NULL DEFAULT '0',
+  `so_luong` int NOT NULL DEFAULT '0',
+  `id_sp` int NOT NULL DEFAULT '0',
   `hinh_sp` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_dathang_chitiet_backup`
@@ -620,13 +620,13 @@ INSERT INTO `db_dathang_chitiet_backup` (`id`, `id_ctv`, `id_dh`, `ma_dh`, `ten_
 --
 
 CREATE TABLE `db_dathang_xuly` (
-  `id` int(11) NOT NULL,
-  `id_dh` int(11) NOT NULL,
-  `trang_thai_xuly` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `id_dh` int NOT NULL,
+  `trang_thai_xuly` int NOT NULL,
   `ghi_chu` text NOT NULL,
   `ngay_xuly` datetime NOT NULL,
   `nguoi_xuly` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_dathang_xuly`
@@ -652,17 +652,17 @@ INSERT INTO `db_dathang_xuly` (`id`, `id_dh`, `trang_thai_xuly`, `ghi_chu`, `nga
 --
 
 CREATE TABLE `db_diachi` (
-  `id` int(11) NOT NULL,
-  `id_thanhvien` int(11) NOT NULL,
-  `mo_ta` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ho_ten` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `dien_thoai` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `dia_chi` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code_xa` varchar(11) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code_huyen` varchar(11) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code_tinh` varchar(11) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `trang_thai` int(11) NOT NULL
+  `id` int NOT NULL,
+  `id_thanhvien` int NOT NULL,
+  `mo_ta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ho_ten` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dien_thoai` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dia_chi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_xa` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_huyen` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_tinh` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `trang_thai` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -681,20 +681,20 @@ INSERT INTO `db_diachi` (`id`, `id_thanhvien`, `mo_ta`, `ho_ten`, `dien_thoai`, 
 --
 
 CREATE TABLE `db_files` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` text NOT NULL,
   `alais` varchar(255) NOT NULL,
-  `id_loai` int(11) NOT NULL,
+  `id_loai` int NOT NULL,
   `file` text NOT NULL,
   `mo_ta` text NOT NULL,
   `loai_file` varchar(50) NOT NULL,
-  `ngay_dang` int(11) NOT NULL,
+  `ngay_dang` int NOT NULL,
   `link_khac` text NOT NULL,
-  `hien_thi` tinyint(4) NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `so_thu_tu` int(11) NOT NULL,
+  `hien_thi` tinyint NOT NULL,
+  `id_code` int NOT NULL,
+  `so_thu_tu` int NOT NULL,
   `lang` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -703,19 +703,19 @@ CREATE TABLE `db_files` (
 --
 
 CREATE TABLE `db_filter` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` varchar(255) NOT NULL,
   `alias` varchar(500) NOT NULL,
   `link` text NOT NULL,
-  `nofollow` int(11) NOT NULL DEFAULT '0',
-  `target` int(11) NOT NULL DEFAULT '0',
+  `nofollow` int NOT NULL DEFAULT '0',
+  `target` int NOT NULL DEFAULT '0',
   `heading` varchar(10) DEFAULT 'div',
   `noi_dung` text NOT NULL,
   `hinh_anh` varchar(255) NOT NULL,
-  `hien_thi` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
+  `hien_thi` int NOT NULL,
+  `id_code` int NOT NULL,
   `lang` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -724,23 +724,23 @@ CREATE TABLE `db_filter` (
 --
 
 CREATE TABLE `db_filter_content` (
-  `id` int(11) NOT NULL,
-  `id_loai` int(11) NOT NULL,
-  `hinh_anh` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `so_thu_tu` int(11) NOT NULL,
-  `hien_thi` int(11) NOT NULL,
-  `ten` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `s_price` int(11) NOT NULL,
-  `e_price` int(11) NOT NULL,
-  `link` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `nofollow` int(11) NOT NULL DEFAULT '0',
-  `target` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL,
+  `id_loai` int NOT NULL,
+  `hinh_anh` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `so_thu_tu` int NOT NULL,
+  `hien_thi` int NOT NULL,
+  `ten` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `s_price` int NOT NULL,
+  `e_price` int NOT NULL,
+  `link` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `nofollow` int NOT NULL DEFAULT '0',
+  `target` int NOT NULL DEFAULT '0',
   `heading` varchar(10) NOT NULL DEFAULT 'div',
-  `noi_dung` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `noi_dung` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `video` varchar(200) DEFAULT NULL,
-  `ma_video` varchar(100) CHARACTER SET utf8 NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(10) CHARACTER SET utf8 NOT NULL
+  `ma_video` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `id_code` int NOT NULL,
+  `lang` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -750,11 +750,11 @@ CREATE TABLE `db_filter_content` (
 --
 
 CREATE TABLE `db_flash_sale` (
-  `id` int(11) NOT NULL,
-  `ten` text COLLATE utf8mb4_unicode_ci,
-  `tu_ngay` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `den_ngay` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `hien_thi` int(11) NOT NULL DEFAULT '0'
+  `id` int NOT NULL,
+  `ten` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `tu_ngay` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `den_ngay` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `hien_thi` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -771,11 +771,11 @@ INSERT INTO `db_flash_sale` (`id`, `ten`, `tu_ngay`, `den_ngay`, `hien_thi`) VAL
 --
 
 CREATE TABLE `db_huyen` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `code_tinh` varchar(255) NOT NULL,
   `code` varchar(255) NOT NULL,
   `ten` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_huyen`
@@ -1518,18 +1518,18 @@ INSERT INTO `db_huyen` (`id`, `code_tinh`, `code`, `ten`) VALUES
 --
 
 CREATE TABLE `db_khuyenmai` (
-  `id` int(11) NOT NULL,
-  `ten` text COLLATE utf8mb4_unicode_ci,
-  `ma` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `gia_tri` int(11) NOT NULL,
-  `don_vi` int(11) NOT NULL COMMENT '0: số tiền, 1: phần trăm',
-  `loai` int(11) NOT NULL COMMENT '0: giảm trên tổng giá trị, 1 giảm trên phí ship',
-  `dieu_kien` int(11) NOT NULL COMMENT '0: ko kèm đk,  >0 Giá trị đơn hàng áp dụng',
+  `id` int NOT NULL,
+  `ten` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `ma` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `gia_tri` int NOT NULL,
+  `don_vi` int NOT NULL COMMENT '0: số tiền, 1: phần trăm',
+  `loai` int NOT NULL COMMENT '0: giảm trên tổng giá trị, 1 giảm trên phí ship',
+  `dieu_kien` int NOT NULL COMMENT '0: ko kèm đk,  >0 Giá trị đơn hàng áp dụng',
   `tu_ngay` date NOT NULL,
   `den_ngay` date NOT NULL,
-  `id_thanhvien` text COLLATE utf8mb4_unicode_ci,
-  `gioi_han` int(11) NOT NULL COMMENT '0: ko giới hạn. >0 số lượt áp dụng',
-  `gia_tri_max` int(11) DEFAULT '0'
+  `id_thanhvien` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `gioi_han` int NOT NULL COMMENT '0: ko giới hạn. >0 số lượt áp dụng',
+  `gia_tri_max` int DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -1555,13 +1555,13 @@ INSERT INTO `db_khuyenmai` (`id`, `ten`, `ma`, `gia_tri`, `don_vi`, `loai`, `die
 --
 
 CREATE TABLE `db_khuyenmai_ls` (
-  `id` int(11) NOT NULL,
-  `ma_km` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `id_thanhvien` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `ma_km` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id_thanhvien` int NOT NULL,
   `ngay_dung` date NOT NULL,
-  `id_donhang` int(11) DEFAULT '0',
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
-  `dien_thoai` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT ''
+  `id_donhang` int DEFAULT '0',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `dien_thoai` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -1578,7 +1578,7 @@ INSERT INTO `db_khuyenmai_ls` (`id`, `ma_km`, `id_thanhvien`, `ngay_dung`, `id_d
 --
 
 CREATE TABLE `db_lang` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `code` varchar(10) DEFAULT NULL,
   `locale` varchar(20) DEFAULT NULL,
   `name` varchar(100) DEFAULT NULL,
@@ -1589,8 +1589,8 @@ CREATE TABLE `db_lang` (
   `is_default` tinyint(1) DEFAULT '0',
   `is_rtl` tinyint(1) DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
-  `sort_order` int(11) DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `sort_order` int DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_lang`
@@ -1607,7 +1607,7 @@ INSERT INTO `db_lang` (`id`, `code`, `locale`, `name`, `label`, `image`, `price_
 --
 
 CREATE TABLE `db_lienhe` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ho_ten` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `sdt` varchar(20) DEFAULT NULL,
@@ -1617,10 +1617,10 @@ CREATE TABLE `db_lienhe` (
   `noi_dung` text,
   `ngay_hoi` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `tra_loi` text,
-  `ngay_traloi` int(11) NOT NULL,
+  `ngay_traloi` int NOT NULL,
   `nguoi_traloi` varchar(255) DEFAULT NULL,
   `trang_thai` tinyint(1) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -1629,8 +1629,8 @@ CREATE TABLE `db_lienhe` (
 --
 
 CREATE TABLE `db_menus` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `id` int NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -1649,21 +1649,21 @@ INSERT INTO `db_menus` (`id`, `name`) VALUES
 --
 
 CREATE TABLE `db_menu_items` (
-  `id` int(11) NOT NULL,
-  `menu_id` int(11) NOT NULL,
-  `parent_id` int(11) NOT NULL DEFAULT '0',
-  `sort_order` int(11) NOT NULL DEFAULT '0',
-  `label` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `class` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `style` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `block` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `target` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `rel` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `object_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT 'custom',
-  `object_id` int(11) DEFAULT NULL
+  `id` int NOT NULL,
+  `menu_id` int NOT NULL,
+  `parent_id` int NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
+  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `class` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `style` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `block` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `target` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rel` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `object_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'custom',
+  `object_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -1686,10 +1686,10 @@ INSERT INTO `db_menu_items` (`id`, `menu_id`, `parent_id`, `sort_order`, `label`
 --
 
 CREATE TABLE `db_menu_locations` (
-  `location_label` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `location_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `lang` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `menu_id` int(11) DEFAULT NULL
+  `location_label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `location_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lang` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `menu_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -1711,13 +1711,13 @@ INSERT INTO `db_menu_locations` (`location_label`, `location_name`, `lang`, `men
 --
 
 CREATE TABLE `db_module` (
-  `id` int(11) NOT NULL,
-  `stt` int(11) NOT NULL,
-  `hide` int(11) NOT NULL,
-  `title` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `templates` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `id` int NOT NULL,
+  `stt` int NOT NULL,
+  `hide` int NOT NULL,
+  `title` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `templates` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `setting` text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_module`
@@ -1747,18 +1747,18 @@ INSERT INTO `db_module` (`id`, `stt`, `hide`, `title`, `templates`, `setting`) V
 --
 
 CREATE TABLE `db_module_admin` (
-  `id` int(11) NOT NULL,
-  `parent` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `parent` int NOT NULL,
   `name` varchar(255) NOT NULL,
   `icon` varchar(255) DEFAULT NULL,
   `alias` varchar(100) NOT NULL,
   `route_name` varchar(255) DEFAULT NULL,
-  `sort_order` int(11) NOT NULL DEFAULT '0',
-  `is_active` int(11) NOT NULL DEFAULT '1',
-  `permission_level` int(11) NOT NULL DEFAULT '1',
+  `sort_order` int NOT NULL DEFAULT '0',
+  `is_active` int NOT NULL DEFAULT '1',
+  `permission_level` int NOT NULL DEFAULT '1',
   `badge_query` varchar(255) DEFAULT NULL,
   `badge_color` varchar(50) DEFAULT 'danger'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_module_admin`
@@ -1815,7 +1815,7 @@ INSERT INTO `db_module_admin` (`id`, `parent`, `name`, `icon`, `alias`, `route_n
 --
 
 CREATE TABLE `db_newsletter` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ho_ten` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `sdt` varchar(20) DEFAULT NULL,
@@ -1825,10 +1825,10 @@ CREATE TABLE `db_newsletter` (
   `noi_dung` text,
   `ngay_hoi` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `tra_loi` text,
-  `ngay_traloi` int(11) NOT NULL,
+  `ngay_traloi` int NOT NULL,
   `nguoi_traloi` varchar(255) DEFAULT NULL,
   `trang_thai` tinyint(1) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -1837,17 +1837,17 @@ CREATE TABLE `db_newsletter` (
 --
 
 CREATE TABLE `db_orders` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `session_id` bigint(20) UNSIGNED NOT NULL,
-  `shop_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `order_code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `session_id` bigint UNSIGNED NOT NULL,
+  `shop_id` bigint UNSIGNED NOT NULL DEFAULT '0',
+  `order_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `subtotal` decimal(15,2) NOT NULL DEFAULT '0.00',
   `shipping_fee` decimal(15,2) NOT NULL DEFAULT '0.00',
   `discount_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `grand_total` decimal(15,2) NOT NULL DEFAULT '0.00',
   `order_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0: Pending, 1: Processing, 2: Shipping, 3: Delivered, 4: Canceled',
-  `shop_note` text COLLATE utf8mb4_unicode_ci,
-  `customer_note` text COLLATE utf8mb4_unicode_ci,
+  `shop_note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `customer_note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1859,13 +1859,13 @@ CREATE TABLE `db_orders` (
 --
 
 CREATE TABLE `db_order_items` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `order_id` bigint(20) UNSIGNED NOT NULL,
-  `product_id` int(10) UNSIGNED NOT NULL,
-  `variant_id` int(10) UNSIGNED DEFAULT NULL,
-  `product_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `attributes_info` text COLLATE utf8mb4_unicode_ci,
-  `quantity` int(11) NOT NULL DEFAULT '1',
+  `id` bigint UNSIGNED NOT NULL,
+  `order_id` bigint UNSIGNED NOT NULL,
+  `product_id` int UNSIGNED NOT NULL,
+  `variant_id` int UNSIGNED DEFAULT NULL,
+  `product_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `attributes_info` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `quantity` int NOT NULL DEFAULT '1',
   `price` decimal(15,2) NOT NULL DEFAULT '0.00',
   `total` decimal(15,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -1879,22 +1879,51 @@ CREATE TABLE `db_order_items` (
 --
 
 CREATE TABLE `db_page` (
-  `id` int(11) NOT NULL,
-  `id_code` int(11) DEFAULT '0',
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `view` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT 'page',
-  `noi_dung` longtext COLLATE utf8mb4_unicode_ci,
-  `hinh_anh` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `seo_title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `keyword` text COLLATE utf8mb4_unicode_ci,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `so_thu_tu` int(11) DEFAULT '0',
+  `id` int NOT NULL,
+  `id_code` int DEFAULT '0',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `view` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'page',
+  `noi_dung` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `hinh_anh` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `seo_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `keyword` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `so_thu_tu` int DEFAULT '0',
   `hien_thi` tinyint(1) DEFAULT '1',
-  `lang` varchar(2) COLLATE utf8mb4_unicode_ci DEFAULT 'vi',
-  `ngay_dang` int(11) DEFAULT NULL,
-  `cap_nhat` int(11) DEFAULT NULL
+  `lang` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'vi',
+  `ngay_dang` int DEFAULT NULL,
+  `cap_nhat` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `db_payment_methods`
+--
+
+CREATE TABLE `db_payment_methods` (
+  `id` bigint UNSIGNED NOT NULL,
+  `shop_id` bigint UNSIGNED NOT NULL DEFAULT '0',
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `api_config` json DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `sort_order` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `id_code` int NOT NULL DEFAULT '0',
+  `lang` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `db_payment_methods`
+--
+
+INSERT INTO `db_payment_methods` (`id`, `shop_id`, `name`, `code`, `description`, `api_config`, `is_active`, `sort_order`, `created_at`, `updated_at`, `id_code`, `lang`) VALUES
+(1, 0, 'Thanh toán khi nhận hàng', 'thanh-toan-khi-nhan-hang', '', NULL, 1, 0, '2026-06-19 09:14:25', '2026-06-19 17:24:59', 1, 'vi'),
+(2, 0, 'Thanh toán Momo', 'momo', '', '{\"sdfsdfs4$%^$%@#%%$\": \"34536363756464645645645\"}', 1, 0, '2026-06-19 10:20:26', '2026-06-19 17:24:59', 2, 'vi');
 
 -- --------------------------------------------------------
 
@@ -1903,9 +1932,9 @@ CREATE TABLE `db_page` (
 --
 
 CREATE TABLE `db_permission_action` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `name` varchar(20) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_permission_action`
@@ -1923,8 +1952,8 @@ INSERT INTO `db_permission_action` (`id`, `name`) VALUES
 --
 
 CREATE TABLE `db_posts` (
-  `id` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `id_code` int NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `slug` varchar(255) DEFAULT NULL,
   `description` text,
@@ -1936,19 +1965,19 @@ CREATE TABLE `db_posts` (
   `keyword` varchar(255) NOT NULL,
   `tags` varchar(255) NOT NULL,
   `seo_description` text,
-  `category_id` int(11) NOT NULL DEFAULT '0',
-  `sort_order` int(11) NOT NULL DEFAULT '0',
-  `nofollow` int(11) NOT NULL DEFAULT '0',
-  `noindex` int(11) NOT NULL DEFAULT '0',
+  `category_id` int NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
+  `nofollow` int NOT NULL DEFAULT '0',
+  `noindex` int NOT NULL DEFAULT '0',
   `seo_head` text,
   `seo_body` text,
-  `created_by` int(11) NOT NULL DEFAULT '0',
-  `views` int(11) NOT NULL DEFAULT '0',
+  `created_by` int NOT NULL DEFAULT '0',
+  `views` int NOT NULL DEFAULT '0',
   `lang` varchar(10) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `updated_by` int(11) DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `updated_by` int DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_posts`
@@ -1987,12 +2016,12 @@ INSERT INTO `db_posts` (`id`, `id_code`, `title`, `slug`, `description`, `conten
 --
 
 CREATE TABLE `db_products` (
-  `id` int(11) NOT NULL,
-  `shop_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `category_id` int(11) NOT NULL DEFAULT '0',
-  `brand_id` int(11) DEFAULT '0',
+  `id` int NOT NULL,
+  `shop_id` bigint UNSIGNED NOT NULL DEFAULT '0',
+  `category_id` int NOT NULL DEFAULT '0',
+  `brand_id` int DEFAULT '0',
   `product_type` varchar(50) DEFAULT 'simple',
-  `id_code` int(11) NOT NULL,
+  `id_code` int NOT NULL,
   `slug` varchar(255) NOT NULL,
   `sku` varchar(255) NOT NULL,
   `barcode` varchar(255) DEFAULT NULL,
@@ -2000,35 +2029,35 @@ CREATE TABLE `db_products` (
   `description` text NOT NULL,
   `thumbnail` varchar(255) DEFAULT NULL,
   `gallery` text,
-  `price` int(11) NOT NULL DEFAULT '0',
-  `promotional_price` int(11) NOT NULL DEFAULT '0',
-  `cost_price` int(11) DEFAULT '0',
+  `price` int NOT NULL DEFAULT '0',
+  `promotional_price` int NOT NULL DEFAULT '0',
+  `cost_price` int DEFAULT '0',
   `content` text NOT NULL,
   `specifications` text,
   `unit` varchar(225) DEFAULT NULL,
   `is_featured` tinyint(1) NOT NULL DEFAULT '0',
   `is_new` tinyint(1) NOT NULL DEFAULT '0',
-  `is_hot` tinyint(4) NOT NULL DEFAULT '0',
-  `is_sale` tinyint(4) NOT NULL DEFAULT '0',
-  `sp_top` tinyint(4) NOT NULL DEFAULT '0',
+  `is_hot` tinyint NOT NULL DEFAULT '0',
+  `is_sale` tinyint NOT NULL DEFAULT '0',
+  `sp_top` tinyint NOT NULL DEFAULT '0',
   `seo_title` varchar(255) NOT NULL,
   `seo_keyword` varchar(255) DEFAULT NULL,
   `seo_description` varchar(255) DEFAULT NULL,
-  `view` int(11) NOT NULL DEFAULT '0',
+  `view` int NOT NULL DEFAULT '0',
   `status` tinyint(1) NOT NULL DEFAULT '1',
-  `nofollow` int(11) NOT NULL DEFAULT '0',
-  `noindex` int(11) NOT NULL DEFAULT '0',
+  `nofollow` int NOT NULL DEFAULT '0',
+  `noindex` int NOT NULL DEFAULT '0',
   `seo_head` text,
   `seo_body` text,
   `lang` varchar(10) NOT NULL,
-  `flash_sale` int(11) NOT NULL DEFAULT '0',
+  `flash_sale` int NOT NULL DEFAULT '0',
   `flash_sale_start` datetime DEFAULT NULL,
   `flash_sale_end` datetime DEFAULT NULL,
-  `gia_flash_sale` int(11) DEFAULT '0',
-  `sold_count` int(11) DEFAULT '0',
-  `stock_quantity` int(11) DEFAULT '0',
+  `gia_flash_sale` int DEFAULT '0',
+  `sold_count` int DEFAULT '0',
+  `stock_quantity` int DEFAULT '0',
   `stock_status` varchar(50) DEFAULT 'in_stock',
-  `low_stock_amount` int(11) DEFAULT '5',
+  `low_stock_amount` int DEFAULT '5',
   `product_attributes` text,
   `weight` decimal(10,2) DEFAULT '0.00',
   `length` decimal(10,2) DEFAULT '0.00',
@@ -2036,7 +2065,7 @@ CREATE TABLE `db_products` (
   `height` decimal(10,2) DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_products`
@@ -2055,18 +2084,18 @@ INSERT INTO `db_products` (`id`, `shop_id`, `category_id`, `brand_id`, `product_
 --
 
 CREATE TABLE `db_product_variants` (
-  `id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL,
+  `product_id` int NOT NULL DEFAULT '0',
   `sku` varchar(100) NOT NULL,
   `barcode` varchar(255) DEFAULT NULL,
-  `price` int(11) NOT NULL DEFAULT '0',
-  `promotional_price` int(11) NOT NULL DEFAULT '0',
-  `gia_flash_sale` int(11) DEFAULT '0',
-  `stock_quantity` int(11) NOT NULL DEFAULT '0',
+  `price` int NOT NULL DEFAULT '0',
+  `promotional_price` int NOT NULL DEFAULT '0',
+  `gia_flash_sale` int DEFAULT '0',
+  `stock_quantity` int NOT NULL DEFAULT '0',
   `image` varchar(255) DEFAULT NULL,
   `status` tinyint(1) DEFAULT '1',
   `weight` double DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_product_variants`
@@ -2089,10 +2118,10 @@ INSERT INTO `db_product_variants` (`id`, `product_id`, `sku`, `barcode`, `price`
 --
 
 CREATE TABLE `db_product_variant_attributes` (
-  `id` int(11) NOT NULL,
-  `variant_id` int(11) NOT NULL,
-  `attribute_id` int(11) NOT NULL,
-  `attribute_value_id` int(11) NOT NULL
+  `id` int NOT NULL,
+  `variant_id` int NOT NULL,
+  `attribute_id` int NOT NULL,
+  `attribute_value_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -2122,14 +2151,14 @@ INSERT INTO `db_product_variant_attributes` (`id`, `variant_id`, `attribute_id`,
 --
 
 CREATE TABLE `db_roles` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `is_system` tinyint(1) DEFAULT '0',
-  `created_at` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `created_at` int DEFAULT NULL,
+  `updated_at` int DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_roles`
@@ -2147,9 +2176,9 @@ INSERT INTO `db_roles` (`id`, `name`, `description`, `is_active`, `is_system`, `
 --
 
 CREATE TABLE `db_role_permissions` (
-  `id` int(11) NOT NULL,
-  `role_id` int(11) NOT NULL,
-  `module_id` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `role_id` int NOT NULL,
+  `module_id` int NOT NULL,
   `can_view` tinyint(1) DEFAULT '0',
   `can_add` tinyint(1) DEFAULT '0',
   `can_edit` tinyint(1) DEFAULT '0',
@@ -2170,14 +2199,14 @@ INSERT INTO `db_role_permissions` (`id`, `role_id`, `module_id`, `can_view`, `ca
 --
 
 CREATE TABLE `db_sanpham_ctv` (
-  `id` int(11) NOT NULL,
-  `id_sp` int(11) NOT NULL DEFAULT '0',
-  `id_thanhvien` int(11) NOT NULL DEFAULT '0',
-  `gia_goc` int(11) NOT NULL,
-  `gia` int(11) NOT NULL DEFAULT '0',
-  `khuyen_mai` int(11) NOT NULL DEFAULT '0',
-  `token` text COLLATE utf8mb4_unicode_ci,
-  `hien_thi` int(11) NOT NULL DEFAULT '1'
+  `id` int NOT NULL,
+  `id_sp` int NOT NULL DEFAULT '0',
+  `id_thanhvien` int NOT NULL DEFAULT '0',
+  `gia_goc` int NOT NULL,
+  `gia` int NOT NULL DEFAULT '0',
+  `khuyen_mai` int NOT NULL DEFAULT '0',
+  `token` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `hien_thi` int NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -2187,10 +2216,10 @@ CREATE TABLE `db_sanpham_ctv` (
 --
 
 CREATE TABLE `db_seo` (
-  `id` int(11) NOT NULL,
-  `title` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `keyword` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `des` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `id` int NOT NULL,
+  `title` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `keyword` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `des` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `lang` varchar(10) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -2209,11 +2238,11 @@ INSERT INTO `db_seo` (`id`, `title`, `keyword`, `des`, `lang`) VALUES
 --
 
 CREATE TABLE `db_settings` (
-  `id` int(11) NOT NULL,
-  `lang` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `company_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
-  `logo_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
-  `favicon_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `id` int NOT NULL,
+  `lang` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `company_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `logo_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `favicon_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
   `schema_config` json DEFAULT NULL,
   `data_payload` json DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -2235,14 +2264,14 @@ INSERT INTO `db_settings` (`id`, `lang`, `company_name`, `logo_image`, `favicon_
 --
 
 CREATE TABLE `db_shipping_methods` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `shop_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '0 = Sàn, > 0 = Gian hàng',
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Tên hiển thị (Giao chuẩn, Hỏa tốc, GHN, DHL)',
-  `carrier_code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Mã hãng (custom, ghn, ghtk, dhl)',
+  `id` bigint UNSIGNED NOT NULL,
+  `shop_id` bigint UNSIGNED NOT NULL DEFAULT '0' COMMENT '0 = Sàn, > 0 = Gian hàng',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Tên hiển thị (Giao chuẩn, Hỏa tốc, GHN, DHL)',
+  `carrier_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Mã hãng (custom, ghn, ghtk, dhl)',
   `is_api` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0: Phí thủ công theo bảng Rates, 1: Phí động gọi từ API của Hãng',
   `api_config` json DEFAULT NULL COMMENT 'Cấu hình Token, API Key của hãng',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `sort_order` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -2261,21 +2290,30 @@ INSERT INTO `db_shipping_methods` (`id`, `shop_id`, `name`, `carrier_code`, `is_
 --
 
 CREATE TABLE `db_shipping_rates` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `shipping_method_id` bigint(20) UNSIGNED NOT NULL COMMENT 'Liên kết với bảng methods ở trên',
-  `country_code` char(2) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'VN' COMMENT 'Mã quốc gia chuẩn ISO (VN, US, JP...). Dùng * cho Toàn cầu',
-  `province_code` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mã tỉnh/bang',
-  `district_code` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mã quận/huyện',
-  `ward_code` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mã phường/xã',
+  `id` bigint UNSIGNED NOT NULL,
+  `shipping_method_id` bigint UNSIGNED NOT NULL COMMENT 'Liên kết với bảng methods ở trên',
+  `country_code` char(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'VN' COMMENT 'Mã quốc gia chuẩn ISO (VN, US, JP...). Dùng * cho Toàn cầu',
+  `province_code` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mã tỉnh/bang',
+  `district_code` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mã quận/huyện',
+  `ward_code` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Mã phường/xã',
   `base_fee` decimal(15,0) NOT NULL DEFAULT '0' COMMENT 'Phí ship cơ bản',
   `extra_fee_per_kg` decimal(15,0) NOT NULL DEFAULT '0' COMMENT 'Phí phụ thu vượt mức kg',
   `free_weight_kg` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT 'Khối lượng miễn phí ban đầu',
-  `estimated_time` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ví dụ: 2-3 ngày',
-  `priority` int(11) NOT NULL DEFAULT '0' COMMENT 'Độ ưu tiên',
+  `estimated_time` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ví dụ: 2-3 ngày',
+  `priority` int NOT NULL DEFAULT '0' COMMENT 'Độ ưu tiên',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `db_shipping_rates`
+--
+
+INSERT INTO `db_shipping_rates` (`id`, `shipping_method_id`, `country_code`, `province_code`, `district_code`, `ward_code`, `base_fee`, `extra_fee_per_kg`, `free_weight_kg`, `estimated_time`, `priority`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 1, 'VN', '33', '328', '12115', '50000', '20000', '0.00', '', 0, 1, '2026-06-19 06:41:29', '2026-06-19 07:20:35'),
+(2, 1, 'US', NULL, NULL, NULL, '1000000', '0', '0.00', '', 0, 1, '2026-06-19 07:06:07', '2026-06-19 07:47:16'),
+(3, 1, 'VN', '01', '076', NULL, '75000', '0', '0.00', '', 0, 1, '2026-06-19 07:49:07', '2026-06-19 07:49:07');
 
 -- --------------------------------------------------------
 
@@ -2284,20 +2322,20 @@ CREATE TABLE `db_shipping_rates` (
 --
 
 CREATE TABLE `db_shops` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED DEFAULT '0',
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'vi',
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `logo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `banner` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `phone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `map_iframe` text COLLATE utf8mb4_unicode_ci,
-  `sort_order` int(11) NOT NULL DEFAULT '0',
+  `id` bigint UNSIGNED NOT NULL,
+  `user_id` int UNSIGNED DEFAULT '0',
+  `id_code` int NOT NULL,
+  `lang` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'vi',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banner` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `map_iframe` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `sort_order` int NOT NULL DEFAULT '0',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0: Locked, 1: Active, 2: Pending',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -2318,12 +2356,12 @@ INSERT INTO `db_shops` (`id`, `user_id`, `id_code`, `lang`, `name`, `slug`, `log
 --
 
 CREATE TABLE `db_tags` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` varchar(255) NOT NULL,
   `alias` varchar(255) NOT NULL,
-  `hien_thi` tinyint(4) NOT NULL,
+  `hien_thi` tinyint NOT NULL,
   `lang` varchar(10) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -2332,11 +2370,11 @@ CREATE TABLE `db_tags` (
 --
 
 CREATE TABLE `db_text` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `key_name` varchar(255) DEFAULT NULL,
   `group_name` varchar(50) DEFAULT 'uncategorized',
   `text` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_text`
@@ -2516,9 +2554,9 @@ INSERT INTO `db_text` (`id`, `key_name`, `group_name`, `text`) VALUES
 --
 
 CREATE TABLE `db_thanhpho` (
-  `id` int(11) NOT NULL,
-  `ten` text CHARACTER SET utf8 NOT NULL,
-  `code` varchar(30) CHARACTER SET utf8 NOT NULL
+  `id` int NOT NULL,
+  `ten` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `code` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 --
@@ -2597,14 +2635,14 @@ INSERT INTO `db_thanhpho` (`id`, `ten`, `code`) VALUES
 --
 
 CREATE TABLE `db_thanhtoan_ctv` (
-  `id` int(11) NOT NULL,
-  `id_ctv` int(11) NOT NULL,
-  `du_no_dau` int(11) NOT NULL,
-  `thanh_toan` int(11) NOT NULL,
-  `du_no_cuoi` int(11) NOT NULL,
-  `ma_hoadon` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int NOT NULL,
+  `id_ctv` int NOT NULL,
+  `du_no_dau` int NOT NULL,
+  `thanh_toan` int NOT NULL,
+  `du_no_cuoi` int NOT NULL,
+  `ma_hoadon` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ngay_thanhtoan` date NOT NULL,
-  `ghi_chu` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ghi_chu` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ngay_tao` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -2622,26 +2660,26 @@ INSERT INTO `db_thanhtoan_ctv` (`id`, `id_ctv`, `du_no_dau`, `thanh_toan`, `du_n
 --
 
 CREATE TABLE `db_thanhvien` (
-  `id` int(11) NOT NULL,
-  `ma_thanhvien` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `ho_ten` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `dien_thoai` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `dia_chi` text COLLATE utf8mb4_unicode_ci,
-  `huyen` int(11) NOT NULL DEFAULT '0',
-  `tinh` int(11) NOT NULL DEFAULT '0',
-  `quoc_gia` int(11) NOT NULL DEFAULT '0',
-  `loai` int(11) NOT NULL DEFAULT '0',
-  `md5_email` text COLLATE utf8mb4_unicode_ci,
-  `mat_khau` text COLLATE utf8mb4_unicode_ci,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int NOT NULL,
+  `ma_thanhvien` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ho_ten` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dien_thoai` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dia_chi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `huyen` int NOT NULL DEFAULT '0',
+  `tinh` int NOT NULL DEFAULT '0',
+  `quoc_gia` int NOT NULL DEFAULT '0',
+  `loai` int NOT NULL DEFAULT '0',
+  `md5_email` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `mat_khau` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `ngay_tao` date NOT NULL,
-  `id_mxh` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `avata` text COLLATE utf8mb4_unicode_ci,
-  `trang_thai` int(11) NOT NULL DEFAULT '0',
-  `token_gioithieu` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `anh_bia` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `gioi_thieu` text COLLATE utf8mb4_unicode_ci NOT NULL
+  `id_mxh` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `avata` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `trang_thai` int NOT NULL DEFAULT '0',
+  `token_gioithieu` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `anh_bia` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `gioi_thieu` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -2659,15 +2697,15 @@ INSERT INTO `db_thanhvien` (`id`, `ma_thanhvien`, `ho_ten`, `dien_thoai`, `email
 --
 
 CREATE TABLE `db_thongke` (
-  `id` int(11) NOT NULL,
-  `trong_ngay` int(11) NOT NULL,
-  `trong_ngay_date` int(11) NOT NULL,
-  `trong_tuan` int(11) NOT NULL,
-  `trong_tuan_date` int(11) NOT NULL,
-  `trong_thang` int(11) NOT NULL,
-  `trong_thang_date` int(11) NOT NULL,
-  `tong_truy_cap` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `id` int NOT NULL,
+  `trong_ngay` int NOT NULL,
+  `trong_ngay_date` int NOT NULL,
+  `trong_tuan` int NOT NULL,
+  `trong_tuan_date` int NOT NULL,
+  `trong_thang` int NOT NULL,
+  `trong_thang_date` int NOT NULL,
+  `tong_truy_cap` int NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_thongke`
@@ -2684,8 +2722,8 @@ INSERT INTO `db_thongke` (`id`, `trong_ngay`, `trong_ngay_date`, `trong_tuan`, `
 
 CREATE TABLE `db_thongke_detail` (
   `session_id` varchar(255) NOT NULL,
-  `time` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `time` int NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_thongke_detail`
@@ -2701,21 +2739,21 @@ INSERT INTO `db_thongke_detail` (`session_id`, `time`) VALUES
 --
 
 CREATE TABLE `db_users` (
-  `id` int(11) NOT NULL,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `fullname` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fullname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `birthday` date DEFAULT NULL,
   `gender` tinyint(1) DEFAULT '0',
-  `role_id` int(11) DEFAULT '0',
+  `role_id` int DEFAULT '0',
   `is_admin` tinyint(1) DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
-  `created_at` int(11) DEFAULT NULL
+  `created_at` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -2733,11 +2771,11 @@ INSERT INTO `db_users` (`id`, `token`, `username`, `password`, `email`, `fullnam
 --
 
 CREATE TABLE `db_user_permission_group` (
-  `id` int(11) NOT NULL,
-  `id_user` int(11) NOT NULL,
-  `id_permission` int(11) NOT NULL,
-  `action` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `id` int NOT NULL,
+  `id_user` int NOT NULL,
+  `id_permission` int NOT NULL,
+  `action` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_user_permission_group`
@@ -2755,7 +2793,7 @@ INSERT INTO `db_user_permission_group` (`id`, `id_user`, `id_permission`, `actio
 --
 
 CREATE TABLE `db_video` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` text NOT NULL,
   `alias` varchar(255) NOT NULL,
   `noi_dung` text NOT NULL,
@@ -2765,13 +2803,13 @@ CREATE TABLE `db_video` (
   `title` varchar(255) NOT NULL,
   `keyword` text NOT NULL,
   `des` text NOT NULL,
-  `id_loai` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `so_thu_tu` int(11) NOT NULL,
-  `cap_nhat` int(11) NOT NULL,
-  `hien_thi` tinyint(4) NOT NULL,
+  `id_loai` int NOT NULL,
+  `id_code` int NOT NULL,
+  `so_thu_tu` int NOT NULL,
+  `cap_nhat` int NOT NULL,
+  `hien_thi` tinyint NOT NULL,
   `lang` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_video`
@@ -2787,12 +2825,12 @@ INSERT INTO `db_video` (`id`, `ten`, `alias`, `noi_dung`, `hinh_anh`, `ma_video`
 --
 
 CREATE TABLE `db_xa` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `code_tinh` varchar(255) NOT NULL,
   `code_huyen` varchar(255) NOT NULL,
   `code` varchar(255) NOT NULL,
   `ten` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_xa`
@@ -13959,9 +13997,9 @@ INSERT INTO `db_xa` (`id`, `code_tinh`, `code_huyen`, `code`, `ten`) VALUES
 --
 
 CREATE TABLE `db_yeuthich` (
-  `id` int(11) NOT NULL,
-  `id_thanhvien` int(11) NOT NULL,
-  `id_sp` int(11) NOT NULL
+  `id` int NOT NULL,
+  `id_thanhvien` int NOT NULL,
+  `id_sp` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -14202,6 +14240,13 @@ ALTER TABLE `db_page`
   ADD KEY `alias` (`slug`);
 
 --
+-- Indexes for table `db_payment_methods`
+--
+ALTER TABLE `db_payment_methods`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `payment_code_shop_lang_unique` (`code`,`shop_id`,`lang`);
+
+--
 -- Indexes for table `db_permission_action`
 --
 ALTER TABLE `db_permission_action`
@@ -14373,355 +14418,361 @@ ALTER TABLE `db_yeuthich`
 -- AUTO_INCREMENT for table `cf_code`
 --
 ALTER TABLE `cf_code`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=785;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=785;
 
 --
 -- AUTO_INCREMENT for table `cf_parent`
 --
 ALTER TABLE `cf_parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=718;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=718;
 
 --
 -- AUTO_INCREMENT for table `db_album`
 --
 ALTER TABLE `db_album`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_album_hinhanh`
 --
 ALTER TABLE `db_album_hinhanh`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `db_attributes`
 --
 ALTER TABLE `db_attributes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `db_attribute_values`
 --
 ALTER TABLE `db_attribute_values`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `db_binhluan`
 --
 ALTER TABLE `db_binhluan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `db_binhluan_media`
 --
 ALTER TABLE `db_binhluan_media`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `db_blocks`
 --
 ALTER TABLE `db_blocks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_block_items`
 --
 ALTER TABLE `db_block_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `db_button_contact`
 --
 ALTER TABLE `db_button_contact`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `db_categories`
 --
 ALTER TABLE `db_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=374;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=374;
 
 --
 -- AUTO_INCREMENT for table `db_checkout_sessions`
 --
 ALTER TABLE `db_checkout_sessions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_coupon`
 --
 ALTER TABLE `db_coupon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `db_dathang_backup`
 --
 ALTER TABLE `db_dathang_backup`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_dathang_chitiet_backup`
 --
 ALTER TABLE `db_dathang_chitiet_backup`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `db_dathang_xuly`
 --
 ALTER TABLE `db_dathang_xuly`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `db_diachi`
 --
 ALTER TABLE `db_diachi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `db_files`
 --
 ALTER TABLE `db_files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_filter`
 --
 ALTER TABLE `db_filter`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_filter_content`
 --
 ALTER TABLE `db_filter_content`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT for table `db_flash_sale`
 --
 ALTER TABLE `db_flash_sale`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_huyen`
 --
 ALTER TABLE `db_huyen`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=730;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=730;
 
 --
 -- AUTO_INCREMENT for table `db_khuyenmai`
 --
 ALTER TABLE `db_khuyenmai`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `db_khuyenmai_ls`
 --
 ALTER TABLE `db_khuyenmai_ls`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `db_lang`
 --
 ALTER TABLE `db_lang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_lienhe`
 --
 ALTER TABLE `db_lienhe`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `db_menus`
 --
 ALTER TABLE `db_menus`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `db_menu_items`
 --
 ALTER TABLE `db_menu_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=698;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=698;
 
 --
 -- AUTO_INCREMENT for table `db_module`
 --
 ALTER TABLE `db_module`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `db_module_admin`
 --
 ALTER TABLE `db_module_admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
 
 --
 -- AUTO_INCREMENT for table `db_newsletter`
 --
 ALTER TABLE `db_newsletter`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `db_orders`
 --
 ALTER TABLE `db_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_order_items`
 --
 ALTER TABLE `db_order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_page`
 --
 ALTER TABLE `db_page`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `db_payment_methods`
+--
+ALTER TABLE `db_payment_methods`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_permission_action`
 --
 ALTER TABLE `db_permission_action`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `db_posts`
 --
 ALTER TABLE `db_posts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
 
 --
 -- AUTO_INCREMENT for table `db_products`
 --
 ALTER TABLE `db_products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
 
 --
 -- AUTO_INCREMENT for table `db_product_variants`
 --
 ALTER TABLE `db_product_variants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=382;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=382;
 
 --
 -- AUTO_INCREMENT for table `db_product_variant_attributes`
 --
 ALTER TABLE `db_product_variant_attributes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1435;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1435;
 
 --
 -- AUTO_INCREMENT for table `db_roles`
 --
 ALTER TABLE `db_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `db_role_permissions`
 --
 ALTER TABLE `db_role_permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `db_sanpham_ctv`
 --
 ALTER TABLE `db_sanpham_ctv`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_seo`
 --
 ALTER TABLE `db_seo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `db_settings`
 --
 ALTER TABLE `db_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_shipping_methods`
 --
 ALTER TABLE `db_shipping_methods`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_shipping_rates`
 --
 ALTER TABLE `db_shipping_rates`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `db_shops`
 --
 ALTER TABLE `db_shops`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_tags`
 --
 ALTER TABLE `db_tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `db_text`
 --
 ALTER TABLE `db_text`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=183;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=183;
 
 --
 -- AUTO_INCREMENT for table `db_thanhpho`
 --
 ALTER TABLE `db_thanhpho`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT for table `db_thanhtoan_ctv`
 --
 ALTER TABLE `db_thanhtoan_ctv`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_thanhvien`
 --
 ALTER TABLE `db_thanhvien`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `db_thongke`
 --
 ALTER TABLE `db_thongke`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_users`
 --
 ALTER TABLE `db_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `db_user_permission_group`
 --
 ALTER TABLE `db_user_permission_group`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `db_video`
 --
 ALTER TABLE `db_video`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_xa`
 --
 ALTER TABLE `db_xa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11145;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11145;
 
 --
 -- AUTO_INCREMENT for table `db_yeuthich`
 --
 ALTER TABLE `db_yeuthich`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
