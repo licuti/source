@@ -126,6 +126,9 @@ $router->group('/admin', function($r) {
     $r->post('/tax-rate/update/{id}', [\App\Controllers\Admin\TaxRateController::class, 'update'])->name('admin.tax_rate.update');
     $r->post('/tax-rate/delete/{id}', [\App\Controllers\Admin\TaxRateController::class, 'destroy'])->name('admin.tax_rate.destroy');
     $r->post('/tax-rate/update-status-ajax', [\App\Controllers\Admin\TaxRateController::class, 'updateStatusAjax'])->name('admin.tax_rate.updateStatusAjax');
+    $r->post('/location/get-provinces', [\App\Controllers\Admin\LocationController::class, 'getProvincesAjax'])->name('admin.location.get_provinces');
+    $r->post('/location/get-districts', [\App\Controllers\Admin\LocationController::class, 'getDistrictsAjax'])->name('admin.location.get_districts');
+    $r->post('/location/get-wards', [\App\Controllers\Admin\LocationController::class, 'getWardsAjax'])->name('admin.location.get_wards');
 
     // Shop / Marketplace Routes
     $r->get('/shop', [\App\Controllers\Admin\ShopController::class, 'index'])->name('admin.shop.index');
@@ -207,4 +210,31 @@ $router->group('/admin', function($r) {
     $r->post('/shipping/{methodId}/rates/update/{rateId}', [\App\Controllers\Admin\ShippingController::class, 'updateRate'])->name('admin.shipping.update_rate');
     $r->post('/shipping/rates/delete', [\App\Controllers\Admin\ShippingController::class, 'destroyRate'])->name('admin.shipping.destroy_rate');
     $r->post('/shipping/rates/update-status-ajax', [\App\Controllers\Admin\ShippingController::class, 'updateRateStatusAjax'])->name('admin.shipping.updateRateStatusAjax');
+
+    // Promo Code Routes
+    $r->get('/promo-code', [\App\Controllers\Admin\PromoCodeController::class, 'index'])->name('admin.promo_code.index');
+    $r->get('/promo-code/create', [\App\Controllers\Admin\PromoCodeController::class, 'create'])->name('admin.promo_code.create');
+    $r->post('/promo-code/store', [\App\Controllers\Admin\PromoCodeController::class, 'store'])->name('admin.promo_code.store');
+    $r->get('/promo-code/edit/{id}', [\App\Controllers\Admin\PromoCodeController::class, 'edit'])->name('admin.promo_code.edit');
+    $r->post('/promo-code/update/{id}', [\App\Controllers\Admin\PromoCodeController::class, 'update'])->name('admin.promo_code.update');
+    $r->post('/promo-code/delete/{id}', [\App\Controllers\Admin\PromoCodeController::class, 'destroy'])->name('admin.promo_code.destroy');
+    $r->post('/promo-code/delete-multiple', [\App\Controllers\Admin\PromoCodeController::class, 'destroyMultiple'])->name('admin.promo_code.destroy_multiple');
+    $r->post('/promo-code/update-status-ajax', [\App\Controllers\Admin\PromoCodeController::class, 'updateStatusAjax'])->name('admin.promo_code.updateStatusAjax');
+    $r->get('/promo-code/generate-code', [\App\Controllers\Admin\PromoCodeController::class, 'generateCodeAjax'])->name('admin.promo_code.generateCodeAjax');
+
+    // Customer Routes
+    $r->get('/customers', [\App\Controllers\Admin\CustomerController::class, 'index'])->name('admin.customer.index');
+    $r->get('/customers/create', [\App\Controllers\Admin\CustomerController::class, 'create'])->name('admin.customer.create');
+    $r->post('/customers/store', [\App\Controllers\Admin\CustomerController::class, 'store'])->name('admin.customer.store');
+    $r->get('/customers/edit/{id}', [\App\Controllers\Admin\CustomerController::class, 'edit'])->name('admin.customer.edit');
+    $r->post('/customers/update/{id}', [\App\Controllers\Admin\CustomerController::class, 'update'])->name('admin.customer.update');
+    $r->post('/customers/delete/{id}', [\App\Controllers\Admin\CustomerController::class, 'destroy'])->name('admin.customer.destroy');
+    $r->post('/customers/delete-multiple', [\App\Controllers\Admin\CustomerController::class, 'destroyMultiple'])->name('admin.customer.destroy_multiple');
+    $r->post('/customers/update-status-ajax', [\App\Controllers\Admin\CustomerController::class, 'updateStatusAjax'])->name('admin.customer.updateStatusAjax');
+
+    // Order Routes
+    $r->get('/orders', [\App\Controllers\Admin\OrderController::class, 'index'])->name('admin.order.index');
+    $r->get('/orders/show/{id}', [\App\Controllers\Admin\OrderController::class, 'show'])->name('admin.order.show');
+    $r->post('/orders/update-status/{id}', [\App\Controllers\Admin\OrderController::class, 'updateStatus'])->name('admin.order.updateStatus');
+    $r->get('/orders/print/{id}', [\App\Controllers\Admin\OrderController::class, 'print'])->name('admin.order.print');
 });

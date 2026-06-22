@@ -1,9 +1,21 @@
 <?php
+
 namespace App\Models;
 
-class LocationModel extends \Model {
-    public $table = '#_thanhpho';
+class LocationModel extends \Model
+{
+    public $table = 'db_locations';
+    public bool $use_lang = false;
+    protected string $createdAt = 'created_at';
+    protected string $updatedAt = 'updated_at';
 
-    // TODO: Phát triển các hàm xử lý Vị trí (Tỉnh/Thành, Quận/Huyện, Phường/Xã...)
+    public function parent()
+    {
+        return $this->belongsTo(LocationModel::class, 'parent_id', 'id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(LocationModel::class, 'parent_id', 'id');
+    }
 }
-?>

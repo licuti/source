@@ -56,23 +56,14 @@ $taxClasses = $taxClasses ?? [];
                             </div>
 
                             <h6 class="fw-bold mt-4 mb-3 border-bottom pb-2">Vị trí địa lý áp dụng</h6>
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Quốc gia</label>
-                                    <input type="number" class="form-control form-control-sm" name="country_id" value="<?= $item['country_id'] ?? 0 ?>" min="0">
-                                    <div class="form-text">0 = Tất cả quốc gia.</div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Tỉnh / Thành phố</label>
-                                    <input type="number" class="form-control form-control-sm" name="province_id" value="<?= $item['province_id'] ?? 0 ?>" min="0">
-                                    <div class="form-text">0 = Tất cả tỉnh thành.</div>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label fw-bold">Quận / Huyện</label>
-                                    <input type="number" class="form-control form-control-sm" name="district_id" value="<?= $item['district_id'] ?? 0 ?>" min="0">
-                                    <div class="form-text">0 = Tất cả quận huyện.</div>
-                                </div>
-                            </div>
+                            <?= view('admin.components.location_selector', [
+                                'item' => $item,
+                                'countries' => $countries ?? [],
+                                'provinces' => $provinces ?? [],
+                                'districts' => $districts ?? [],
+                                'wards' => $wards ?? [],
+                                'layout' => 'col-md-3 mb-3'
+                            ]) ?>
 
                         </div>
                     </div>
@@ -113,11 +104,9 @@ $taxClasses = $taxClasses ?? [];
                             
                         </div>
                         
-                        <div class="card-footer">
-                            <?= view('admin.components.save_buttons', [
-                                'back_url' => route('admin.tax_rate.index')
-                            ]) ?>
-                        </div>
+                        <?= view('admin.components.save_buttons', [
+                            'back_url' => route('admin.tax_rate.index')
+                        ]) ?>
                     </div>
                 </div>
             </div>

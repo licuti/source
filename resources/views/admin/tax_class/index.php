@@ -53,27 +53,44 @@ $title = $title ?? 'Quản lý Nhóm Thuế';
                                 <th>Tên Nhóm Thuế</th>
                                 <th width="150" class="text-center">Trạng thái</th>
                                 <th width="150" class="text-center">Mặc định</th>
-                                <th width="120" class="text-center">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (!empty($items)): ?>
                                 <?php foreach ($items as $item): ?>
-                                    <tr>
+                                    <tr class="wp-row">
                                         <td class="text-center">
                                             <div class="form-check d-flex justify-content-center mb-0">
-                                                <input class="form-check-input check-item" type="checkbox" value="<?= $item->id ?>">
+                                                <input class="form-check-input row-check" type="checkbox" value="<?= $item->id ?>">
                                             </div>
                                         </td>
                                         <td class="text-center"><?= $item->id ?></td>
-                                        <td class="fw-bold text-primary">
-                                            <?= htmlspecialchars($item->name) ?>
+                                        <td>
+                                            <strong><a href="<?= route('admin.tax_class.edit', ['id' => $item->id]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->name) ?></a></strong>
+                                            
+                                            <?php 
+                                            $actions = [
+                                                'edit' => [
+                                                    'label' => 'Chỉnh sửa', 
+                                                    'url' => route('admin.tax_class.edit', ['id' => $item->id]), 
+                                                    'class' => 'text-primary'
+                                                ],
+                                                'delete' => [
+                                                    'label' => 'Xóa', 
+                                                    'url' => route('admin.tax_class.destroy', ['id' => $item->id]), 
+                                                    'class' => 'text-danger confirm-delete',
+                                                    'attributes' => 'data-confirm="Bạn có chắc chắn muốn xóa nhóm thuế này? Tất cả biểu phí thuộc nhóm này sẽ bị mồ côi."'
+                                                ]
+                                            ];
+                                            echo view('admin.components.row_actions', ['actions' => $actions]);
+                                            ?>
                                         </td>
                                         <td class="text-center">
                                             <div class="form-check form-switch d-flex justify-content-center">
-                                                <input class="form-check-input status-toggle" type="checkbox" 
+                                                <input class="form-check-input ajax-toggle-status" type="checkbox" 
                                                     data-id="<?= $item->id ?>" 
                                                     data-field="is_active"
+                                                    data-url="<?= route('admin.tax_class.updateStatusAjax') ?>"
                                                     <?= $item->is_active ? 'checked' : '' ?>>
                                             </div>
                                         </td>
@@ -84,21 +101,13 @@ $title = $title ?? 'Quản lý Nhóm Thuế';
                                                 <span class="badge bg-secondary">Không</span>
                                             <?php endif; ?>
                                         </td>
-                                        <td class="text-center">
-                                            <div class="btn-group btn-group-sm">
-                                                <a href="<?= route('admin.tax_class.edit', ['id' => $item->id]) ?>" class="btn btn-outline-secondary" title="Sửa">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-outline-danger btn-delete" data-id="<?= $item->id ?>" title="Xóa">
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">Chưa có dữ liệu.</td>
+                                    <td colspan="5" class="text-center text-muted py-4">
+                                        Không tìm thấy dữ liệu!
+                                    </td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
@@ -122,86 +131,3 @@ $title = $title ?? 'Quản lý Nhóm Thuế';
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Checkbox All
-    const checkAll = document.querySelector('.check-all');
-    const checkItems = document.querySelectorAll('.check-item');
-    const btnBulkApply = document.getElementById('btnBulkApply');
-    
-    if (checkAll) {
-        checkAll.addEventListener('change', function() {
-            checkItems.forEach(item => item.checked = this.checked);
-            updateBulkButton();
-        });
-        
-        checkItems.forEach(item => {
-            item.addEventListener('change', function() {
-                const allChecked = document.querySelectorAll('.check-item:checked').length === checkItems.length;
-                checkAll.checked = allChecked;
-                updateBulkButton();
-            });
-        });
-    }
-
-    function updateBulkButton() {
-        const hasChecked = document.querySelectorAll('.check-item:checked').length > 0;
-        const hasAction = document.getElementById('bulkActionSelect').value !== '';
-        btnBulkApply.disabled = !(hasChecked && hasAction);
-    }
-    
-    document.getElementById('bulkActionSelect')?.addEventListener('change', updateBulkButton);
-
-    // Toggle Status
-    document.querySelectorAll('.status-toggle').forEach(function(toggle) {
-        toggle.addEventListener('change', function() {
-            const id = this.dataset.id;
-            const field = this.dataset.field;
-            const value = this.checked ? 1 : 0;
-            
-            fetch('<?= route('admin.tax_class.updateStatusAjax') ?>', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `id=${id}&field=${field}&value=${value}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    AppNotify.success(data.message);
-                } else {
-                    AppNotify.error(data.message);
-                    this.checked = !this.checked;
-                }
-            })
-            .catch(error => {
-                AppNotify.error('Có lỗi xảy ra!');
-                this.checked = !this.checked;
-            });
-        });
-    });
-
-    // Delete Item
-    document.querySelectorAll('.btn-delete').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            if (confirm('Bạn có chắc chắn muốn xóa nhóm thuế này? Tất cả các biểu phí thuế thuộc nhóm này cũng sẽ bị ảnh hưởng (mồ côi).')) {
-                const id = this.dataset.id;
-                fetch(`<?= route('admin.tax_class.destroy', ['id' => '']) ?>${id}`, {
-                    method: 'POST'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.reload();
-                    } else {
-                        AppNotify.error(data.message);
-                    }
-                })
-                .catch(error => AppNotify.error('Có lỗi xảy ra!'));
-            }
-        });
-    });
-});
-</script>

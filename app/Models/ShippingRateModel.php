@@ -9,15 +9,19 @@ class ShippingRateModel extends \Model
     protected string $createdAt = 'created_at';
     protected string $updatedAt = 'updated_at';
 
+    public function country() {
+        return $this->belongsTo(LocationModel::class, 'country_id', 'id');
+    }
+
     public function province() {
-        return $this->belongsTo(ProvinceModel::class, 'province_code', 'code');
+        return $this->belongsTo(LocationModel::class, 'province_id', 'id');
     }
 
     public function district() {
-        return $this->belongsTo(DistrictModel::class, 'district_code', 'code');
+        return $this->belongsTo(LocationModel::class, 'district_id', 'id');
     }
 
     public function ward() {
-        return $this->belongsTo(WardModel::class, 'ward_code', 'code');
+        return $this->belongsTo(LocationModel::class, 'ward_id', 'id');
     }
 }

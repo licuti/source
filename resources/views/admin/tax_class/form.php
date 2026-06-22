@@ -75,11 +75,9 @@ $langs = $langs ?? [];
                             </div>
                         </div>
                         
-                        <div class="card-footer">
-                            <?= view('admin.components.save_buttons', [
-                                'back_url' => route('admin.tax_class.index')
-                            ]) ?>
-                        </div>
+                        <?= view('admin.components.save_buttons', [
+                            'back_url' => route('admin.tax_class.index')
+                        ]) ?>
                     </div>
                 </div>
             </div>

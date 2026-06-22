@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 
 use App\Models\TaxRateModel;
 use App\Models\TaxClassModel;
+use App\Models\LocationModel;
 use App\Core\Request;
 
 class TaxRateController extends BaseAdminController
@@ -28,10 +29,16 @@ class TaxRateController extends BaseAdminController
     public function create()
     {
         $taxClasses = TaxClassModel::where('lang', config('app.locale', 'vi'))->where('is_active', 1)->get();
+        $countries = LocationModel::where('type', 'country')->orderBy('name', 'ASC')->get();
+        $provinces = [];
         
         return view('admin.tax_rate.form', [
             'title' => 'Thêm Biểu Phí Thuế',
             'taxClasses' => $taxClasses,
+            'countries' => $countries,
+            'provinces' => $provinces,
+            'districts' => [],
+            'wards' => [],
             'item' => []
         ]);
     }
@@ -44,6 +51,7 @@ class TaxRateController extends BaseAdminController
             'country_id' => $request->input('country_id', 0),
             'province_id' => $request->input('province_id', 0),
             'district_id' => $request->input('district_id', 0),
+            'ward_id' => $request->input('ward_id', 0),
             'name' => $request->input('name', ''),
             'rate' => floatval($request->input('rate', 0)),
             'is_compound' => $request->input('is_compound') !== null ? 1 : 0,
@@ -67,11 +75,31 @@ class TaxRateController extends BaseAdminController
         if (!$item) return $this->redirect(route('admin.tax_rate.index'));
 
         $taxClasses = TaxClassModel::where('lang', config('app.locale', 'vi'))->get();
+        $countries = LocationModel::where('type', 'country')->orderBy('name', 'ASC')->get();
+        $provinces = [];
+        $districts = [];
+        $wards = [];
+        
+        if (!empty($item->country_id)) {
+            $provinces = LocationModel::where('type', 'province')->where('parent_id', $item->country_id)->orderBy('name', 'ASC')->get();
+        }
+        
+        if (!empty($item->province_id)) {
+            $districts = LocationModel::where('type', 'district')->where('parent_id', $item->province_id)->orderBy('name', 'ASC')->get();
+        }
+        
+        if (!empty($item->district_id)) {
+            $wards = LocationModel::where('type', 'ward')->where('parent_id', $item->district_id)->orderBy('name', 'ASC')->get();
+        }
 
         return view('admin.tax_rate.form', [
             'title' => 'Sửa Biểu Phí Thuế',
-            'item' => (array) $item,
-            'taxClasses' => $taxClasses
+            'item' => $item->toArray(),
+            'taxClasses' => $taxClasses,
+            'countries' => $countries,
+            'provinces' => $provinces,
+            'districts' => $districts,
+            'wards' => $wards
         ]);
     }
 
@@ -87,6 +115,7 @@ class TaxRateController extends BaseAdminController
             'country_id' => $request->input('country_id', 0),
             'province_id' => $request->input('province_id', 0),
             'district_id' => $request->input('district_id', 0),
+            'ward_id' => $request->input('ward_id', 0),
             'name' => $request->input('name', ''),
             'rate' => floatval($request->input('rate', 0)),
             'is_compound' => $request->input('is_compound') !== null ? 1 : 0,
@@ -101,17 +130,6 @@ class TaxRateController extends BaseAdminController
             return $this->redirect(route('admin.tax_rate.edit', ['id' => $id]))->with('success', 'Cập nhật thành công!');
         }
         return $this->redirect(route('admin.tax_rate.index'))->with('success', 'Cập nhật thành công!');
-    }
-
-    public function destroy(Request $request, $params = [])
-    {
-        $id = is_array($params) ? ($params['id'] ?? 0) : $params;
-        $deleted = TaxRateModel::where('id', $id)->delete();
-        
-        if ($deleted) {
-            return $this->json(['success' => true, 'message' => 'Đã xóa biểu phí thuế']);
-        }
-        return $this->json(['success' => false, 'message' => 'Không tìm thấy dữ liệu']);
     }
 
     public function updateStatusAjax(Request $request)
@@ -133,4 +151,14 @@ class TaxRateController extends BaseAdminController
         
         return $this->json(['success' => false, 'message' => 'Không tìm thấy dữ liệu!']);
     }
+
+    public function destroy(Request $request)
+    {
+        $id = $request->input('id');
+        if (TaxRateModel::where('id', $id)->delete()) {
+            return $this->json(['success' => true, 'message' => 'Xóa Biểu Phí Thuế thành công!']);
+        }
+        return $this->json(['success' => false, 'message' => 'Lỗi hệ thống!']);
+    }
+
 }

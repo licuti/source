@@ -158,11 +158,11 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
 |---|---|---|---|
 | 106 | **Cổng thanh toán** (`payment`) | `PaymentController` | 🟢 Hoàn thành |
-| 32 | **Quản lý đơn hàng** (`quan-ly-don-hang`) | `OrderController` | 🔴 Chưa làm |
+| 32 | **Quản lý đơn hàng** (`quan-ly-don-hang`) | `OrderController` | 🟢 Hoàn thành |
 | 45 | **Thống kê doanh thu** (`doanh-thu`) | `RevenueController` | 🔴 Chưa làm |
 | 55 | **Cấu hình vận chuyển** (`quan-ly-van-chuyen`) | `ShippingController` | 🟢 Hoàn thành |
-| 56 | **Quản lý thuế** (`quan-ly-thue`) | `TaxController` | 🔴 Chưa làm |
-| 46 | **Mã khuyến mãi** (`ma-khuyen-mai`) | `PromoCodeController` | 🔴 Chưa làm |
+| 56 | **Quản lý thuế** (`quan-ly-thue`) | `TaxClassController`, `TaxRateController` | 🟢 Hoàn thành |
+| 46 | **Mã giảm giá** (`promo-code`) | `PromoCodeController` | 🟢 Hoàn thành |
 | 47 | **Flash Sale** (`flash-sale`) | `FlashSaleController` | 🔴 Chưa làm |
 | 51 | **Đăng ký nhận ưu đãi** (`coupon`) | `CouponController` | 🔴 Chưa làm |
 
@@ -178,6 +178,19 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **Cấu hình linh hoạt:** Cho phép thiết lập Phí cơ bản, Phụ thu quá ký (`extra_fee_per_kg`), Số kg miễn phí (`free_weight_kg`), Thời gian giao hàng dự kiến (`estimated_time`).
 - **Độ ưu tiên (Priority):** Cho phép gắn chỉ số ưu tiên (`priority`). Khi khách hàng thanh toán, hệ thống sẽ đối chiếu địa chỉ giao hàng với các bảng giá theo mức độ phủ sóng (Xã -> Huyện -> Tỉnh -> Quốc gia) và ưu tiên chọn biểu phí có mức độ khớp sâu nhất hoặc `priority` cao nhất để tính ra mức cước chính xác.
 
+### 🟢 Chi tiết: TaxClassController & TaxRateController (Quản lý Thuế)
+- **Kiến trúc dữ liệu:** Tách biệt Nhóm Thuế (Tax Class - ví dụ: Thuế giá trị gia tăng, Thuế tiêu thụ đặc biệt) và Biểu phí Thuế (Tax Rate - phần trăm thuế theo từng khu vực địa lý cụ thể).
+- **Quản lý Biểu phí Thuế:** Cho phép định nghĩa phần trăm thuế suất áp dụng cụ thể cho từng Quốc gia, Tỉnh/Thành, Quận/Huyện, Phường/Xã. 
+- **Tính năng Thuế nâng cao:** Hỗ trợ tính thuế lồng nhau (`is_compound`) đối với các loại thuế chồng lên nhau, và cấu hình độ ưu tiên (`priority`) để xác định thứ tự tính thuế trong trường hợp một sản phẩm áp dụng nhiều loại biểu phí thuế cùng một khu vực.
+- Giao diện thiết lập địa lý thông minh tự động load thông qua Component `Location Selector` chuẩn hệ thống.
+
+### 🟢 Chi tiết: PromoCodeController (Mã giảm giá)
+- **Kiến trúc dữ liệu:** Xây dựng lại hoàn toàn cấu trúc Database (`db_promo_codes`, `db_promo_code_usage`) để đáp ứng chuẩn E-commerce hiện đại.
+- **Tính năng nâng cao:** Hỗ trợ đa dạng loại giảm giá (%, tiền mặt, freeship), giới hạn giảm tối đa, yêu cầu đơn tối thiểu, hẹn giờ có hiệu lực chuẩn xác đến phút.
+- **Bảo mật và kiểm soát:** Tích hợp logic giới hạn tổng lượt dùng hệ thống và giới hạn lượt dùng trên mỗi User. Ngăn chặn xóa các mã đã phát sinh lịch sử sử dụng để bảo toàn dữ liệu đối soát đơn hàng.
+- **Phát triển tương lai (Checkout/Cart Integration):** Sẽ được gọi trong quá trình xử lý thanh toán (Kiểm tra `is_active`, thời hạn, điều kiện min order, và tính toán số tiền giảm cuối cùng, đồng thời ghi log vào `db_promo_code_usage`).
+- **Phát triển tương lai (Apply To):** Mở rộng áp dụng mã giảm giá cho Từng Sản phẩm cụ thể hoặc Danh mục cụ thể (Hiện tại đang áp dụng cho Tổng đơn hàng).
+
 ---
 
 ## 6. 👥 KHÁCH HÀNG & TƯƠNG TÁC (Customers & CRM)
@@ -192,4 +205,4 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 ---
 
-> **📊 Tổng kết tiến độ:** Hoàn thành **13/33 module** (39%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Bài viết, Quản lý Sản phẩm, Thanh toán, Vận chuyển và Khối giao diện động đã hoàn thiện 100%. Ưu tiên tiếp theo: Module Đơn hàng và các phần CRM liên quan.
+> **📊 Tổng kết tiến độ:** Hoàn thành **14/33 module** (42%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Bài viết, Quản lý Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng và Khối giao diện động đã hoàn thiện 100%. Ưu tiên tiếp theo: Thống kê Doanh thu và các phần CRM liên quan.

@@ -3,11 +3,12 @@
 namespace App\Controllers;
 
 use App\Core\Response;
+use App\Models\LocationModel;
 
 /**
  * LocationController
- * Xử lý API địa chỉ: Tỉnh/Thành, Quận/Huyện, Phường/Xã.
- * Migrate từ: sources/ajax/ajax.php (action: get_huyen, get_xa)
+ * Xử lý API địa chỉ: Tỉnh/Thành, Quận/Huyện, Phường/Xã cho Frontend.
+ * Tương thích ngược: Nhận input code_tinh, code_huyen và trả về chuỗi HTML.
  */
 class LocationController extends Controller {
 
@@ -19,20 +20,24 @@ class LocationController extends Controller {
         $code_tinh = trim($request->input('code_tinh', ''));
 
         if (empty($code_tinh)) {
-            return Response::json(['html' => '<option value="">Chọn Quận / Huyện</option>']);
+            return new Response('<option value="">Chọn Quận / Huyện</option>');
         }
 
-        $rows = \App\Models\DistrictModel::where('code_tinh', $code_tinh)
-                              ->orderBy('ten', 'ASC')
-                              ->get();
-
+        $province = LocationModel::where('type', 'province')->where('code', $code_tinh)->first();
+        
         $html = '<option value="">Chọn Quận / Huyện</option>';
-        foreach ((array) $rows as $row) {
-            $html .= '<option value="' . e($row->code) . '">' . e($row->ten) . '</option>';
+        if ($province) {
+            $rows = LocationModel::where('type', 'district')
+                                  ->where('parent_id', $province->id)
+                                  ->orderBy('name', 'ASC')
+                                  ->get();
+            foreach ((array) $rows as $row) {
+                $html .= '<option value="' . e($row->code) . '">' . e($row->name) . '</option>';
+            }
         }
 
-        // Trả về HTML trực tiếp để tương thích ngược với JS cũ
-        return new \App\Core\Response($html);
+        // Trả về HTML trực tiếp để tương thích ngược với JS Frontend cũ
+        return new Response($html);
     }
 
     /**
@@ -43,18 +48,22 @@ class LocationController extends Controller {
         $code_huyen = trim($request->input('code_huyen', ''));
 
         if (empty($code_huyen)) {
-            return new \App\Core\Response('<option value="">Chọn Phường / Xã</option>');
+            return new Response('<option value="">Chọn Phường / Xã</option>');
         }
 
-        $rows = \App\Models\WardModel::where('code_huyen', $code_huyen)
-                          ->orderBy('ten', 'ASC')
-                          ->get();
+        $district = LocationModel::where('type', 'district')->where('code', $code_huyen)->first();
 
         $html = '<option value="">Chọn Phường / Xã</option>';
-        foreach ((array) $rows as $row) {
-            $html .= '<option value="' . e($row->code) . '">' . e($row->ten) . '</option>';
+        if ($district) {
+            $rows = LocationModel::where('type', 'ward')
+                                  ->where('parent_id', $district->id)
+                                  ->orderBy('name', 'ASC')
+                                  ->get();
+            foreach ((array) $rows as $row) {
+                $html .= '<option value="' . e($row->code) . '">' . e($row->name) . '</option>';
+            }
         }
 
-        return new \App\Core\Response($html);
+        return new Response($html);
     }
 }

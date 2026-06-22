@@ -56,26 +56,43 @@ $title = $title ?? 'Quản lý Biểu Phí Thuế';
                                 <th width="120" class="text-center">Thuế Kép</th>
                                 <th width="100" class="text-center">Ưu tiên</th>
                                 <th width="120" class="text-center">Trạng thái</th>
-                                <th width="120" class="text-center">Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (!empty($items)): ?>
                                 <?php foreach ($items as $item): ?>
-                                    <tr>
+                                    <tr class="wp-row">
                                         <td class="text-center">
                                             <div class="form-check d-flex justify-content-center mb-0">
                                                 <input class="form-check-input check-item" type="checkbox" value="<?= $item->id ?>">
                                             </div>
                                         </td>
                                         <td class="text-center"><?= $item->id ?></td>
-                                        <td class="fw-bold">
-                                            <?= htmlspecialchars($item->name) ?>
+                                        <td class="align-middle">
+                                            <a href="<?= route('admin.tax_rate.edit', ['id' => $item->id]) ?>" class="fw-medium text-dark text-decoration-none">
+                                                <?= htmlspecialchars($item->name) ?>
+                                            </a>
                                             <?php if ($item->shop_id > 0): ?>
                                                 <div class="small text-muted fw-normal"><i class="fa-solid fa-store me-1"></i> Shop ID: <?= $item->shop_id ?></div>
                                             <?php else: ?>
                                                 <div class="small text-muted fw-normal"><i class="fa-solid fa-globe me-1"></i> Hệ thống chung</div>
                                             <?php endif; ?>
+                                            
+                                            <?php 
+                                            $actions = [];
+                                            $actions['edit'] = [
+                                                'label' => 'Chỉnh sửa', 
+                                                'url' => route('admin.tax_rate.edit', ['id' => $item->id]), 
+                                                'class' => 'text-primary'
+                                            ];
+                                            $actions['delete'] = [
+                                                'label' => 'Xóa', 
+                                                'url' => '#', 
+                                                'class' => 'text-danger btn-delete',
+                                                'attributes' => 'data-id="'.$item->id.'"'
+                                            ];
+                                            echo view('admin.components.row_actions', ['actions' => $actions]);
+                                            ?>
                                         </td>
                                         <td>
                                             <span class="badge bg-info text-dark"><?= htmlspecialchars($classMap[$item->tax_class_id] ?? 'Unknown') ?></span>
@@ -100,21 +117,11 @@ $title = $title ?? 'Quản lý Biểu Phí Thuế';
                                                     <?= $item->is_active ? 'checked' : '' ?>>
                                             </div>
                                         </td>
-                                        <td class="text-center">
-                                            <div class="btn-group btn-group-sm">
-                                                <a href="<?= route('admin.tax_rate.edit', ['id' => $item->id]) ?>" class="btn btn-outline-secondary" title="Sửa">
-                                                    <i class="fa-solid fa-pen-to-square"></i>
-                                                </a>
-                                                <button type="button" class="btn btn-outline-danger btn-delete" data-id="<?= $item->id ?>" title="Xóa">
-                                                    <i class="fa-solid fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="9" class="text-center text-muted py-4">Chưa có dữ liệu biểu phí.</td>
+                                    <td colspan="8" class="text-center text-muted py-4">Chưa có dữ liệu biểu phí.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>

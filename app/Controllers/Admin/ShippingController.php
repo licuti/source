@@ -150,11 +150,9 @@ class ShippingController extends BaseAdminController
         $method = ShippingMethodModel::find($methodId);
         if (!$method) return $this->redirect(route('admin.shipping.index'));
         
-        // Lấy danh sách quốc gia tạm thời (hoặc có model Country)
-        $countries = ['VN' => 'Việt Nam', 'US' => 'Hoa Kỳ', 'JP' => 'Nhật Bản', '*' => 'Toàn cầu (Khác)'];
+        $countries = \App\Models\LocationModel::where('type', 'country')->orderBy('name', 'ASC')->get(['id', 'name', 'code']);
         
-        // Load available provinces
-        $provinces = \App\Models\ProvinceModel::orderBy('ten', 'ASC')->get('code, ten');
+        $provinces = [];
 
         return view('admin.shipping.form_rate', [
             'method' => $method,
@@ -169,10 +167,10 @@ class ShippingController extends BaseAdminController
         $methodId = is_array($params) ? ($params['methodId'] ?? 0) : $params;
         $data = [
             'shipping_method_id' => $methodId,
-            'country_code' => $request->input('country_code', 'VN'),
-            'province_code' => $request->input('province_code'),
-            'district_code' => $request->input('district_code'),
-            'ward_code' => $request->input('ward_code'),
+            'country_id' => $request->input('country_id', 0),
+            'province_id' => $request->input('province_id', 0),
+            'district_id' => $request->input('district_id', 0),
+            'ward_id' => $request->input('ward_id', 0),
             'base_fee' => $request->input('base_fee', 0),
             'extra_fee_per_kg' => $request->input('extra_fee_per_kg', 0),
             'free_weight_kg' => $request->input('free_weight_kg', 0),
@@ -180,10 +178,6 @@ class ShippingController extends BaseAdminController
             'priority' => $request->input('priority', 0),
             'is_active' => $request->input('is_active') !== null ? 1 : 0,
         ];
-        
-        if (empty($data['province_code'])) $data['province_code'] = null;
-        if (empty($data['district_code'])) $data['district_code'] = null;
-        if (empty($data['ward_code'])) $data['ward_code'] = null;
 
         $rate = ShippingRateModel::create($data);
 
@@ -203,16 +197,29 @@ class ShippingController extends BaseAdminController
         $rate = ShippingRateModel::find($rateId);
         if (!$method || !$rate) return $this->redirect(route('admin.shipping.index'));
 
-        $countries = ['VN' => 'Việt Nam', 'US' => 'Hoa Kỳ', 'JP' => 'Nhật Bản', '*' => 'Toàn cầu (Khác)'];
+        $countries = \App\Models\LocationModel::where('type', 'country')->orderBy('name', 'ASC')->get(['id', 'name', 'code']);
+        
         // Load available provinces
-        $provinces = \App\Models\ProvinceModel::orderBy('ten', 'ASC')->get('code, ten');
+        $provinces = [];
+        $districts = [];
+        $wards = [];
+
+        if (!empty($rate->country_id)) {
+            $provinces = \App\Models\LocationModel::where('type', 'province')->where('parent_id', $rate->country_id)->orderBy('name', 'ASC')->get(['id', 'name']);
+        }
 
         // Load districts if province exists
-        $districts = [];
-        if ($rate->province_code) {
-            $districts = \App\Models\DistrictModel::where('code_tinh', $rate->province_code)
-                                                  ->orderBy('ten', 'ASC')
-                                                  ->get('code, ten');
+        if ($rate->province_id) {
+            $districts = \App\Models\LocationModel::where('type', 'district')
+                                                  ->where('parent_id', $rate->province_id)
+                                                  ->orderBy('name', 'ASC')
+                                                  ->get(['id', 'name']);
+        }
+        if ($rate->district_id) {
+            $wards = \App\Models\LocationModel::where('type', 'ward')
+                                              ->where('parent_id', $rate->district_id)
+                                              ->orderBy('name', 'ASC')
+                                              ->get('id, name');
         }
 
         return view('admin.shipping.form_rate', [
@@ -220,7 +227,8 @@ class ShippingController extends BaseAdminController
             'item' => $rate,
             'countries' => $countries,
             'provinces' => $provinces,
-            'districts' => $districts
+            'districts' => $districts,
+            'wards' => $wards
         ]);
     }
 
@@ -233,10 +241,10 @@ class ShippingController extends BaseAdminController
         if (!$rate) return $this->redirect(route('admin.shipping.index'));
 
         $data = [
-            'country_code' => $request->input('country_code', 'VN'),
-            'province_code' => $request->input('province_code'),
-            'district_code' => $request->input('district_code'),
-            'ward_code' => $request->input('ward_code'),
+            'country_id' => $request->input('country_id', 0),
+            'province_id' => $request->input('province_id', 0),
+            'district_id' => $request->input('district_id', 0),
+            'ward_id' => $request->input('ward_id', 0),
             'base_fee' => $request->input('base_fee', 0),
             'extra_fee_per_kg' => $request->input('extra_fee_per_kg', 0),
             'free_weight_kg' => $request->input('free_weight_kg', 0),
@@ -244,10 +252,6 @@ class ShippingController extends BaseAdminController
             'priority' => $request->input('priority', 0),
             'is_active' => $request->input('is_active') !== null ? 1 : 0,
         ];
-
-        if (empty($data['province_code'])) $data['province_code'] = null;
-        if (empty($data['district_code'])) $data['district_code'] = null;
-        if (empty($data['ward_code'])) $data['ward_code'] = null;
 
         $rate->update($data);
 
