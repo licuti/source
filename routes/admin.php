@@ -180,7 +180,13 @@ $router->group('/admin', function($r) {
     $r->post('/translations/scan', [\App\Controllers\Admin\TextTranslationController::class, 'scan'])->name('admin.translation.scan');
 
     $r->get('/backup-cache', [\App\Controllers\Admin\BackupController::class, 'index'])->name('admin.backup.index');
-    $r->post('/backup-cache/save', [\App\Controllers\Admin\BackupController::class, 'save'])->name('admin.backup.save');
+    $r->post('/backup-cache/create', [\App\Controllers\Admin\BackupController::class, 'createBackup'])->name('admin.backup.create');
+    $r->post('/backup-cache/create-source', [\App\Controllers\Admin\BackupController::class, 'createSourceBackup'])->name('admin.backup.create_source');
+    $r->get('/backup-cache/download/{file}', [\App\Controllers\Admin\BackupController::class, 'downloadBackup'])->name('admin.backup.download');
+    $r->post('/backup-cache/delete/{file}', [\App\Controllers\Admin\BackupController::class, 'deleteBackup'])->name('admin.backup.delete');
+    $r->post('/backup-cache/restore/{file}', [\App\Controllers\Admin\BackupController::class, 'restoreBackup'])->name('admin.backup.restore');
+    $r->post('/backup-cache/save-settings', [\App\Controllers\Admin\BackupController::class, 'saveSettings'])->name('admin.backup.save_settings');
+    $r->post('/backup-cache/clear-cache', [\App\Controllers\Admin\BackupController::class, 'clearCache'])->name('admin.backup.clear_cache');
 
     $r->get('/maintenance', [\App\Controllers\Admin\MaintenanceController::class, 'index'])->name('admin.maintenance.index');
     $r->post('/maintenance/save', [\App\Controllers\Admin\MaintenanceController::class, 'save'])->name('admin.maintenance.save');

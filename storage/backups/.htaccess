@@ -1,0 +1,3 @@
+# Ngăn chặn việc tải trực tiếp các tệp tin backup (.sql, .zip) từ trình duyệt
+Order deny,allow
+Deny from all

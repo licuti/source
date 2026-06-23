@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 22, 2026 at 12:18 AM
+-- Generation Time: Jun 23, 2026 at 05:56 PM
 -- Server version: 8.0.30
 -- PHP Version: 7.4.9
 
@@ -14172,7 +14172,7 @@ INSERT INTO `db_module_admin` (`id`, `parent`, `name`, `icon`, `alias`, `route_n
 (27, 10, 'Quản lý Tài khoản', 'fa-circle', 'user', 'admin.user.index', 1, 1, 1, NULL, 'danger'),
 (28, 8, 'Cấu hình SEO cơ bản', 'fa-circle', 'seo-co-ban', 'admin.seo-co-ban.index', 5, 1, 1, NULL, 'danger'),
 (31, 0, 'Khách hàng & Tương tác', 'fa-users', '', NULL, 5, 1, 1, NULL, 'danger'),
-(32, 43, 'Qu?n lý ??n hàng', 'fa-solid fa-cart-shopping', 'orders', 'admin.order.index', 3, 1, 1, NULL, 'danger'),
+(32, 43, 'Quản lý bán hàng', 'fa-circle', 'orders', 'admin.order.index', 3, 1, 1, NULL, 'danger'),
 (33, 31, 'Khách hàng liên hệ', 'fa-circle', 'lien-he', 'admin.lien-he.index', 4, 1, 1, NULL, 'danger'),
 (36, 7, 'Album ảnh', 'fa-circle', 'gallery', 'admin.gallery.index', 3, 1, 1, NULL, 'danger'),
 (37, 7, 'Videos', 'fa-circle', 'video', 'admin.video.index', 4, 1, 1, NULL, 'danger'),
@@ -14182,7 +14182,7 @@ INSERT INTO `db_module_admin` (`id`, `parent`, `name`, `icon`, `alias`, `route_n
 (42, 31, 'Công tác viên', 'fa-circle', 'cong-tac-vien', 'admin.cong-tac-vien.index', 3, 1, 1, NULL, 'danger'),
 (43, 0, 'Thương mại điện tử', 'fa-cart-shopping', '', NULL, 2, 1, 1, NULL, 'danger'),
 (46, 43, 'Mã Giảm Giá', 'fa-circle', 'promo-code', 'admin.promo_code.index', 5, 1, 1, NULL, 'danger'),
-(45, 43, 'Thống kê doanh  thu', 'fa-circle', 'doanh-thu', 'admin.doanh-thu.index', 2, 1, 1, NULL, 'danger'),
+(45, 43, 'Thống kê doanh  thu', 'fa-circle', 'revenue', 'admin.revenue.index', 2, 1, 1, NULL, 'danger'),
 (47, 43, 'Flash Sale', 'fa-circle', 'flash-sale', 'admin.flash-sale.index', 1, 1, 1, NULL, 'danger'),
 (48, 31, 'Quản lý bình luận', 'fa-circle', 'binh-luan', 'admin.binh-luan.index', 5, 1, 1, NULL, 'danger'),
 (49, 100, 'Nhóm thuộc tính', 'fa-circle', 'attribute', 'admin.attribute.index', 3, 1, 1, NULL, 'danger'),
@@ -14199,9 +14199,9 @@ INSERT INTO `db_module_admin` (`id`, `parent`, `name`, `icon`, `alias`, `route_n
 (105, 8, 'Chế độ bảo trì', 'fa-circle', 'maintenance', 'admin.maintenance.index', 11, 1, 1, NULL, 'danger'),
 (106, 43, 'Cổng thanh toán', 'fa-circle', 'payment', 'admin.payment.index', 8, 1, 1, NULL, 'danger'),
 (107, 10, 'Nhóm quyền', 'fa-circle', 'nhom-quyen', 'admin.role.index', 2, 1, 1, NULL, 'danger'),
-(109, 10, 'Menu Hệ thống', 'fa-circle', 'system-menu', 'admin.system_menu.index', 5, 1, 1, NULL, 'danger'),
+(109, 10, 'Menu Hệ thống', 'fa-circle', 'system-menu', 'admin.system_menu.index', 3, 1, 1, 'Nâng cao', 'danger'),
 (110, 0, 'Hệ thống Gian hàng', 'fa-circle', 'admin.shop', 'admin.shop.index', 7, 1, 1, NULL, 'danger'),
-(111, 43, 'Biểu phí Thuế', 'fa-circle', 'tax-rate', 'admin.tax_rate.index', 57, 1, 1, NULL, 'danger');
+(111, 43, 'Biểu phí Thuế', 'fa-circle', 'tax-rate', 'admin.tax_rate.index', 9, 1, 1, NULL, 'danger');
 
 -- --------------------------------------------------------
 
@@ -27275,7 +27275,7 @@ ALTER TABLE `db_roles`
 -- AUTO_INCREMENT for table `db_role_permissions`
 --
 ALTER TABLE `db_role_permissions`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `db_sanpham_ctv`

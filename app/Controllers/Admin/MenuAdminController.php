@@ -11,13 +11,13 @@ class MenuAdminController extends BaseAdminController {
      */
     public function index(Request $request) {
         // Lấy tất cả menu sắp xếp theo sort_order
-        $menus = \ModuleAdminModel::orderBy('sort_order', 'ASC')->get();
+        $menus = ModuleAdminModel::orderBy('sort_order', 'ASC')->get();
         
         // Build cấu trúc cây để Nestable dễ render
         $tree = $this->buildTree($menus);
         
         // Lấy danh sách menu cấp 1 để làm option cho select box (nếu cần ở form tạo nhanh)
-        $parentOptions = \ModuleAdminModel::where('parent', 0)->orderBy('sort_order', 'ASC')->get();
+        $parentOptions = ModuleAdminModel::where('parent', 0)->orderBy('sort_order', 'ASC')->get();
         
         return $this->render('admin.system_menu.index', compact('tree', 'parentOptions', 'menus'));
     }
@@ -56,8 +56,8 @@ class MenuAdminController extends BaseAdminController {
             'sort_order'       => 0 // Mặc định là 0, sẽ được sort lại sau
         ];
 
-        \ModuleAdminModel::insert($data);
-        return $this->redirect(route('admin.system_menu.index'));
+        ModuleAdminModel::insert($data);
+        return $this->redirect(route('admin.system_menu.index'))->with('success', 'Thêm mới menu thành công!');
     }
 
     /**
@@ -65,7 +65,7 @@ class MenuAdminController extends BaseAdminController {
      */
     public function edit(Request $request, $id) {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
-        $menu = \ModuleAdminModel::where('id', $id)->first();
+        $menu = ModuleAdminModel::where('id', $id)->first();
         if ($menu) {
             return $this->json(['success' => true, 'data' => $menu]);
         }
@@ -95,8 +95,8 @@ class MenuAdminController extends BaseAdminController {
             $data['parent'] = 0;
         }
 
-        \ModuleAdminModel::where('id', $id)->update($data);
-        return $this->redirect(route('admin.system_menu.index'));
+        ModuleAdminModel::where('id', $id)->update($data);
+        return $this->redirect(route('admin.system_menu.index'))->with('success', 'Cập nhật menu thành công!');
     }
 
     /**
@@ -106,11 +106,11 @@ class MenuAdminController extends BaseAdminController {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
         
         // Xóa menu hiện tại
-        \ModuleAdminModel::where('id', $id)->delete();
+        ModuleAdminModel::where('id', $id)->delete();
         // Xóa luôn các menu con
-        \ModuleAdminModel::where('parent', $id)->delete();
+        ModuleAdminModel::where('parent', $id)->delete();
         
-        return $this->redirect(route('admin.system_menu.index'));
+        return $this->redirect(route('admin.system_menu.index'))->with('success', 'Đã xóa menu thành công!');
     }
 
     /**
@@ -136,7 +136,7 @@ class MenuAdminController extends BaseAdminController {
         foreach ($items as $item) {
             $id = (int)$item['id'];
             if ($id > 0) {
-                \ModuleAdminModel::where('id', $id)->update([
+                ModuleAdminModel::where('id', $id)->update([
                     'parent' => $parentId,
                     'sort_order' => $sortOrder
                 ]);

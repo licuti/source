@@ -45,7 +45,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | N/A | **Menu Hệ thống (Admin Sidebar)** (`system-menu`) | `MenuAdminController` | 🟢 Hoàn thành |
 | 101 | **Cấu hình Email / SMTP** (`email-smtp`) | `EmailController` | 🟡 Đang PT |
 | 102 | **Tích hợp API / Scripts** (`api-integration`) | `ApiIntegrationController` | 🟡 Đang PT |
-| 104 | **Sao lưu & Cache** (`backup-cache`) | `BackupController` | 🟡 Đang PT |
+| 104 | **Sao lưu & Cache** (`backup-cache`) | `BackupController` | 🟢 Hoàn thành |
 | 105 | **Chế độ bảo trì** (`maintenance`) | `MaintenanceController` | 🟡 Đang PT |
 | 25 | **Cấu hình Website** (`setting`) | `SettingController` | 🟡 Đang phát triển |
 | 28 | **Cấu hình SEO cơ bản** (`seo-co-ban`) | `SeoConfigController` | 🔴 Chưa làm |
@@ -60,6 +60,12 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **`update()`**: Cập nhật ngôn ngữ theo ID. Validate trùng `code` với bản ghi khác. Logic xử lý `is_default` tương tự `store()`. Sau khi lưu, gọi `generateConfigFile()`.
 - **`destroy()`**: Xóa ngôn ngữ theo ID. **Ngăn chặn xóa ngôn ngữ mặc định** (`is_default = 1`). Sau khi xóa, gọi `generateConfigFile()`.
 - **`generateConfigFile()` (private)**: Lấy toàn bộ ngôn ngữ đang `is_active = 1` từ DB, tự động ghi đè lên file `config/languages.php`. File này được ứng dụng đọc để biết danh sách ngôn ngữ hỗ trợ mà không cần query DB.
+
+### 🟢 Chi tiết: BackupController (Sao lưu & Cache)
+- **Quản lý Cache**: Hỗ trợ dọn dẹp linh hoạt từng phần (chỉ xóa Logs hoặc chỉ làm mới OPcache) hoặc xóa toàn bộ để tối ưu dung lượng và tốc độ web.
+- **Quản lý Sao lưu DB**: Cho phép sao lưu an toàn Cơ sở dữ liệu ra file `.sql` và tải về trực tiếp. Tích hợp tính năng **Phục hồi 1-Click** (Restore) có xác nhận 2 lớp bằng chữ "RESTORE" để chống bấm nhầm gây mất dữ liệu.
+- **Sao lưu Mã nguồn**: Nén toàn bộ web thành `.zip` để bảo lưu tài nguyên. Tự động loại trừ thông minh các thư mục hệ thống/tiến trình ngầm đang chạy (`storage`, `.git`, `.vscode`, `node_modules`, `.claude`, v.v) để ngăn chặn vòng lặp zip và lỗi khóa file (Read error).
+- **Tự động hóa (Cronjob)**: Hỗ trợ kích hoạt tiến trình ngầm `cron_backup.php` qua URL bảo mật Token. Tự động sao lưu mỗi đêm, cấu hình xoay vòng (xóa file cũ sau N ngày) và chuẩn bị sẵn Placeholder gửi Email cảnh báo. Cấu hình được lưu qua file JSON riêng lẻ (`cron_settings.json`) để tiết kiệm kết nối Database khi tiến trình ngầm kiểm tra trạng thái bật/tắt.
 
 ### 🟢 Chi tiết: TextTranslationController (Dịch chuỗi ngôn ngữ)
 - **`index()`**: Hiển thị danh sách bản dịch có phân trang (50 bản ghi/trang), hỗ trợ tìm kiếm theo `keyword` (trên `key_name` và `text`), lọc theo `group_name`. Tự động load danh sách ngôn ngữ từ `config('lang')` để render cột theo từng ngôn ngữ. Liệt kê danh sách tất cả `group_name` hiện có để hiển thị dropdown lọc.
@@ -159,7 +165,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 |---|---|---|---|
 | 106 | **Cổng thanh toán** (`payment`) | `PaymentController` | 🟢 Hoàn thành |
 | 32 | **Quản lý đơn hàng** (`quan-ly-don-hang`) | `OrderController` | 🟢 Hoàn thành |
-| 45 | **Thống kê doanh thu** (`doanh-thu`) | `RevenueController` | 🔴 Chưa làm |
+| 45 | **Thống kê doanh thu** (`doanh-thu`) | `RevenueController` | 🟢 Hoàn thành |
 | 55 | **Cấu hình vận chuyển** (`quan-ly-van-chuyen`) | `ShippingController` | 🟢 Hoàn thành |
 | 56 | **Quản lý thuế** (`quan-ly-thue`) | `TaxClassController`, `TaxRateController` | 🟢 Hoàn thành |
 | 46 | **Mã giảm giá** (`promo-code`) | `PromoCodeController` | 🟢 Hoàn thành |
@@ -197,7 +203,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 | ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |
 |---|---|---|---|
-| 41 | **Thành viên** (`thanh-vien`) | `CustomerController` | 🔴 Chưa làm |
+| 41 | **Thành viên** (`thanh-vien`) | `CustomerController` | 🟢 Hoàn thành |
 | 42 | **Cộng tác viên** (`cong-tac-vien`) | `AffiliateController` | 🔴 Chưa làm |
 | 33 | **Khách hàng liên hệ** (`lien-he`) | `ContactController` | 🔴 Chưa làm |
 | 48 | **Quản lý bình luận** (`binh-luan`) | `CommentController` | 🔴 Chưa làm |
@@ -205,4 +211,11 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 ---
 
-> **📊 Tổng kết tiến độ:** Hoàn thành **14/33 module** (42%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Bài viết, Quản lý Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng và Khối giao diện động đã hoàn thiện 100%. Ưu tiên tiếp theo: Thống kê Doanh thu và các phần CRM liên quan.
+### 🟢 Chi tiết: RevenueController (Thống kê doanh thu)
+- **`index()`**: Hiển thị Dashboard toàn diện với các chỉ số báo cáo nâng cao (Doanh thu, Lợi nhuận ước tính, Đơn thành công, Số lượng SP bán ra, Thiệt hại đơn hủy). Tính toán và so sánh tự động Tỷ lệ phần trăm tăng/giảm so với kỳ trước.
+- **Biểu đồ (Charts):** Tích hợp 3 biểu đồ Chart.js (Line chart Doanh thu, Doughnut Trạng thái đơn, Doughnut Phương thức thanh toán).
+- **Bộ lọc (Filters):** Lấy tham số `date_range`, hỗ trợ Quick Filters (Hôm nay, Tuần này, Tháng này).
+- **Danh sách:** Top 10 sản phẩm bán chạy nhất, Top 10 khách hàng VIP chi tiêu nhiều nhất.
+- **Export:** Cung cấp tính năng xuất báo cáo `.csv` với định dạng UTF-8 BOM chuẩn để đọc trên Excel.
+
+> **📊 Tổng kết tiến độ:** Hoàn thành **16/33 module** (48%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Bài viết, Quản lý Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu, Quản lý Thành viên và Khối giao diện động đã hoàn thiện. Ưu tiên tiếp theo: Flash Sale và Liên hệ.
