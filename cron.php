@@ -1,8 +1,9 @@
 <?php
 /**
  * ============================================================
- *  Cronjob Tự động Sao lưu CSDL & Xoay vòng Log
- *  Chạy: curl -s https://domain.com/cron_backup.php?token=SECRET_KEY
+ *  TIẾN TRÌNH TỰ ĐỘNG HÓA HỆ THỐNG (CRON)
+ *  Thực thi tự động: Đổ CSDL, Dọn dẹp Log cũ
+ *  Chạy: curl -s https://domain.com/cron.php?token=SECRET_KEY
  * ============================================================
  */
 require_once __DIR__ . '/app/autoload.php';
@@ -78,7 +79,7 @@ try {
     }
     $sql .= "SET FOREIGN_KEY_CHECKS=1;\n";
 
-    $filename = 'backup_db_auto_' . date('Ymd_His') . '.sql';
+    $filename = 'backup_' . date('Ymd') . '.sql';
     file_put_contents($backupDir . $filename, $sql);
     
     $status = 'SUCCESS';
@@ -110,23 +111,46 @@ if ($deletedOldFiles > 0) {
 }
 
 // -----------------------------------------------------
-// 3. GỬI EMAIL THÔNG BÁO (PLACEHOLDER)
+// 3. TỰ ĐỘNG DỌN DẸP LOG CŨ
+// -----------------------------------------------------
+$logDir = __DIR__ . '/storage/logs/';
+$logFiles = glob($logDir . 'app-*.log');
+$deletedLogs = 0;
+
+foreach ($logFiles as $lFile) {
+    if (is_file($lFile)) {
+        if (filemtime($lFile) < $limitDaysAgo) {
+            unlink($lFile);
+            $deletedLogs++;
+        }
+    }
+}
+
+if ($deletedLogs > 0) {
+    $message .= " | Đã tự động dọn dẹp $deletedLogs file Log hệ thống cũ.";
+}
+
+// -----------------------------------------------------
+// 4. GỬI EMAIL THÔNG BÁO (PLACEHOLDER)
 // -----------------------------------------------------
 function sendMailNotification($status, $message, $email) {
     if (empty($email)) return;
     
-    // TODO: Khi setup xong cấu hình SMTP, viết code gửi mail ở đây
-    // Ví dụ:
-    // $mailer = new \App\Libraries\Mailer();
-    // $mailer->send($email, "Cron Backup: $status", $message);
-    
-    // Tạm thời ghi log
-    $logFile = __DIR__ . '/storage/logs/cron_backup.log';
-    $logMsg = "[" . date('Y-m-d H:i:s') . "] [$status] Sent to $email: $message" . PHP_EOL;
-    file_put_contents($logFile, $logMsg, FILE_APPEND);
+    // TODO: Chèn code gửi email (PHPMailer/SMTP) vào đây
+    // $mailer->send($email, "Cron Status: $status", $message);
 }
 
-sendMailNotification($status, $message, $adminEmail);
+if (!empty($adminEmail)) {
+    sendMailNotification($status, $message, $adminEmail);
+}
 
-// Output cho trình duyệt hoặc terminal
-echo "Cronjob Finished. Status: $status. Message: $message";
+// -----------------------------------------------------
+// 5. KẾT THÚC VÀ TRẢ KẾT QUẢ
+// -----------------------------------------------------
+header('Content-Type: application/json; charset=utf-8');
+echo json_encode([
+    'status' => $status,
+    'message' => $message,
+    'time' => date('Y-m-d H:i:s')
+]);
+exit;

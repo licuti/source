@@ -86,7 +86,7 @@
                             </div>
                             <div class="alert alert-secondary small mb-0">
                                 <i class="fa-solid fa-info-circle"></i> Vui lòng thiết lập lệnh Cron trên máy chủ trỏ về:<br>
-                                <code>curl -s <?= url('cron_backup.php?token=s4fe_cron_backup_2026_xyz') ?></code>
+                                <code>curl -s <?= url('cron.php?token=s4fe_cron_backup_2026_xyz') ?></code>
                             </div>
                         </div>
                         <div class="card-footer text-end">
@@ -119,10 +119,10 @@
                             <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="ps-4">Tên tệp tin (.sql)</th>
-                                        <th>Kích thước</th>
-                                        <th>Ngày tạo</th>
-                                        <th class="text-end pe-4">Hành động</th>
+                                        <th>Tên bản sao lưu</th>
+                                        <th>Dung lượng</th>
+                                        <th>Thời gian tạo</th>
+                                        <th class="text-end pe-4">Thao tác</th>
                                     </tr>
                                 </thead>
                                 <tbody>

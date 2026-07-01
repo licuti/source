@@ -147,7 +147,14 @@ class BackupController extends BaseAdminController
             if ($item->isDir()) {
                 $zip->addEmptyDir($relativePath);
             } elseif ($item->isFile()) {
-                $zip->addFile($path, $relativePath);
+                if (filesize($path) < 5 * 1024 * 1024) { // Nhỏ hơn 5MB
+                    $content = @file_get_contents($path);
+                    if ($content !== false) {
+                        $zip->addFromString($relativePath, $content);
+                    }
+                } else {
+                    $zip->addFile($path, $relativePath);
+                }
             }
         }
 
