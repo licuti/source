@@ -154,6 +154,7 @@ $router->group('/admin', function($r) {
     // System Configuration Routes
     $r->get('/email-smtp', [\App\Controllers\Admin\EmailController::class, 'index'])->name('admin.email.index');
     $r->post('/email-smtp/save', [\App\Controllers\Admin\EmailController::class, 'save'])->name('admin.email.save');
+    $r->post('/email-smtp/test', [\App\Controllers\Admin\EmailController::class, 'testEmail'])->name('admin.email.test');
 
     $r->get('/api-integration', [\App\Controllers\Admin\ApiIntegrationController::class, 'index'])->name('admin.api_integration.index');
     $r->post('/api-integration/save', [\App\Controllers\Admin\ApiIntegrationController::class, 'save'])->name('admin.api_integration.save');

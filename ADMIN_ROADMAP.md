@@ -43,7 +43,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 26 | **Dịch chuỗi ngôn ngữ** (`text`) | `TextTranslationController` | 🟢 Hoàn thành |
 | 54 | **Quản lý Menu Website** (`menu`) | `MenuController` | 🟡 Đang PT |
 | N/A | **Menu Hệ thống (Admin Sidebar)** (`system-menu`) | `MenuAdminController` | 🟢 Hoàn thành |
-| 101 | **Cấu hình Email / SMTP** (`email-smtp`) | `EmailController` | 🟡 Đang PT |
+| 101 | **Cấu hình Email / SMTP** (`email-smtp`) | `EmailController` | 🟢 Hoàn thành |
 | 102 | **Tích hợp API / Scripts** (`api-integration`) | `ApiIntegrationController` | 🟡 Đang PT |
 | 104 | **Sao lưu & Cache** (`backup-cache`) | `BackupController` | 🟢 Hoàn thành |
 | 105 | **Chế độ bảo trì** (`maintenance`) | `MaintenanceController` | 🟡 Đang PT |
