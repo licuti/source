@@ -1,5 +1,4 @@
 <?php
-include './smtp/index.php';
 
 if(isset($_POST['dang-ky']) && $_SESSION['token'] == $_POST['_token']){
     token();
@@ -46,7 +45,7 @@ if(isset($_POST['dang-ky']) && $_SESSION['token'] == $_POST['_token']){
                 <p><a href='$confirm_link'>$confirm_link</a></p>
                 <p>Trân trọng!</p>";
                 
-                if(sendmail("Xác nhận đăng ký tại " . _web_page, $noidung, _email, $email, _ten_cong_ty)) {
+                if(send_email($email, "Xác nhận đăng ký tại " . _web_page, $noidung)) {
                     $thongbao_tt      = 'Đăng ký thành công';
                     $thongbao_icon    = 'success';
                     $thongbao_content = 'Vui lòng kiểm tra email để xác nhận kích hoạt tài khoản.';

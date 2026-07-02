@@ -21,12 +21,7 @@ $title = 'Cấu hình Email / SMTP';
 <div class="app-content">
     <div class="container-fluid">
         
-        <?php $successMsg = session('success'); if ($successMsg): ?>
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fa-solid fa-check-circle me-1"></i> <?= htmlspecialchars($successMsg) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        <?php endif; ?>
+
 
         <form action="<?= route('admin.email.save') ?>" method="POST" id="email-form">
             <div class="row g-4">
@@ -39,36 +34,45 @@ $title = 'Cấu hình Email / SMTP';
                         </div>
                         <div class="card-body">
                             
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Trình gửi mail (Mailer)</label>
-                                <select class="form-select" name="MAIL_MAILER">
-                                    <option value="smtp" <?= ($settings['MAIL_MAILER'] ?? '') == 'smtp' ? 'selected' : '' ?>>SMTP (Khuyến nghị)</option>
-                                    <option value="mail" <?= ($settings['MAIL_MAILER'] ?? '') == 'mail' ? 'selected' : '' ?>>PHP Mail</option>
-                                    <option value="sendmail" <?= ($settings['MAIL_MAILER'] ?? '') == 'sendmail' ? 'selected' : '' ?>>Sendmail</option>
-                                </select>
-                            </div>
+                            <?= view('admin.components.select', [
+                                'label' => 'Trình gửi mail (Mailer)',
+                                'name' => 'MAIL_MAILER',
+                                'value' => $settings['MAIL_MAILER'] ?? '',
+                                'options' => [
+                                    'smtp' => 'SMTP (Khuyến nghị)',
+                                    'mail' => 'PHP Mail',
+                                    'sendmail' => 'Sendmail'
+                                ]
+                            ]) ?>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Máy chủ (Host)</label>
-                                <input type="text" class="form-control" name="MAIL_HOST" value="<?= htmlspecialchars($settings['MAIL_HOST'] ?? '') ?>" placeholder="VD: smtp.gmail.com">
-                            </div>
+                            <?= view('admin.components.input', [
+                                'label' => 'Máy chủ (Host)',
+                                'name' => 'MAIL_HOST',
+                                'value' => $settings['MAIL_HOST'] ?? '',
+                                'attrs' => ['placeholder' => 'VD: smtp.gmail.com']
+                            ]) ?>
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label fw-bold">Cổng (Port)</label>
-                                        <input type="number" class="form-control" name="MAIL_PORT" value="<?= htmlspecialchars($settings['MAIL_PORT'] ?? '') ?>" placeholder="465 hoặc 587">
-                                    </div>
+                                    <?= view('admin.components.input', [
+                                        'type' => 'number',
+                                        'label' => 'Cổng (Port)',
+                                        'name' => 'MAIL_PORT',
+                                        'value' => $settings['MAIL_PORT'] ?? '',
+                                        'attrs' => ['placeholder' => '465 hoặc 587']
+                                    ]) ?>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label class="form-label fw-bold">Mã hóa (Encryption)</label>
-                                        <select class="form-select" name="MAIL_ENCRYPTION">
-                                            <option value="ssl" <?= ($settings['MAIL_ENCRYPTION'] ?? '') == 'ssl' ? 'selected' : '' ?>>SSL (Port 465)</option>
-                                            <option value="tls" <?= ($settings['MAIL_ENCRYPTION'] ?? '') == 'tls' ? 'selected' : '' ?>>TLS (Port 587)</option>
-                                            <option value="" <?= empty($settings['MAIL_ENCRYPTION']) ? 'selected' : '' ?>>Không mã hóa</option>
-                                        </select>
-                                    </div>
+                                    <?= view('admin.components.select', [
+                                        'label' => 'Mã hóa (Encryption)',
+                                        'name' => 'MAIL_ENCRYPTION',
+                                        'value' => $settings['MAIL_ENCRYPTION'] ?? '',
+                                        'options' => [
+                                            'ssl' => 'SSL (Port 465)',
+                                            'tls' => 'TLS (Port 587)',
+                                            '' => 'Không mã hóa'
+                                        ]
+                                    ]) ?>
                                 </div>
                             </div>
                             
@@ -83,37 +87,45 @@ $title = 'Cấu hình Email / SMTP';
 
                 <!-- Cấu hình Tài khoản -->
                 <div class="col-md-6">
-                    <div class="card card-success card-outline h-100">
+                    <div class="card card-dark card-outline h-100">
                         <div class="card-header">
-                            <h3 class="card-title"><i class="fa-solid fa-user-shield text-success me-2"></i> Thông tin Tài khoản</h3>
+                            <h3 class="card-title"><i class="fa-solid fa-user-shield text-dark me-2"></i> Thông tin Tài khoản</h3>
                         </div>
                         <div class="card-body">
                             
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Email gửi (Username)</label>
-                                <input type="email" class="form-control" name="MAIL_USERNAME" value="<?= htmlspecialchars($settings['MAIL_USERNAME'] ?? '') ?>" placeholder="VD: your_email@gmail.com">
-                            </div>
+                            <?= view('admin.components.input', [
+                                'type' => 'email',
+                                'label' => 'Email gửi (Username)',
+                                'name' => 'MAIL_USERNAME',
+                                'value' => $settings['MAIL_USERNAME'] ?? '',
+                                'attrs' => ['placeholder' => 'VD: your_email@gmail.com']
+                            ]) ?>
 
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Mật khẩu ứng dụng (Password)</label>
-                                <div class="input-group">
-                                    <input type="password" class="form-control" name="MAIL_PASSWORD" id="mail-password" value="<?= htmlspecialchars($settings['MAIL_PASSWORD'] ?? '') ?>">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()"><i class="fa-solid fa-eye" id="eye-icon"></i></button>
+                                <div class="input-group input-group-sm">
+                                    <input type="password" class="form-control form-control-sm" name="MAIL_PASSWORD" id="mail-password" value="<?= htmlspecialchars($settings['MAIL_PASSWORD'] ?? '') ?>">
+                                    <button class="btn btn-outline-dark" type="button" onclick="togglePassword()"><i class="fa-solid fa-eye" id="eye-icon"></i></button>
                                 </div>
                                 <small class="text-muted d-block mt-1">Đối với Gmail, bạn phải sử dụng Mật khẩu Ứng dụng (App Password) 16 ký tự, không dùng mật khẩu đăng nhập gốc.</small>
                             </div>
                             
                             <hr>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Địa chỉ Email người gửi (From Address)</label>
-                                <input type="email" class="form-control" name="MAIL_FROM_ADDRESS" value="<?= htmlspecialchars($settings['MAIL_FROM_ADDRESS'] ?? '') ?>" placeholder="Thường giống Email gửi ở trên">
-                            </div>
+                            <?= view('admin.components.input', [
+                                'type' => 'email',
+                                'label' => 'Địa chỉ Email người gửi (From Address)',
+                                'name' => 'MAIL_FROM_ADDRESS',
+                                'value' => $settings['MAIL_FROM_ADDRESS'] ?? '',
+                                'attrs' => ['placeholder' => 'Thường giống Email gửi ở trên']
+                            ]) ?>
 
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Tên người gửi hiển thị (From Name)</label>
-                                <input type="text" class="form-control" name="MAIL_FROM_NAME" value="<?= htmlspecialchars($settings['MAIL_FROM_NAME'] ?? '') ?>" placeholder="VD: Tên Công Ty">
-                            </div>
+                            <?= view('admin.components.input', [
+                                'label' => 'Tên người gửi hiển thị (From Name)',
+                                'name' => 'MAIL_FROM_NAME',
+                                'value' => $settings['MAIL_FROM_NAME'] ?? '',
+                                'attrs' => ['placeholder' => 'VD: Tên Công Ty']
+                            ]) ?>
 
                         </div>
                     </div>
@@ -124,18 +136,16 @@ $title = 'Cấu hình Email / SMTP';
             <div class="row mt-4 mb-5">
                 <div class="col-12 d-flex justify-content-between align-items-center">
                     <div>
-                        <div class="input-group">
-                            <input type="email" class="form-control" id="test-email-input" placeholder="Nhập email nhận test..." style="min-width: 250px;">
-                            <button type="button" class="btn btn-warning" id="btn-test-email">
+                        <div class="input-group input-group-sm">
+                            <input type="email" class="form-control form-control-sm" id="test-email-input" placeholder="Nhập email nhận test..." style="min-width: 250px;">
+                            <button type="button" class="btn btn-dark" id="btn-test-email">
                                 <i class="fa-solid fa-paper-plane me-1"></i> Gửi thử (Test)
                             </button>
                         </div>
                         <small class="text-muted d-block mt-1">Tính năng Gửi thử sẽ dùng các thông số trên Form (chưa cần lưu) để test.</small>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fa-solid fa-save me-1"></i> Lưu cấu hình SMTP
-                    </button>
+                    <?= view('admin.components.save_buttons', ['hide_cancel' => true, 'save_text' => 'Lưu cấu hình SMTP']) ?>
                 </div>
             </div>
         </form>

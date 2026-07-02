@@ -8,6 +8,17 @@
             <li class="nav-item d-none d-md-block">
                 <a href="/" target="_blank" class="nav-link">Xem Website</a>
             </li>
+            <?php if (get_option('maintenance_status', '0') == '1'): ?>
+            <li class="nav-item d-flex align-items-center ms-3">
+                <a href="<?= route('admin.maintenance.index') ?>" class="badge bg-danger text-decoration-none shadow-sm blink-animation">
+                    <i class="fa-solid fa-triangle-exclamation me-1"></i> ĐANG BẢO TRÌ
+                </a>
+            </li>
+            <style>
+                @keyframes badgeBlink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+                .blink-animation { animation: badgeBlink 1.5s infinite; }
+            </style>
+            <?php endif; ?>
         </ul>
 
         <!-- Menu người dùng -->

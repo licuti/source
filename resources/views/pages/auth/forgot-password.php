@@ -1,6 +1,4 @@
 <?php
-include './smtp/index.php';
-
 $params = getQueryParams();
 
 if (isset($_POST['quenpass']) && $_POST['_token'] == $_SESSION['token']) {
@@ -32,7 +30,7 @@ if (isset($_POST['quenpass']) && $_POST['_token'] == $_SESSION['token']) {
                     <p style='margin-top: 30px; font-size: 0.8em; color: #777;'>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
                 </div>";
                 
-                if (sendmail(_ten_cong_ty . " - Đặt lại mật khẩu", $noidung, _email, $email, _ten_cong_ty)) {
+                if (send_email($email, _ten_cong_ty . " - Đặt lại mật khẩu", $noidung)) {
                     $thongbao_tt      = 'Yêu cầu thành công';
                     $thongbao_icon    = 'success';
                     $thongbao_content = 'Vui lòng kiểm tra email để tiếp tục.';

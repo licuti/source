@@ -1,0 +1,6 @@
+{
+    "name": "licuti/source",
+    "require": {
+        "phpmailer/phpmailer": "^7.1"
+    }
+}

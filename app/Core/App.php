@@ -71,6 +71,7 @@ class App {
         // Lưu ý: StartSession nên chạy đầu tiên để các middleware sau có Session dùng
         $this->router->pushMiddleware(\App\Middleware\StartSession::class);
         $this->router->pushMiddleware(\App\Middleware\LanguageMiddleware::class);
+        $this->router->pushMiddleware(\App\Middleware\MaintenanceMiddleware::class);
         // Middleware bảo vệ mật khẩu toàn trang (nếu được bật trong config)
         if (config('protection', false)) {
             $this->router->pushMiddleware(\App\Middleware\SitePasswordMiddleware::class);

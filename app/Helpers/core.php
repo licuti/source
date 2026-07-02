@@ -16,6 +16,24 @@ if (!function_exists('base_path')) {
     }
 }
 
+if (!function_exists('get_option')) {
+    /**
+     * Lấy giá trị cấu hình hệ thống từ bảng db_options
+     */
+    function get_option($key, $default = null) {
+        return \App\Models\OptionModel::getValue($key, $default);
+    }
+}
+
+if (!function_exists('set_option')) {
+    /**
+     * Lưu/Cập nhật cấu hình hệ thống vào bảng db_options
+     */
+    function set_option($key, $value, $autoload = 1) {
+        return \App\Models\OptionModel::setValue($key, $value, $autoload);
+    }
+}
+
 if (!function_exists('render_attrs')) {
     /**
      * Chuyển đổi mảng các thuộc tính thành chuỗi HTML chuẩn
@@ -586,19 +604,10 @@ if (!function_exists('send_email')) {
      * Lấy cấu hình SMTP trực tiếp từ .env
      */
     function send_email($to, $subject, $body, $attachments = []) {
-        $smtpDir = base_path('smtp');
-        if (!file_exists($smtpDir . '/class.phpmailer.php')) {
-            \App\Core\Logger::error("Không tìm thấy thư viện PHPMailer tại $smtpDir");
-            return false;
-        }
-
-        require_once $smtpDir . '/class.phpmailer.php';
-        require_once $smtpDir . '/class.smtp.php';
-
-        $mail = new \PHPMailer(true);
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
         
         try {
-            $mailerType = env('MAIL_MAILER', 'smtp');
+            $mailerType = get_option('MAIL_MAILER', env('MAIL_MAILER', 'smtp'));
             if ($mailerType === 'smtp') {
                 $mail->IsSMTP();
             } elseif ($mailerType === 'sendmail') {
@@ -609,14 +618,14 @@ if (!function_exists('send_email')) {
             
             $mail->SMTPDebug  = 0;
             $mail->SMTPAuth   = true;
-            $mail->SMTPSecure = env('MAIL_ENCRYPTION', 'ssl') === 'ssl' ? 'ssl' : 'tls';
-            $mail->Host       = env('MAIL_HOST', 'smtp.gmail.com');
-            $mail->Port       = env('MAIL_PORT', 465);
-            $mail->Username   = env('MAIL_USERNAME', '');
-            $mail->Password   = env('MAIL_PASSWORD', '');
+            $mail->SMTPSecure = get_option('MAIL_ENCRYPTION', env('MAIL_ENCRYPTION', 'ssl')) === 'ssl' ? 'ssl' : 'tls';
+            $mail->Host       = get_option('MAIL_HOST', env('MAIL_HOST', 'smtp.gmail.com'));
+            $mail->Port       = get_option('MAIL_PORT', env('MAIL_PORT', 465));
+            $mail->Username   = get_option('MAIL_USERNAME', env('MAIL_USERNAME', ''));
+            $mail->Password   = get_option('MAIL_PASSWORD', env('MAIL_PASSWORD', ''));
             
             $mail->CharSet = 'UTF-8';
-            $mail->SetFrom(env('MAIL_FROM_ADDRESS', ''), env('MAIL_FROM_NAME', 'System'));
+            $mail->SetFrom(get_option('MAIL_FROM_ADDRESS', env('MAIL_FROM_ADDRESS', '')), get_option('MAIL_FROM_NAME', env('MAIL_FROM_NAME', 'System')));
             
             if (is_array($to)) {
                 foreach ($to as $address) {

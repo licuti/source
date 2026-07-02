@@ -6,6 +6,12 @@
  * ============================================================
  */
 
+// ── 0. Register Composer Autoloader ───────────────────────────
+$composerAutoload = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+if (file_exists($composerAutoload)) {
+    require_once $composerAutoload;
+}
+
 // ── 1. Register Class Autoloader ─────────────────────────────
 spl_autoload_register(function ($className) {
     $baseDir = __DIR__ . DIRECTORY_SEPARATOR;

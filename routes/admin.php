@@ -189,8 +189,10 @@ $router->group('/admin', function($r) {
     $r->post('/backup-cache/save-settings', [\App\Controllers\Admin\BackupController::class, 'saveSettings'])->name('admin.backup.save_settings');
     $r->post('/backup-cache/clear-cache', [\App\Controllers\Admin\BackupController::class, 'clearCache'])->name('admin.backup.clear_cache');
 
+    // Maintenance Module
     $r->get('/maintenance', [\App\Controllers\Admin\MaintenanceController::class, 'index'])->name('admin.maintenance.index');
     $r->post('/maintenance/save', [\App\Controllers\Admin\MaintenanceController::class, 'save'])->name('admin.maintenance.save');
+    $r->get('/maintenance/preview', [\App\Controllers\Admin\MaintenanceController::class, 'preview'])->name('admin.maintenance.preview');
 
     $r->get('/payment', [\App\Controllers\Admin\PaymentController::class, 'index'])->name('admin.payment.index');
     $r->get('/payment/create', [\App\Controllers\Admin\PaymentController::class, 'create'])->name('admin.payment.create');

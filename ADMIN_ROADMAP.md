@@ -46,7 +46,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 101 | **Cấu hình Email / SMTP** (`email-smtp`) | `EmailController` | 🟢 Hoàn thành |
 | 102 | **Tích hợp API / Scripts** (`api-integration`) | `ApiIntegrationController` | 🟡 Đang PT |
 | 104 | **Sao lưu & Cache** (`backup-cache`) | `BackupController` | 🟢 Hoàn thành |
-| 105 | **Chế độ bảo trì** (`maintenance`) | `MaintenanceController` | 🟡 Đang PT |
+| 105 | **Chế độ bảo trì** (`maintenance`) | `MaintenanceController` | 🟢 Hoàn thành |
 | 25 | **Cấu hình Website** (`setting`) | `SettingController` | 🟡 Đang phát triển |
 | 28 | **Cấu hình SEO cơ bản** (`seo-co-ban`) | `SeoConfigController` | 🔴 Chưa làm |
 | 39 | **Sitemap** (`sitemap`) | `SitemapController` | 🔴 Chưa làm |
@@ -98,6 +98,12 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **`testEmail()`**: (AJAX) Nhận thông số ngay từ Form (không cần lưu), trực tiếp gán vào thư viện PHPMailer cũ và bắn mail thử nghiệm. Trả về kết quả JSON để xuất thông báo Alert/SweetAlert2 cho Quản trị viên.
 - **Hàm `send_email()` (Helper)**: Viết tiện ích đa năng ở `core.php` kết nối tự động tới cấu hình SMTP `.env`, có hỗ trợ truyền mảng email và file đính kèm, tái sử dụng trên toàn dự án.
 
+### 🟢 Chi tiết: MaintenanceController (Chế độ bảo trì)
+- **`index()` / `save()`**: Quản lý bật tắt chế độ bảo trì hệ thống. Cho phép tùy chỉnh giao diện thông báo (Tiêu đề, Nội dung qua Editor, Countdown hẹn giờ ETA, Logo, Màu nền).
+- **Tính năng Bypass Nâng cao**: Xây dựng cơ chế vượt rào bảo trì bằng 2 cách độc lập:
+  - (1) **IP Whitelist**: Cho phép admin chủ động cấp quyền truy cập theo địa chỉ IP (có nút thêm nhanh IP hiện tại).
+  - (2) **Token Access (URL Bypass)**: Tự động sinh Link chia sẻ bảo mật chứa Token `/?bypass=TOKEN` phục vụ cho Khách / Tester. Hệ thống sẽ cấp Cookie Bypass có thời hạn tuỳ chỉnh.
+- **Tính năng Xem trước (Preview)**: Tích hợp route `/admin/maintenance/preview` cho phép Admin xem thử trực tiếp giao diện bảo trì hiện tại mà không cần phải kích hoạt bảo trì hệ thống. Khắc phục triệt để lỗi xung đột Layout tĩnh bằng cách bypass `layouts/main`.
 ---
 
 ## 3. 📰 QUẢN LÝ BÀI VIẾT (Content)
