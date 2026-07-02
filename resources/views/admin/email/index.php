@@ -21,9 +21,9 @@ $title = 'Cấu hình Email / SMTP';
 <div class="app-content">
     <div class="container-fluid">
         
-        <?php if (session()->has('success')): ?>
+        <?php $successMsg = session('success'); if ($successMsg): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fa-solid fa-check-circle me-1"></i> <?= session()->flash('success') ?>
+                <i class="fa-solid fa-check-circle me-1"></i> <?= htmlspecialchars($successMsg) ?>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>

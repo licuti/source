@@ -92,6 +92,12 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **`destroy()`**: Xóa một menu đồng thời tự động xóa các menu con trực thuộc nó.
 - **`updateSortAjax()`**: Nhận JSON cấu trúc cây đã thay đổi từ giao diện Nestable kéo thả, cập nhật đồng loạt lại vị trí cha/con (`parent`) và thứ tự hiển thị (`sort_order`) thông qua AJAX.
 
+### 🟢 Chi tiết: EmailController (Cấu hình Email / SMTP)
+- **`index()`**: Hiển thị Giao diện đọc trực tiếp thông số hiện tại từ biến môi trường `.env`. Giao diện 2 khối (Máy chủ & Tài khoản), có nút tắt/bật mật khẩu và cảnh báo Gmail App Password.
+- **`save()`**: Xử lý mảng `$request->post()`, quét file `.env` bằng Regex (`preg_replace`) để tìm và ghi đè trực tiếp các tham số `MAIL_*`. Nếu chưa có, tự động nối thêm vào dòng cuối cùng.
+- **`testEmail()`**: (AJAX) Nhận thông số ngay từ Form (không cần lưu), trực tiếp gán vào thư viện PHPMailer cũ và bắn mail thử nghiệm. Trả về kết quả JSON để xuất thông báo Alert/SweetAlert2 cho Quản trị viên.
+- **Hàm `send_email()` (Helper)**: Viết tiện ích đa năng ở `core.php` kết nối tự động tới cấu hình SMTP `.env`, có hỗ trợ truyền mảng email và file đính kèm, tái sử dụng trên toàn dự án.
+
 ---
 
 ## 3. 📰 QUẢN LÝ BÀI VIẾT (Content)
