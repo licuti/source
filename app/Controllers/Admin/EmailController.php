@@ -61,7 +61,7 @@ class EmailController extends BaseAdminController
         $fromAddress = $request->input('MAIL_FROM_ADDRESS');
         $fromName = $request->input('MAIL_FROM_NAME');
 
-        // Yêu cầu thư viện PHPMailer thông qua Composer (đã load ở index.php)
+        // Sử dụng PHPMailer từ Composer
         $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 
         try {
