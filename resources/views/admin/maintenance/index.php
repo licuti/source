@@ -79,16 +79,24 @@ $title = 'Bảo trì hệ thống';
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="eta" class="form-label">Dự kiến hoàn thành (Tuỳ chọn)</label>
-                                        <input type="datetime-local" class="form-control form-control-sm" id="eta" name="eta" value="<?= $content['eta'] ?? '' ?>">
-                                    </div>
+                                    <?= view('admin.components.datetime', [
+                                        'name' => 'eta',
+                                        'label' => 'Dự kiến hoàn thành (Tuỳ chọn)',
+                                        'value' => $content['eta'] ?? ''
+                                    ]) ?>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="bg_color" class="form-label">Màu nền</label>
-                                        <input type="color" class="form-control form-control-sm form-control-color w-100" id="bg_color" name="bg_color" value="<?= $content['bg_color'] ?? '#0f0f13' ?>" title="Chọn màu nền">
-                                    </div>
+                                    <?= view('admin.components.input', [
+                                        'type' => 'color',
+                                        'name' => 'bg_color',
+                                        'label' => 'Màu nền',
+                                        'value' => $content['bg_color'] ?? '#0f0f13',
+                                        'attrs' => [
+                                            'id' => 'bg_color',
+                                            'class' => 'w-100',
+                                            'title' => 'Chọn màu nền'
+                                        ]
+                                    ]) ?>
                                 </div>
                             </div>
 
@@ -105,14 +113,14 @@ $title = 'Bảo trì hệ thống';
                     <!-- Card IP Whitelist -->
                     <div class="card card-primary card-outline mb-4">
                         <div class="card-header">
-                            <h3 class="card-title"><i class="fa-solid fa-shield-halved text-success me-2"></i> Ngoại lệ theo IP (Whitelist)</h3>
+                            <h3 class="card-title"><i class="fa-solid fa-shield-halved text-primary me-2"></i> Ngoại lệ theo IP (Whitelist)</h3>
                         </div>
                         <div class="card-body">
                             <p class="text-muted small">Các địa chỉ IP dưới đây sẽ được phép truy cập website bình thường dù đang bật bảo trì.</p>
                             
-                            <div class="mb-3 p-2 bg-light rounded border">
+                            <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded border">
                                 <span class="small">IP hiện tại của bạn: <strong class="text-primary" id="current_ip"><?= $_SERVER['REMOTE_ADDR'] ?></strong></span>
-                                <button type="button" class="btn btn-xs btn-outline-primary float-end" onclick="addCurrentIp()">+ Thêm nhanh</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="addCurrentIp()">+ Thêm nhanh</button>
                             </div>
 
                             <div id="ip_list">
@@ -131,7 +139,7 @@ $title = 'Bảo trì hệ thống';
                                 <?php endforeach; ?>
                             </div>
                             
-                            <button type="button" class="btn btn-sm btn-light border mt-2 w-100" id="btn-add-ip">
+                            <button type="button" class="btn btn-sm btn-dark border mt-2" id="btn-add-ip">
                                 <i class="fa-solid fa-plus"></i> Thêm IP ngoại lệ
                             </button>
                         </div>
@@ -140,7 +148,7 @@ $title = 'Bảo trì hệ thống';
                     <!-- Card URL Tokens -->
                     <div class="card card-primary card-outline mb-4">
                         <div class="card-header">
-                            <h3 class="card-title"><i class="fa-solid fa-link text-info me-2"></i> Token Truy Cập Khách (URL Bypass)</h3>
+                            <h3 class="card-title"><i class="fa-solid fa-link text-primary me-2"></i> Token Truy Cập Khách (URL Bypass)</h3>
                         </div>
                         <div class="card-body">
                             <p class="text-muted small">Tạo link chia sẻ cho người test: <code><?= config('urls.base', '/') ?>/?bypass=TOKEN</code>. Hệ thống sẽ lưu Cookie 7 ngày.</p>
@@ -164,7 +172,7 @@ $title = 'Bảo trì hệ thống';
                                 <?php endforeach; ?>
                             </div>
                             
-                            <button type="button" class="btn btn-sm btn-light border mt-2 w-100" id="btn-add-token">
+                            <button type="button" class="btn btn-sm btn-dark border mt-2" id="btn-add-token">
                                 <i class="fa-solid fa-plus"></i> Tạo Token mới
                             </button>
                         </div>
