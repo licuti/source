@@ -43,22 +43,30 @@ $title = 'Bảo trì hệ thống';
                             <h3 class="card-title"><i class="fa-solid fa-power-off text-primary me-2"></i> Trạng thái hoạt động</h3>
                         </div>
                         <div class="card-body">
-                            <div class="form-check form-switch d-flex align-items-center mb-3">
-                                <input class="form-check-input" type="checkbox" role="switch" id="statusSwitch" name="maintenance_status" value="1" <?= $status == '1' ? 'checked' : '' ?>>
-                                <label class="form-check-label ms-3 fs-5" for="statusSwitch"><strong>Bật chế độ bảo trì</strong></label>
-                            </div>
-                            <p class="text-muted small mb-0">Khi bật, tất cả truy cập vào trang chủ sẽ bị chuyển hướng sang trang báo lỗi 503 (Ngoại trừ Admin và các IP/Token được cấp phép bên dưới).</p>
+                            <?= view('admin.components.switch', [
+                                'name' => 'maintenance_status',
+                                'label' => '<span class="fs-5">Bật chế độ bảo trì</span>',
+                                'checked' => $status == '1',
+                                'help_text' => 'Khi bật, tất cả truy cập vào trang chủ sẽ bị chuyển hướng sang trang báo lỗi 503 (Ngoại trừ Admin và các IP/Token được cấp phép bên dưới).',
+                                'attrs' => [
+                                    'id' => 'statusSwitch',
+                                    'role' => 'switch',
+                                    'style' => 'transform: scale(1.5); margin-left: -1.5em; margin-top: 0.25em;'
+                                ]
+                            ]) ?>
                         </div>
                     </div>
 
                     <!-- Card Cấu hình giao diện -->
                     <div class="card card-primary card-outline mb-4">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h3 class="card-title"><i class="fa-solid fa-desktop text-primary me-2"></i> Giao diện thông báo</h3>
-                            <div class="card-tools">
-                                <a href="<?= route('admin.maintenance.preview') ?>" target="_blank" class="btn btn-sm btn-outline-secondary">
-                                    <i class="fa-solid fa-eye me-1"></i> Xem trước (Preview)
-                                </a>
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h3 class="card-title"><i class="fa-solid fa-desktop text-primary me-2"></i> Giao diện thông báo</h3>
+                                <div class="card-tools">
+                                    <a href="<?= route('admin.maintenance.preview') ?>" target="_blank" class="btn btn-sm btn-primary">
+                                        <i class="fa-solid fa-eye me-1"></i> Xem trước (Preview)
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="card-body">
