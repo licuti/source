@@ -51,7 +51,6 @@ $title = 'Bảo trì hệ thống';
                                 'attrs' => [
                                     'id' => 'statusSwitch',
                                     'role' => 'switch',
-                                    'style' => 'transform: scale(1.5); margin-left: -1.5em; margin-top: 0.25em;'
                                 ]
                             ]) ?>
                         </div>

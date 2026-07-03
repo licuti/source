@@ -37,8 +37,14 @@
     <?php if(!empty($com)): ?>
         <?= $row->seo_head ?? '' ?>
     <?php endif; ?>
+
+    <!-- User API Scripts (Head) -->
+    <?= \App\Models\OptionModel::getValue('api_head_scripts', '') ?>
 </head>
 <body>
+    <!-- User API Scripts (Body) -->
+    <?= \App\Models\OptionModel::getValue('api_body_scripts', '') ?>
+
     <?php echo view('partials/header'); ?>
     
     <main id="app-content">
@@ -116,6 +122,9 @@
     <?php if(!empty($com)): ?>
         <?= $row->seo_body ?? '' ?>
     <?php endif; ?>
+
+    <!-- User API Scripts (Footer) -->
+    <?= \App\Models\OptionModel::getValue('api_footer_scripts', '') ?>
 </body>
 </html>
 

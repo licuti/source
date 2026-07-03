@@ -47,6 +47,6 @@ $attrString = render_attrs($attrs);
         <?php endif; ?>
     </div>
     <?php if ($help_text): ?>
-        <small class="text-muted fst-italic ms-5"><?= htmlspecialchars($help_text) ?></small>
+        <small class="text-muted fst-italic"><?= htmlspecialchars($help_text) ?></small>
     <?php endif; ?>
 </div>

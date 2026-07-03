@@ -41,13 +41,13 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 |---|---|---|---|
 | 103 | **Cấu hình Ngôn ngữ** (`language`) | `LanguageSettingController` | 🟢 Hoàn thành |
 | 26 | **Dịch chuỗi ngôn ngữ** (`text`) | `TextTranslationController` | 🟢 Hoàn thành |
-| 54 | **Quản lý Menu Website** (`menu`) | `MenuController` | 🟡 Đang PT |
+| 54 | **Quản lý Menu Website** (`menu`) | `MenuController` | 🟢 Hoàn thành |
 | N/A | **Menu Hệ thống (Admin Sidebar)** (`system-menu`) | `MenuAdminController` | 🟢 Hoàn thành |
 | 101 | **Cấu hình Email / SMTP** (`email-smtp`) | `EmailController` | 🟢 Hoàn thành |
-| 102 | **Tích hợp API / Scripts** (`api-integration`) | `ApiIntegrationController` | 🟡 Đang PT |
+| 102 | **Tích hợp API / Scripts** (`api-integration`) | `ApiIntegrationController` | 🟢 Hoàn thành |
 | 104 | **Sao lưu & Cache** (`backup-cache`) | `BackupController` | 🟢 Hoàn thành |
 | 105 | **Chế độ bảo trì** (`maintenance`) | `MaintenanceController` | 🟢 Hoàn thành |
-| 25 | **Cấu hình Website** (`setting`) | `SettingController` | 🟡 Đang phát triển |
+| 25 | **Cấu hình Website** (`setting`) | `SettingController` | 🟢 Hoàn thành |
 | 28 | **Cấu hình SEO cơ bản** (`seo-co-ban`) | `SeoConfigController` | 🔴 Chưa làm |
 | 39 | **Sitemap** (`sitemap`) | `SitemapController` | 🔴 Chưa làm |
 | 53 | **Button Contact** (`button-contact`) | `ContactButtonController` | 🔴 Chưa làm |
@@ -104,6 +104,15 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
   - (1) **IP Whitelist**: Cho phép admin chủ động cấp quyền truy cập theo địa chỉ IP (có nút thêm nhanh IP hiện tại).
   - (2) **Token Access (URL Bypass)**: Tự động sinh Link chia sẻ bảo mật chứa Token `/?bypass=TOKEN` phục vụ cho Khách / Tester. Hệ thống sẽ cấp Cookie Bypass có thời hạn tuỳ chỉnh.
 - **Tính năng Xem trước (Preview)**: Tích hợp route `/admin/maintenance/preview` cho phép Admin xem thử trực tiếp giao diện bảo trì hiện tại mà không cần phải kích hoạt bảo trì hệ thống. Khắc phục triệt để lỗi xung đột Layout tĩnh bằng cách bypass `layouts/main`.
+### 🟢 Chi tiết: SettingController (Cấu hình Website)
+- **`index()`**: Lấy toàn bộ dữ liệu cấu hình chung (Company Name, Logo, Favicon...) mà không phân biệt ngôn ngữ. Giao diện được thiết kế tích hợp Component Upload ảnh trực tiếp. Cấu trúc Schema JSON được xây dựng sẵn để lưu trữ linh hoạt mọi tham số mở rộng.
+- **`update()`**: Xử lý mảng đa chiều khi submit. Cập nhật cấu hình chung, logo, favicon, và thông tin dịch thuật (data_payload) độc lập cho từng ngôn ngữ `lang`. Hỗ trợ lưu trữ không giới hạn các trường Setting.
+
+### 🟢 Chi tiết: ApiIntegrationController (Tích hợp API / Scripts)
+- **`index()`**: Giao diện hiển thị 3 khu vực nhập mã: `<head>`, `<body>`, `<footer>`. Được trang bị Component IDE **CodeMirror 5** với giao diện Dracula cực đẹp, tự động highlight cú pháp HTML/CSS/JS, số dòng, và đóng mở ngoặc thông minh. Tối ưu load CDN linh hoạt với cơ chế biến cờ toàn cục `$GLOBALS`.
+- **`save()`**: Trích xuất dữ liệu, lưu thẳng (Raw Text) vào bảng `#_options` sử dụng `OptionModel` thông qua 3 khóa (`api_head_scripts`, `api_body_scripts`, `api_footer_scripts`). Vô hiệu hóa tính năng Escape HTML để bảo toàn 100% nguyên bản mã của Script.
+- **Tối ưu Hiệu năng**: Nhờ cơ chế `Autoload Cache` (tải trước bằng 1 query duy nhất trên hệ thống OptionModel), toàn bộ Script đều được ghim trực tiếp vào RAM, giúp Frontend xuất mã cực nhanh mà không gây trễ băng thông cơ sở dữ liệu.
+
 ---
 
 ## 3. 📰 QUẢN LÝ BÀI VIẾT (Content)
@@ -217,7 +226,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 |---|---|---|---|
 | 41 | **Thành viên** (`thanh-vien`) | `CustomerController` | 🟢 Hoàn thành |
 | 42 | **Cộng tác viên** (`cong-tac-vien`) | `AffiliateController` | 🔴 Chưa làm |
-| 33 | **Khách hàng liên hệ** (`lien-he`) | `ContactController` | 🔴 Chưa làm |
+| 33 | **Khách hàng liên hệ** (`lien-he`) | `FormBuilderController` | 🟢 Hoàn thành |
 | 48 | **Quản lý bình luận** (`binh-luan`) | `CommentController` | 🔴 Chưa làm |
 | 50 | **Đăng ký nhận tin** (`newsletter`) | `NewsletterController` | 🔴 Chưa làm |
 
@@ -230,4 +239,10 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **Danh sách:** Top 10 sản phẩm bán chạy nhất, Top 10 khách hàng VIP chi tiêu nhiều nhất.
 - **Export:** Cung cấp tính năng xuất báo cáo `.csv` với định dạng UTF-8 BOM chuẩn để đọc trên Excel.
 
-> **📊 Tổng kết tiến độ:** Hoàn thành **16/33 module** (48%). Hệ thống phân quyền (RBAC), Quản lý User (Core), Cấu hình Menu hệ thống, Quản lý Bài viết, Quản lý Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu, Quản lý Thành viên và Khối giao diện động đã hoàn thiện. Ưu tiên tiếp theo: Flash Sale và Liên hệ.
+### 🟢 Chi tiết: FormBuilderController (Dynamic Form Builder / Quản lý liên hệ)
+- **Kiến trúc dữ liệu:** Xóa bỏ bảng `db_lienhe` cứng nhắc cũ, thay bằng mô hình 3 bảng `db_forms`, `db_form_fields`, `db_form_submissions` linh hoạt, lưu trữ dữ liệu dưới dạng JSON.
+- **Trình tạo Form (Builder):** Giao diện kéo thả (Drag & Drop) tích hợp jQuery UI Sortable. Cho phép Admin tự do thiết kế các Form (Khảo sát, Liên hệ, Báo giá) với 8 loại trường dữ liệu (Text, Email, Phone, Textarea, Select, Radio, Checkbox, File).
+- **Quản lý Inbox (Submissions):** Hộp thư đến hiển thị thông minh, tự động phân tích JSON để tạo dòng preview ngắn gọn. Hỗ trợ thay đổi trạng thái (Mới, Đã đọc, Đã phản hồi), tích hợp Ghi chú nội bộ. Tự động hiển thị huy hiệu đếm số thư chưa đọc ngay trên Sidebar Admin.
+- **Tích hợp Frontend:** Cung cấp sẵn Helper `render_form('shortcode')` tự động sinh cấu trúc HTML form hoàn chỉnh cho phía Frontend.
+
+> **📊 Tổng kết tiến độ:** Hoàn thành **18/33 module** (54%). Hệ thống phân quyền (RBAC), Quản lý User, Cấu hình chung, Dynamic Form Builder, Quản lý Bài viết, Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu đã hoàn thiện.

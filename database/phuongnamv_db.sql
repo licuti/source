@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 02, 2026 at 10:28 AM
+-- Generation Time: Jul 03, 2026 at 10:34 AM
 -- Server version: 5.7.44
 -- PHP Version: 7.4.9
 
@@ -553,7 +553,7 @@ CREATE TABLE `db_customers` (
 --
 
 INSERT INTO `db_customers` (`id`, `code`, `fullname`, `phone`, `email`, `password`, `avatar`, `birthday`, `gender`, `address`, `country_id`, `province_id`, `district_id`, `ward_id`, `status`, `google_id`, `facebook_id`, `created_at`, `updated_at`) VALUES
-(1, 'KH-17314', 'Nguyễn Xuân Linh', '0388442351', 'linhnguyen93cmg@gmail.com', '$2y$10$EIfv7qbpStE4S.XqcLt9kegh8J2z8JLaPjR4vjGL.atlFL4SaRo4G', '395209126_7098402140171579_3912294698631496411_n_5168_1698218521013_16982185211191625182965.jpg', NULL, 1, 'Phú Thuận', 1, 51, 636, 10721, 0, NULL, NULL, '2026-06-21 03:54:59', '2026-06-21 04:55:46');
+(1, 'KH-17314', 'Nguyễn Xuân Linh', '0388442351', 'linhnguyen93cmg@gmail.com', '$2y$10$EIfv7qbpStE4S.XqcLt9kegh8J2z8JLaPjR4vjGL.atlFL4SaRo4G', '395209126_7098402140171579_3912294698631496411_n_5168_1698218521013_16982185211191625182965.jpg', NULL, 1, 'Phú Thuận', 1, 51, 636, 10721, 0, NULL, NULL, '2026-06-21 03:54:59', '2026-07-03 01:12:48');
 
 -- --------------------------------------------------------
 
@@ -777,6 +777,60 @@ CREATE TABLE `db_flash_sale` (
 
 INSERT INTO `db_flash_sale` (`id`, `ten`, `tu_ngay`, `den_ngay`, `hien_thi`) VALUES
 (1, 'Flash sale tháng 12', '2022-12-28T16:26', '2022-12-29T16:26', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `db_forms`
+--
+
+CREATE TABLE `db_forms` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email_to` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `success_message` text COLLATE utf8mb4_unicode_ci,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `db_form_fields`
+--
+
+CREATE TABLE `db_form_fields` (
+  `id` int(11) NOT NULL,
+  `form_id` int(11) NOT NULL,
+  `type` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `label` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `placeholder` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `options` text COLLATE utf8mb4_unicode_ci,
+  `is_required` tinyint(1) NOT NULL DEFAULT '0',
+  `sort_order` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `db_form_submissions`
+--
+
+CREATE TABLE `db_form_submissions` (
+  `id` int(11) NOT NULL,
+  `form_id` int(11) NOT NULL,
+  `data_payload` json NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0: new, 1: read, 2: replied',
+  `ip_address` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text COLLATE utf8mb4_unicode_ci,
+  `reply_content` text COLLATE utf8mb4_unicode_ci,
+  `replied_by` int(11) DEFAULT NULL,
+  `replied_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -14173,7 +14227,7 @@ INSERT INTO `db_module_admin` (`id`, `parent`, `name`, `icon`, `alias`, `route_n
 (28, 8, 'Cấu hình SEO cơ bản', 'fa-circle', 'seo-co-ban', 'admin.seo-co-ban.index', 5, 1, 1, NULL, 'danger'),
 (31, 0, 'Khách hàng & Tương tác', 'fa-users', '', NULL, 5, 1, 1, NULL, 'danger'),
 (32, 43, 'Quản lý bán hàng', 'fa-circle', 'orders', 'admin.order.index', 3, 1, 1, NULL, 'danger'),
-(33, 31, 'Khách hàng liên hệ', 'fa-circle', 'lien-he', 'admin.lien-he.index', 4, 1, 1, NULL, 'danger'),
+(33, 31, 'Khách hàng liên hệ', 'fa-circle', 'lien-he', 'admin.form.index', 4, 1, 1, 'SELECT COUNT(*) FROM db_form_submissions WHERE status = 0', 'danger'),
 (36, 7, 'Album ảnh', 'fa-circle', 'gallery', 'admin.gallery.index', 3, 1, 1, NULL, 'danger'),
 (37, 7, 'Videos', 'fa-circle', 'video', 'admin.video.index', 4, 1, 1, NULL, 'danger'),
 (38, 7, 'Upload file', 'fa-circle', 'upload-file', 'admin.upload-file.index', 5, 1, 1, NULL, 'danger'),
@@ -14254,12 +14308,15 @@ INSERT INTO `db_options` (`id`, `option_key`, `option_value`, `autoload`, `creat
 (7, 'MAIL_ENCRYPTION', 'tls', 1, '2026-07-01 20:24:54', '2026-07-01 21:04:56'),
 (8, 'MAIL_FROM_ADDRESS', 'noreply@yourdomain.com', 1, '2026-07-01 20:24:54', '2026-07-01 21:04:56'),
 (9, 'MAIL_FROM_NAME', 'My Website', 1, '2026-07-01 20:24:54', '2026-07-01 21:04:56'),
-(10, 'maintenance_status', '1', 1, '2026-07-01 23:38:11', '2026-07-02 03:27:48'),
-(11, 'maintenance_meta', '{\"user_id\":\"1\",\"enabled_at\":\"2026-07-02 10:27:48\"}', 1, '2026-07-01 23:38:11', '2026-07-02 03:27:48'),
-(12, 'maintenance_content', '{\"title\":\"H\\u1ec7 th\\u1ed1ng \\u0111ang b\\u1ea3o tr\\u00ec\",\"description\":\"<p>Ch&uacute;ng t&ocirc;i \\u0111ang ti\\u1ebfn h&agrave;nh n&acirc;ng c\\u1ea5p h\\u1ec7 th\\u1ed1ng. Vui l&ograve;ng quay l\\u1ea1i sau.<\\/p>\\r\\n\",\"eta\":\"2026-07-30T13:45\",\"bg_color\":\"#2e2e2e\",\"logo\":\"\"}', 1, '2026-07-01 23:38:11', '2026-07-02 03:27:48'),
-(13, 'maintenance_exceptions', '[]', 1, '2026-07-01 23:38:11', '2026-07-02 03:27:48'),
-(14, 'maintenance_whitelist_ips', '[]', 1, '2026-07-01 23:38:11', '2026-07-02 03:27:48'),
-(15, 'maintenance_bypass_tokens', '[]', 1, '2026-07-01 23:38:11', '2026-07-02 03:27:48');
+(10, 'maintenance_status', '0', 1, '2026-07-01 23:38:11', '2026-07-02 19:04:22'),
+(11, 'maintenance_meta', '{}', 1, '2026-07-01 23:38:11', '2026-07-02 19:04:22'),
+(12, 'maintenance_content', '{\"title\":\"H\\u1ec7 th\\u1ed1ng \\u0111ang b\\u1ea3o tr\\u00ec\",\"description\":\"<p>Ch&uacute;ng t&ocirc;i \\u0111ang ti\\u1ebfn h&agrave;nh n&acirc;ng c\\u1ea5p h\\u1ec7 th\\u1ed1ng. Vui l&ograve;ng quay l\\u1ea1i sau.<\\/p>\\r\\n\",\"eta\":\"2026-07-30T13:45\",\"bg_color\":\"#2e2e2e\",\"logo\":\"\"}', 1, '2026-07-01 23:38:11', '2026-07-02 19:04:22'),
+(13, 'maintenance_exceptions', '[]', 1, '2026-07-01 23:38:11', '2026-07-02 19:04:22'),
+(14, 'maintenance_whitelist_ips', '[{\"ip\":\"171.244.184.242\",\"label\":\"\"}]', 1, '2026-07-01 23:38:11', '2026-07-02 19:04:22'),
+(15, 'maintenance_bypass_tokens', '[{\"token\":\"customer-demo\",\"expires_at\":\"2026-07-24T08:32\",\"label\":\"Kh\\u00e1ch h\\u00e0ng\"}]', 1, '2026-07-01 23:38:11', '2026-07-02 19:04:22'),
+(16, 'api_head_scripts', '', 1, '2026-07-02 20:15:32', '2026-07-02 20:15:32'),
+(17, 'api_body_scripts', '', 1, '2026-07-02 20:15:32', '2026-07-02 20:15:32'),
+(18, 'api_footer_scripts', 'var post = new Swiper(\".post-slide\", {\r\n    autoplay: {\r\n        delay: 3000,\r\n        disableOnInteraction: false,\r\n    },\r\n    speed: 1000,\r\n    navigation: {\r\n        nextEl: \".post-next\",\r\n        prevEl: \".post-prev\",\r\n    },\r\n    breakpoints: {\r\n        320: {\r\n            spaceBetween: 8,\r\n            slidesPerView: 1,\r\n        },\r\n        768: {\r\n            spaceBetween: 16,\r\n            slidesPerView: 2,\r\n        },\r\n        1024: {\r\n            spaceBetween: 24,\r\n            slidesPerView: 3,\r\n        },\r\n    },\r\n});', 1, '2026-07-02 20:15:32', '2026-07-02 20:15:32');
 
 -- --------------------------------------------------------
 
@@ -14484,7 +14541,7 @@ INSERT INTO `db_posts` (`id`, `id_code`, `title`, `slug`, `description`, `conten
 (116, 659, 'KHU DÂN CƯ', 'khu-dan-cu', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cac_buoc_trien_khai_du_an_khu_dan_cu.jpg', 1, 1, 'KHU DÂN CƯ', '', '', '', 242, 0, 0, 0, '', '', 1, 2, 'vi', '2024-06-28 02:29:45', '2026-06-08 17:57:16', 0),
 (117, 660, 'CÔNG VIÊN', 'cong-vien', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/thiet_ke_cong_vien_landscape_park_design_04_san_vuon_a_dong.jpg', 1, 1, 'CÔNG VIÊN', '', '', '', 242, 0, 0, 0, '', '', 1, 3, 'vi', '2024-06-28 02:30:04', '2026-06-08 17:57:16', 0),
 (118, 661, 'NHÀ VƯỜN', 'khu-nghi-duong', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cong_ty_tu_van_thiet_ke_resort_1.jpg', 1, 1, 'NHÀ VƯỜN', '', '', '', 242, 0, 0, 0, '', '', 1, 7, 'vi', '2024-06-28 02:30:19', '2026-06-08 17:57:16', 0),
-(119, 662, 'VĂN PHÒNG', 'san-golf', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/san_golf_vu_yen.jpg', 1, 1, 'VĂN PHÒNG', '', '', '', 242, 0, 0, 0, '', '', 1, 3, 'vi', '2024-06-28 02:30:37', '2026-06-08 17:57:16', 0),
+(119, 662, 'VĂN PHÒNG', 'san-golf', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/san_golf_vu_yen.jpg', 1, 1, 'VĂN PHÒNG', '', '', '', 242, 0, 0, 0, '', '', 1, 3, 'vi', '2024-06-28 02:30:37', '2026-07-03 00:26:35', 0),
 (124, 630, 'What is star anise? The benefits of star anise and ways to use it.', 'what-is-star-anise-the-benefits-of-star-anise-and-ways-to-use-it', '<p>Hoa hồi l&agrave; g&igrave; v&agrave; hoa hồi c&oacute; những lợi &iacute;ch v&agrave; c&ocirc;ng dụng như thế n&agrave;o? H&atilde;y c&ugrave;ng B&aacute;ch h&oacute;a XANH t&igrave;m hiểu ngay trong b&agrave;i viết n&agrave;y nh&eacute;.</p>\r\n', '<p><img alt=\" Hoa hồi\" data-id=\"6\" data-nimg=\"1\" decoding=\"async\" height=\"429\" loading=\"lazy\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202202151534168292.jpg\" title=\" Hoa hồi\" width=\"762\" />Hoa hồi</p>\r\n\r\n<p>Hoa hồi,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/bot-que-ong-cha-va-hu-35g\" target=\"_blank\">quế</a>,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/thao-qua-dh-foods-natural-hu-20g\" target=\"_blank\">thảo quả</a>,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/dinh-huong-ong-cha-va-hu-35g\" target=\"_blank\">đinh hương</a>,... đều l&agrave; những loại gia vị kh&ocirc; thường được d&ugrave;ng trong nấu ăn rất thường xuy&ecirc;n ở nhiều gia đ&igrave;nh. Trong đ&oacute; hoa hồi l&agrave; gia vị kh&ocirc;ng thể thiếu, đặc biệt trong c&aacute;c m&oacute;n ăn truyền thống như&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-nau-pho-bo-ha-noi-962092\" target=\"_blank\">phở</a>. Tuy nhi&ecirc;n&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi-hoi-que-thao-qua-dinh-huong\" target=\"_blank\">hoa hồi</a>&nbsp;c&oacute; xuất sứ từ đ&acirc;u v&agrave; hoa hồi c&oacute; những c&ocirc;ng dụng ra sao ch&iacute;nh l&agrave; những thắc mắc chung của kh&aacute; nhiều người. H&atilde;y c&ugrave;ng t&igrave;m hiểu tất tần tật về loại gia vị n&agrave;y ngay sau đ&acirc;y</p>\r\n\r\n<h3>1Hoa hồi l&agrave; g&igrave;?</h3>\r\n\r\n<p><img alt=\"\" data-id=\"2\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151237240972.jpg\" /></p>\r\n\r\n<p>Hoa hồi hay c&ograve;n gọi l&agrave; hoa đại hồi l&agrave; một loại c&acirc;y&nbsp;<b>c&oacute; nguồn gốc từ Trung Quốc v&agrave; đ&ocirc;ng bắc Việt Nam</b>. Đ&acirc;y l&agrave; lo&agrave;i c&acirc;y gia vị c&oacute; t&aacute;c dụng v&agrave; m&ugrave;i thơm tương tự như c&acirc;y tiểu hồi, thu nhặt được từ vỏ quả. Đặc điểm của lo&agrave;i c&acirc;y n&agrave;y l&agrave; c&oacute; h&igrave;nh d&aacute;ng kh&aacute; nhỏ chỉ từ 6-10m, th&acirc;n c&acirc;y thẳng v&agrave; nhẵn v&agrave; c&oacute; m&agrave;u n&acirc;u x&aacute;m.</p>\r\n\r\n<p><img alt=\"\" data-id=\"3\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151237459437.jpg\" /></p>\r\n\r\n<p>Th&ocirc;ng thường<b>&nbsp;hoa hồi sẽ c&oacute; 6-8 c&aacute;nh, xếp th&agrave;nh h&igrave;nh c&aacute;nh sao c&oacute; đường k&iacute;nh từ 2,5 đến 3 cm</b>, mỗi c&aacute;nh mang b&ecirc;n trong một hạt nhỏ h&igrave;nh quả trứng nhẵn b&oacute;ng. Đa phần hoa hồi sao khi thu hoạch sẽ được&nbsp;<b>mang đi phơi kh&ocirc;, xuất khẩu dưới dạng hoa kh&ocirc;, chỉ c&oacute; một phần nhỏ được đem chế biến th&agrave;nh tinh dầu.</b></p>\r\n\r\n<h3>2Lợi &iacute;ch v&agrave; c&aacute;ch sử dụng hoa hồi</h3>\r\n\r\n<p><img alt=\"\" data-id=\"4\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151238141137.jpg\" /></p>\r\n\r\n<p><b>D&ugrave;ng trong chăm s&oacute;c sức khỏe</b>:&nbsp;<i>Theo Đại t&aacute;, B&aacute;c sĩ Nguyễn B&aacute; Vưỡng &ndash; Ph&ograve;ng chẩn trị y học cổ truyền T&acirc;m Minh Đường</i>, khi sử dụng hoa hồi nguy&ecirc;n chất để ng&acirc;m với rượu sẽ c&oacute; t&aacute;c dụng hỗ trợ&nbsp;<b>điều trị c&aacute;c bệnh như cảm lạnh, đau đầu, đau bụng, c&aacute;c bệnh về ti&ecirc;u ho v&agrave; c&aacute;c bệnh về xương khớp</b>. Ngo&agrave;i ra, hoa hồi c&ograve;n c&oacute; t&aacute;c dụng trong chữa c&aacute;c bệnh nấm da, ghẻ lở, giảm đau, giảm bầm t&iacute;m, trị ho, long đờm... v&agrave; nhiều t&aacute;c dụng chữa bệnh kh&aacute;c.</p>\r\n\r\n<p>Ngo&agrave;i ra tinh dầu hoa hồi c&ograve;n l&agrave; một trong những loại mỹ phẩm tốt nhất trong l&agrave;m đẹp, chỉ cần sử dụng tinh dầu hoa hồi kết hợp c&ugrave;ng nước n&oacute;ng để<b>&nbsp;x&ocirc;ng mặt từ 1 đến 2 lần mỗi tuần th&igrave; sẽ mang lại cho bạn một l&agrave;n da s&aacute;ng mịn v&agrave; sạch sẽ mụn th&acirc;m.</b></p>\r\n\r\n<p><img alt=\"\" data-id=\"5\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151246488637.jpg\" /></p>\r\n\r\n<p><b>D&ugrave;ng trong ẩm thực</b>: Hoa hồi cũng l&agrave; một trong những loại gia vị cực phẩm m&agrave; c&aacute;c đầu bếp nổi tiếng lu&ocirc;n ưa chuộng sử dụng trong c&aacute;c m&oacute;n ăn. Sử dụng hoa hồi trong c&aacute;c m&oacute;n ăn một c&aacute;ch kh&eacute;o l&eacute;o sẽ gi&uacute;p n&acirc;ng tầm m&oacute;n ăn l&ecirc;n một hương vị ho&agrave;n to&agrave;n mới. Để c&oacute; thể sử dụng hết to&agrave;n bộ những hương vị tinh tế của hoa hồi, c&aacute;c đầu bếp thường<b>&nbsp;rang hoa hồi rồi mới sử dụng để tẩm ướp</b>&nbsp;hoặc d&ugrave;ng trong c&aacute;c m&oacute;n canh, s&uacute;p, c&agrave; ri hay c&aacute;c m&oacute;n hầm gi&uacute;p k&iacute;ch th&iacute;ch vị gi&aacute;c, ăn ngon miệng hơn.</p>\r\n\r\n<p>&gt;&gt;&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/huong-dan-cach-lam-mon-lau-trung-khanh-cay-xe-tru-danh-don-gian-tai-nha-1271318\">Hướng dẫn c&aacute;ch l&agrave;m m&oacute;n lẩu Tr&ugrave;ng Kh&aacute;nh cay x&egrave; trứ danh đơn giản tại nh&agrave;</a></p>\r\n\r\n<p>&gt;&gt;&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-lam-trung-ngam-tra-mon-an-doc-dao-mang-lai-may-man-doi-voi-nguoi-trung-hoa-1270984\">C&aacute;ch l&agrave;m trứng ng&acirc;m tr&agrave; - m&oacute;n ăn độc đ&aacute;o, mang lại may mắn đối với người Trung Hoa</a></p>\r\n\r\n<p><img alt=\"\" data-id=\"6\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151247056822.jpg\" /></p>\r\n\r\n<p><b>C&oacute; lợi cho b&agrave; mẹ đang cho con b&uacute;</b>:&nbsp;Theo kinh nghiệm d&acirc;n gian, người ta thường&nbsp;<b>cho hoa hồi v&agrave;o c&aacute;c m&oacute;n ăn của phụ nữ sau sinh</b>&nbsp;để&nbsp;<b>gi&uacute;p sữa c&oacute; m&ugrave;i thơm v&agrave; về nhiều hơn</b>.</p>\r\n\r\n<p><b>C&aacute;c c&ocirc;ng dụng kh&aacute;c</b>: Ngo&agrave;i c&aacute;c t&aacute;c dụng tr&ecirc;n th&igrave; hoa hồi c&ograve;n c&oacute; c&aacute;c t&aacute;c dụng kh&aacute;c như&nbsp;<b>điều chế thuốc trị cảm c&uacute;m, c&aacute;c loại rượu, b&aacute;nh kẹo, hay l&agrave;m mồi c&acirc;u c&aacute;,...</b>Đối với việc c&acirc;u c&aacute;, bạn chỉ&nbsp;<b>trộn bột hoa hồi với c&aacute;c nguy&ecirc;n liệu như bột đậu tương, c&agrave; rốt th&aacute;i nhỏ, ruột b&aacute;nh m&igrave;, c&aacute;m gạo</b>&nbsp;rồi ủ chung tất cả ch&uacute;ng lại với nước luộc thịt lợn qua đ&ecirc;m, bạn sẽ c&oacute; một mồi c&acirc;u xuất sắc.</p>\r\n\r\n<p><i>Hoa hồi với c&aacute;c c&ocirc;ng dụng tuyệt vời của m&igrave;nh sẽ l&agrave; một loại&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi\" target=\"_blank\">gia vị</a>&nbsp;tuyệt vời cho c&aacute;c m&oacute;n ăn, một loại mỹ phẩm ho&agrave;n hảo cho&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/khoe-dep-moi-ngay/1731\" target=\"_blank\">l&agrave;m đẹp</a>&nbsp;v&agrave; c&ograve;n c&oacute; v&ocirc; số c&ocirc;ng dụng kh&aacute;c trong cuộc sống.</i></p>\r\n', 'tin_tuc/hoa_hoi_la_gi_loi_ich_cua_hoa_hoi_va_nhung_cach_su_dung_hoa_hoi_202009151237459437.jpg', 1, 1, 'What is star anise? The benefits of star anise and ways to use it.', '', '', '', 129, 0, 0, 0, '', '', 1, 10, 'en', '2024-06-16 05:26:00', '2026-06-12 09:22:46', 1),
 (125, 622, 'Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh', 'hoa-hoi-va-cac-gia-vi-tao-nen-nuoc-dung-pho-ngon-tru-danh-8', 'Nước dùng phở chính là nhân tố tạo nên hương vị thơm ngon nổi tiếng của món phở truyền thống của Việt Nam. Bên cạnh nguyên liệu quen thuộc như hành, gừng nướng, nước dùng phở không thể thiếu được hoa hồi cùng các gia vị thảo mộc khác sẽ được đề cập chi tiết trong bài viết dưới đây. Mời bạn đọc cùng UniSpice tìm hiểu ngay nhé.', '<p>Nước d&ugrave;ng phở ch&iacute;nh l&agrave; nh&acirc;n tố tạo n&ecirc;n hương vị thơm ngon nổi tiếng của m&oacute;n phở truyền thống của Việt Nam. B&ecirc;n cạnh nguy&ecirc;n liệu quen thuộc như h&agrave;nh, gừng nướng, nước d&ugrave;ng phở kh&ocirc;ng thể thiếu được&nbsp;<strong>hoa hồi</strong>&nbsp;c&ugrave;ng c&aacute;c&nbsp;<a href=\"https://unispice.vn/danh-muc-san-pham/gia-vi-tu-nhien/\"><strong>gia vị thảo mộc</strong></a>&nbsp;kh&aacute;c sẽ được đề cập chi tiết trong b&agrave;i viết dưới đ&acirc;y. Mời bạn đọc c&ugrave;ng&nbsp;<a href=\"https://unispice.vn/\"><strong>UniSpice</strong></a>&nbsp;t&igrave;m hiểu ngay nh&eacute;.</p>\r\n\r\n<p>Xem th&ecirc;m:&nbsp;<a href=\"https://unispice.vn/mon-ngon-moi-ngay/pho-bo-gia-truyen/\"><strong>C&aacute;ch nấu phở b&ograve; gia truyền</strong></a></p>\r\n\r\n<h2><b>Hoa hồi</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/hoa-hoi/\"><strong>Hoa hồi</strong></a>&nbsp;hay c&ograve;n được biết đến với một c&aacute;i t&ecirc;n kh&aacute;c l&agrave; đại hồi hay b&aacute;t gi&aacute;c. Đ&acirc;y l&agrave; một gia vị thảo mộc phổ biến trong nền ẩm thực của nhiều quốc gia Ch&acirc;u &Aacute;. Ở Việt Nam, hoa hồi l&agrave; gia vị kh&ocirc;ng thể thiếu trong nước d&ugrave;ng phở. Kh&ocirc;ng chỉ l&agrave; một vị thuốc qu&yacute; trong chữa bệnh, hoa hồi c&ograve;n g&oacute;p phần tạo n&ecirc;n hương vị tinh tế cho nước phở, với vị cay nhẹ, ngọt dịu c&ugrave;ng hương thơm nồng ấn tượng. Khi được sử dụng ở mức độ vừa phải, hoa hồi kh&ocirc;ng hề lấn &aacute;t hương vị của c&aacute;c nguy&ecirc;n liệu kh&aacute;c.&nbsp;</p>\r\n\r\n<h2><b><img alt=\"Hoa hồi gia vị không thể thiếu trong nước dùng phở\" height=\"576\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Hoa-hoi-1.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></b></h2>\r\n\r\n<h2><b>Quế thanh</b></h2>\r\n\r\n<p>L&agrave; sản phẩm thu từ vỏ của c&acirc;y quế, quế c&oacute; vị cay the v&agrave; m&ugrave;i nồng kh&oacute; trộn lẫn. D&ugrave; được sử dụng l&agrave;&nbsp;<a href=\"https://unispice.vn/san-pham/que-thanh/\"><strong>quế thanh</strong></a>&nbsp;hay&nbsp;<a href=\"https://unispice.vn/san-pham/bot-que/\"><strong>bột quế</strong></a>, kh&ocirc;ng thể phủ nhận mức độ phổ biến của gia vị n&agrave;y, từ c&aacute;c m&oacute;n mặn đến m&oacute;n ngọt. Khi được th&ecirc;m v&agrave;o nước d&ugrave;ng phở, vị cay của quế kh&ocirc;ng qu&aacute; đậm đ&agrave; m&agrave; thoảng thoảng rất dễ chịu.</p>\r\n\r\n<p><img alt=\"Quế thanh gia vị không thể thiếu trong nước dùng phở\" height=\"576\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Que.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/que/\"><strong>Quế</strong></a>&nbsp;d&ugrave;ng trong đ&ocirc;ng y nổi tiếng l&agrave; vị thuốc chữa trị hiệu quả c&aacute;c chứng bệnh về đường ti&ecirc;u h&oacute;a do cảm h&agrave;n, giảm đau, s&aacute;t khuẩn,&hellip;&nbsp;</p>\r\n\r\n<h2><b>Đinh hương</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/dinh-huong/\"><strong>Đinh hương</strong></a>&nbsp;l&agrave; loại gia vị thảo mộc đặc biệt nhờ khả năng khử m&ugrave;i hiệu quả. Với hương thơm nồng đặc trưng, đinh hương l&agrave; lựa chọn th&iacute;ch hợp khi nấu nước d&ugrave;ng từ c&aacute;c loại xương b&ograve;, xương heo.&nbsp;Kh&ocirc;ng chỉ l&agrave;m mất đi m&ugrave;i h&ocirc;i kh&oacute; chịu, đinh hương c&ograve;n rất gi&agrave;u h&agrave;m lượng vitamin B, C, D, K, E, c&ugrave;ng nhiều kho&aacute;ng chất kh&aacute;c như canxi, kali v&agrave; protein. Đ&oacute; cũng l&agrave; l&yacute; do từ xa xưa, đinh hương đ&atilde; được ứng dụng nhiều trong cả y học v&agrave; ẩm thực.</p>\r\n\r\n<h2><b><img alt=\"Đinh hương gia vị không thể thiếu trong nước dùng phở\" height=\"614\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Dinh-huong-1.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></b></h2>\r\n\r\n<h2><b>Thảo quả</b></h2>\r\n\r\n<p>Theo nhận định của nhiều chuy&ecirc;n gia,&nbsp;<a href=\"https://unispice.vn/san-pham/thao-qua/\"><strong>thảo quả</strong></a>&nbsp;c&oacute; h&agrave;m lượng dưỡng chất phong ph&uacute; như carbohydrate, protein, vitamin C c&ugrave;ng nhiều kho&aacute;ng chất kh&aacute;c như đồng, sắt, canxi, phốt pho,&hellip; Do vậy, d&ugrave; được d&ugrave;ng để l&agrave;m thuốc chữa bệnh hay gia vị nấu ăn, thảo quả đều mang đến nhiều lợi &iacute;ch cho sức khỏe. Đặc biệt, hương vị cay nồng, m&ugrave;i thơm c&ugrave;ng vị ngọt dịu đ&atilde; khiến thảo quả trở th&agrave;nh gia vị nấu nước d&ugrave;ng phở kh&ocirc;ng thể thiếu.</p>\r\n\r\n<p><img alt=\"Thảo quả gia vị trong nước dùng phở truyền thống\" height=\"744\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Thao-qua.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p>B&ecirc;n cạnh đ&oacute;, thảo quả c&ograve;n được sử dụng để tạo hương vị thơm ngon cho nhiều m&oacute;n ăn, đồ uống kh&aacute;c, k&iacute;ch th&iacute;ch vị gi&aacute;c v&agrave; cảm gi&aacute;c ngon miệng khi thưởng thức.&nbsp;</p>\r\n\r\n<h2><b>Hạt m&ugrave;i</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/hat-mui/\"><strong>Hạt m&ugrave;i</strong></a>&nbsp;ch&iacute;nh l&agrave; phần hạt của rau m&ugrave;i đ&atilde; được sấy kh&ocirc;, được sử dụng khi chế biến nhiều m&oacute;n ăn, trong đ&oacute; c&oacute; nước phở. Nhờ hương thơm dễ chịu, hạt m&ugrave;i kh&ocirc;ng chỉ l&agrave; gia vị n&ecirc;m nếm, m&agrave; c&ograve;n c&oacute; t&aacute;c dụng khử m&ugrave;i n&ecirc;n thường được sử dụng để ướp thịt heo, thịt g&agrave;, thịt vịt,.. Ngo&agrave;i ra,&nbsp;<a href=\"https://unispice.vn/san-pham/bot-hat-mui/\"><strong>bột hạt m&ugrave;i</strong>&nbsp;</a>cũng được ứng dụng cho nhiều m&oacute;n ăn kh&aacute;c như c&agrave; ri, lẩu b&ograve;, ph&aacute; lấu,&hellip;</p>\r\n\r\n<p><img alt=\"Hạt mùi gia vị có thường dùng trong nước dùng phở\" height=\"672\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Hat-mui.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p>Tr&ecirc;n đ&acirc;y l&agrave; những gia vị thảo mộc cơ bản để tạo n&ecirc;n nước d&ugrave;ng phở mang hương vị truyền thống. T&ugrave;y theo khẩu vị của người nấu, c&aacute;c gia vị n&agrave;y sẽ c&oacute; sự biến tấu theo c&ocirc;ng thức, c&aacute;ch chế biến ri&ecirc;ng để tạo n&ecirc;n n&eacute;t độc đ&aacute;o ri&ecirc;ng cho nước d&ugrave;ng phở. Th&ocirc;ng thường, khi sơ chế, người ta thường d&ugrave;ng c&aacute;c nguy&ecirc;n liệu ở dạng kh&ocirc; thay v&igrave; dạng bột, rang sơ tr&ecirc;n chảo n&oacute;ng cho dậy vị rồi cho v&agrave;o t&uacute;i lọc v&agrave; nấu với nước d&ugrave;ng phở để cho ra hương thơm tinh t&uacute;y nhất.&nbsp;</p>\r\n\r\n<p>Mong rằng b&agrave;i viết tr&ecirc;n đ&acirc;y đ&atilde; gi&uacute;p bạn đọc c&oacute; th&ecirc;m những kinh nghiệm hữu &iacute;ch trong nấu ăn, đặc biệt l&agrave; c&aacute;c b&iacute; k&iacute;p để tạo n&ecirc;n nước d&ugrave;ng phở ngon chuẩn vị.</p>\r\n', 'tin_tuc/hoa_hoi_1.jpg', 1, 1, 'Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh', '', '', '', 129, 0, 0, 0, '', '', 1, 29, 'en', '2024-06-13 09:30:55', '2026-06-08 17:57:16', 0),
 (126, 617, 'Hạt tiêu - Loại gia vị bé nhỏ mà bùng nổ hương vị ấm nồng', 'hat-tieu-loai-gia-vi-be-nho-ma-bung-no-huong-vi-am-nong-4', 'Hạt tiêu là quả của cây hồ tiêu. Loài cây này có thân dạng dây leo, mọc thành đốt. Ở mỗi đốt lại mọc rễ để cây có thể bám và leo lên cột, giàn. Lá hồ tiêu có điểm tương đồng với lá trầu nhưng bé hơn, cứng và dày hơn. ', '<h4 dir=\"ltr\">Hạt ti&ecirc;u tuy nhỏ b&eacute; nhưng lại mang trong m&igrave;nh vị cay nồng ấm, c&ugrave;ng với m&ugrave;i hương rất đặc trưng. Đ&acirc;y l&agrave; loại gia vị quen thuộc trong gian bếp của nhiều gia đ&igrave;nh Việt. Thế nhưng, bạn đ&atilde; bao giờ tự hỏi hạt ti&ecirc;u c&oacute; nguồn gốc từ đ&acirc;u v&agrave; c&oacute; tất cả bao nhi&ecirc;u loại ti&ecirc;u chưa? C&ugrave;ng Poseidon t&igrave;m hiểu nh&eacute;.&nbsp;</h4>\r\n\r\n<h4 dir=\"ltr\">Hạt ti&ecirc;u l&agrave; g&igrave;?&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">Hạt ti&ecirc;u l&agrave; quả của c&acirc;y hồ ti&ecirc;u. Lo&agrave;i c&acirc;y n&agrave;y c&oacute; th&acirc;n dạng d&acirc;y leo, mọc th&agrave;nh đốt. Ở mỗi đốt lại mọc rễ để c&acirc;y c&oacute; thể b&aacute;m v&agrave; leo l&ecirc;n cột, gi&agrave;n. L&aacute; hồ ti&ecirc;u c&oacute; điểm tương đồng với l&aacute; trầu nhưng b&eacute; hơn, cứng v&agrave; d&agrave;y hơn.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Quả hồ ti&ecirc;u mọc li&ecirc;n tiếp tr&ecirc;n chu&ocirc;i, với chiều d&agrave;i khoảng 7 - 10cm, thậm ch&iacute; 25cm. Mỗi quả l&agrave; một h&igrave;nh cầu nhỏ, b&aacute;n kinh khoảng 2 - 3mm. Thời gian thu hoạch ti&ecirc;u rơi v&agrave;o th&aacute;ng 12 v&agrave; k&eacute;o d&agrave;i đến th&aacute;ng 3 năm sau.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">C&acirc;y ti&ecirc;u c&oacute; tuổi thọ kh&ocirc;ng qu&aacute; cao, ưa th&iacute;ch những triền đồi cao r&aacute;o, m&aacute;t mẻ, tho&aacute;ng nước. V&igrave; vậy, lo&agrave;i c&acirc;y n&agrave;y được trồng nhiều ở c&aacute;c tỉnh T&acirc;y Nguy&ecirc;n, đảo Ph&uacute; Quốc, Quảng Trị, B&igrave;nh Phước, B&agrave; Rịa Vũng T&agrave;u v&agrave; c&aacute;c nước tr&ecirc;n thế giới như Trung Quốc, Ấn Độ, Th&aacute;i Lan.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-01-jpg.jpg\" />Hạt ti&ecirc;u ch&iacute;nh l&agrave; quả của c&acirc;y hồ ti&ecirc;u&nbsp;<em>(Ảnh: doanhnghiephoinhap.vn)</em></p>\r\n\r\n<h4 dir=\"ltr\">Hạt ti&ecirc;u xuất hiện từ khi n&agrave;o?&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">C&acirc;y hồ ti&ecirc;u được người Ấn Độ ph&aacute;t hiện ra c&aacute;ch đ&acirc;y khoảng 2000 năm trước C&ocirc;ng Nguy&ecirc;n, tại những khu rừng hoang ph&iacute;a T&acirc;y Nam nước n&agrave;y (v&ugrave;ng Assam v&agrave; Ghats). Thời điểm đ&oacute;, đ&acirc;y được coi l&agrave; cống phẩm qu&yacute; gi&aacute; d&acirc;ng l&ecirc;n vua ch&uacute;a, thậm ch&iacute; họ c&ograve;n d&ugrave;ng ti&ecirc;u để bồi thường thiệt hại chiến tranh.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">M&atilde;i đến đầu thế kỷ 13, c&acirc;y hồ ti&ecirc;u mới được trồng rộng r&atilde;i v&agrave; sử dụng như một loại gia vị trong nấu nướng. &nbsp;L&uacute;c đ&oacute;, hồ ti&ecirc;u được v&iacute; như v&agrave;ng đen - trở th&agrave;nh một loại đơn vị tiền tệ để trao đổi h&agrave;ng h&oacute;a.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">V&agrave;o khoảng thế kỷ 16, hồ ti&ecirc;u vượt bi&ecirc;n giới, lan rộng đến c&aacute;c nước kh&aacute;c trong khu vực Nam &aacute; v&agrave; Đ&ocirc;ng Nam &Aacute;. Đến thế kỷ 19, hồ ti&ecirc;u c&oacute; mặt tại Ch&acirc;u Mĩ v&agrave; Ch&acirc;u Phi&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Hồ ti&ecirc;u xuất hiện tại Việt nam v&agrave;o thế kỷ 17, khi thực d&acirc;n Ph&aacute;p x&acirc;m lược, người Ph&aacute;p đ&atilde; trồng ch&uacute;ng. Hiện nay, Việt Nam l&agrave; một trong những nước xuất khẩu hồ ti&ecirc;u lớn nhất tr&ecirc;n thế giới.&nbsp;</p>\r\n\r\n<h4 dir=\"ltr\">Việt nam c&oacute; bao nhi&ecirc;u loại ti&ecirc;u?&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">Tại Việt Nam c&oacute; 5 loại phổ biến, đ&oacute; l&agrave; ti&ecirc;u đen, ti&ecirc;u xanh, ti&ecirc;u trắng (ti&ecirc;u sọ), ti&ecirc;u hồng v&agrave; hạt mắc kh&eacute;n T&acirc;y Bắc.&nbsp;</p>\r\n\r\n<p><strong>1. Ti&ecirc;u đen&nbsp;</strong></p>\r\n\r\n<p dir=\"ltr\">Đ&acirc;y l&agrave; loại ti&ecirc;u quen thuộc nhất trong gian bếp của c&aacute;c gia đ&igrave;nh Việt Nam. Để c&oacute; được ti&ecirc;u đen, người n&ocirc;ng d&acirc;n sẽ thu hoạch những quả ti&ecirc;u đ&atilde; trưởng th&agrave;nh nhưng vẫn c&ograve;n xanh. Dấu hiệu nhận biết ti&ecirc;u đ&atilde; c&oacute; thể thu hoạch để l&agrave;m ti&ecirc;u đen l&agrave; khi trong ch&ugrave;m hồ ti&ecirc;u đ&atilde; bắt đầu xuất hiện một v&agrave;i quả đỏ hoặc v&agrave;ng. Sau thu hoạch, quả sẽ được đem phơi. Khi phơi kh&ocirc;, vỏ quả sẽ săn cứng lại v&agrave; c&oacute; m&agrave;u đen, đ&oacute; ch&iacute;nh l&agrave; ti&ecirc;u đen.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-05-jpg.jpg\" />&nbsp;Ba chỉ b&ograve; Mỹ ướp ti&ecirc;u đen tr&ecirc;n quầy live Buffet Poseidon</p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u đen c&oacute; vị cay, c&ugrave;ng với đ&oacute; l&agrave; m&ugrave;i thơm nhẹ. Loại ti&ecirc;u n&agrave;y thường được d&ugrave;ng để tăng vị cay ấm, tăng hương vị cho m&oacute;n ăn. Đặc biệt, sốt ti&ecirc;u đen c&ograve;n l&agrave; loại gia vị ướp thịt &ldquo;thần th&aacute;nh&rdquo;, gi&uacute;p cho&nbsp;<a href=\"https://buffetposeidon.com/tin-tuc/diem-danh-cac-loai-thit-buffet-nuong-tai-poseidon\">c&aacute;c m&oacute;n buffet nướng thơm ngon hết &yacute;</a>.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><strong>2. Ti&ecirc;u xanh</strong></p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u xanh l&agrave; quả hồ ti&ecirc;u chưa ch&iacute;n lắm. N&ocirc;ng d&acirc;n thường sẽ thu hoạch cả ch&ugrave;m khi ti&ecirc;u c&ograve;n xanh, hạt chưa tạo so ti&ecirc;u v&agrave; c&ograve;n mềm.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Loại ti&ecirc;u n&agrave;y c&oacute; vị cay nhẹ v&agrave; hương thơm thoang thoảng ở mức độ vừa phải. Ti&ecirc;u xanh c&oacute; t&iacute;nh n&oacute;ng ẩm, thường được d&ugrave;ng trong c&aacute;c m&oacute;n hầm để lấy hương v&agrave; khử m&ugrave;i của nguy&ecirc;n liệu. Ngo&agrave;i ra, ti&ecirc;u xanh c&ograve;n được sử dụng trong c&aacute;c m&oacute;n nướng, trong đ&oacute; kh&ocirc;ng thể kh&ocirc;ng nhắc tới&nbsp;<a href=\"https://buffetposeidon.com/default/oc-nuong-tieu-mon-ngon-nhat-dinh-phai-lam-mot-lan-cho-ca-nha\">ốc bươu nướng ti&ecirc;u xanh</a>&nbsp;d&acirc;n gi&atilde; m&agrave; v&ocirc; c&ugrave;ng hấp dẫn.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-04-jpg.jpg\" />Thơm ngon kh&oacute; cưỡng với m&oacute;n ốc bươu nướng ti&ecirc;u xanh nh&agrave; Poseidon</p>\r\n\r\n<p dir=\"ltr\"><strong>3. Ti&ecirc;u sọ (hồ ti&ecirc;u trắng)</strong></p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u sọ hay hồ ti&ecirc;u trắng ch&iacute;nh l&agrave; loại ti&ecirc;u thu được khi h&aacute;i những quả hồ ti&ecirc;u thật ch&iacute;n, vỏ đ&atilde; chuyển đỏ v&agrave; loại bỏ phần vỏ của ch&uacute;ng.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Loại ti&ecirc;u n&agrave;y c&oacute; m&agrave;u trắng x&aacute;m hoặc trắng ng&agrave;, c&oacute; m&ugrave;i thơm hơn v&igrave; đ&atilde; được loại bỏ phần tinh dầu cay v&agrave; phần vỏ. Tuy nhi&ecirc;n, ti&ecirc;u sọ lại cay hơn bởi quả được thu hoạch khi đ&atilde; rất ch&iacute;n.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">V&igrave; m&agrave;u sắc đẹp, kh&ocirc;ng l&agrave;m mất đi t&iacute;nh thẩm mỹ của m&oacute;n ăn n&ecirc;n ti&ecirc;u sọ thường được d&ugrave;ng để tạo m&ugrave;i hương cho c&aacute;c thực đơn sang trọng.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><strong>4. Ti&ecirc;u hồng (ti&ecirc;u đỏ)</strong></p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u hồng hay c&ograve;n được gọi l&agrave; ti&ecirc;u đỏ. Đ&acirc;y l&agrave; một loại c&acirc;y bụi nhỏ c&oacute; t&ecirc;n tiếng Anh Pink Pepper.</p>\r\n\r\n<p dir=\"ltr\">Tuy gọi l&agrave; ti&ecirc;u hồng trong tiếng Việt nhưng ch&uacute;ng vốn dĩ kh&ocirc;ng thuộc họ nh&agrave; c&acirc;y hồ ti&ecirc;u v&agrave; cũng kh&ocirc;ng phải hạt ti&ecirc;u. Ch&uacute;ng được gọi l&agrave; ti&ecirc;u hồng bởi c&oacute; vỏ hồng thắm v&agrave; mang vị cay nồng ấm như c&aacute;c loại ti&ecirc;u kh&aacute;c.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><strong>5. Hạt mắc kh&eacute;n</strong></p>\r\n\r\n<p dir=\"ltr\">Hạt mắc kh&eacute;n c&oacute; vị cay v&agrave; hương thơm kh&aacute; tương đồng với ti&ecirc;u. Đ&acirc;y l&agrave; loại gia vị nổi tiếng của T&acirc;y Bắc. Ch&uacute;ng xuất hiện hầu hết trong c&aacute;c m&oacute;n ăn của người d&acirc;n tộc khu vực n&agrave;y, đặc biệt l&agrave; d&acirc;n tộc Th&aacute;i.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Đặc biệt, hạt mắc kh&eacute;n c&ograve;n cho cảm gi&aacute;c cay, t&ecirc; t&ecirc; đầu lưỡi v&agrave; c&oacute; hương thơm nồng gấp nhiều lần hạt ti&ecirc;u.&nbsp;</p>\r\n\r\n<h4 dir=\"ltr\">Hạt ti&ecirc;u trong văn h&oacute;a ẩm thực&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">Từ l&acirc;u đời, hạt ti&ecirc;u được con người sử dụng l&agrave;m gia vị khi chế biến c&aacute;c m&oacute;n ăn. Hạt ti&ecirc;u xuất hiện trong gian bếp của mọi gia đ&igrave;nh, từ những m&oacute;n ăn b&igrave;nh d&acirc;n, tới những m&oacute;n ăn đắt đỏ, sang trọng. Đ&acirc;y l&agrave; loại gia vị quốc d&acirc;n tại nhiều nước tr&ecirc;n thế giới, trong đ&oacute; c&oacute; Việt Nam.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-03-jpg.jpg\" />Ti&ecirc;u l&agrave; loại gia vị kh&ocirc;ng thể thiếu trong gian bếp của nhiều gia đ&igrave;nh&nbsp;<em>(Ảnh: hoptri.com)</em></p>\r\n\r\n<p dir=\"ltr\">Vị cay của ti&ecirc;u cũng v&ocirc; c&ugrave;ng đặc biệt m&agrave; kh&ocirc;ng một loại gia vị n&agrave;o c&oacute; thể thay thế tr&ecirc;n bản đồ gia vị. Ch&uacute;ng kh&ocirc;ng cay nồng &ldquo;ứa lệ&rdquo; như ớt, cũng kh&ocirc;ng khiến thực kh&aacute;ch phải &ldquo;nghẹn ng&agrave;o&rdquo; như m&ugrave; tạt. Vị cay của ti&ecirc;u nồng ấm, nhẹ nh&agrave;ng nhưng c&oacute; sức lan tỏa m&atilde;nh liệt.</p>\r\n\r\n<p dir=\"ltr\">C&oacute; thể v&iacute; ti&ecirc;u như một vị &ldquo;qu&acirc;n sư&rdquo; trong l&agrave;ng gia vị. Bởi hạt ti&ecirc;u c&oacute; t&aacute;c dụng khử tanh, tạo m&ugrave;i thơm cho m&oacute;n ăn nhưng kh&ocirc;ng l&agrave;m đổi vị hay lấn &aacute;t mất nguy&ecirc;n liệu. Hương thơm hay vị cay của ti&ecirc;u thật vừa vặn cho mọi m&oacute;n ăn.&nbsp;</p>\r\n', 'tin_tuc/161023_kham_pha_hat_tieu_buffet_poseidon_01_jpg.jpg', 1, 1, 'Hạt tiêu - Loại gia vị bé nhỏ mà bùng nổ hương vị ấm nồng', '', '', '', 129, 0, 0, 0, '', '', 1, 18, 'en', '2024-06-13 08:46:06', '2026-06-08 17:57:16', 0);
@@ -14496,7 +14553,7 @@ INSERT INTO `db_posts` (`id`, `id_code`, `title`, `slug`, `description`, `conten
 (133, 659, 'KHU DÂN CƯ', 'khu-dan-cu', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cac_buoc_trien_khai_du_an_khu_dan_cu.jpg', 1, 1, 'KHU DÂN CƯ', '', '', '', 242, 0, 0, 0, '', '', 1, 2, 'en', '2024-06-28 02:29:45', '2026-06-08 17:57:16', 0),
 (134, 660, 'CÔNG VIÊN', 'cong-vien', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/thiet_ke_cong_vien_landscape_park_design_04_san_vuon_a_dong.jpg', 1, 1, 'CÔNG VIÊN', '', '', '', 242, 0, 0, 0, '', '', 1, 3, 'en', '2024-06-28 02:30:04', '2026-06-08 17:57:16', 0),
 (135, 661, 'NHÀ VƯỜN', 'khu-nghi-duong', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cong_ty_tu_van_thiet_ke_resort_1.jpg', 1, 1, 'NHÀ VƯỜN', '', '', '', 242, 0, 0, 0, '', '', 1, 7, 'en', '2024-06-28 02:30:19', '2026-06-08 17:57:16', 0),
-(136, 662, 'VĂN PHÒNG', 'san-golf', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/san_golf_vu_yen.jpg', 1, 1, 'VĂN PHÒNG', '', '', '', 242, 0, 0, 0, '', '', 1, 3, 'en', '2024-06-28 02:30:37', '2026-06-08 17:57:16', 0);
+(136, 662, 'VĂN PHÒNG', 'san-golf', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/san_golf_vu_yen.jpg', 1, 1, 'VĂN PHÒNG', '', '', '', 242, 0, 0, 0, '', '', 1, 3, 'en', '2024-06-28 02:30:37', '2026-07-03 00:26:35', 0);
 
 -- --------------------------------------------------------
 
@@ -26746,6 +26803,27 @@ ALTER TABLE `db_flash_sale`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `db_forms`
+--
+ALTER TABLE `db_forms`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `code` (`code`);
+
+--
+-- Indexes for table `db_form_fields`
+--
+ALTER TABLE `db_form_fields`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `form_id` (`form_id`);
+
+--
+-- Indexes for table `db_form_submissions`
+--
+ALTER TABLE `db_form_submissions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `form_id` (`form_id`);
+
+--
 -- Indexes for table `db_huyen`
 --
 ALTER TABLE `db_huyen`
@@ -27183,6 +27261,24 @@ ALTER TABLE `db_flash_sale`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `db_forms`
+--
+ALTER TABLE `db_forms`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `db_form_fields`
+--
+ALTER TABLE `db_form_fields`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `db_form_submissions`
+--
+ALTER TABLE `db_form_submissions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `db_huyen`
 --
 ALTER TABLE `db_huyen`
@@ -27240,7 +27336,7 @@ ALTER TABLE `db_newsletter`
 -- AUTO_INCREMENT for table `db_options`
 --
 ALTER TABLE `db_options`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `db_orders`
@@ -27437,6 +27533,18 @@ ALTER TABLE `db_yeuthich`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `db_form_fields`
+--
+ALTER TABLE `db_form_fields`
+  ADD CONSTRAINT `fk_form_fields` FOREIGN KEY (`form_id`) REFERENCES `db_forms` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `db_form_submissions`
+--
+ALTER TABLE `db_form_submissions`
+  ADD CONSTRAINT `fk_form_submissions` FOREIGN KEY (`form_id`) REFERENCES `db_forms` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `db_locations`

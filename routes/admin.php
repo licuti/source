@@ -246,4 +246,11 @@ $router->group('/admin', function($r) {
     $r->get('/orders/show/{id}', [\App\Controllers\Admin\OrderController::class, 'show'])->name('admin.order.show');
     $r->post('/orders/update-status/{id}', [\App\Controllers\Admin\OrderController::class, 'updateStatus'])->name('admin.order.updateStatus');
     $r->get('/orders/print/{id}', [\App\Controllers\Admin\OrderController::class, 'print'])->name('admin.order.print');
+    // Form Builder (Liên hệ)
+    $r->get('/forms', [\App\Controllers\Admin\FormBuilderController::class, 'index'])->name('admin.form.index');
+    $r->post('/forms/ajax', [\App\Controllers\Admin\FormBuilderController::class, 'ajax'])->name('admin.form.ajax');
+    $r->get('/forms/builder/{id}', [\App\Controllers\Admin\FormBuilderController::class, 'builder'])->name('admin.form.builder');
+    $r->get('/forms/submissions/{id}', [\App\Controllers\Admin\FormBuilderController::class, 'submissions'])->name('admin.form.submissions');
+    $r->post('/forms/submissions/ajax', [\App\Controllers\Admin\FormBuilderController::class, 'submissionAjax'])->name('admin.form.submission_ajax');
+
 });

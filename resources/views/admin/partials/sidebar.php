@@ -71,20 +71,49 @@
                     // Check active state
                     $isActive = false;
                     $requestUri = $_SERVER['REQUEST_URI'] ?? '';
+                    // Lấy path từ REQUEST_URI (bỏ query string)
+                    $currentPath = parse_url($requestUri, PHP_URL_PATH);
+                    $router = \App\Core\App::getInstance()->router;
                     
                     if ($hasSub) {
                         foreach ($subModules as $sub) {
-                            // Ưu tiên check theo route_name, nếu không có thì check theo alias
-                            $checkPath = !empty($sub->alias) ? $sub->alias : $sub->route_name;
-                            if (!empty($checkPath) && strpos($requestUri, '/admin/' . $checkPath) !== false) {
-                                $isActive = true;
-                                break;
+                            $routeName = $sub->route_name ?: 'admin.' . $sub->alias . '.index';
+                            $subUrl = $router->getNamedRoute($routeName);
+                            if (!$subUrl) $subUrl = url('admin/index.php?com=' . $sub->alias . '&act=man');
+                            
+                            $subPath = parse_url($subUrl, PHP_URL_PATH);
+                            if ($subPath) {
+                                // Fallback cho URL cũ dạng ?com=...
+                                if (substr($subPath, -9) === 'index.php' && isset($_GET['com'])) {
+                                    if ($_GET['com'] === $sub->alias) {
+                                        $isActive = true;
+                                        break;
+                                    }
+                                } else {
+                                    // URL chuẩn MVC
+                                    if ($currentPath === $subPath || strpos($currentPath, $subPath . '/') === 0) {
+                                        $isActive = true;
+                                        break;
+                                    }
+                                }
                             }
                         }
                     } else {
-                        $checkPath = !empty($main->alias) ? $main->alias : $main->route_name;
-                        if (!empty($checkPath) && strpos($requestUri, '/admin/' . $checkPath) !== false) {
-                            $isActive = true;
+                        $routeName = $main->route_name ?: 'admin.' . $main->alias . '.index';
+                        $mainUrl = $router->getNamedRoute($routeName);
+                        if (!$mainUrl) $mainUrl = url('admin/index.php?com=' . $main->alias . '&act=man');
+                        
+                        $mainPath = parse_url($mainUrl, PHP_URL_PATH);
+                        if ($mainPath) {
+                            if (substr($mainPath, -9) === 'index.php' && isset($_GET['com'])) {
+                                if ($_GET['com'] === $main->alias) {
+                                    $isActive = true;
+                                }
+                            } else {
+                                if ($currentPath === $mainPath || strpos($currentPath, $mainPath . '/') === 0) {
+                                    $isActive = true;
+                                }
+                            }
                         }
                     }
                     ?>
@@ -101,23 +130,34 @@
                             <ul class="nav nav-treeview">
                                 <?php foreach ($subModules as $sub): ?>
                                     <?php 
-                                        $checkPath = !empty($sub->alias) ? $sub->alias : $sub->route_name;
-                                        $subActive = (!empty($checkPath) && strpos($requestUri, '/admin/' . $checkPath) !== false);
-                                        
                                         // Try to resolve route, fallback to legacy URL if route doesn't exist
                                         try {
                                             $router = \App\Core\App::getInstance()->router;
-                                            // Sử dụng route_name nếu có, ngược lại dùng fallback admin.{alias}.index
                                             $routeName = $sub->route_name ?: 'admin.' . $sub->alias . '.index';
                                             $subUrl = $router->getNamedRoute($routeName);
                                             if (!$subUrl) {
-                                                // Fallback to legacy URL
                                                 $subUrl = url('admin/index.php?com=' . $sub->alias . '&act=man');
                                             } else {
                                                 $subUrl = route($routeName);
                                             }
                                         } catch (\Exception $e) {
                                             $subUrl = '#';
+                                        }
+                                        
+                                        $subActive = false;
+                                        if ($subUrl !== '#') {
+                                            $subPath = parse_url($subUrl, PHP_URL_PATH);
+                                            if ($subPath) {
+                                                if (substr($subPath, -9) === 'index.php' && isset($_GET['com'])) {
+                                                    if ($_GET['com'] === $sub->alias) {
+                                                        $subActive = true;
+                                                    }
+                                                } else {
+                                                    if ($currentPath === $subPath || strpos($currentPath, $subPath . '/') === 0) {
+                                                        $subActive = true;
+                                                    }
+                                                }
+                                            }
                                         }
                                     ?>
                                     <li class="nav-item">

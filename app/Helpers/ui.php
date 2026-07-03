@@ -1,4 +1,77 @@
 <?php
+if (!function_exists('render_form')) {
+    /**
+     * Render HTML của một Dynamic Form bằng mã Code
+     */
+    function render_form($code) {
+        $form = \App\Models\FormModel::where('code', $code)->where('is_active', 1)->first();
+        if (!$form) return '<!-- Form không tồn tại hoặc đã bị tắt -->';
+        
+        $fields = \App\Models\FormFieldModel::where('form_id', $form->id)->orderBy('sort_order', 'ASC')->get();
+        if (count($fields) == 0) return '<!-- Form chưa có trường dữ liệu -->';
+        
+        $html = '<form action="' . url('submit-form/' . $form->id) . '" method="POST" class="dynamic-form" id="form-' . $form->code . '" enctype="multipart/form-data">';
+        $html .= '<input type="hidden" name="form_code" value="' . htmlspecialchars($form->code) . '">';
+        
+        foreach ($fields as $field) {
+            $req = $field->is_required ? 'required' : '';
+            $reqMark = $field->is_required ? '<span class="text-danger">*</span>' : '';
+            $name = htmlspecialchars($field->name);
+            $label = htmlspecialchars($field->label);
+            $placeholder = htmlspecialchars($field->placeholder);
+            
+            $html .= '<div class="form-group mb-3">';
+            $html .= '<label class="form-label">' . $label . ' ' . $reqMark . '</label>';
+            
+            switch ($field->type) {
+                case 'textarea':
+                    $html .= '<textarea class="form-control" name="' . $name . '" placeholder="' . $placeholder . '" rows="4" ' . $req . '></textarea>';
+                    break;
+                case 'select':
+                    $html .= '<select class="form-select" name="' . $name . '" ' . $req . '>';
+                    $html .= '<option value="">-- Chọn --</option>';
+                    $options = json_decode($field->options, true) ?? [];
+                    foreach ($options as $opt) {
+                        $html .= '<option value="' . htmlspecialchars($opt) . '">' . htmlspecialchars($opt) . '</option>';
+                    }
+                    $html .= '</select>';
+                    break;
+                case 'radio':
+                    $options = json_decode($field->options, true) ?? [];
+                    foreach ($options as $k => $opt) {
+                        $html .= '<div class="form-check">';
+                        $html .= '<input class="form-check-input" type="radio" name="' . $name . '" id="' . $name . '_' . $k . '" value="' . htmlspecialchars($opt) . '" ' . $req . '>';
+                        $html .= '<label class="form-check-label" for="' . $name . '_' . $k . '">' . htmlspecialchars($opt) . '</label>';
+                        $html .= '</div>';
+                    }
+                    break;
+                case 'checkbox':
+                    $options = json_decode($field->options, true) ?? [];
+                    foreach ($options as $k => $opt) {
+                        $html .= '<div class="form-check">';
+                        $html .= '<input class="form-check-input" type="checkbox" name="' . $name . '[]" id="' . $name . '_' . $k . '" value="' . htmlspecialchars($opt) . '">';
+                        $html .= '<label class="form-check-label" for="' . $name . '_' . $k . '">' . htmlspecialchars($opt) . '</label>';
+                        $html .= '</div>';
+                    }
+                    break;
+                case 'file':
+                    $html .= '<input type="file" class="form-control" name="' . $name . '" ' . $req . '>';
+                    break;
+                default:
+                    // text, email, tel
+                    $html .= '<input type="' . htmlspecialchars($field->type) . '" class="form-control" name="' . $name . '" placeholder="' . $placeholder . '" ' . $req . '>';
+                    break;
+            }
+            $html .= '</div>';
+        }
+        
+        $html .= '<button type="submit" class="btn btn-primary btn-submit-form">Gửi thông tin</button>';
+        $html .= '</form>';
+        
+        return $html;
+    }
+}
+
 /**
  * ============================================================
  *  UI HELPERS
