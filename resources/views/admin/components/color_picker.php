@@ -7,12 +7,14 @@
  * @param string $value Giá trị mặc định (HEX, RGB, HSL...), mặc định '#000000'
  * @param string $label Nhãn hiển thị bên ngoài
  * @param string $id ID tuỳ chỉnh (mặc định sẽ tự sinh nếu không truyền)
+ * @param string $help_text Văn bản hỗ trợ bên dưới input
  */
 
 $name = $name ?? '';
 $value = $value ?? '#000000';
 $label = $label ?? 'Chọn màu';
 $id = $id ?? 'color_picker_' . uniqid();
+$help_text = $help_text ?? '';
 
 // Xử lý value rỗng (nếu DB chưa có dữ liệu)
 if (empty($value)) {
@@ -32,6 +34,10 @@ if (empty($value)) {
         <!-- Input ẩn lưu giá trị cho form submit -->
         <input type="text" name="<?= htmlspecialchars($name) ?>" id="input_<?= $id ?>" value="<?= htmlspecialchars((string)$value) ?>" class="form-control form-control-sm" style="max-width: 120px;" readonly>
     </div>
+    
+    <?php if ($help_text): ?>
+        <small class="text-muted fst-italic d-block mt-1"><?= htmlspecialchars($help_text) ?></small>
+    <?php endif; ?>
 </div>
 
 <script>
