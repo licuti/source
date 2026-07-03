@@ -86,16 +86,11 @@ $title = 'Bảo trì hệ thống';
                                     ]) ?>
                                 </div>
                                 <div class="col-md-6">
-                                    <?= view('admin.components.input', [
-                                        'type' => 'color',
+                                    <?= view('admin.components.color_picker', [
                                         'name' => 'bg_color',
                                         'label' => 'Màu nền',
                                         'value' => $content['bg_color'] ?? '#0f0f13',
-                                        'attrs' => [
-                                            'id' => 'bg_color',
-                                            'class' => 'w-100',
-                                            'title' => 'Chọn màu nền'
-                                        ]
+                                        'id' => 'bg_color'
                                     ]) ?>
                                 </div>
                             </div>
