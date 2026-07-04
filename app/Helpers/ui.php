@@ -70,6 +70,12 @@ if (!function_exists('render_form')) {
         }
         
         $html .= '<button type="submit" class="btn btn-primary btn-submit-form">Gửi thông tin</button>';
+        
+        $captcha = \App\Services\Captcha\CaptchaManager::getDriver();
+        if ($captcha) {
+            $html .= $captcha->render();
+        }
+        
         $html .= '</form>';
         
         return $html;

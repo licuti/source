@@ -21,6 +21,15 @@ class FormController extends \Controller {
             return $this->backWithSuccess($form->success_message ?: 'Cảm ơn bạn đã liên hệ.');
         }
         
+        // Kiểm tra CAPTCHA nếu có kích hoạt
+        $captcha = \App\Services\Captcha\CaptchaManager::getDriver();
+        if ($captcha) {
+            $token = request()->post('g-recaptcha-response') ?? request()->post('cf-turnstile-response') ?? '';
+            if (!$captcha->verify($token, request()->ip())) {
+                return $this->backWithError('Xác minh an toàn (Captcha) thất bại. Vui lòng thử lại.');
+            }
+        }
+        
         // 2. Lấy định nghĩa các field của form
         $fields = FormFieldModel::where('form_id', $id)->get();
         $payload = [];
