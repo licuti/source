@@ -49,7 +49,7 @@ class SitemapController extends BaseAdminController {
     }
     
     public function save(Request $request) {
-        $data = $request->post();
+        $data = $_POST;
         
         $keys = [
             'sitemap_post_enable', 'sitemap_post_priority', 'sitemap_post_freq',
