@@ -49,7 +49,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 105 | **Chế độ bảo trì** (`maintenance`) | `MaintenanceController` | 🟢 Hoàn thành |
 | 25 | **Cấu hình Website** (`setting`) | `SettingController` | 🟢 Hoàn thành |
 | 28 | **Cấu hình SEO cơ bản** (`seo-co-ban`) | `SeoConfigController` | 🔴 Chưa làm |
-| 39 | **Sitemap** (`sitemap`) | `SitemapController` | 🔴 Chưa làm |
+| 39 | **Sitemap** (`sitemap`) | `SitemapController` | 🟢 Hoàn thành |
 | 53 | **Button Contact** (`button-contact`) | `ContactButtonController` | 🔴 Chưa làm |
 
 ### 🟢 Chi tiết: LanguageSettingController (Cấu hình Ngôn ngữ)
@@ -253,4 +253,4 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 > 2. *Truy vấn Dữ liệu:* Submission được lưu dưới dạng JSON. Nếu đạt hàng triệu bản ghi và cần query/search theo 1 field cụ thể bên trong JSON, hiệu năng sẽ bị giảm sút trầm trọng do MySQL không đánh index tự nhiên được. Cần dùng Virtual Columns hoặc Elasticsearch.
 > 3. *Đồng bộ Email:* Gửi mail thông báo hiện đang chạy đồng bộ (Synchronous). Khách phải chờ SMTP Server phản hồi (vài giây) mới hoàn thành gửi Form. Quá nhiều user cùng lúc sẽ sập PHP Worker. Cần chuyển sang cơ chế Background Queue (RabbitMQ/Redis).
 
-> **📊 Tổng kết tiến độ:** Hoàn thành **18/33 module** (54%). Hệ thống phân quyền (RBAC), Quản lý User, Cấu hình chung, Dynamic Form Builder, Quản lý Bài viết, Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu đã hoàn thiện.
+> **📊 Tổng kết tiến độ:** Hoàn thành **19/33 module** (57%). Hệ thống phân quyền (RBAC), Quản lý User, Cấu hình chung, Dynamic Form Builder, Sitemap, Quản lý Bài viết, Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu đã hoàn thiện.
