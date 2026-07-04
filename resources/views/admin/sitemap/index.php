@@ -35,14 +35,14 @@ $title = "Cấu hình Sitemap";
                                 <div class="row">
                                     <div class="col-md-4">
                                         <label class="form-label">Đưa vào Sitemap</label>
-                                        <select name="sitemap_<?= $type ?>_enable" class="form-select">
+                                        <select name="sitemap_<?= $type ?>_enable" class="form-select form-select-sm">
                                             <option value="1" <?= $settings[$type]['enable'] == 1 ? 'selected' : '' ?>>Có</option>
                                             <option value="0" <?= $settings[$type]['enable'] == 0 ? 'selected' : '' ?>>Không</option>
                                         </select>
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Tần suất cập nhật (ChangeFreq)</label>
-                                        <select name="sitemap_<?= $type ?>_freq" class="form-select">
+                                        <select name="sitemap_<?= $type ?>_freq" class="form-select form-select-sm">
                                             <option value="always" <?= $settings[$type]['freq'] == 'always' ? 'selected' : '' ?>>Always</option>
                                             <option value="hourly" <?= $settings[$type]['freq'] == 'hourly' ? 'selected' : '' ?>>Hourly</option>
                                             <option value="daily" <?= $settings[$type]['freq'] == 'daily' ? 'selected' : '' ?>>Daily</option>
@@ -54,7 +54,7 @@ $title = "Cấu hình Sitemap";
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label">Mức độ ưu tiên (Priority)</label>
-                                        <input type="number" step="0.1" min="0" max="1" name="sitemap_<?= $type ?>_priority" class="form-control" value="<?= htmlspecialchars((string)$settings[$type]['priority']) ?>">
+                                        <input type="number" step="0.1" min="0" max="1" name="sitemap_<?= $type ?>_priority" class="form-control form-control-sm" value="<?= htmlspecialchars((string)$settings[$type]['priority']) ?>">
                                     </div>
                                 </div>
                             </div>
