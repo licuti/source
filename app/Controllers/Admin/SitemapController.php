@@ -14,7 +14,7 @@ class SitemapController extends BaseAdminController {
             'sitemap_post_enable', 'sitemap_post_priority', 'sitemap_post_freq',
             'sitemap_product_enable', 'sitemap_product_priority', 'sitemap_product_freq',
             'sitemap_category_enable', 'sitemap_category_priority', 'sitemap_category_freq'
-        ])->pluck('option_value', 'option_key')->toArray();
+        ])->pluck('option_value', 'option_key');
         
         // Defaults
         $settings = [
@@ -80,7 +80,7 @@ class SitemapController extends BaseAdminController {
                 'sitemap_post_enable', 'sitemap_post_priority', 'sitemap_post_freq',
                 'sitemap_product_enable', 'sitemap_product_priority', 'sitemap_product_freq',
                 'sitemap_category_enable', 'sitemap_category_priority', 'sitemap_category_freq'
-            ])->pluck('option_value', 'option_key')->toArray();
+            ])->pluck('option_value', 'option_key');
             
             $filePath = public_path('sitemap.xml');
             
