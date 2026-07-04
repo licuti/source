@@ -146,10 +146,10 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
 
                             <div class="pt-2">
                                 <?= view('admin.components.switch', [
-                                    'name' => 'is_active',
-                                    'checked' => !isset($item) || !empty($item['is_active']),
+                                    'name' => 'status',
+                                    'checked' => !isset($item) || !empty($item['status']),
                                     'label' => 'Cho phép hiển thị',
-                                    'attrs' => ['id' => 'is_active']
+                                    'attrs' => ['id' => 'status']
                                 ]) ?>
                             </div>
 

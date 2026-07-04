@@ -23,7 +23,7 @@ class CategoryController extends BaseAdminController {
             $filtered = [];
             foreach ($allCategories as $cat) {
                 $matchKeyword = $keyword === '' || mb_stripos($cat->title, $keyword) !== false || (string)$cat->id_code === $keyword;
-                $matchStatus = $status === '' || (string)$cat->is_active === $status;
+                $matchStatus = $status === '' || (string)$cat->status === $status;
                 if ($matchKeyword && $matchStatus) {
                     $filtered[] = $cat;
                 }
@@ -75,7 +75,7 @@ class CategoryController extends BaseAdminController {
             'parent_id'   => $first->parent_id, 
             'module'      => $first->module, 
             'sort_order'  => $first->sort_order, 
-            'is_active'   => $first->is_active,
+            'status'   => $first->status,
             'is_featured' => $first->is_featured,
             'image'       => $first->image,
             'banner'      => $first->banner,
@@ -121,7 +121,7 @@ class CategoryController extends BaseAdminController {
             'parent_id'      => (int)$request->input('parent_id', 0),
             'module'         => $request->input('module', 0),
             'sort_order'     => (int)$request->input('sort_order', 0),
-            'is_active'      => $request->input('is_active') !== null ? 1 : 0,
+            'status'      => $request->input('status') !== null ? 1 : 0,
             'is_featured'    => $request->input('is_featured') !== null ? 1 : 0,
         ];
     }
@@ -211,11 +211,11 @@ class CategoryController extends BaseAdminController {
      */
     public function updateStatusAjax(Request $request) {
         $id = (int)$request->input('id');
-        $field = $request->input('field', 'is_active'); // Mặc định là is_active
+        $field = $request->input('field', 'status'); // Mặc định là status
         $value = (int)$request->input('value', 0);
 
         // Danh sách các cột được phép update qua AJAX để bảo mật
-        $allowedFields = ['is_active', 'is_featured']; 
+        $allowedFields = ['status', 'is_featured'];
         if (!in_array($field, $allowedFields)) {
             return $this->json(['success' => false, 'message' => 'Trường dữ liệu không hợp lệ']);
         }

@@ -17,7 +17,7 @@ class CategoryModel extends \Model {
         if (self::$cachedCategories === null) {
             // Chỉ lấy các cột cần thiết để tối ưu bộ nhớ
             self::$cachedCategories = self::query()
-                ->where('is_active', 1)
+                ->where('status', 1)
                 ->get('id_code, parent_id');
         }
         return self::$cachedCategories;
@@ -58,7 +58,7 @@ class CategoryModel extends \Model {
      * Lấy toàn bộ danh mục đang hiển thị
      */
     public static function getAll($parentId = null) {
-        $query = self::query()->where('is_active', 1);
+        $query = self::query()->where('status', 1);
         if ($parentId !== null) {
             $query->where('parent_id', (int)$parentId);
         }

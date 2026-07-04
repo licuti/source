@@ -18,11 +18,11 @@
     }
 
     // Trạng thái (Toggle Switch)
-    $checked = $item->is_active ? 'checked' : '';
+    $checked = $item->status ? 'checked' : '';
     if (hasPermission('admin.category', 'edit')) {
         $statusHtml = '
             <div class="form-check form-switch d-flex justify-content-center">
-                <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="' . $item->id_code . '" data-field="is_active" data-url="' . route('admin.category.updateStatusAjax') . '" ' . $checked . ' style="cursor: pointer; width: 2.5em; height: 1.25em;">
+                <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="' . $item->id_code . '" data-field="status" data-url="' . route('admin.category.updateStatusAjax') . '" ' . $checked . ' style="cursor: pointer; width: 2.5em; height: 1.25em;">
             </div>
         ';
     } else {
