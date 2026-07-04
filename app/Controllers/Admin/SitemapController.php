@@ -97,7 +97,7 @@ class SitemapController extends BaseAdminController {
             
             // 2. Posts
             if (($options['sitemap_post_enable'] ?? 1) == 1) {
-                $posts = PostModel::where('is_active', 1)->select('slug', 'updated_at')->get();
+                $posts = PostModel::where('status', 1)->select('slug', 'updated_at')->get();
                 $freq = $options['sitemap_post_freq'] ?? 'daily';
                 $pri = $options['sitemap_post_priority'] ?? '0.8';
                 foreach ($posts as $post) {
@@ -107,7 +107,7 @@ class SitemapController extends BaseAdminController {
             
             // 3. Products
             if (($options['sitemap_product_enable'] ?? 1) == 1) {
-                $products = ProductModel::where('is_active', 1)->select('slug', 'updated_at')->get();
+                $products = ProductModel::where('status', 1)->select('slug', 'updated_at')->get();
                 $freq = $options['sitemap_product_freq'] ?? 'daily';
                 $pri = $options['sitemap_product_priority'] ?? '0.9';
                 foreach ($products as $product) {
