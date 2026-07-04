@@ -75,6 +75,17 @@ $hasMultipleTabs = count($groups) > 1;
                             'value' => $fieldValue,
                             'label' => $fieldLabel
                         ]) ?>
+                    <?php elseif($fieldType === 'select'): ?>
+                        <label class="form-label fw-bold"><?= $fieldLabel ?></label>
+                        <select name="<?= $inputName ?>" class="form-select">
+                            <?php 
+                            $options = $field['options'] ?? [];
+                            foreach($options as $optValue => $optLabel): 
+                                $selected = (string)$fieldValue === (string)$optValue ? 'selected' : '';
+                            ?>
+                                <option value="<?= htmlspecialchars($optValue) ?>" <?= $selected ?>><?= htmlspecialchars($optLabel) ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>
