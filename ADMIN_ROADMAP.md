@@ -246,6 +246,11 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **Logic Hiển thị (Conditional Logic):** Tích hợp Javascript Engine cho phép cấu hình Ẩn/Hiện một trường dữ liệu bất kỳ dựa trên giá trị (Value) người dùng nhập vào một trường khác (Ví dụ: Nếu chọn "Khác" thì hiện thêm ô nhập lý do).
 - **Cấu hình Email Nâng cao (Autoresponder):** Chức năng cấu hình nội dung Email tự động sử dụng biến linh động (ví dụ `{ho_ten}`, `{email}`). Hỗ trợ 2 luồng riêng biệt: Gửi thông báo cho Admin & Gửi thư cảm ơn tự động cho Khách hàng. Hỗ trợ soạn thảo bằng thẻ HTML.
 - **Quản lý Inbox (Submissions):** Hộp thư đến tự động phân tích JSON tạo dòng preview ngắn gọn. Thay đổi trạng thái (Mới, Đã đọc, Đã phản hồi), Ghi chú nội bộ, và có huy hiệu đếm thư chưa đọc trên Sidebar.
-- **Tích hợp Frontend (🚧 Đang phát triển):** Cần viết thêm tính năng Shortcode Parser và Frontend Form Controller để thực thi việc tiếp nhận request POST, validate dữ liệu (chống file nặng, sai regex), gửi Mail qua SMTP (sử dụng cấu hình JSON) và lưu vào Database. Đồng thời cần nghiên cứu tích hợp Google reCAPTCHA v3.
+- **Tích hợp Frontend (🟢 Hoàn thành):** Đã hoàn thiện toàn bộ tính năng Endpoint nhận submit an toàn, kiểm tra giới hạn file (đuôi file + dung lượng), lưu trữ JSON thông minh. Tích hợp bẫy Honeypot ẩn (chống Spam cơ bản) và Hệ thống Captcha theo kiến trúc Strategy Pattern (Hỗ trợ Google reCAPTCHA v3 & Cloudflare Turnstile vô hình). Tính năng trích xuất dữ liệu Excel CSV thông minh.
+
+> **⚠️ Lưu ý Kỹ thuật (Scalability bottlenecks):**
+> 1. *Lưu trữ File:* Đang lưu cục bộ tại `public/uploads/`. Nếu scale (nhiều user upload file lớn), ổ cứng sẽ đầy nhanh và giảm băng thông Server. Cần tính toán dời qua Amazon S3/Cloudflare R2.
+> 2. *Truy vấn Dữ liệu:* Submission được lưu dưới dạng JSON. Nếu đạt hàng triệu bản ghi và cần query/search theo 1 field cụ thể bên trong JSON, hiệu năng sẽ bị giảm sút trầm trọng do MySQL không đánh index tự nhiên được. Cần dùng Virtual Columns hoặc Elasticsearch.
+> 3. *Đồng bộ Email:* Gửi mail thông báo hiện đang chạy đồng bộ (Synchronous). Khách phải chờ SMTP Server phản hồi (vài giây) mới hoàn thành gửi Form. Quá nhiều user cùng lúc sẽ sập PHP Worker. Cần chuyển sang cơ chế Background Queue (RabbitMQ/Redis).
 
 > **📊 Tổng kết tiến độ:** Hoàn thành **18/33 module** (54%). Hệ thống phân quyền (RBAC), Quản lý User, Cấu hình chung, Dynamic Form Builder, Quản lý Bài viết, Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu đã hoàn thiện.
