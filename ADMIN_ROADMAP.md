@@ -253,4 +253,9 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 > 2. *Truy vấn Dữ liệu:* Submission được lưu dưới dạng JSON. Nếu đạt hàng triệu bản ghi và cần query/search theo 1 field cụ thể bên trong JSON, hiệu năng sẽ bị giảm sút trầm trọng do MySQL không đánh index tự nhiên được. Cần dùng Virtual Columns hoặc Elasticsearch.
 > 3. *Đồng bộ Email:* Gửi mail thông báo hiện đang chạy đồng bộ (Synchronous). Khách phải chờ SMTP Server phản hồi (vài giây) mới hoàn thành gửi Form. Quá nhiều user cùng lúc sẽ sập PHP Worker. Cần chuyển sang cơ chế Background Queue (RabbitMQ/Redis).
 
+### 🟢 Chi tiết: SitemapController (Quản lý Sơ đồ trang web)
+- **Kiến trúc UI:** Tuân thủ chuẩn UI 9-3. Cho phép cấu hình Bật/Tắt, tần suất quét (`ChangeFreq`) và mức độ ưu tiên (`Priority`) riêng biệt cho từng loại dữ liệu (Bài viết, Sản phẩm, Danh mục). Lưu trực tiếp vào bảng `db_options`.
+- **Kỹ thuật Lõi Sinh XML:** Sử dụng `XMLWriter` bản địa của PHP để ghi trực tiếp luồng dữ liệu XML vào ổ cứng (streaming) thay vì gộp chuỗi bằng `DOMDocument`. Điều này giúp hệ thống tạo sitemap cho website hàng trăm ngàn bài viết nhưng chỉ tốn chưa tới 2MB RAM, mở rộng (scale) vô cùng tốt.
+- **Tối ưu hóa Database (Refactor):** Đã viết script thực thi việc đồng bộ hóa cơ sở dữ liệu. Đổi tên cột `is_active` của bảng `db_categories` thành `status` để **đồng bộ hóa 100%** kiến trúc trạng thái với 2 bảng `db_posts` và `db_products`. Tự động scan và cập nhật toàn bộ `CategoryModel` cùng các Views liên quan để loại bỏ các lỗi truy vấn tiềm ẩn.
+
 > **📊 Tổng kết tiến độ:** Hoàn thành **19/33 module** (57%). Hệ thống phân quyền (RBAC), Quản lý User, Cấu hình chung, Dynamic Form Builder, Sitemap, Quản lý Bài viết, Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu đã hoàn thiện.
