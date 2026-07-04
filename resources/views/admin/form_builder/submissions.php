@@ -31,7 +31,7 @@ $title = 'Hộp thư đến: ' . $form->name;
         <div class="card card-outline card-primary shadow">
             <div class="card-header">
                 <h3 class="card-title">Danh sách thư liên hệ</h3>
-                <div class="card-tools">
+                <div class="card-tools d-flex gap-2">
                     <form method="GET" class="d-flex" id="filterForm">
                         <select name="status" class="form-select form-select-sm" onchange="document.getElementById('filterForm').submit()">
                             <option value="">-- Tất cả trạng thái --</option>
@@ -40,6 +40,9 @@ $title = 'Hộp thư đến: ' . $form->name;
                             <option value="2" <?= request()->get('status') === '2' ? 'selected' : '' ?>>Đã phản hồi</option>
                         </select>
                     </form>
+                    <a href="<?= route('admin.form.export', ['id' => $form->id]) ?>" class="btn btn-sm btn-success">
+                        <i class="fa-solid fa-file-excel"></i> Xuất Excel
+                    </a>
                 </div>
             </div>
             <div class="card-body p-0">

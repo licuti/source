@@ -46,6 +46,8 @@ $router->get('/' . ($t['category']['vi'] ?? 'danh-muc') . '/{slug}', [\App\Contr
 $router->get( '/' . ($t['contact']['vi'] ?? 'lien-he'), [ContactController::class, 'index'])->name('contact.index');
 $router->post('/' . ($t['contact']['vi'] ?? 'lien-he'), [ContactController::class, 'store'])->name('contact.store');
 
+$router->post('/submit-form/{id}', [\App\Controllers\Frontend\FormController::class, 'submit'])->name('frontend.form.submit');
+
 // ————————————————————————————————————————
 // 3. Xác thực (Auth)
 // ————————————————————————————————————————

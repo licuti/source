@@ -210,6 +210,66 @@ class FormBuilderController extends BaseAdminController {
         ]);
     }
     
+    public function export(Request $request, $id) {
+        $id = is_array($id) ? ($id['id'] ?? 0) : $id;
+        $form = FormModel::find($id);
+        if (!$form) {
+            return redirect(route('admin.form.index'))->with('error', 'Không tìm thấy form.');
+        }
+        
+        $submissions = FormSubmissionModel::where('form_id', $id)->orderBy('created_at', 'DESC')->get();
+        
+        // Prepare CSV Output
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=form_' . $form->code . '_export_' . date('Ymd_His') . '.csv');
+        
+        $output = fopen('php://output', 'w');
+        // Add UTF-8 BOM for Excel compatibility
+        fputs($output, "\xEF\xBB\xBF");
+        
+        // Find all possible keys in JSON
+        $headers = ['ID', 'Trạng thái', 'IP', 'Thời gian gửi', 'Ghi chú / Phản hồi'];
+        $jsonKeys = [];
+        
+        foreach ($submissions as $sub) {
+            $data = json_decode($sub->data_payload, true) ?? [];
+            foreach ($data as $key => $val) {
+                if (!in_array($key, $jsonKeys)) {
+                    $jsonKeys[] = $key;
+                }
+            }
+        }
+        
+        // Append dynamic JSON keys to headers
+        $headers = array_merge($headers, $jsonKeys);
+        fputcsv($output, $headers);
+        
+        // Output rows
+        foreach ($submissions as $sub) {
+            $statusText = 'Mới';
+            if ($sub->status == FormSubmissionModel::STATUS_READ) $statusText = 'Đã đọc';
+            if ($sub->status == FormSubmissionModel::STATUS_REPLIED) $statusText = 'Đã phản hồi';
+            
+            $row = [
+                $sub->id,
+                $statusText,
+                $sub->ip_address,
+                $sub->created_at,
+                $sub->reply_content
+            ];
+            
+            $data = json_decode($sub->data_payload, true) ?? [];
+            foreach ($jsonKeys as $key) {
+                $row[] = isset($data[$key]) ? $data[$key] : '';
+            }
+            
+            fputcsv($output, $row);
+        }
+        
+        fclose($output);
+        exit;
+    }
+    
     public function submissionAjax(Request $request) {
         $action = $request->input('action');
         $id = $request->input('id');

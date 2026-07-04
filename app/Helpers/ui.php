@@ -12,6 +12,10 @@ if (!function_exists('render_form')) {
         
         $html = '<form action="' . url('submit-form/' . $form->id) . '" method="POST" class="dynamic-form" id="form-' . $form->code . '" enctype="multipart/form-data">';
         $html .= '<input type="hidden" name="form_code" value="' . htmlspecialchars($form->code) . '">';
+        // Honeypot field (Anti-spam)
+        $html .= '<div style="display:none !important;" aria-hidden="true">';
+        $html .= '<input type="text" name="__hp_website" tabindex="-1" autocomplete="off">';
+        $html .= '</div>';
         
         foreach ($fields as $field) {
             $req = $field->is_required ? 'required' : '';

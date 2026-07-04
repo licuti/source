@@ -252,6 +252,7 @@ $router->group('/admin', function($r) {
     $r->get('/forms/builder/{id}', [\App\Controllers\Admin\FormBuilderController::class, 'builder'])->name('admin.form.builder');
     $r->get('/forms/preview/{id}', [\App\Controllers\Admin\FormBuilderController::class, 'preview'])->name('admin.form.preview');
     $r->get('/forms/submissions/{id}', [\App\Controllers\Admin\FormBuilderController::class, 'submissions'])->name('admin.form.submissions');
+    $r->get('/forms/export/{id}', [\App\Controllers\Admin\FormBuilderController::class, 'export'])->name('admin.form.export');
     $r->post('/forms/submissions/ajax', [\App\Controllers\Admin\FormBuilderController::class, 'submissionAjax'])->name('admin.form.submission_ajax');
 
 });
