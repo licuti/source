@@ -162,6 +162,12 @@ $router->group('/admin', function($r) {
     $r->get('/language', [\App\Controllers\Admin\LanguageSettingController::class, 'index'])->name('admin.language.index');
     $r->get('/language/create', [\App\Controllers\Admin\LanguageSettingController::class, 'create'])->name('admin.language.create');
     $r->post('/language/store', [\App\Controllers\Admin\LanguageSettingController::class, 'store'])->name('admin.language.store');
+    $r->get('/language/scan', 'LanguageSettingController@scan', ['name' => 'admin.language.scan']);
+    
+    // Sitemap
+    $r->get('/sitemap', [\App\Controllers\Admin\SitemapController::class, 'index'])->name('admin.sitemap.index');
+    $r->post('/sitemap/save', [\App\Controllers\Admin\SitemapController::class, 'save'])->name('admin.sitemap.save');
+    $r->post('/sitemap/generate', [\App\Controllers\Admin\SitemapController::class, 'generate'])->name('admin.sitemap.generate');
     $r->get('/language/edit/{id}', [\App\Controllers\Admin\LanguageSettingController::class, 'edit'])->name('admin.language.edit');
     $r->post('/language/update/{id}', [\App\Controllers\Admin\LanguageSettingController::class, 'update'])->name('admin.language.update');
     $r->get('/language/delete/{id}', [\App\Controllers\Admin\LanguageSettingController::class, 'destroy'])->name('admin.language.destroy');
