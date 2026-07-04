@@ -124,6 +124,7 @@
                                 <i class="nav-icon fa-solid <?= htmlspecialchars($main->icon ?: 'fa-box') ?>"></i>
                                 <p>
                                     <?= htmlspecialchars($main->name) ?>
+                                    <?php if ($main->alias === 'form'): ?><span class="badge text-bg-warning ms-1" style="font-size: 0.6rem;">BETA</span><?php endif; ?>
                                     <i class="nav-arrow fa-solid fa-angle-right"></i>
                                 </p>
                             </a>
@@ -163,7 +164,10 @@
                                     <li class="nav-item">
                                         <a href="<?= $subUrl ?>" class="nav-link <?= $subActive ? 'active' : '' ?>">
                                             <i class="nav-icon fa-regular <?= htmlspecialchars($sub->icon ?: 'fa-circle') ?>"></i>
-                                            <p><?= htmlspecialchars($sub->name) ?></p>
+                                            <p>
+                                                <?= htmlspecialchars($sub->name) ?>
+                                                <?php if ($sub->alias === 'form'): ?><span class="badge text-bg-warning ms-1" style="font-size: 0.6rem;">BETA</span><?php endif; ?>
+                                            </p>
                                         </a>
                                     </li>
                                 <?php endforeach; ?>
@@ -187,7 +191,10 @@
                         <li class="nav-item">
                             <a href="<?= $mainUrl ?>" class="nav-link <?= $isActive ? 'active' : '' ?>">
                                 <i class="nav-icon fa-solid <?= htmlspecialchars($main->icon ?: 'fa-box') ?>"></i>
-                                <p><?= htmlspecialchars($main->name) ?></p>
+                                    <p>
+                                        <?= htmlspecialchars($main->name) ?>
+                                        <?php if ($main->alias === 'form'): ?><span class="badge text-bg-warning ms-1" style="font-size: 0.6rem;">BETA</span><?php endif; ?>
+                                    </p>
                             </a>
                         </li>
                     <?php endif; ?>

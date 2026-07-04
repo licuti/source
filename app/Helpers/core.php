@@ -653,3 +653,29 @@ if (!function_exists('send_email')) {
         }
     }
 }
+
+if (!function_exists('request')) {
+    /**
+     * Lấy đối tượng Request hiện tại của ứng dụng.
+     * Dùng để lấy các tham số GET/POST ở bất kỳ đâu một cách nhanh chóng.
+     * 
+     * @return \App\Core\Request
+     */
+    function request() {
+        return \App\Core\App::getInstance()->request;
+    }
+}
+
+if (!function_exists('response')) {
+    /**
+     * Khởi tạo đối tượng Response.
+     * Có thể gọi chuỗi: response()->json(...)
+     * 
+     * @param string $content Nội dung trả về
+     * @param int $statusCode Mã HTTP Status
+     * @return \App\Core\Response
+     */
+    function response($content = '', $statusCode = 200) {
+        return new \App\Core\Response($content, $statusCode);
+    }
+}

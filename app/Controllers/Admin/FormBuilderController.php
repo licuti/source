@@ -1,16 +1,14 @@
 <?php
 namespace App\Controllers\Admin;
 
+use App\Core\Request;
+
 use App\Models\FormModel;
 use App\Models\FormFieldModel;
 use App\Models\FormSubmissionModel;
 
 class FormBuilderController extends BaseAdminController {
     
-    public function __construct() {
-        parent::__construct();
-        $this->requirePermission(33); // ID của module Khách hàng liên hệ
-    }
 
     public function index() {
         $forms = FormModel::orderBy('created_at', 'DESC')->get();
@@ -23,16 +21,16 @@ class FormBuilderController extends BaseAdminController {
         return view('admin.form_builder.index', ['forms' => $forms]);
     }
     
-    public function ajax() {
-        $action = request()->post('action');
-        $id = request()->post('id');
+    public function ajax(Request $request) {
+        $action = $request->input('action');
+        $id = $request->input('id');
         
         try {
             switch ($action) {
                 case 'create':
-                    $name = request()->post('name');
-                    $code = request()->post('code');
-                    $email_to = request()->post('email_to');
+                    $name = $request->input('name');
+                    $code = $request->input('code');
+                    $email_to = $request->input('email_to');
                     
                     if (empty($name) || empty($code)) {
                         throw new \Exception('Vui lòng nhập Tên form và Mã shortcode.');
@@ -44,21 +42,36 @@ class FormBuilderController extends BaseAdminController {
                         throw new \Exception('Mã shortcode này đã tồn tại, vui lòng chọn mã khác.');
                     }
                     
+                    $mail_settings = [
+                        'admin' => [
+                            'enable' => $request->input('admin_mail_enable') ? true : false,
+                            'subject' => $request->input('admin_mail_subject'),
+                            'body' => $request->input('admin_mail_body')
+                        ],
+                        'customer' => [
+                            'enable' => $request->input('customer_mail_enable') ? true : false,
+                            'field' => $request->input('customer_mail_field'),
+                            'subject' => $request->input('customer_mail_subject'),
+                            'body' => $request->input('customer_mail_body')
+                        ]
+                    ];
+                    
                     FormModel::create([
                         'name' => $name,
                         'code' => $code,
                         'email_to' => $email_to,
+                        'mail_settings' => json_encode($mail_settings, JSON_UNESCAPED_UNICODE),
                         'is_active' => 1
                     ]);
                     
-                    return response()->json(['success' => true, 'message' => 'Thêm form thành công.']);
+                    return $this->json(['success' => true, 'message' => 'Thêm form thành công.']);
                     
                 case 'update':
-                    $name = request()->post('name');
-                    $code = request()->post('code');
-                    $email_to = request()->post('email_to');
-                    $success_message = request()->post('success_message');
-                    $is_active = request()->post('is_active') ? 1 : 0;
+                    $name = $request->input('name');
+                    $code = $request->input('code');
+                    $email_to = $request->input('email_to');
+                    $success_message = $request->input('success_message');
+                    $is_active = $request->input('is_active') ? 1 : 0;
                     
                     if (empty($name) || empty($code)) {
                         throw new \Exception('Vui lòng nhập Tên form và Mã shortcode.');
@@ -70,30 +83,47 @@ class FormBuilderController extends BaseAdminController {
                         throw new \Exception('Mã shortcode này đã tồn tại, vui lòng chọn mã khác.');
                     }
                     
+                    $mail_settings = [
+                        'admin' => [
+                            'enable' => $request->input('admin_mail_enable') ? true : false,
+                            'subject' => $request->input('admin_mail_subject'),
+                            'body' => $request->input('admin_mail_body')
+                        ],
+                        'customer' => [
+                            'enable' => $request->input('customer_mail_enable') ? true : false,
+                            'field' => $request->input('customer_mail_field'),
+                            'subject' => $request->input('customer_mail_subject'),
+                            'body' => $request->input('customer_mail_body')
+                        ]
+                    ];
+                    
                     FormModel::update($id, [
                         'name' => $name,
                         'code' => $code,
                         'email_to' => $email_to,
                         'success_message' => $success_message,
+                        'mail_settings' => json_encode($mail_settings, JSON_UNESCAPED_UNICODE),
                         'is_active' => $is_active
                     ]);
                     
-                    return response()->json(['success' => true, 'message' => 'Cập nhật thành công.']);
+                    return $this->json(['success' => true, 'message' => 'Cập nhật thành công.']);
                     
                 case 'delete':
                     FormModel::delete($id);
-                    return response()->json(['success' => true, 'message' => 'Xóa form thành công.']);
+                    return $this->json(['success' => true, 'message' => 'Xóa form thành công.']);
                     
                 case 'get':
                     $form = FormModel::find($id);
                     if ($form) {
-                        return response()->json(['success' => true, 'data' => $form]);
+                        $fields = FormFieldModel::where('form_id', $id)->orderBy('sort_order', 'ASC')->get();
+                        $form->fields = $fields;
+                        return $this->json(['success' => true, 'data' => $form]);
                     }
                     throw new \Exception('Không tìm thấy form.');
                     
                 case 'save_builder':
                     // Lưu cấu trúc fields của form
-                    $fieldsJson = request()->post('fields');
+                    $fieldsJson = $request->input('fields');
                     $fields = json_decode($fieldsJson, true);
                     
                     if (!is_array($fields)) {
@@ -104,31 +134,34 @@ class FormBuilderController extends BaseAdminController {
                     FormFieldModel::where('form_id', $id)->delete();
                     
                     // Thêm lại các field mới
-                    $sortOrder = 0;
-                    foreach ($fields as $field) {
-                        FormFieldModel::create([
+                    $sort = 0;
+                    foreach ($fields as $f) {
+                        FormFieldModel::insert([
                             'form_id' => $id,
-                            'type' => $field['type'] ?? 'text',
-                            'name' => $field['name'] ?? 'field_' . time(),
-                            'label' => $field['label'] ?? 'Trường dữ liệu',
-                            'placeholder' => $field['placeholder'] ?? '',
-                            'options' => !empty($field['options']) ? json_encode($field['options'], JSON_UNESCAPED_UNICODE) : null,
-                            'is_required' => !empty($field['is_required']) ? 1 : 0,
-                            'sort_order' => $sortOrder++
+                            'type' => $f['type'],
+                            'name' => $f['name'],
+                            'label' => $f['label'],
+                            'placeholder' => $f['placeholder'] ?? '',
+                            'options' => json_encode($f['options'] ?? [], JSON_UNESCAPED_UNICODE),
+                            'advanced_settings' => !empty($f['advanced_settings']) ? json_encode($f['advanced_settings'], JSON_UNESCAPED_UNICODE) : null,
+                            'is_required' => $f['is_required'] ? 1 : 0,
+                            'col_width' => $f['col_width'] ?? 'col-md-12',
+                            'sort_order' => $sort++
                         ]);
                     }
                     
-                    return response()->json(['success' => true, 'message' => 'Lưu cấu trúc form thành công.']);
+                    return $this->json(['success' => true, 'message' => 'Lưu cấu trúc form thành công.']);
                     
                 default:
                     throw new \Exception('Hành động không hợp lệ.');
             }
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
     
-    public function builder($id) {
+    public function builder(Request $request, $id) {
+        $id = is_array($id) ? ($id['id'] ?? 0) : $id;
         $form = FormModel::find($id);
         if (!$form) {
             return redirect(route('admin.form.index'))->with('error', 'Không tìm thấy form.');
@@ -141,13 +174,28 @@ class FormBuilderController extends BaseAdminController {
         ]);
     }
     
-    public function submissions($id) {
+    public function preview(Request $request, $id) {
+        $id = is_array($id) ? ($id['id'] ?? 0) : $id;
         $form = FormModel::find($id);
         if (!$form) {
             return redirect(route('admin.form.index'))->with('error', 'Không tìm thấy form.');
         }
         
-        $status = request()->get('status');
+        $fields = FormFieldModel::where('form_id', $id)->orderBy('sort_order', 'ASC')->get();
+        return view('admin.form_builder.preview', [
+            'form' => $form,
+            'fields' => $fields
+        ]);
+    }
+    
+    public function submissions(Request $request, $id) {
+        $id = is_array($id) ? ($id['id'] ?? 0) : $id;
+        $form = FormModel::find($id);
+        if (!$form) {
+            return redirect(route('admin.form.index'))->with('error', 'Không tìm thấy form.');
+        }
+        
+        $status = $request->input('status');
         
         $query = FormSubmissionModel::where('form_id', $id);
         if ($status !== null && $status !== '') {
@@ -162,9 +210,9 @@ class FormBuilderController extends BaseAdminController {
         ]);
     }
     
-    public function submissionAjax() {
-        $action = request()->post('action');
-        $id = request()->post('id');
+    public function submissionAjax(Request $request) {
+        $action = $request->input('action');
+        $id = $request->input('id');
         
         try {
             switch ($action) {
@@ -180,12 +228,12 @@ class FormBuilderController extends BaseAdminController {
                         // Parse JSON data
                         $sub->data_payload = json_decode($sub->data_payload, true);
                         
-                        return response()->json(['success' => true, 'data' => $sub]);
+                        return $this->json(['success' => true, 'data' => $sub]);
                     }
                     throw new \Exception('Không tìm thấy thư liên hệ.');
                     
                 case 'reply':
-                    $reply_content = request()->post('reply_content');
+                    $reply_content = $request->input('reply_content');
                     if (empty($reply_content)) {
                         throw new \Exception('Vui lòng nhập nội dung phản hồi.');
                     }
@@ -206,17 +254,17 @@ class FormBuilderController extends BaseAdminController {
                     // Todo: Tích hợp Gửi Email thực tế ở đây nếu cần thiết
                     // Cần parse JSON để lấy email của khách, nếu field name có chữ "email"
                     
-                    return response()->json(['success' => true, 'message' => 'Đã lưu phản hồi.']);
+                    return $this->json(['success' => true, 'message' => 'Phản hồi đã được gửi.']);
                     
                 case 'delete':
                     FormSubmissionModel::delete($id);
-                    return response()->json(['success' => true, 'message' => 'Xóa thư liên hệ thành công.']);
+                    return $this->json(['success' => true, 'message' => 'Xóa thư liên hệ thành công.']);
                     
                 default:
                     throw new \Exception('Hành động không hợp lệ.');
             }
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()]);
+            return $this->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 }

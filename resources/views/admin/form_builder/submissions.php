@@ -1,6 +1,5 @@
 <?php
 $title = 'Hộp thư đến: ' . $form->name;
-ob_start();
 ?>
 <style>
 .submission-row.unread {
@@ -57,7 +56,7 @@ ob_start();
                             </tr>
                         </thead>
                         <tbody>
-                            <?php if ($submissions->isEmpty()): ?>
+                            <?php if (count($submissions) == 0): ?>
                             <tr>
                                 <td colspan="6" class="text-center py-4">Chưa có thư liên hệ nào.</td>
                             </tr>
@@ -96,7 +95,7 @@ ob_start();
                                         <button type="button" class="btn btn-sm btn-info text-white" onclick="viewSubmission(<?= $sub->id ?>)">
                                             <i class="fa-solid fa-eye"></i>
                                         </button>
-                                        <?php if (check_permission('delete')): ?>
+                                        <?php if (hasPermission('admin.form', 'delete')): ?>
                                         <button type="button" class="btn btn-sm btn-danger" onclick="deleteSubmission(<?= $sub->id ?>)">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
@@ -320,7 +319,3 @@ function escapeHtml(unsafe) {
          .replace(/'/g, "&#039;");
 }
 </script>
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/main.php';
-?>

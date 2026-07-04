@@ -1,22 +1,13 @@
 <?php
 $title = 'Quản lý Form liên hệ';
-ob_start();
 ?>
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-6">
-                <h3 class="mb-0">Quản lý Form liên hệ</h3>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="<?= route('admin.dashboard') ?>">Dashboard</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Form liên hệ</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
+<?= view('admin.components.breadcrumb', [
+    'title'  => $title,
+    'bitems' => [
+        ['name' => 'Bảng điều khiển', 'url' => route('admin.dashboard')],
+        ['name' => 'Form liên hệ', 'url' => '']
+    ]
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
@@ -24,7 +15,7 @@ ob_start();
             <div class="card-header">
                 <h3 class="card-title">Danh sách Form</h3>
                 <div class="card-tools">
-                    <?php if (check_permission('add')): ?>
+                    <?php if (hasPermission('admin.form', 'add')): ?>
                     <button type="button" class="btn btn-primary btn-sm" onclick="openAddModal()">
                         <i class="fa-solid fa-plus"></i> Thêm Form mới
                     </button>
@@ -40,7 +31,6 @@ ob_start();
                             <th>Shortcode</th>
                             <th>Hộp thư đến</th>
                             <th width="150" class="text-center">Trạng thái</th>
-                            <th width="250" class="text-center">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,12 +40,41 @@ ob_start();
                         </tr>
                         <?php else: ?>
                             <?php foreach ($forms as $item): ?>
-                            <tr>
+                            <tr class="wp-row">
                                 <td><?= $item->id ?></td>
-                                <td><strong><?= htmlspecialchars($item->name) ?></strong></td>
+                                <td>
+                                    <strong><a href="<?= route('admin.form.builder', ['id' => $item->id]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->name) ?></a></strong>
+                                    
+                                    <!-- WP-Style Row Actions -->
+                                    <?php 
+                                    $actions = [];
+                                    if (hasPermission('admin.form', 'edit')) {
+                                        $actions['builder'] = [
+                                            'label' => 'Thiết kế', 
+                                            'url' => route('admin.form.builder', ['id' => $item->id]), 
+                                            'class' => 'text-primary'
+                                        ];
+                                        $actions['edit'] = [
+                                            'label' => 'Cấu hình', 
+                                            'url' => 'javascript:void(0)', 
+                                            'class' => 'text-info',
+                                            'attributes' => 'onclick="openEditModal(' . $item->id . ')"'
+                                        ];
+                                    }
+                                    if (hasPermission('admin.form', 'delete')) {
+                                        $actions['delete'] = [
+                                            'label' => 'Xóa', 
+                                            'url' => 'javascript:void(0)', 
+                                            'class' => 'text-danger',
+                                            'attributes' => 'onclick="deleteForm(' . $item->id . ')"'
+                                        ];
+                                    }
+                                    echo view('admin.components.row_actions', ['actions' => $actions]);
+                                    ?>
+                                </td>
                                 <td><code>[form code="<?= htmlspecialchars($item->code) ?>"]</code></td>
                                 <td>
-                                    <?php if (check_permission('view')): ?>
+                                    <?php if (hasPermission('admin.form', 'view')): ?>
                                     <a href="<?= route('admin.form.submissions', ['id' => $item->id]) ?>" class="btn btn-sm btn-outline-info">
                                         <i class="fa-regular fa-envelope"></i> Xem thư 
                                         <?php if ($item->unread_count > 0): ?>
@@ -73,22 +92,6 @@ ob_start();
                                         <span class="badge text-bg-danger">Đang tắt</span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="text-center">
-                                    <?php if (check_permission('edit')): ?>
-                                    <a href="<?= route('admin.form.builder', ['id' => $item->id]) ?>" class="btn btn-warning btn-sm" title="Thiết kế Form">
-                                        <i class="fa-solid fa-pen-ruler"></i> Build
-                                    </a>
-                                    <button type="button" class="btn btn-primary btn-sm" onclick="openEditModal(<?= $item->id ?>)" title="Sửa cấu hình">
-                                        <i class="fa-solid fa-gear"></i>
-                                    </button>
-                                    <?php endif; ?>
-                                    
-                                    <?php if (check_permission('delete')): ?>
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteForm(<?= $item->id ?>)" title="Xóa Form">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                    <?php endif; ?>
-                                </td>
                             </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
@@ -101,41 +104,102 @@ ob_start();
 
 <!-- Modal -->
 <div class="modal fade" id="formModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <form id="formBuilderForm" class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="formModalTitle">Thêm Form</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <input type="hidden" name="action" id="formAction" value="create">
-                <input type="hidden" name="id" id="formId" value="">
-                
-                <div class="mb-3">
-                    <label class="form-label">Tên Form <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="name" id="formName" required placeholder="VD: Liên hệ chính">
-                </div>
-                
-                <div class="mb-3">
-                    <label class="form-label">Mã Shortcode <span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" name="code" id="formCode" required placeholder="VD: contact-form-1">
-                    <div class="form-text">Dùng để nhúng ra ngoài Frontend. Không được viết có dấu, không khoảng trắng.</div>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="form-label">Email nhận thông báo</label>
-                    <input type="email" class="form-control" name="email_to" id="formEmailTo" placeholder="admin@example.com">
-                    <div class="form-text">Gửi email thông báo khi có người gửi form. Để trống nếu không cần.</div>
-                </div>
-                
-                <div class="mb-3" id="formSuccessMessageGroup" style="display: none;">
-                    <label class="form-label">Lời cảm ơn (Sau khi gửi thành công)</label>
-                    <textarea class="form-control" name="success_message" id="formSuccessMessage" rows="3" placeholder="Cảm ơn bạn đã liên hệ..."></textarea>
-                </div>
-                
-                <div class="mb-3 form-check" id="formActiveGroup" style="display: none;">
-                    <input type="checkbox" class="form-check-input" name="is_active" id="formIsActive" value="1" checked>
-                    <label class="form-check-label" for="formIsActive">Kích hoạt</label>
+            <div class="modal-body p-0">
+                <ul class="nav nav-tabs px-3 pt-3" id="formSettingsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-general" type="button" role="tab">Cài đặt chung</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-admin-mail" type="button" role="tab">Mail Admin</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-customer-mail" type="button" role="tab">Mail Khách</button>
+                    </li>
+                </ul>
+
+                <div class="tab-content p-3">
+                    <!-- Tab General -->
+                    <div class="tab-pane fade show active" id="tab-general" role="tabpanel">
+                        <input type="hidden" name="action" id="formAction" value="create">
+                        <input type="hidden" name="id" id="formId" value="">
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Tên Form <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="name" id="formName" required placeholder="VD: Liên hệ chính">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Mã Shortcode <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="code" id="formCode" required placeholder="VD: contact-form-1">
+                            <div class="form-text">Dùng để nhúng ra ngoài Frontend. Không được viết có dấu, không khoảng trắng.</div>
+                        </div>
+                        
+                        <div class="mb-3" id="formSuccessMessageGroup" style="display: none;">
+                            <label class="form-label">Lời cảm ơn (Sau khi gửi thành công)</label>
+                            <textarea class="form-control" name="success_message" id="formSuccessMessage" rows="3" placeholder="Cảm ơn bạn đã liên hệ..."></textarea>
+                        </div>
+                        
+                        <div class="mb-3 form-check" id="formActiveGroup" style="display: none;">
+                            <input type="checkbox" class="form-check-input" name="is_active" id="formIsActive" value="1" checked>
+                            <label class="form-check-label" for="formIsActive">Kích hoạt</label>
+                        </div>
+                    </div>
+
+                    <!-- Tab Admin Mail -->
+                    <div class="tab-pane fade" id="tab-admin-mail" role="tabpanel">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" role="switch" name="admin_mail_enable" id="adminMailEnable" value="1">
+                            <label class="form-check-label fw-bold text-primary" for="adminMailEnable">Bật gửi thông báo cho Admin</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email nhận thông báo</label>
+                            <input type="email" class="form-control" name="email_to" id="formEmailTo" placeholder="admin@example.com">
+                            <div class="form-text">Gửi email thông báo khi có người gửi form.</div>
+                        </div>
+                        <div class="alert alert-info py-2 small mb-3" id="adminMailAvailableFields" style="display: none;">
+                            <strong>Các biến có sẵn:</strong> <span></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tiêu đề Email</label>
+                            <input type="text" class="form-control" name="admin_mail_subject" id="adminMailSubject" placeholder="Có liên hệ mới từ {ho_ten}">
+                            <div class="form-text">Sử dụng <code>{ten_bien}</code> để chèn dữ liệu động.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nội dung Email</label>
+                            <textarea class="form-control" name="admin_mail_body" id="adminMailBody" rows="5" placeholder="Chào admin, bạn nhận được liên hệ mới..."></textarea>
+                            <div class="form-text">Sử dụng HTML. Ví dụ: <code>&lt;strong&gt;Tên:&lt;/strong&gt; {ho_ten}</code></div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Customer Mail -->
+                    <div class="tab-pane fade" id="tab-customer-mail" role="tabpanel">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" role="switch" name="customer_mail_enable" id="customerMailEnable" value="1">
+                            <label class="form-check-label fw-bold text-primary" for="customerMailEnable">Bật gửi phản hồi tự động cho Khách (Autoresponder)</label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Trường chứa Email khách hàng</label>
+                            <input type="text" class="form-control" name="customer_mail_field" id="customerMailField" placeholder="Ví dụ: email">
+                            <div class="form-text">Điền "Tên biến" (Name) của trường nhập Email trong form.</div>
+                        </div>
+                        <div class="alert alert-info py-2 small mb-3" id="customerMailAvailableFields" style="display: none;">
+                            <strong>Các biến có sẵn:</strong> <span></span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tiêu đề Email phản hồi</label>
+                            <input type="text" class="form-control" name="customer_mail_subject" id="customerMailSubject" placeholder="Cảm ơn bạn đã liên hệ!">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nội dung Email phản hồi</label>
+                            <textarea class="form-control" name="customer_mail_body" id="customerMailBody" rows="5" placeholder="Chào {ho_ten}, chúng tôi đã nhận được thông tin..."></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -223,6 +287,9 @@ function openAddModal() {
     document.getElementById('formSuccessMessageGroup').style.display = 'none';
     document.getElementById('formActiveGroup').style.display = 'none';
     
+    // Reset tabs
+    new bootstrap.Tab(document.querySelector('#formSettingsTabs button[data-bs-target="#tab-general"]')).show();
+    
     formModal.show();
 }
 
@@ -245,30 +312,70 @@ function openEditModal(id) {
             document.getElementById('formCode').value = res.data.code;
             document.getElementById('formEmailTo').value = res.data.email_to || '';
             
+            document.getElementById('formSuccessMessageGroup').style.display = 'block';
             document.getElementById('formSuccessMessage').value = res.data.success_message || '';
+            
+            document.getElementById('formActiveGroup').style.display = 'block';
             document.getElementById('formIsActive').checked = res.data.is_active == 1;
             
-            document.getElementById('formSuccessMessageGroup').style.display = 'block';
-            document.getElementById('formActiveGroup').style.display = 'block';
+            // Load mail settings
+            let mailSettings = {
+                admin: { enable: false, subject: '', body: '' },
+                customer: { enable: false, field: '', subject: '', body: '' }
+            };
+            
+            if (res.data.mail_settings) {
+                try {
+                    mailSettings = JSON.parse(res.data.mail_settings);
+                } catch(e) {}
+            }
+            
+            document.getElementById('adminMailEnable').checked = mailSettings?.admin?.enable || false;
+            document.getElementById('adminMailSubject').value = mailSettings?.admin?.subject || '';
+            document.getElementById('adminMailBody').value = mailSettings?.admin?.body || '';
+            
+            document.getElementById('customerMailEnable').checked = mailSettings?.customer?.enable || false;
+            document.getElementById('customerMailField').value = mailSettings?.customer?.field || '';
+            document.getElementById('customerMailSubject').value = mailSettings?.customer?.subject || '';
+            document.getElementById('customerMailBody').value = mailSettings?.customer?.body || '';
             
             document.getElementById('formModalTitle').innerText = 'Sửa cấu hình Form';
+            
+            // Load available fields
+            if (res.data.fields && res.data.fields.length > 0) {
+                let vars = res.data.fields.map(f => `<code>{${f.name}}</code>`).join(', ');
+                document.getElementById('adminMailAvailableFields').style.display = 'block';
+                document.getElementById('adminMailAvailableFields').querySelector('span').innerHTML = vars;
+                
+                document.getElementById('customerMailAvailableFields').style.display = 'block';
+                document.getElementById('customerMailAvailableFields').querySelector('span').innerHTML = vars;
+            } else {
+                document.getElementById('adminMailAvailableFields').style.display = 'none';
+                document.getElementById('customerMailAvailableFields').style.display = 'none';
+            }
+            
+            // Reset tabs
+            new bootstrap.Tab(document.querySelector('#formSettingsTabs button[data-bs-target="#tab-general"]')).show();
+            
             formModal.show();
         } else {
             Swal.fire('Lỗi', res.message, 'error');
         }
+    })
+    .catch(err => {
+        Swal.fire('Lỗi', 'Không thể lấy dữ liệu form.', 'error');
     });
 }
 
 function deleteForm(id) {
     Swal.fire({
-        title: 'Bạn có chắc chắn?',
-        text: "Xóa Form sẽ xóa toàn bộ Fields và các Thư liên hệ thuộc Form này. Hành động này không thể hoàn tác!",
+        title: 'Bạn có chắc muốn xóa?',
+        text: "Mọi dữ liệu form và thư liên hệ sẽ bị xóa vĩnh viễn!",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
         cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Vâng, Xóa nó!',
-        cancelButtonText: 'Hủy'
+        confirmButtonText: 'Vâng, xóa nó!'
     }).then((result) => {
         if (result.isConfirmed) {
             const formData = new FormData();
@@ -283,15 +390,7 @@ function deleteForm(id) {
             .then(res => res.json())
             .then(res => {
                 if (res.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Đã xóa!',
-                        text: res.message,
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        window.location.reload();
-                    });
+                    window.location.reload();
                 } else {
                     Swal.fire('Lỗi', res.message, 'error');
                 }
@@ -300,7 +399,4 @@ function deleteForm(id) {
     });
 }
 </script>
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/main.php';
-?>
+

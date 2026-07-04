@@ -1,6 +1,5 @@
 <?php
 $title = 'Thiết kế Form: ' . $form->name;
-ob_start();
 ?>
 <!-- jQuery UI for Sortable -->
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
@@ -58,34 +57,24 @@ ob_start();
 }
 </style>
 
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-6">
-                <h3 class="mb-0">Thiết kế Form: <?= htmlspecialchars($form->name) ?></h3>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="<?= route('admin.dashboard') ?>">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a href="<?= route('admin.form.index') ?>">Form liên hệ</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Thiết kế</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
+<?= view('admin.components.breadcrumb', [
+    'title'  => $title,
+    'bitems' => [
+        ['name' => 'Bảng điều khiển', 'url' => route('admin.dashboard')],
+        ['name' => 'Form liên hệ', 'url' => route('admin.form.index')],
+        ['name' => 'Thiết kế', 'url' => '']
+    ]
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
-        
-        <div class="row">
-            <!-- Sidebar: Available Fields -->
-            <div class="col-md-3 mb-4">
-                <div class="card shadow">
-                    <div class="card-header text-bg-primary">
-                        <h3 class="card-title">Thêm Trường (Fields)</h3>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card card-outline card-primary shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0 fw-bold"><i class="fa-solid fa-plus text-secondary"></i> Thêm Trường</h5>
                     </div>
-                    <div class="card-body p-0 builder-sidebar">
+                    <div class="card-body p-0 builder-sidebar bg-light">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item" onclick="addField('text', 'Văn bản ngắn')">
                                 <i class="fa-solid fa-font fa-fw"></i> Văn bản ngắn (Text)
@@ -115,19 +104,24 @@ ob_start();
                     </div>
                 </div>
             </div>
-            
-            <!-- Canvas: Form Builder -->
             <div class="col-md-9">
-                <div class="card shadow">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="card-title mb-0">Cấu trúc Form</h3>
-                        <button type="button" class="btn btn-success" onclick="saveFormBuilder()">
-                            <i class="fa-solid fa-save"></i> Lưu Cấu Trúc
-                        </button>
+                <div class="card card-outline card-primary shadow-sm">
+                    <div class="card-header bg-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0 fw-bold">Cấu trúc Form</h5>
+                            <div>
+                                <a href="<?= route('admin.form.preview', ['id' => $form->id]) ?>" target="_blank" class="btn btn-success btn-sm me-1">
+                                    <i class="fa-solid fa-eye"></i> Xem thử
+                                </a>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="saveFormBuilder()">
+                                    <i class="fa-solid fa-save"></i> Lưu
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info">
-                            <i class="fa-solid fa-info-circle"></i> Bấm vào nút bên trái để thêm trường. Kéo thả để thay đổi vị trí. Bấm biểu tượng ✏️ để cấu hình chi tiết từng trường.
+                        <div class="alert alert-info p-2 small">
+                            <i class="fa-solid fa-info-circle"></i> Bấm vào nút bên phải để thêm trường. Kéo thả để thay đổi vị trí. Bấm biểu tượng ✏️ để cấu hình.
                         </div>
                         
                         <div id="builder-canvas" class="builder-canvas">
@@ -137,7 +131,6 @@ ob_start();
                 </div>
             </div>
         </div>
-        
     </div>
 </div>
 
@@ -161,6 +154,9 @@ $(document).ready(function() {
         existingFields.forEach(f => {
             let options = f.options ? (typeof f.options === 'string' ? JSON.parse(f.options) : f.options) : [];
             let optionsText = Array.isArray(options) ? options.join('\n') : '';
+            
+            let adv = f.advanced_settings ? (typeof f.advanced_settings === 'string' ? JSON.parse(f.advanced_settings) : f.advanced_settings) : {};
+            
             renderFieldHTML({
                 id: f.id,
                 type: f.type,
@@ -168,11 +164,13 @@ $(document).ready(function() {
                 label: f.label,
                 placeholder: f.placeholder,
                 is_required: f.is_required == 1,
-                optionsText: optionsText
+                col_width: f.col_width || 'col-md-12',
+                optionsText: optionsText,
+                advanced_settings: adv
             });
         });
     } else {
-        canvas.html('<div class="text-center text-muted mt-5 id="empty-state">Chưa có trường dữ liệu nào.</div>');
+        canvas.html('<div class="text-center text-muted mt-5" id="empty-state">Chưa có trường dữ liệu nào.</div>');
     }
 });
 
@@ -186,18 +184,23 @@ function addField(type, typeName) {
         label: typeName,
         placeholder: '',
         is_required: false,
-        optionsText: 'Tùy chọn 1\nTùy chọn 2\nTùy chọn 3'
+        col_width: 'col-md-12',
+        optionsText: 'Tùy chọn 1\nTùy chọn 2\nTùy chọn 3',
+        advanced_settings: {}
     };
     
     renderFieldHTML(fieldData);
 }
 
 function renderFieldHTML(data) {
+    const uid = 'field_' + Math.random().toString(36).substr(2, 9);
+    const adv = data.advanced_settings || {};
+    
     let optionsHtml = '';
     if (['select', 'radio', 'checkbox'].includes(data.type)) {
         optionsHtml = `
-            <div class="mb-2">
-                <label class="form-label text-muted small">Các tùy chọn (Mỗi dòng 1 tùy chọn):</label>
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-bold">Các tùy chọn (Mỗi dòng 1 tùy chọn):</label>
                 <textarea class="form-control form-control-sm field-options" rows="3">${data.optionsText || ''}</textarea>
             </div>
         `;
@@ -223,27 +226,163 @@ function renderFieldHTML(data) {
                 </button>
             </div>
             
-            <div class="field-settings">
-                <div class="row">
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label text-muted small">Nhãn hiển thị (Label)</label>
-                        <input type="text" class="form-control form-control-sm field-label" value="${data.label}" oninput="updateDisplayLabel(this)">
+            <div class="field-settings mt-3 p-3 bg-light border rounded" style="display:none;">
+                <ul class="nav nav-tabs nav-sm mb-3" id="tabs_${uid}" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#basic_${uid}" type="button" role="tab">Cơ bản</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#adv_${uid}" type="button" role="tab">Nâng cao</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#val_${uid}" type="button" role="tab">Xác thực</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#logic_${uid}" type="button" role="tab">Logic (Hiển thị)</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content" id="tabsContent_${uid}">
+                    <!-- Tab: Cơ bản -->
+                    <div class="tab-pane fade show active" id="basic_${uid}" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Nhãn hiển thị (Label)</label>
+                                <input type="text" class="form-control form-control-sm field-label" value="${data.label}" oninput="updateDisplayLabel(this)">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Tên biến (Name - Cần viết liền, không dấu)</label>
+                                <input type="text" class="form-control form-control-sm field-name" value="${data.name}">
+                            </div>
+                            
+                            ${['text', 'email', 'tel', 'textarea'].includes(data.type) ? `
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label text-muted small fw-bold">Gợi ý mờ (Placeholder)</label>
+                                <input type="text" class="form-control form-control-sm field-placeholder" value="${data.placeholder || ''}">
+                            </div>
+                            ` : ''}
+                            
+                            <div class="col-md-12">
+                                ${optionsHtml}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Độ rộng cột (Grid Layout)</label>
+                                <select class="form-select form-select-sm field-width">
+                                    <option value="col-md-12" ${data.col_width === 'col-md-12' ? 'selected' : ''}>100% (Full Width)</option>
+                                    <option value="col-md-9" ${data.col_width === 'col-md-9' ? 'selected' : ''}>75% (3/4 Width)</option>
+                                    <option value="col-md-8" ${data.col_width === 'col-md-8' ? 'selected' : ''}>66.6% (2/3 Width)</option>
+                                    <option value="col-md-6" ${data.col_width === 'col-md-6' ? 'selected' : ''}>50% (Half Width)</option>
+                                    <option value="col-md-4" ${data.col_width === 'col-md-4' ? 'selected' : ''}>33.3% (1/3 Width)</option>
+                                    <option value="col-md-3" ${data.col_width === 'col-md-3' ? 'selected' : ''}>25% (1/4 Width)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3 d-flex align-items-center">
+                                <div class="form-check mt-3">
+                                    <input class="form-check-input field-required" type="checkbox" value="1" onchange="updateRequiredBadge(this)" ${data.is_required ? 'checked' : ''}>
+                                    <label class="form-check-label fw-bold">Bắt buộc nhập</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label text-muted small">Tên biến (Name - không dấu)</label>
-                        <input type="text" class="form-control form-control-sm field-name" value="${data.name}">
+                    
+                    <!-- Tab: Nâng cao -->
+                    <div class="tab-pane fade" id="adv_${uid}" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label text-muted small fw-bold">Mô tả phụ (Help Text)</label>
+                                <input type="text" class="form-control form-control-sm adv-help-text" placeholder="Dòng hướng dẫn nhỏ bên dưới trường nhập liệu" value="${adv.help_text || ''}">
+                            </div>
+                            ${!['file'].includes(data.type) ? `
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Giá trị mặc định (Default Value)</label>
+                                <input type="text" class="form-control form-control-sm adv-default-value" placeholder="Giá trị điền sẵn" value="${adv.default_value || ''}">
+                            </div>
+                            ` : ''}
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Custom CSS Class</label>
+                                <input type="text" class="form-control form-control-sm adv-css-class" placeholder="VD: my-custom-input" value="${adv.css_class || ''}">
+                            </div>
+                            ${['text', 'email', 'tel'].includes(data.type) ? `
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Icon FontAwesome</label>
+                                <input type="text" class="form-control form-control-sm adv-icon" placeholder="VD: fa-solid fa-user" value="${adv.icon || ''}">
+                            </div>
+                            ` : ''}
+                            ${['radio', 'checkbox'].includes(data.type) ? `
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Kiểu hiển thị (Layout)</label>
+                                <select class="form-select form-select-sm adv-layout">
+                                    <option value="stacked" ${adv.layout === 'stacked' ? 'selected' : ''}>Xếp dọc (Stacked)</option>
+                                    <option value="inline" ${adv.layout === 'inline' ? 'selected' : ''}>Xếp ngang (Inline)</option>
+                                </select>
+                            </div>
+                            ` : ''}
+                            <div class="col-md-12">
+                                <div class="form-check">
+                                    <input class="form-check-input adv-readonly" type="checkbox" value="1" ${adv.readonly ? 'checked' : ''}>
+                                    <label class="form-check-label text-muted small">Chỉ đọc (Readonly / Không cho sửa)</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    ${['text', 'email', 'tel', 'textarea'].includes(data.type) ? `
-                    <div class="col-md-12 mb-2">
-                        <label class="form-label text-muted small">Gợi ý mờ (Placeholder)</label>
-                        <input type="text" class="form-control form-control-sm field-placeholder" value="${data.placeholder || ''}">
+                    
+                    <!-- Tab: Xác thực (Validation) -->
+                    <div class="tab-pane fade" id="val_${uid}" role="tabpanel">
+                        <div class="row">
+                            ${['text', 'textarea'].includes(data.type) ? `
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Độ dài tối thiểu (Min Length)</label>
+                                <input type="number" class="form-control form-control-sm val-min-length" placeholder="0" value="${adv.min_length || ''}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Độ dài tối đa (Max Length)</label>
+                                <input type="number" class="form-control form-control-sm val-max-length" placeholder="255" value="${adv.max_length || ''}">
+                            </div>
+                            ` : ''}
+                            ${['file'].includes(data.type) ? `
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Định dạng file (Extensions)</label>
+                                <input type="text" class="form-control form-control-sm val-allowed-ext" placeholder=".jpg, .png, .pdf" value="${adv.allowed_ext || ''}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Kích thước tối đa (MB)</label>
+                                <input type="number" class="form-control form-control-sm val-max-size" placeholder="5" value="${adv.max_size || ''}">
+                            </div>
+                            ` : ''}
+                            ${['text', 'email', 'tel', 'textarea'].includes(data.type) ? `
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label text-muted small fw-bold">Biểu thức chính quy (Regex Pattern)</label>
+                                <input type="text" class="form-control form-control-sm val-regex" placeholder="VD: ^[A-Za-z]+$" value="${adv.regex || ''}">
+                                <small class="text-muted">Kiểm tra định dạng nâng cao bằng Regex.</small>
+                            </div>
+                            ` : ''}
+                        </div>
                     </div>
-                    ` : ''}
-                    <div class="col-md-12">
-                        ${optionsHtml}
-                        <div class="form-check mt-2">
-                            <input class="form-check-input field-required" type="checkbox" value="1" onchange="updateRequiredBadge(this)" ${data.is_required ? 'checked' : ''}>
-                            <label class="form-check-label text-muted small">Bắt buộc nhập</label>
+                    
+                    <!-- Tab: Logic -->
+                    <div class="tab-pane fade" id="logic_${uid}" role="tabpanel">
+                        <div class="alert alert-warning py-2 mb-3 small">
+                            <strong>Logic hiển thị:</strong> Trường này sẽ chỉ hiển thị nếu trường được chọn có giá trị thỏa mãn điều kiện.
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label text-muted small fw-bold">Bật Logic hiển thị?</label>
+                                <select class="form-select form-select-sm logic-enable" onchange="$(this).closest('.tab-pane').find('.logic-rules').toggle($(this).val() == '1')">
+                                    <option value="0" ${!adv.logic_enable ? 'selected' : ''}>Không (Luôn hiển thị)</option>
+                                    <option value="1" ${adv.logic_enable ? 'selected' : ''}>Có (Ẩn/Hiện có điều kiện)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="logic-rules row" style="display: ${adv.logic_enable ? 'flex' : 'none'};">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Trường điều kiện (Name của trường khác)</label>
+                                <input type="text" class="form-control form-control-sm logic-field" placeholder="Ví dụ: loai_dich_vu" value="${adv.logic_field || ''}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-muted small fw-bold">Giá trị bằng (==)</label>
+                                <input type="text" class="form-control form-control-sm logic-value" placeholder="Ví dụ: Khác" value="${adv.logic_value || ''}">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -299,6 +438,7 @@ function saveFormBuilder() {
         let label = el.find('.field-label').val().trim();
         let name = el.find('.field-name').val().trim();
         let placeholder = el.find('.field-placeholder').length ? el.find('.field-placeholder').val().trim() : '';
+        let col_width = el.find('.field-width').val();
         let is_required = el.find('.field-required').is(':checked') ? 1 : 0;
         
         let options = [];
@@ -308,6 +448,52 @@ function saveFormBuilder() {
                 if(o.trim() !== '') options.push(o.trim());
             });
         }
+        
+        // --- Advanced Settings Extraction ---
+        let adv = {};
+        
+        let helpText = el.find('.adv-help-text').val();
+        if (helpText) adv.help_text = helpText.trim();
+        
+        let defaultVal = el.find('.adv-default-value').length ? el.find('.adv-default-value').val().trim() : '';
+        if (defaultVal) adv.default_value = defaultVal;
+        
+        let cssClass = el.find('.adv-css-class').val();
+        if (cssClass) adv.css_class = cssClass.trim();
+        
+        let icon = el.find('.adv-icon').length ? el.find('.adv-icon').val().trim() : '';
+        if (icon) adv.icon = icon;
+        
+        let layout = el.find('.adv-layout').length ? el.find('.adv-layout').val() : '';
+        if (layout) adv.layout = layout;
+        
+        adv.readonly = el.find('.adv-readonly').is(':checked');
+        
+        // Validation
+        let minL = el.find('.val-min-length').length ? el.find('.val-min-length').val().trim() : '';
+        if (minL) adv.min_length = minL;
+        
+        let maxL = el.find('.val-max-length').length ? el.find('.val-max-length').val().trim() : '';
+        if (maxL) adv.max_length = maxL;
+        
+        let allowExt = el.find('.val-allowed-ext').length ? el.find('.val-allowed-ext').val().trim() : '';
+        if (allowExt) adv.allowed_ext = allowExt;
+        
+        let maxSize = el.find('.val-max-size').length ? el.find('.val-max-size').val().trim() : '';
+        if (maxSize) adv.max_size = maxSize;
+        
+        let regex = el.find('.val-regex').length ? el.find('.val-regex').val().trim() : '';
+        if (regex) adv.regex = regex;
+        
+        // Logic
+        let logicEnable = el.find('.logic-enable').val() === '1';
+        adv.logic_enable = logicEnable;
+        if (logicEnable) {
+            adv.logic_field = el.find('.logic-field').val().trim();
+            adv.logic_value = el.find('.logic-value').val().trim();
+        }
+        
+        // --- End Advanced ---
         
         if (name === '') {
             hasError = 'Tên biến không được để trống.';
@@ -325,7 +511,9 @@ function saveFormBuilder() {
             label: label,
             placeholder: placeholder,
             is_required: is_required,
-            options: options
+            col_width: col_width,
+            options: options,
+            advanced_settings: adv
         });
     });
     
@@ -367,7 +555,3 @@ function saveFormBuilder() {
 }
 </script>
 
-<?php
-$content = ob_get_clean();
-require_once __DIR__ . '/../layouts/main.php';
-?>
