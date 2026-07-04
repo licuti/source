@@ -117,7 +117,7 @@ class SitemapController extends BaseAdminController {
             
             // 4. Categories
             if (($options['sitemap_category_enable'] ?? 1) == 1) {
-                $cats = CategoryModel::where('is_active', 1)->select('slug', 'updated_at')->get();
+                $cats = CategoryModel::where('status', 1)->select('slug', 'updated_at')->get();
                 $freq = $options['sitemap_category_freq'] ?? 'weekly';
                 $pri = $options['sitemap_category_priority'] ?? '0.7';
                 foreach ($cats as $cat) {
