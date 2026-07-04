@@ -240,9 +240,12 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **Export:** Cung cấp tính năng xuất báo cáo `.csv` với định dạng UTF-8 BOM chuẩn để đọc trên Excel.
 
 ### 🟢 Chi tiết: FormBuilderController (Dynamic Form Builder / Quản lý liên hệ)
-- **Kiến trúc dữ liệu:** Xóa bỏ bảng `db_lienhe` cứng nhắc cũ, thay bằng mô hình 3 bảng `db_forms`, `db_form_fields`, `db_form_submissions` linh hoạt, lưu trữ dữ liệu dưới dạng JSON.
-- **Trình tạo Form (Builder):** Giao diện kéo thả (Drag & Drop) tích hợp jQuery UI Sortable. Cho phép Admin tự do thiết kế các Form (Khảo sát, Liên hệ, Báo giá) với 8 loại trường dữ liệu (Text, Email, Phone, Textarea, Select, Radio, Checkbox, File).
-- **Quản lý Inbox (Submissions):** Hộp thư đến hiển thị thông minh, tự động phân tích JSON để tạo dòng preview ngắn gọn. Hỗ trợ thay đổi trạng thái (Mới, Đã đọc, Đã phản hồi), tích hợp Ghi chú nội bộ. Tự động hiển thị huy hiệu đếm số thư chưa đọc ngay trên Sidebar Admin.
-- **Tích hợp Frontend:** Cung cấp sẵn Helper `render_form('shortcode')` tự động sinh cấu trúc HTML form hoàn chỉnh cho phía Frontend.
+- **Kiến trúc dữ liệu:** Xóa bỏ bảng `db_lienhe` cứng nhắc cũ, thay bằng mô hình 3 bảng `db_forms`, `db_form_fields`, `db_form_submissions` linh hoạt, lưu trữ dữ liệu dưới dạng JSON siêu nhẹ.
+- **Trình tạo Form (Builder):** Giao diện kéo thả (Drag & Drop) tích hợp jQuery UI Sortable. Cho phép Admin tự do thiết kế các Form (Khảo sát, Liên hệ, Báo giá) với nhiều loại trường dữ liệu (Text, Email, Phone, Textarea, Select, Radio, Checkbox, File).
+- **Thuộc tính Nâng cao (Advanced Settings):** Tích hợp 10 thuộc tính nâng cao cho mỗi Field (Help text, Value mặc định, CSS Class, Icon, Min/Max length, Allowed extensions...).
+- **Logic Hiển thị (Conditional Logic):** Tích hợp Javascript Engine cho phép cấu hình Ẩn/Hiện một trường dữ liệu bất kỳ dựa trên giá trị (Value) người dùng nhập vào một trường khác (Ví dụ: Nếu chọn "Khác" thì hiện thêm ô nhập lý do).
+- **Cấu hình Email Nâng cao (Autoresponder):** Chức năng cấu hình nội dung Email tự động sử dụng biến linh động (ví dụ `{ho_ten}`, `{email}`). Hỗ trợ 2 luồng riêng biệt: Gửi thông báo cho Admin & Gửi thư cảm ơn tự động cho Khách hàng. Hỗ trợ soạn thảo bằng thẻ HTML.
+- **Quản lý Inbox (Submissions):** Hộp thư đến tự động phân tích JSON tạo dòng preview ngắn gọn. Thay đổi trạng thái (Mới, Đã đọc, Đã phản hồi), Ghi chú nội bộ, và có huy hiệu đếm thư chưa đọc trên Sidebar.
+- **Tích hợp Frontend (🚧 Đang phát triển):** Cần viết thêm tính năng Shortcode Parser và Frontend Form Controller để thực thi việc tiếp nhận request POST, validate dữ liệu (chống file nặng, sai regex), gửi Mail qua SMTP (sử dụng cấu hình JSON) và lưu vào Database. Đồng thời cần nghiên cứu tích hợp Google reCAPTCHA v3.
 
 > **📊 Tổng kết tiến độ:** Hoàn thành **18/33 module** (54%). Hệ thống phân quyền (RBAC), Quản lý User, Cấu hình chung, Dynamic Form Builder, Quản lý Bài viết, Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu đã hoàn thiện.
