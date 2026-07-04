@@ -71,7 +71,7 @@ class SitemapController extends BaseAdminController {
             }
         }
         
-        return $this->backWithSuccess('Đã lưu cấu hình sitemap thành công.');
+        return $this->redirect(route('admin.sitemap.index'))->with('success', 'Đã lưu cấu hình sitemap thành công.');
     }
     
     public function generate() {
