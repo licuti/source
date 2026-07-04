@@ -5,7 +5,7 @@ use App\Models\OptionModel;
 use App\Models\PostModel;
 use App\Models\ProductModel;
 use App\Models\CategoryModel;
-use Illuminate\Http\Request;
+use App\Core\Request;
 
 class SitemapController extends BaseAdminController {
     
