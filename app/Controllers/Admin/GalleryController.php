@@ -22,6 +22,7 @@ class GalleryController extends BaseAdminController {
     public function index(Request $request) {
         $keyword = $request->get('keyword');
         $currentLang = $request->get('lang', $this->primaryLang);
+        $categoryId = (int)$request->get('category_id', 0);
         
         $query = GalleryModel::adminQuery()
             ->where('lang', $currentLang)
@@ -30,6 +31,10 @@ class GalleryController extends BaseAdminController {
         
         if (!empty($keyword)) {
             $query->whereLike('title', $keyword);
+        }
+        
+        if ($categoryId > 0) {
+            $query->where('category_id', $categoryId);
         }
         
         $albums = $query->qbPaginate(20);
@@ -58,7 +63,7 @@ class GalleryController extends BaseAdminController {
         
         $langs = $this->langs;
         $categories = CategoryModel::where('status', 1)->where('module', config('modules.album', 15))->orderBy('sort_order', 'asc')->get();
-        return view('admin.gallery.index', compact('albums', 'keyword', 'currentLang', 'langs', 'translations'));
+        return view('admin.gallery.index', compact('albums', 'keyword', 'currentLang', 'langs', 'translations', 'categories', 'categoryId'));
     }
     
     public function create(Request $request) {
@@ -146,5 +151,63 @@ class GalleryController extends BaseAdminController {
             return response()->json(['success' => true, 'message' => 'Đã xóa Album thành công!']);
         }
         return response()->json(['success' => false, 'message' => 'Không tìm thấy Album!']);
+    }
+
+    /**
+     * Xóa hàng loạt qua AJAX
+     */
+    public function bulkDeleteAjax(Request $request) {
+        $idsStr = $request->input('ids');
+        if (empty($idsStr)) {
+            return response()->json(['success' => false, 'message' => 'Không có mục nào được chọn!']);
+        }
+        
+        $ids = json_decode($idsStr, true);
+        if (!is_array($ids) || count($ids) === 0) {
+            return response()->json(['success' => false, 'message' => 'Dữ liệu không hợp lệ!']);
+        }
+        
+        // Find id_codes of selected items
+        $albums = GalleryModel::adminQuery()->whereIn('id', $ids)->get();
+        if (count($albums) === 0) {
+            return response()->json(['success' => false, 'message' => 'Không tìm thấy mục nào để xóa!']);
+        }
+        
+        $idCodes = [];
+        foreach ($albums as $a) {
+            $idCodes[] = $a->id_code;
+        }
+        $idCodes = array_unique($idCodes);
+        
+        // Delete all translations matching these id_codes
+        GalleryModel::adminQuery()->whereIn('id_code', $idCodes)->delete();
+        
+        return response()->json(['success' => true, 'message' => 'Đã xóa ' . count($idCodes) . ' Album và các bản dịch thành công!']);
+    }
+
+    /**
+     * Cập nhật trạng thái hiển thị qua AJAX
+     */
+    public function updateStatusAjax(Request $request) {
+        $id    = (int)$request->input('id');
+        $field = $request->input('field', 'status');
+        $value = (int)$request->input('value', 0);
+
+        if (!in_array($field, ['status', 'is_featured'])) {
+            return $this->jsonError('Trường dữ liệu không hợp lệ');
+        }
+
+        $album = GalleryModel::adminQuery()->where('id_code', $id)->first();
+        if (!$album) return $this->jsonError('ID không hợp lệ');
+
+        // Cập nhật cho tất cả các bản dịch có cùng id_code
+        GalleryModel::adminQuery()
+            ->where('id_code', $album->id_code)
+            ->update([$field => $value]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật trạng thái thành công!'
+        ]);
     }
 }

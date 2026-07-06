@@ -76,11 +76,7 @@ foreach($langs as $l) {
                                 'label' => "Nội dung chi tiết"
                             ]) ?>
 
-                            <!-- Nhúng Component SEO -->
-                            <?= view('admin.components.seo', [
-                                'c' => '', // Empty since we removed array dimension
-                                'item' => $item ?? []
-                            ]) ?>
+
                         </div>
                     </div>
                     
@@ -95,6 +91,19 @@ foreach($langs as $l) {
                                 'values' => $item['gallery'] ?? [],
                                 'label' => '',
                                 'path' => '/img_data/images/'
+                            ]) ?>
+                        </div>
+                    </div>
+
+                    <!-- Block SEO -->
+                    <div class="card card-outline card-primary mb-4">
+                        <div class="card-header bg-white">
+                            <h3 class="card-title mb-0 fw-bold"><i class="fa-solid fa-magnifying-glass text-primary"></i> Tối ưu hóa công cụ tìm kiếm (SEO)</h3>
+                        </div>
+                        <div class="card-body">
+                            <?= view('admin.components.seo', [
+                                'c' => '',
+                                'item' => $item ?? []
                             ]) ?>
                         </div>
                     </div>

@@ -85,6 +85,8 @@ class GalleryService {
         $model->nofollow = isset($inputData['nofollow']) ? 1 : 0;
         $model->seo_head = $inputData['seo_head'] ?? '';
         $model->seo_body = $inputData['seo_body'] ?? '';
+        $model->seo_schema = $inputData['seo_schema'] ?? '';
+        $model->seo_canonical = $inputData['seo_canonical'] ?? '';
 
         $model->save();
         

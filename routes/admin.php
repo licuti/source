@@ -57,6 +57,16 @@ $router->group('/admin', function($r) {
     $r->post('/menu/ajax-save', [\App\Controllers\Admin\MenuController::class, 'ajaxSave'])->name('admin.menu.ajax_save');
     $r->post('/menu/ajax-delete', [\App\Controllers\Admin\MenuController::class, 'ajaxDelete'])->name('admin.menu.ajax_delete');
 
+    // Redirect 301 Routes
+    $r->get('/redirect', [\App\Controllers\Admin\RedirectController::class, 'index'])->name('admin.redirect.index');
+    $r->get('/redirect/create', [\App\Controllers\Admin\RedirectController::class, 'create'])->name('admin.redirect.create');
+    $r->post('/redirect/store', [\App\Controllers\Admin\RedirectController::class, 'store'])->name('admin.redirect.store');
+    $r->get('/redirect/edit/{id}', [\App\Controllers\Admin\RedirectController::class, 'edit'])->name('admin.redirect.edit');
+    $r->post('/redirect/update/{id}', [\App\Controllers\Admin\RedirectController::class, 'update'])->name('admin.redirect.update');
+    $r->delete('/redirect/destroy/{id}', [\App\Controllers\Admin\RedirectController::class, 'destroy'])->name('admin.redirect.destroy');
+    $r->post('/redirect/delete-multiple', [\App\Controllers\Admin\RedirectController::class, 'destroyMultiple'])->name('admin.redirect.destroyMultiple');
+    $r->post('/redirect/update-status-ajax', [\App\Controllers\Admin\RedirectController::class, 'updateStatusAjax'])->name('admin.redirect.status');
+
     // Category Routes
     $r->get('/category', [\App\Controllers\Admin\CategoryController::class, 'index'])->name('admin.category.index');
     $r->get('/category/create', [\App\Controllers\Admin\CategoryController::class, 'create'])->name('admin.category.create');
@@ -189,6 +199,8 @@ $router->group('/admin', function($r) {
     $r->get('/gallery/edit/{id}', [\App\Controllers\Admin\GalleryController::class, 'edit'])->name('admin.gallery.edit');
     $r->post('/gallery/store', [\App\Controllers\Admin\GalleryController::class, 'store'])->name('admin.gallery.store');
     $r->post('/gallery/delete-ajax', [\App\Controllers\Admin\GalleryController::class, 'destroyAjax'])->name('admin.gallery.destroy_ajax');
+    $r->post('/gallery/bulk-delete-ajax', [\App\Controllers\Admin\GalleryController::class, 'bulkDeleteAjax'])->name('admin.gallery.bulkDeleteAjax');
+    $r->post('/gallery/update-status-ajax', [\App\Controllers\Admin\GalleryController::class, 'updateStatusAjax'])->name('admin.gallery.updateStatusAjax');
 
     $r->get('/language/edit/{id}', [\App\Controllers\Admin\LanguageSettingController::class, 'edit'])->name('admin.language.edit');
     $r->post('/language/update/{id}', [\App\Controllers\Admin\LanguageSettingController::class, 'update'])->name('admin.language.update');

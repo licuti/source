@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 06, 2026 at 10:25 AM
--- Server version: 5.7.44
+-- Generation Time: Jul 06, 2026 at 06:04 PM
+-- Server version: 8.0.30
 -- PHP Version: 7.4.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -28,14 +28,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `cf_code` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` varchar(255) NOT NULL,
   `hinh_anh` varchar(255) DEFAULT NULL,
-  `id_loai` int(11) NOT NULL,
-  `module` int(11) NOT NULL,
-  `so_thu_tu` int(11) NOT NULL,
-  `hien_thi` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `id_loai` int NOT NULL,
+  `module` int NOT NULL,
+  `so_thu_tu` int NOT NULL,
+  `hien_thi` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `cf_code`
@@ -70,10 +70,10 @@ INSERT INTO `cf_code` (`id`, `ten`, `hinh_anh`, `id_loai`, `module`, `so_thu_tu`
 --
 
 CREATE TABLE `cf_parent` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` text NOT NULL,
-  `type` int(11) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `type` int NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `cf_parent`
@@ -165,15 +165,15 @@ INSERT INTO `cf_parent` (`id`, `ten`, `type`) VALUES
 --
 
 CREATE TABLE `db_attributes` (
-  `id` int(11) NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sort_by` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `product_id` int(11) DEFAULT '0'
+  `id` int NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sort_by` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id_code` int NOT NULL,
+  `lang` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `product_id` int DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -197,15 +197,15 @@ INSERT INTO `db_attributes` (`id`, `title`, `slug`, `description`, `type`, `sort
 --
 
 CREATE TABLE `db_attribute_values` (
-  `id` int(11) NOT NULL,
-  `attribute_id` int(11) NOT NULL,
-  `value` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `mo_ta` text COLLATE utf8mb4_unicode_ci,
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `product_id` int(11) DEFAULT '0'
+  `id` int NOT NULL,
+  `attribute_id` int NOT NULL,
+  `value` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mo_ta` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `id_code` int NOT NULL,
+  `lang` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `product_id` int DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -245,20 +245,20 @@ INSERT INTO `db_attribute_values` (`id`, `attribute_id`, `value`, `title`, `slug
 --
 
 CREATE TABLE `db_binhluan` (
-  `id` int(11) NOT NULL,
-  `id_sanpham` int(11) NOT NULL DEFAULT '0',
-  `id_tin` int(11) DEFAULT NULL,
-  `id_user` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL,
+  `id_sanpham` int NOT NULL DEFAULT '0',
+  `id_tin` int DEFAULT NULL,
+  `id_user` int NOT NULL DEFAULT '0',
   `ho_ten` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `dien_thoai` varchar(255) DEFAULT NULL,
   `tieu_de` text,
   `noi_dung` text,
-  `danh_gia` int(11) NOT NULL DEFAULT '0',
-  `parent` int(11) DEFAULT '0',
+  `danh_gia` int NOT NULL DEFAULT '0',
+  `parent` int DEFAULT '0',
   `ngay` datetime NOT NULL,
-  `trang_thai` int(11) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `trang_thai` int NOT NULL DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_binhluan`
@@ -280,10 +280,10 @@ INSERT INTO `db_binhluan` (`id`, `id_sanpham`, `id_tin`, `id_user`, `ho_ten`, `e
 --
 
 CREATE TABLE `db_binhluan_media` (
-  `id` int(11) NOT NULL,
-  `id_binhluan` int(11) NOT NULL DEFAULT '0',
-  `loai` enum('image','video') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'image',
-  `ten_file` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int NOT NULL,
+  `id_binhluan` int NOT NULL DEFAULT '0',
+  `loai` enum('image','video') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'image',
+  `ten_file` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ngay` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -304,15 +304,15 @@ INSERT INTO `db_binhluan_media` (`id`, `id_binhluan`, `loai`, `ten_file`, `ngay`
 --
 
 CREATE TABLE `db_blocks` (
-  `id` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `alias` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int NOT NULL,
+  `id_code` int NOT NULL,
+  `lang` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `alias` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `schema_config` json DEFAULT NULL,
-  `sort_order` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
@@ -333,12 +333,12 @@ INSERT INTO `db_blocks` (`id`, `id_code`, `lang`, `name`, `alias`, `description`
 --
 
 CREATE TABLE `db_block_items` (
-  `id` int(11) NOT NULL,
-  `block_id` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int NOT NULL,
+  `block_id` int NOT NULL,
+  `id_code` int NOT NULL,
+  `lang` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `data_payload` json DEFAULT NULL,
-  `sort_order` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
@@ -361,15 +361,15 @@ INSERT INTO `db_block_items` (`id`, `block_id`, `id_code`, `lang`, `data_payload
 --
 
 CREATE TABLE `db_button_contact` (
-  `id` int(11) NOT NULL,
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `link` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `target` char(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `color_background` char(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `color_background_alpha` char(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `color_text` char(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `sort` int(11) NOT NULL DEFAULT '0'
+  `id` int NOT NULL,
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `link` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `target` char(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `color_background` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `color_background_alpha` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `color_text` char(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sort` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -388,68 +388,70 @@ INSERT INTO `db_button_contact` (`id`, `image`, `name`, `link`, `target`, `color
 --
 
 CREATE TABLE `db_categories` (
-  `id` int(11) NOT NULL,
-  `parent_id` int(11) NOT NULL DEFAULT '0',
-  `id_code` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL,
+  `parent_id` int NOT NULL DEFAULT '0',
+  `id_code` int NOT NULL DEFAULT '0',
   `slug` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `description` text,
   `content` text,
   `image` varchar(255) DEFAULT NULL,
   `banner` varchar(255) DEFAULT NULL,
-  `sort_order` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
   `status` tinyint(1) DEFAULT '1',
   `is_featured` tinyint(1) DEFAULT '0',
-  `module` int(11) NOT NULL DEFAULT '0',
+  `module` int NOT NULL DEFAULT '0',
   `lang` varchar(5) DEFAULT NULL,
-  `nofollow` int(11) NOT NULL DEFAULT '0',
-  `noindex` int(11) NOT NULL DEFAULT '0',
+  `nofollow` int NOT NULL DEFAULT '0',
+  `noindex` int NOT NULL DEFAULT '0',
   `seo_title` varchar(255) DEFAULT NULL,
   `keyword` varchar(255) DEFAULT NULL,
   `seo_description` text,
   `seo_head` text,
   `seo_body` text,
+  `seo_schema` varchar(50) DEFAULT '',
+  `seo_canonical` varchar(255) DEFAULT '',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_categories`
 --
 
-INSERT INTO `db_categories` (`id`, `parent_id`, `id_code`, `slug`, `title`, `description`, `content`, `image`, `banner`, `sort_order`, `status`, `is_featured`, `module`, `lang`, `nofollow`, `noindex`, `seo_title`, `keyword`, `seo_description`, `seo_head`, `seo_body`, `created_at`, `updated_at`) VALUES
-(103, 0, 99, 'gioi-thieu', 'Giới thiệu', '<p><br />\r\n&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>Ch&agrave;o mừng qu&yacute; kh&aacute;ch đến với <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>, một trong những đơn vị h&agrave;ng đầu trong lĩnh vực xuất khẩu c&aacute;c sản phẩm gia vị truyền thống của Việt Nam. Ch&uacute;ng t&ocirc;i chuy&ecirc;n cung cấp c&aacute;c sản phẩm quế, ti&ecirc;u, hồi chất lượng cao đến c&aacute;c thị trường quốc tế.</p>\r\n\r\n<p><strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong> được th&agrave;nh lập với sứ mệnh mang đến cho thị trường to&agrave;n cầu những sản phẩm gia vị tinh t&uacute;y nhất của Việt Nam. Với hơn 10 năm kinh nghiệm trong ng&agrave;nh xuất khẩu, ch&uacute;ng t&ocirc;i đ&atilde; x&acirc;y dựng được uy t&iacute;n vững chắc v&agrave; mối quan hệ đối t&aacute;c l&acirc;u d&agrave;i với nhiều kh&aacute;ch h&agrave;ng v&agrave; nh&agrave; ph&acirc;n phối quốc tế.</p>\r\n\r\n<p><strong>Sản Phẩm Ch&iacute;nh</strong></p>\r\n\r\n<ul>\r\n	<li>\r\n	<p><strong>Quế:</strong> Ch&uacute;ng t&ocirc;i cung cấp quế dạng thanh v&agrave; dạng bột, được thu hoạch từ những v&ugrave;ng quế nổi tiếng của Việt Nam. Quế của ch&uacute;ng t&ocirc;i nổi bật với hương thơm đặc trưng v&agrave; chất lượng vượt trội, đảm bảo đ&aacute;p ứng c&aacute;c ti&ecirc;u chuẩn quốc tế khắt khe.</p>\r\n	</li>\r\n	<li>\r\n	<p><strong>Ti&ecirc;u:</strong> Ti&ecirc;u của ch&uacute;ng t&ocirc;i được sản xuất từ những v&ugrave;ng trồng ti&ecirc;u chất lượng cao, với c&aacute;c loại ti&ecirc;u đen, ti&ecirc;u trắng, ti&ecirc;u xanh v&agrave; ti&ecirc;u đỏ. Sản phẩm ti&ecirc;u của ch&uacute;ng t&ocirc;i lu&ocirc;n đạt ti&ecirc;u chuẩn về hương vị v&agrave; độ cay nồng, phục vụ cho nhiều ứng dụng trong chế biến thực phẩm.</p>\r\n	</li>\r\n	<li>\r\n	<p><strong>Hồi:</strong> Hồi của ch&uacute;ng t&ocirc;i được chọn lựa kỹ c&agrave;ng từ c&aacute;c v&ugrave;ng trồng hồi nổi tiếng. Ch&uacute;ng t&ocirc;i cung cấp hồi nguy&ecirc;n hạt v&agrave; hồi xay, với hương vị đặc biệt v&agrave; c&ocirc;ng dụng phong ph&uacute; trong ẩm thực v&agrave; y học.</p>\r\n	</li>\r\n</ul>\r\n\r\n<p><strong>Cam Kết Chất Lượng</strong></p>\r\n\r\n<p>Tại <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>, chất lượng sản phẩm lu&ocirc;n l&agrave; ưu ti&ecirc;n h&agrave;ng đầu. Ch&uacute;ng t&ocirc;i &aacute;p dụng quy tr&igrave;nh kiểm so&aacute;t chất lượng nghi&ecirc;m ngặt từ kh&acirc;u thu hoạch, chế biến đến đ&oacute;ng g&oacute;i. Đội ngũ nh&acirc;n vi&ecirc;n của ch&uacute;ng t&ocirc;i l&agrave; những người d&agrave;y dạn kinh nghiệm, sẵn s&agrave;ng đ&aacute;p ứng nhu cầu v&agrave; y&ecirc;u cầu của kh&aacute;ch h&agrave;ng.</p>\r\n\r\n<p><strong>Dịch Vụ Kh&aacute;ch H&agrave;ng</strong></p>\r\n\r\n<p>Ch&uacute;ng t&ocirc;i kh&ocirc;ng chỉ tập trung v&agrave;o việc cung cấp sản phẩm chất lượng m&agrave; c&ograve;n ch&uacute; trọng đến dịch vụ kh&aacute;ch h&agrave;ng. Đội ngũ chăm s&oacute;c kh&aacute;ch h&agrave;ng của ch&uacute;ng t&ocirc;i lu&ocirc;n sẵn s&agrave;ng lắng nghe v&agrave; hỗ trợ kh&aacute;ch h&agrave;ng trong việc đặt h&agrave;ng, tư vấn sản phẩm v&agrave; giải quyết c&aacute;c vấn đề ph&aacute;t sinh.</p>\r\n\r\n<p><strong>Tầm Nh&igrave;n v&agrave; Sứ Mệnh</strong></p>\r\n\r\n<p>Ch&uacute;ng t&ocirc;i hướng đến việc trở th&agrave;nh đối t&aacute;c tin cậy của kh&aacute;ch h&agrave;ng to&agrave;n cầu trong lĩnh vực gia vị. Sứ mệnh của ch&uacute;ng t&ocirc;i l&agrave; n&acirc;ng cao gi&aacute; trị của c&aacute;c sản phẩm gia vị Việt Nam, g&oacute;p phần v&agrave;o sự ph&aacute;t triển bền vững của ng&agrave;nh n&ocirc;ng nghiệp v&agrave; xuất khẩu quốc gia.</p>\r\n\r\n<hr />\r\n<p>Cảm ơn qu&yacute; kh&aacute;ch đ&atilde; quan t&acirc;m đến <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>. Ch&uacute;ng t&ocirc;i rất mong được hợp t&aacute;c v&agrave; phục vụ qu&yacute; kh&aacute;ch trong thời gian tới. Nếu c&oacute; bất kỳ c&acirc;u hỏi hoặc y&ecirc;u cầu n&agrave;o, xin vui l&ograve;ng li&ecirc;n hệ với ch&uacute;ng t&ocirc;i qua email hoặc điện thoại.</p>\r\n', '', '', 0, 1, 0, 2, 'vi', 0, 0, 'Giới thiệu', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:32'),
-(105, 0, 100, 'san-pham', 'Sản phẩm', '<p style=\"text-align: center;\"><span style=\"font-size:18px;\"><em>Với mỗi sản phẩm hữu cơ được trồng, c&ocirc;ng ty ch&uacute;ng t&ocirc;i lu&ocirc;n mong muốn mang đến cho qu&yacute; kh&aacute;ch<br />\r\nc&oacute; một trải nghiệm dịch vụ v&agrave; sản phẩm chất lượng tốt nhất.</em></span></p>\r\n', '', '', '', 0, 1, 0, 4, 'vi', 0, 0, 'Sản phẩm', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:53:44'),
-(234, 0, 195, 'hinh-anh', 'Hình ảnh', '', '', '', '', 0, 1, 0, 15, 'vi', 0, 0, 'Hình ảnh', '', '', '', '', '2026-06-08 10:10:00', '2026-07-05 23:07:30'),
-(211, 0, 172, 'trang-chu', 'Trang chủ', '', '', '', '', 0, 1, 0, 1, 'vi', 0, 0, 'Trang chủ', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:23'),
-(149, 0, 122, 'gio-hang', 'Giỏ hàng', '', '<h6><span style=\"color:#ed1c24\">THƯƠNG HIỆU VẬN TẢI H&Agrave;NG ĐẦU</span></h6>\r\n\r\n<p>Dịch vụ vận tải Qu&acirc;n Hưng tr&atilde;i d&agrave;i khắp mọi miền Bắc - Nam. Mang đến cho kh&aacute;ch h&agrave;ng niềm tin v&agrave; sự h&agrave;i l&ograve;ng về dịch vụ của ch&uacute;ng t&ocirc;i.</p>\r\n', '', '', 0, 1, 0, 5, 'vi', 0, 0, 'Giỏ hàng', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:27'),
-(163, 0, 129, 'tin-tuc', 'Tin tức', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Tin tức', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:02'),
-(165, 0, 130, 'lien-he', 'Liên hệ', '<p>Mọi thắc mắc vui l&ograve;ng li&ecirc;n hệ theo th&ocirc;ng tin b&ecirc;n dưới:</p>\r\n\r\n<p><span style=\"color:#d35400;\"><span style=\"font-size:18px;\"><strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XNK VNJT</strong></span></span></p>\r\n\r\n<ul>\r\n	<li>&nbsp;Số 4 Nguyễn Đ&igrave;nh Chiểu, Phường Đa Kao, Quận 1, TP. HCM</li>\r\n	<li>&nbsp;385/1 Huỳnh Văn B&aacute;nh, Phường 11, Quận Ph&uacute; Nhuận, TP. HCM</li>\r\n	<li>&nbsp;(+84) 96 1816 887 - (+82) 10 3362 5376</li>\r\n	<li>&nbsp;mymy.vnjt@gmail.com</li>\r\n	<li>&nbsp;vnjt.com</li>\r\n</ul>\r\n', '', '', '', 0, 1, 0, 14, 'vi', 0, 0, 'Liên hệ', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:57:02'),
-(310, 0, 242, 'dich-vu', 'Dịch vụ', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', 0, 1, 0, 2, 'vi', 0, 0, 'Dịch vụ', '', '', '', '', '2026-06-08 10:10:03', '2026-06-06 14:34:04'),
-(339, 0, 269, 'k6t5gi', 'Chính sách bảo mật', '', '', '', '', 0, 1, 0, 2, 'vi', 0, 0, 'Chính sách bảo mật', '', '', '', '', '2026-06-08 10:10:03', '2026-06-07 14:35:57'),
-(324, 0, 254, 'thanh-toan', 'Thanh toán', '', '', '', '', 0, 1, 0, 6, 'vi', 0, 0, 'Thanh toán', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:45'),
-(352, 100, 272, 'tieu', 'Tiêu', '', '', '2.png', '', 0, 1, 1, 4, 'vi', 0, 0, 'Tiêu', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:47:29'),
-(353, 100, 273, 'quefrngjc', 'Quế', '', '', '3.png', '', 0, 1, 1, 3, 'vi', 0, 0, 'Quế', '', '', '', '', '2026-06-08 10:10:03', '2024-09-13 04:48:15'),
-(354, 100, 274, 'hoa-hoi', 'Hoa hồi', '', '', '4.png', 'album/15_thuhoachtieu02.jpg', 0, 1, 1, 4, 'vi', 0, 0, 'Hoa hồi', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:46:29'),
-(355, 0, 99, 'about', 'About', '<p><br />\r\n&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>Welcome to one of the leading units in the export of traditional condiments in Vietnam. We specialize in providing high-quality cinnamon, pepper and recycled products for the international market.<br />\r\n<br />\r\nVNJT was established, and its mission is to provide Vietnam&#39;s most exquisite condiments to the global market. With more than 10 years of experience in the export industry, we have established a solid reputation and long-term cooperative relationship with many international customers and distributors.<br />\r\n<br />\r\nMain products<br />\r\n<br />\r\nCinnamon: We provide cinnamon and flour, harvested from the famous cinnamon area in Vietnam. Our jam stands out with its unique aroma and excellent quality, ensuring that it meets strict international standards.<br />\r\n<br />\r\nPepper: Our peppers come from high-quality pepper growing areas, including black pepper, white pepper, blue pepper and red pepper. Our products always meet the standards of flavor and pungency, and can be used in many applications in food processing.<br />\r\n<br />\r\nTime: Our time is a well-chosen famous plantation. We provide seed recovery and stirring, which has special flavor and rich food and medical uses.<br />\r\n<br />\r\nQuantum binding<br />\r\n<br />\r\nIn VNJT, product quality is always the primary task. We adopt strict quality control procedures, from harvesting, processing to packaging. Our employees are experienced people, ready to meet the needs and requirements of customers.<br />\r\n<br />\r\nCustomer service<br />\r\n<br />\r\nWe not only focus on providing quality products, but also pay attention to customer service. Our customer service team is always ready to listen and assist customers in ordering, consulting products and solving problems.<br />\r\n<br />\r\nVision and mission<br />\r\n<br />\r\nOur goal is to become a reliable partner of global customers in condiment industry. Our mission is to improve the value of Vietnamese condiments and contribute to the sustainable development of national agriculture and exports.<br />\r\n<br />\r\nThank you for your attention to the new round of financing. We look forward to cooperating and serving your guests in the future. If you have any questions or requirements, please contact us by email or telephone.</p>\r\n', '', '', 0, 1, 0, 2, 'en', 0, 0, 'About', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:32'),
-(356, 0, 100, 'product', 'Product', '<p style=\"text-align: center;\"><span style=\"font-size:18px;\">With each organic product grown, our company always wants to<br />\r\nbring you the best service experience and quality products.</span></p>\r\n', '', '', '', 0, 1, 0, 4, 'en', 0, 0, 'Product', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:53:44'),
-(357, 0, 195, 'gallery', 'Gallery', '', '', '', '', 0, 1, 0, 15, 'en', 0, 0, 'Gallery', '', '', '', '', '2026-06-08 10:10:00', '2026-07-05 23:07:30'),
-(358, 0, 172, 'home', 'Home', '', '', '', '', 0, 1, 0, 1, 'en', 0, 0, 'Home', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:23'),
-(359, 0, 122, 'cart', 'Cart', '', '<h6><span style=\"color:#ed1c24\">THƯƠNG HIỆU VẬN TẢI H&Agrave;NG ĐẦU</span></h6>\r\n\r\n<p>Dịch vụ vận tải Qu&acirc;n Hưng tr&atilde;i d&agrave;i khắp mọi miền Bắc - Nam. Mang đến cho kh&aacute;ch h&agrave;ng niềm tin v&agrave; sự h&agrave;i l&ograve;ng về dịch vụ của ch&uacute;ng t&ocirc;i.</p>\r\n', '', '', 0, 1, 0, 5, 'en', 0, 0, 'Cart', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:27'),
-(360, 0, 129, 'news', 'News', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'News', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:02'),
-(361, 0, 130, 'contact', 'Contact', '<p>For any questions please contact the information below</p>\r\n', '', '', '', 0, 1, 0, 14, 'en', 0, 0, 'Contact', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:57:02'),
-(362, 0, 242, 'dich-vu', 'Dịch vụ', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', 0, 1, 0, 2, 'en', 0, 0, 'Dịch vụ', '', '', '', '', '2026-06-08 10:10:03', '2026-06-06 14:34:04'),
-(363, 0, 269, 'factory', 'Factory', '', '', '', '', 0, 1, 0, 2, 'en', 0, 0, 'Factory', '', '', '', '', '2026-06-08 10:10:03', '2026-06-07 14:35:57'),
-(364, 0, 254, 'thong-bao', 'Thông báo', '', '', '', '', 0, 1, 0, 6, 'en', 0, 0, 'Thông báo', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:45'),
-(365, 100, 272, 'pepper', 'Pepper', '', '', '2.png', '', 0, 1, 1, 4, 'en', 0, 0, 'Pepper', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:47:29'),
-(366, 100, 273, 'cinnamon', 'Cinnamon', '', '', '3.png', '', 0, 1, 1, 3, 'en', 0, 0, 'Cinnamon', '', '', '', '', '2026-06-08 10:10:03', '2024-09-13 04:48:15'),
-(367, 100, 274, 'star-anise', 'Star anise', '', '', '4.png', 'album/15_thuhoachtieu02.jpg', 0, 1, 1, 4, 'en', 0, 0, 'Star anise', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:46:29'),
-(368, 272, 275, 'hat-tieu-den', 'Hạt tiêu đen', '', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Hạt tiêu đen', '', '', '', '', '2026-06-08 10:10:03', '2026-06-12 10:46:34'),
-(369, 272, 275, 'black-pepper', 'Black Pepper', '', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'Black Pepper', '', '', '', '', '2026-06-08 10:10:03', '2026-06-12 10:46:34'),
-(370, 272, 276, 'hat-tieu-trang', 'Hạt tiêu trắng', '', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Hạt tiêu trắng', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:17:19'),
-(371, 272, 276, 'white-pepper', 'White Pepper', '', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'White Pepper', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:17:19'),
-(372, 272, 277, 'tieu-den-xay', 'Tiêu đen xay', '', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Tiêu đen xay', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:18:00'),
-(373, 272, 277, 'ground-black-pepper', 'Ground Black Pepper', '', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'Ground Black Pepper', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:18:00');
+INSERT INTO `db_categories` (`id`, `parent_id`, `id_code`, `slug`, `title`, `description`, `content`, `image`, `banner`, `sort_order`, `status`, `is_featured`, `module`, `lang`, `nofollow`, `noindex`, `seo_title`, `keyword`, `seo_description`, `seo_head`, `seo_body`, `seo_schema`, `seo_canonical`, `created_at`, `updated_at`) VALUES
+(103, 0, 99, 'gioi-thieu', 'Giới thiệu', '<p><br />\r\n&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>Ch&agrave;o mừng qu&yacute; kh&aacute;ch đến với <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>, một trong những đơn vị h&agrave;ng đầu trong lĩnh vực xuất khẩu c&aacute;c sản phẩm gia vị truyền thống của Việt Nam. Ch&uacute;ng t&ocirc;i chuy&ecirc;n cung cấp c&aacute;c sản phẩm quế, ti&ecirc;u, hồi chất lượng cao đến c&aacute;c thị trường quốc tế.</p>\r\n\r\n<p><strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong> được th&agrave;nh lập với sứ mệnh mang đến cho thị trường to&agrave;n cầu những sản phẩm gia vị tinh t&uacute;y nhất của Việt Nam. Với hơn 10 năm kinh nghiệm trong ng&agrave;nh xuất khẩu, ch&uacute;ng t&ocirc;i đ&atilde; x&acirc;y dựng được uy t&iacute;n vững chắc v&agrave; mối quan hệ đối t&aacute;c l&acirc;u d&agrave;i với nhiều kh&aacute;ch h&agrave;ng v&agrave; nh&agrave; ph&acirc;n phối quốc tế.</p>\r\n\r\n<p><strong>Sản Phẩm Ch&iacute;nh</strong></p>\r\n\r\n<ul>\r\n	<li>\r\n	<p><strong>Quế:</strong> Ch&uacute;ng t&ocirc;i cung cấp quế dạng thanh v&agrave; dạng bột, được thu hoạch từ những v&ugrave;ng quế nổi tiếng của Việt Nam. Quế của ch&uacute;ng t&ocirc;i nổi bật với hương thơm đặc trưng v&agrave; chất lượng vượt trội, đảm bảo đ&aacute;p ứng c&aacute;c ti&ecirc;u chuẩn quốc tế khắt khe.</p>\r\n	</li>\r\n	<li>\r\n	<p><strong>Ti&ecirc;u:</strong> Ti&ecirc;u của ch&uacute;ng t&ocirc;i được sản xuất từ những v&ugrave;ng trồng ti&ecirc;u chất lượng cao, với c&aacute;c loại ti&ecirc;u đen, ti&ecirc;u trắng, ti&ecirc;u xanh v&agrave; ti&ecirc;u đỏ. Sản phẩm ti&ecirc;u của ch&uacute;ng t&ocirc;i lu&ocirc;n đạt ti&ecirc;u chuẩn về hương vị v&agrave; độ cay nồng, phục vụ cho nhiều ứng dụng trong chế biến thực phẩm.</p>\r\n	</li>\r\n	<li>\r\n	<p><strong>Hồi:</strong> Hồi của ch&uacute;ng t&ocirc;i được chọn lựa kỹ c&agrave;ng từ c&aacute;c v&ugrave;ng trồng hồi nổi tiếng. Ch&uacute;ng t&ocirc;i cung cấp hồi nguy&ecirc;n hạt v&agrave; hồi xay, với hương vị đặc biệt v&agrave; c&ocirc;ng dụng phong ph&uacute; trong ẩm thực v&agrave; y học.</p>\r\n	</li>\r\n</ul>\r\n\r\n<p><strong>Cam Kết Chất Lượng</strong></p>\r\n\r\n<p>Tại <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>, chất lượng sản phẩm lu&ocirc;n l&agrave; ưu ti&ecirc;n h&agrave;ng đầu. Ch&uacute;ng t&ocirc;i &aacute;p dụng quy tr&igrave;nh kiểm so&aacute;t chất lượng nghi&ecirc;m ngặt từ kh&acirc;u thu hoạch, chế biến đến đ&oacute;ng g&oacute;i. Đội ngũ nh&acirc;n vi&ecirc;n của ch&uacute;ng t&ocirc;i l&agrave; những người d&agrave;y dạn kinh nghiệm, sẵn s&agrave;ng đ&aacute;p ứng nhu cầu v&agrave; y&ecirc;u cầu của kh&aacute;ch h&agrave;ng.</p>\r\n\r\n<p><strong>Dịch Vụ Kh&aacute;ch H&agrave;ng</strong></p>\r\n\r\n<p>Ch&uacute;ng t&ocirc;i kh&ocirc;ng chỉ tập trung v&agrave;o việc cung cấp sản phẩm chất lượng m&agrave; c&ograve;n ch&uacute; trọng đến dịch vụ kh&aacute;ch h&agrave;ng. Đội ngũ chăm s&oacute;c kh&aacute;ch h&agrave;ng của ch&uacute;ng t&ocirc;i lu&ocirc;n sẵn s&agrave;ng lắng nghe v&agrave; hỗ trợ kh&aacute;ch h&agrave;ng trong việc đặt h&agrave;ng, tư vấn sản phẩm v&agrave; giải quyết c&aacute;c vấn đề ph&aacute;t sinh.</p>\r\n\r\n<p><strong>Tầm Nh&igrave;n v&agrave; Sứ Mệnh</strong></p>\r\n\r\n<p>Ch&uacute;ng t&ocirc;i hướng đến việc trở th&agrave;nh đối t&aacute;c tin cậy của kh&aacute;ch h&agrave;ng to&agrave;n cầu trong lĩnh vực gia vị. Sứ mệnh của ch&uacute;ng t&ocirc;i l&agrave; n&acirc;ng cao gi&aacute; trị của c&aacute;c sản phẩm gia vị Việt Nam, g&oacute;p phần v&agrave;o sự ph&aacute;t triển bền vững của ng&agrave;nh n&ocirc;ng nghiệp v&agrave; xuất khẩu quốc gia.</p>\r\n\r\n<hr />\r\n<p>Cảm ơn qu&yacute; kh&aacute;ch đ&atilde; quan t&acirc;m đến <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>. Ch&uacute;ng t&ocirc;i rất mong được hợp t&aacute;c v&agrave; phục vụ qu&yacute; kh&aacute;ch trong thời gian tới. Nếu c&oacute; bất kỳ c&acirc;u hỏi hoặc y&ecirc;u cầu n&agrave;o, xin vui l&ograve;ng li&ecirc;n hệ với ch&uacute;ng t&ocirc;i qua email hoặc điện thoại.</p>\r\n', '', '', 0, 1, 0, 2, 'vi', 0, 0, 'Giới thiệu', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:32'),
+(105, 0, 100, 'san-pham', 'Sản phẩm', '<p style=\"text-align: center;\"><span style=\"font-size:18px;\"><em>Với mỗi sản phẩm hữu cơ được trồng, c&ocirc;ng ty ch&uacute;ng t&ocirc;i lu&ocirc;n mong muốn mang đến cho qu&yacute; kh&aacute;ch<br />\r\nc&oacute; một trải nghiệm dịch vụ v&agrave; sản phẩm chất lượng tốt nhất.</em></span></p>\r\n', '', '', '', 0, 1, 0, 4, 'vi', 0, 0, 'Sản phẩm', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:53:44'),
+(234, 0, 195, 'hinh-anh', 'Hình ảnh', '', '', '', '', 0, 1, 0, 15, 'vi', 0, 0, 'Hình ảnh', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-07-05 23:07:30'),
+(211, 0, 172, 'trang-chu', 'Trang chủ', '', '', '', '', 0, 1, 0, 1, 'vi', 0, 0, 'Trang chủ', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:23'),
+(149, 0, 122, 'gio-hang', 'Giỏ hàng', '', '<h6><span style=\"color:#ed1c24\">THƯƠNG HIỆU VẬN TẢI H&Agrave;NG ĐẦU</span></h6>\r\n\r\n<p>Dịch vụ vận tải Qu&acirc;n Hưng tr&atilde;i d&agrave;i khắp mọi miền Bắc - Nam. Mang đến cho kh&aacute;ch h&agrave;ng niềm tin v&agrave; sự h&agrave;i l&ograve;ng về dịch vụ của ch&uacute;ng t&ocirc;i.</p>\r\n', '', '', 0, 1, 0, 5, 'vi', 0, 0, 'Giỏ hàng', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:27'),
+(163, 0, 129, 'tin-tuc', 'Tin tức', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Tin tức', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:02'),
+(165, 0, 130, 'lien-he', 'Liên hệ', '<p>Mọi thắc mắc vui l&ograve;ng li&ecirc;n hệ theo th&ocirc;ng tin b&ecirc;n dưới:</p>\r\n\r\n<p><span style=\"color:#d35400;\"><span style=\"font-size:18px;\"><strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XNK VNJT</strong></span></span></p>\r\n\r\n<ul>\r\n	<li>&nbsp;Số 4 Nguyễn Đ&igrave;nh Chiểu, Phường Đa Kao, Quận 1, TP. HCM</li>\r\n	<li>&nbsp;385/1 Huỳnh Văn B&aacute;nh, Phường 11, Quận Ph&uacute; Nhuận, TP. HCM</li>\r\n	<li>&nbsp;(+84) 96 1816 887 - (+82) 10 3362 5376</li>\r\n	<li>&nbsp;mymy.vnjt@gmail.com</li>\r\n	<li>&nbsp;vnjt.com</li>\r\n</ul>\r\n', '', '', '', 0, 1, 0, 14, 'vi', 0, 0, 'Liên hệ', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:57:02'),
+(310, 0, 242, 'dich-vu', 'Dịch vụ', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', 0, 1, 0, 2, 'vi', 0, 0, 'Dịch vụ', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-06 14:34:04'),
+(339, 0, 269, 'k6t5gi', 'Chính sách bảo mật', '', '', '', '', 0, 1, 0, 2, 'vi', 0, 0, 'Chính sách bảo mật', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-07 14:35:57'),
+(324, 0, 254, 'thanh-toan', 'Thanh toán', '', '', '', '', 0, 1, 0, 6, 'vi', 0, 0, 'Thanh toán', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:45'),
+(352, 100, 272, 'tieu', 'Tiêu', '', '', '2.png', '', 0, 1, 1, 4, 'vi', 0, 0, 'Tiêu', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:47:29'),
+(353, 100, 273, 'quefrngjc', 'Quế', '', '', '3.png', '', 0, 1, 1, 3, 'vi', 0, 0, 'Quế', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-13 04:48:15'),
+(354, 100, 274, 'hoa-hoi', 'Hoa hồi', '', '', '4.png', 'album/15_thuhoachtieu02.jpg', 0, 1, 1, 4, 'vi', 0, 0, 'Hoa hồi', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:46:29'),
+(355, 0, 99, 'about', 'About', '<p><br />\r\n&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>Welcome to one of the leading units in the export of traditional condiments in Vietnam. We specialize in providing high-quality cinnamon, pepper and recycled products for the international market.<br />\r\n<br />\r\nVNJT was established, and its mission is to provide Vietnam&#39;s most exquisite condiments to the global market. With more than 10 years of experience in the export industry, we have established a solid reputation and long-term cooperative relationship with many international customers and distributors.<br />\r\n<br />\r\nMain products<br />\r\n<br />\r\nCinnamon: We provide cinnamon and flour, harvested from the famous cinnamon area in Vietnam. Our jam stands out with its unique aroma and excellent quality, ensuring that it meets strict international standards.<br />\r\n<br />\r\nPepper: Our peppers come from high-quality pepper growing areas, including black pepper, white pepper, blue pepper and red pepper. Our products always meet the standards of flavor and pungency, and can be used in many applications in food processing.<br />\r\n<br />\r\nTime: Our time is a well-chosen famous plantation. We provide seed recovery and stirring, which has special flavor and rich food and medical uses.<br />\r\n<br />\r\nQuantum binding<br />\r\n<br />\r\nIn VNJT, product quality is always the primary task. We adopt strict quality control procedures, from harvesting, processing to packaging. Our employees are experienced people, ready to meet the needs and requirements of customers.<br />\r\n<br />\r\nCustomer service<br />\r\n<br />\r\nWe not only focus on providing quality products, but also pay attention to customer service. Our customer service team is always ready to listen and assist customers in ordering, consulting products and solving problems.<br />\r\n<br />\r\nVision and mission<br />\r\n<br />\r\nOur goal is to become a reliable partner of global customers in condiment industry. Our mission is to improve the value of Vietnamese condiments and contribute to the sustainable development of national agriculture and exports.<br />\r\n<br />\r\nThank you for your attention to the new round of financing. We look forward to cooperating and serving your guests in the future. If you have any questions or requirements, please contact us by email or telephone.</p>\r\n', '', '', 0, 1, 0, 2, 'en', 0, 0, 'About', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:32'),
+(356, 0, 100, 'product', 'Product', '<p style=\"text-align: center;\"><span style=\"font-size:18px;\">With each organic product grown, our company always wants to<br />\r\nbring you the best service experience and quality products.</span></p>\r\n', '', '', '', 0, 1, 0, 4, 'en', 0, 0, 'Product', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:53:44'),
+(357, 0, 195, 'gallery', 'Gallery', '', '', '', '', 0, 1, 0, 15, 'en', 0, 0, 'Gallery', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-07-05 23:07:30'),
+(358, 0, 172, 'home', 'Home', '', '', '', '', 0, 1, 0, 1, 'en', 0, 0, 'Home', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:23'),
+(359, 0, 122, 'cart', 'Cart', '', '<h6><span style=\"color:#ed1c24\">THƯƠNG HIỆU VẬN TẢI H&Agrave;NG ĐẦU</span></h6>\r\n\r\n<p>Dịch vụ vận tải Qu&acirc;n Hưng tr&atilde;i d&agrave;i khắp mọi miền Bắc - Nam. Mang đến cho kh&aacute;ch h&agrave;ng niềm tin v&agrave; sự h&agrave;i l&ograve;ng về dịch vụ của ch&uacute;ng t&ocirc;i.</p>\r\n', '', '', 0, 1, 0, 5, 'en', 0, 0, 'Cart', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:27'),
+(360, 0, 129, 'news', 'News', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'News', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:02'),
+(361, 0, 130, 'contact', 'Contact', '<p>For any questions please contact the information below</p>\r\n', '', '', '', 0, 1, 0, 14, 'en', 0, 0, 'Contact', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:57:02'),
+(362, 0, 242, 'dich-vu', 'Dịch vụ', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', 0, 1, 0, 2, 'en', 0, 0, 'Dịch vụ', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-06 14:34:04'),
+(363, 0, 269, 'factory', 'Factory', '', '', '', '', 0, 1, 0, 2, 'en', 0, 0, 'Factory', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-07 14:35:57'),
+(364, 0, 254, 'thong-bao', 'Thông báo', '', '', '', '', 0, 1, 0, 6, 'en', 0, 0, 'Thông báo', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:45'),
+(365, 100, 272, 'pepper', 'Pepper', '', '', '2.png', '', 0, 1, 1, 4, 'en', 0, 0, 'Pepper', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:47:29'),
+(366, 100, 273, 'cinnamon', 'Cinnamon', '', '', '3.png', '', 0, 1, 1, 3, 'en', 0, 0, 'Cinnamon', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-13 04:48:15'),
+(367, 100, 274, 'star-anise', 'Star anise', '', '', '4.png', 'album/15_thuhoachtieu02.jpg', 0, 1, 1, 4, 'en', 0, 0, 'Star anise', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:46:29'),
+(368, 272, 275, 'hat-tieu-den', 'Hạt tiêu đen', '', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Hạt tiêu đen', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-12 10:46:34'),
+(369, 272, 275, 'black-pepper', 'Black Pepper', '', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'Black Pepper', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-12 10:46:34'),
+(370, 272, 276, 'hat-tieu-trang', 'Hạt tiêu trắng', '', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Hạt tiêu trắng', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:17:19'),
+(371, 272, 276, 'white-pepper', 'White Pepper', '', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'White Pepper', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:17:19'),
+(372, 272, 277, 'tieu-den-xay', 'Tiêu đen xay', '', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Tiêu đen xay', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:18:00'),
+(373, 272, 277, 'ground-black-pepper', 'Ground Black Pepper', '', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'Ground Black Pepper', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:18:00');
 
 -- --------------------------------------------------------
 
@@ -458,7 +460,7 @@ INSERT INTO `db_categories` (`id`, `parent_id`, `id_code`, `slug`, `title`, `des
 --
 
 CREATE TABLE `db_coupon` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ho_ten` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `sdt` varchar(20) DEFAULT NULL,
@@ -468,10 +470,10 @@ CREATE TABLE `db_coupon` (
   `noi_dung` text,
   `ngay_hoi` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `tra_loi` text,
-  `ngay_traloi` int(11) NOT NULL,
+  `ngay_traloi` int NOT NULL,
   `nguoi_traloi` varchar(255) DEFAULT NULL,
   `trang_thai` tinyint(1) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -480,23 +482,23 @@ CREATE TABLE `db_coupon` (
 --
 
 CREATE TABLE `db_customers` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `code` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `fullname` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fullname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `birthday` date DEFAULT NULL,
   `gender` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0: Female, 1: Male, 2: Other',
-  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `country_id` int(11) DEFAULT '0',
-  `province_id` int(11) DEFAULT '0',
-  `district_id` int(11) DEFAULT '0',
-  `ward_id` int(11) DEFAULT '0',
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `country_id` int DEFAULT '0',
+  `province_id` int DEFAULT '0',
+  `district_id` int DEFAULT '0',
+  `ward_id` int DEFAULT '0',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1: Active, 0: Banned',
-  `google_id` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `facebook_id` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `google_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `facebook_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -515,9 +517,9 @@ INSERT INTO `db_customers` (`id`, `code`, `fullname`, `phone`, `email`, `passwor
 --
 
 CREATE TABLE `db_dathang_backup` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ma_dh` varchar(100) NOT NULL,
-  `id_thanhvien` int(11) NOT NULL DEFAULT '0',
+  `id_thanhvien` int NOT NULL DEFAULT '0',
   `ho_ten` varchar(100) NOT NULL,
   `dien_thoai` varchar(50) NOT NULL,
   `email` varchar(200) NOT NULL,
@@ -528,17 +530,17 @@ CREATE TABLE `db_dathang_backup` (
   `dia_chi` text NOT NULL,
   `loi_nhan` text NOT NULL,
   `thanh_toan` text NOT NULL,
-  `phi_vanchuyen` int(11) DEFAULT '0',
+  `phi_vanchuyen` int DEFAULT '0',
   `ma_giamgia` varchar(100) DEFAULT NULL,
-  `so_tien_giam` int(11) NOT NULL DEFAULT '0',
+  `so_tien_giam` int NOT NULL DEFAULT '0',
   `vat_amount` double DEFAULT '0',
   `ngay_dathang` date NOT NULL,
-  `tinhtrang_donhang` int(11) NOT NULL COMMENT '0: chưa xác thực, 1: đã xác thực',
-  `trangthai_xuly` int(11) NOT NULL DEFAULT '0' COMMENT '0:chưa xem, 1:đang xử lý, 2: đang giao, 3 đã giao, 4: trả hàng',
-  `trangthai_thanhtoan` int(11) DEFAULT '0',
+  `tinhtrang_donhang` int NOT NULL COMMENT '0: chưa xác thực, 1: đã xác thực',
+  `trangthai_xuly` int NOT NULL DEFAULT '0' COMMENT '0:chưa xem, 1:đang xử lý, 2: đang giao, 3 đã giao, 4: trả hàng',
+  `trangthai_thanhtoan` int DEFAULT '0',
   `ngay_capnhat` date DEFAULT NULL,
   `ngay_thanhtoan` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_dathang_backup`
@@ -555,19 +557,19 @@ INSERT INTO `db_dathang_backup` (`id`, `ma_dh`, `id_thanhvien`, `ho_ten`, `dien_
 --
 
 CREATE TABLE `db_dathang_chitiet_backup` (
-  `id` int(11) NOT NULL,
-  `id_ctv` int(11) DEFAULT NULL,
-  `id_dh` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL,
+  `id_ctv` int DEFAULT NULL,
+  `id_dh` int NOT NULL DEFAULT '0',
   `ma_dh` varchar(100) DEFAULT NULL,
   `ten_sp` text,
   `thuoc_tinh` text,
   `ghi_chu` text,
-  `gia_goc` int(11) NOT NULL DEFAULT '0',
-  `gia_ban` int(11) NOT NULL DEFAULT '0',
-  `so_luong` int(11) NOT NULL DEFAULT '0',
-  `id_sp` int(11) NOT NULL DEFAULT '0',
+  `gia_goc` int NOT NULL DEFAULT '0',
+  `gia_ban` int NOT NULL DEFAULT '0',
+  `so_luong` int NOT NULL DEFAULT '0',
+  `id_sp` int NOT NULL DEFAULT '0',
   `hinh_sp` text
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_dathang_chitiet_backup`
@@ -587,13 +589,13 @@ INSERT INTO `db_dathang_chitiet_backup` (`id`, `id_ctv`, `id_dh`, `ma_dh`, `ten_
 --
 
 CREATE TABLE `db_dathang_xuly` (
-  `id` int(11) NOT NULL,
-  `id_dh` int(11) NOT NULL,
-  `trang_thai_xuly` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `id_dh` int NOT NULL,
+  `trang_thai_xuly` int NOT NULL,
   `ghi_chu` text NOT NULL,
   `ngay_xuly` datetime NOT NULL,
   `nguoi_xuly` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_dathang_xuly`
@@ -619,17 +621,17 @@ INSERT INTO `db_dathang_xuly` (`id`, `id_dh`, `trang_thai_xuly`, `ghi_chu`, `nga
 --
 
 CREATE TABLE `db_diachi` (
-  `id` int(11) NOT NULL,
-  `id_thanhvien` int(11) NOT NULL,
-  `mo_ta` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ho_ten` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `dien_thoai` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `dia_chi` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code_xa` varchar(11) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code_huyen` varchar(11) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code_tinh` varchar(11) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `trang_thai` int(11) NOT NULL
+  `id` int NOT NULL,
+  `id_thanhvien` int NOT NULL,
+  `mo_ta` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ho_ten` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dien_thoai` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `dia_chi` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_xa` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_huyen` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_tinh` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `trang_thai` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -648,20 +650,20 @@ INSERT INTO `db_diachi` (`id`, `id_thanhvien`, `mo_ta`, `ho_ten`, `dien_thoai`, 
 --
 
 CREATE TABLE `db_files` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` text NOT NULL,
   `alais` varchar(255) NOT NULL,
-  `id_loai` int(11) NOT NULL,
+  `id_loai` int NOT NULL,
   `file` text NOT NULL,
   `mo_ta` text NOT NULL,
   `loai_file` varchar(50) NOT NULL,
-  `ngay_dang` int(11) NOT NULL,
+  `ngay_dang` int NOT NULL,
   `link_khac` text NOT NULL,
-  `hien_thi` tinyint(4) NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `so_thu_tu` int(11) NOT NULL,
+  `hien_thi` tinyint NOT NULL,
+  `id_code` int NOT NULL,
+  `so_thu_tu` int NOT NULL,
   `lang` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -670,19 +672,19 @@ CREATE TABLE `db_files` (
 --
 
 CREATE TABLE `db_filter` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` varchar(255) NOT NULL,
   `alias` varchar(500) NOT NULL,
   `link` text NOT NULL,
-  `nofollow` int(11) NOT NULL DEFAULT '0',
-  `target` int(11) NOT NULL DEFAULT '0',
+  `nofollow` int NOT NULL DEFAULT '0',
+  `target` int NOT NULL DEFAULT '0',
   `heading` varchar(10) DEFAULT 'div',
   `noi_dung` text NOT NULL,
   `hinh_anh` varchar(255) NOT NULL,
-  `hien_thi` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
+  `hien_thi` int NOT NULL,
+  `id_code` int NOT NULL,
   `lang` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -691,23 +693,23 @@ CREATE TABLE `db_filter` (
 --
 
 CREATE TABLE `db_filter_content` (
-  `id` int(11) NOT NULL,
-  `id_loai` int(11) NOT NULL,
-  `hinh_anh` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `so_thu_tu` int(11) NOT NULL,
-  `hien_thi` int(11) NOT NULL,
-  `ten` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `s_price` int(11) NOT NULL,
-  `e_price` int(11) NOT NULL,
-  `link` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `nofollow` int(11) NOT NULL DEFAULT '0',
-  `target` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL,
+  `id_loai` int NOT NULL,
+  `hinh_anh` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `so_thu_tu` int NOT NULL,
+  `hien_thi` int NOT NULL,
+  `ten` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `s_price` int NOT NULL,
+  `e_price` int NOT NULL,
+  `link` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `nofollow` int NOT NULL DEFAULT '0',
+  `target` int NOT NULL DEFAULT '0',
   `heading` varchar(10) NOT NULL DEFAULT 'div',
-  `noi_dung` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `noi_dung` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `video` varchar(200) DEFAULT NULL,
-  `ma_video` varchar(100) CHARACTER SET utf8 NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(10) CHARACTER SET utf8 NOT NULL
+  `ma_video` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `id_code` int NOT NULL,
+  `lang` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -717,11 +719,11 @@ CREATE TABLE `db_filter_content` (
 --
 
 CREATE TABLE `db_flash_sale` (
-  `id` int(11) NOT NULL,
-  `ten` text COLLATE utf8mb4_unicode_ci,
-  `tu_ngay` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `den_ngay` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `hien_thi` int(11) NOT NULL DEFAULT '0'
+  `id` int NOT NULL,
+  `ten` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `tu_ngay` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `den_ngay` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `hien_thi` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -738,8 +740,8 @@ INSERT INTO `db_flash_sale` (`id`, `ten`, `tu_ngay`, `den_ngay`, `hien_thi`) VAL
 --
 
 CREATE TABLE `db_flash_sales` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `start_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
   `status` tinyint(1) DEFAULT '1',
@@ -761,12 +763,12 @@ INSERT INTO `db_flash_sales` (`id`, `name`, `start_time`, `end_time`, `status`, 
 --
 
 CREATE TABLE `db_forms` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email_to` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `success_message` text COLLATE utf8mb4_unicode_ci,
-  `mail_settings` text COLLATE utf8mb4_unicode_ci,
+  `id` int NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email_to` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `success_message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `mail_settings` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
@@ -786,17 +788,17 @@ INSERT INTO `db_forms` (`id`, `name`, `code`, `email_to`, `success_message`, `ma
 --
 
 CREATE TABLE `db_form_fields` (
-  `id` int(11) NOT NULL,
-  `form_id` int(11) NOT NULL,
-  `type` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `label` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `placeholder` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `col_width` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'col-md-12',
-  `options` text COLLATE utf8mb4_unicode_ci,
-  `advanced_settings` text COLLATE utf8mb4_unicode_ci,
+  `id` int NOT NULL,
+  `form_id` int NOT NULL,
+  `type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `placeholder` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `col_width` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'col-md-12',
+  `options` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `advanced_settings` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `is_required` tinyint(1) NOT NULL DEFAULT '0',
-  `sort_order` int(11) NOT NULL DEFAULT '0'
+  `sort_order` int NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -818,14 +820,14 @@ INSERT INTO `db_form_fields` (`id`, `form_id`, `type`, `name`, `label`, `placeho
 --
 
 CREATE TABLE `db_form_submissions` (
-  `id` int(11) NOT NULL,
-  `form_id` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `form_id` int NOT NULL,
   `data_payload` json NOT NULL,
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0: new, 1: read, 2: replied',
-  `ip_address` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `user_agent` text COLLATE utf8mb4_unicode_ci,
-  `reply_content` text COLLATE utf8mb4_unicode_ci,
-  `replied_by` int(11) DEFAULT NULL,
+  `ip_address` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_agent` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `reply_content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `replied_by` int DEFAULT NULL,
   `replied_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -837,9 +839,9 @@ CREATE TABLE `db_form_submissions` (
 --
 
 CREATE TABLE `db_galleries` (
-  `id` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `category_id` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL,
+  `id_code` int NOT NULL,
+  `category_id` int NOT NULL DEFAULT '0',
   `image` varchar(255) DEFAULT NULL,
   `gallery` text,
   `title` varchar(255) DEFAULT NULL,
@@ -850,27 +852,30 @@ CREATE TABLE `db_galleries` (
   `seo_description` text,
   `keyword` varchar(255) DEFAULT NULL,
   `tags` varchar(255) DEFAULT NULL,
-  `noindex` int(11) NOT NULL DEFAULT '0',
-  `nofollow` int(11) NOT NULL DEFAULT '0',
+  `noindex` int NOT NULL DEFAULT '0',
+  `nofollow` int NOT NULL DEFAULT '0',
   `seo_head` text,
   `seo_body` text,
+  `seo_schema` varchar(50) DEFAULT '',
+  `seo_canonical` varchar(255) DEFAULT '',
   `status` tinyint(1) NOT NULL DEFAULT '1',
   `is_featured` tinyint(1) NOT NULL DEFAULT '0',
-  `sort_order` int(11) NOT NULL DEFAULT '0',
-  `created_by` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
+  `created_by` int NOT NULL DEFAULT '0',
   `lang` varchar(10) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `updated_by` int(11) DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `updated_by` int DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Dumping data for table `db_galleries`
 --
 
-INSERT INTO `db_galleries` (`id`, `id_code`, `category_id`, `image`, `gallery`, `title`, `slug`, `description`, `content`, `seo_title`, `seo_description`, `keyword`, `tags`, `noindex`, `nofollow`, `seo_head`, `seo_body`, `status`, `is_featured`, `sort_order`, `created_by`, `lang`, `created_at`, `updated_at`, `updated_by`) VALUES
-(1, 1, 195, 'album/15_thuhoachtieu02.jpg', '[\"album\\/15_thuhoachtieu02.jpg\",\"album\\/243385_que1.jpg\",\"album\\/cach_che_bien_va_bao_quan_que_1_640x348.jpg\",\"album\\/cayque_lcai.jpg\",\"album\\/images1780776_aa.jpg\",\"album\\/p1770217.jpg\",\"album\\/que_la_gia_vi_tuoi_tho.jpg\"]', 'Du lịch công ty 2026', 'du-lich-cong-ty-2026', '', '', '', '', '', '', 0, 0, '', '', 1, 0, 0, 1, 'vi', '2026-07-05 19:55:00', '2026-07-06 03:23:09', 0),
-(2, 1, 195, 'album/15_thuhoachtieu02.jpg', '[\"album\\/15_thuhoachtieu02.jpg\",\"album\\/243385_que1.jpg\",\"album\\/cach_che_bien_va_bao_quan_que_1_640x348.jpg\",\"album\\/cayque_lcai.jpg\",\"album\\/images1780776_aa.jpg\",\"album\\/p1770217.jpg\",\"album\\/que_la_gia_vi_tuoi_tho.jpg\"]', 'Gallery nè', 'gallery-ne', '', '', '', '', '', '', 1, 0, '', '', 1, 0, 0, 1, 'en', '2026-07-05 21:28:00', '2026-07-06 03:23:09', 0);
+INSERT INTO `db_galleries` (`id`, `id_code`, `category_id`, `image`, `gallery`, `title`, `slug`, `description`, `content`, `seo_title`, `seo_description`, `keyword`, `tags`, `noindex`, `nofollow`, `seo_head`, `seo_body`, `seo_schema`, `seo_canonical`, `status`, `is_featured`, `sort_order`, `created_by`, `lang`, `created_at`, `updated_at`, `updated_by`) VALUES
+(1, 1, 195, 'album/15_thuhoachtieu02.jpg', '[\"album\\/15_thuhoachtieu02.jpg\",\"album\\/243385_que1.jpg\",\"album\\/cach_che_bien_va_bao_quan_que_1_640x348.jpg\",\"album\\/cayque_lcai.jpg\",\"album\\/images1780776_aa.jpg\",\"album\\/p1770217.jpg\",\"album\\/que_la_gia_vi_tuoi_tho.jpg\"]', 'Du lịch công ty 2026', 'du-lich-cong-ty-2026', '', '', '', '', '', '', 0, 0, '', '', '', '', 1, 0, 0, 1, 'vi', '2026-07-05 19:55:00', '2026-07-06 08:38:28', 0),
+(2, 1, 195, 'album/15_thuhoachtieu02.jpg', '[\"album\\/15_thuhoachtieu02.jpg\",\"album\\/243385_que1.jpg\",\"album\\/cach_che_bien_va_bao_quan_que_1_640x348.jpg\",\"album\\/cayque_lcai.jpg\",\"album\\/images1780776_aa.jpg\",\"album\\/p1770217.jpg\",\"album\\/que_la_gia_vi_tuoi_tho.jpg\"]', 'Gallery nè', 'gallery-ne', '', '', '', '', '', '', 1, 0, '', '', '', '', 1, 0, 0, 1, 'en', '2026-07-05 21:28:00', '2026-07-06 08:38:28', 0),
+(3, 3, 0, '5.png', '[]', 'Xuân 2026', 'xuan-2026', '<p>Lorem Ipsum&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&#39;s standard dummy text ever since the 1500s, when an unknown printer took a galley of type</p>\r\n', '', '', '', '', '', 0, 0, '', '', '', '', 1, 0, 0, 1, 'vi', '2026-07-06 08:34:00', '2026-07-06 09:19:47', 0);
 
 -- --------------------------------------------------------
 
@@ -879,11 +884,11 @@ INSERT INTO `db_galleries` (`id`, `id_code`, `category_id`, `image`, `gallery`, 
 --
 
 CREATE TABLE `db_huyen` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `code_tinh` varchar(255) NOT NULL,
   `code` varchar(255) NOT NULL,
   `ten` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_huyen`
@@ -1626,7 +1631,7 @@ INSERT INTO `db_huyen` (`id`, `code_tinh`, `code`, `ten`) VALUES
 --
 
 CREATE TABLE `db_lang` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `code` varchar(10) DEFAULT NULL,
   `locale` varchar(20) DEFAULT NULL,
   `name` varchar(100) DEFAULT NULL,
@@ -1637,8 +1642,8 @@ CREATE TABLE `db_lang` (
   `is_default` tinyint(1) DEFAULT '0',
   `is_rtl` tinyint(1) DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
-  `sort_order` int(11) DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `sort_order` int DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_lang`
@@ -1655,7 +1660,7 @@ INSERT INTO `db_lang` (`id`, `code`, `locale`, `name`, `label`, `image`, `price_
 --
 
 CREATE TABLE `db_lienhe` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ho_ten` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `sdt` varchar(20) DEFAULT NULL,
@@ -1665,10 +1670,10 @@ CREATE TABLE `db_lienhe` (
   `noi_dung` text,
   `ngay_hoi` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `tra_loi` text,
-  `ngay_traloi` int(11) NOT NULL,
+  `ngay_traloi` int NOT NULL,
   `nguoi_traloi` varchar(255) DEFAULT NULL,
   `trang_thai` tinyint(1) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -1677,13 +1682,13 @@ CREATE TABLE `db_lienhe` (
 --
 
 CREATE TABLE `db_locations` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `parent_id` int(10) UNSIGNED DEFAULT NULL,
-  `type` enum('country','province','district','ward') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int UNSIGNED NOT NULL,
+  `parent_id` int UNSIGNED DEFAULT NULL,
+  `type` enum('country','province','district','ward') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_active` tinyint(1) DEFAULT '1',
-  `priority` int(11) DEFAULT '0',
+  `priority` int DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -14117,8 +14122,8 @@ INSERT INTO `db_locations` (`id`, `parent_id`, `type`, `code`, `name`, `is_activ
 --
 
 CREATE TABLE `db_menus` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `id` int NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -14137,21 +14142,21 @@ INSERT INTO `db_menus` (`id`, `name`) VALUES
 --
 
 CREATE TABLE `db_menu_items` (
-  `id` int(11) NOT NULL,
-  `menu_id` int(11) NOT NULL,
-  `parent_id` int(11) NOT NULL DEFAULT '0',
-  `sort_order` int(11) NOT NULL DEFAULT '0',
-  `label` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `class` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `style` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `block` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `target` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `rel` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `type` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `object_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT 'custom',
-  `object_id` int(11) DEFAULT NULL
+  `id` int NOT NULL,
+  `menu_id` int NOT NULL,
+  `parent_id` int NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
+  `label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `class` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `style` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `block` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `target` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rel` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `object_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'custom',
+  `object_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -14174,10 +14179,10 @@ INSERT INTO `db_menu_items` (`id`, `menu_id`, `parent_id`, `sort_order`, `label`
 --
 
 CREATE TABLE `db_menu_locations` (
-  `location_label` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `location_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `lang` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `menu_id` int(11) DEFAULT NULL
+  `location_label` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `location_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `lang` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `menu_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -14199,13 +14204,13 @@ INSERT INTO `db_menu_locations` (`location_label`, `location_name`, `lang`, `men
 --
 
 CREATE TABLE `db_module` (
-  `id` int(11) NOT NULL,
-  `stt` int(11) NOT NULL,
-  `hide` int(11) NOT NULL,
-  `title` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `templates` varchar(100) CHARACTER SET latin1 NOT NULL,
+  `id` int NOT NULL,
+  `stt` int NOT NULL,
+  `hide` int NOT NULL,
+  `title` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `templates` varchar(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `setting` text NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_module`
@@ -14235,18 +14240,18 @@ INSERT INTO `db_module` (`id`, `stt`, `hide`, `title`, `templates`, `setting`) V
 --
 
 CREATE TABLE `db_module_admin` (
-  `id` int(11) NOT NULL,
-  `parent` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `parent` int NOT NULL,
   `name` varchar(255) NOT NULL,
   `icon` varchar(255) DEFAULT NULL,
   `alias` varchar(100) NOT NULL,
   `route_name` varchar(255) DEFAULT NULL,
-  `sort_order` int(11) NOT NULL DEFAULT '0',
-  `is_active` int(11) NOT NULL DEFAULT '1',
-  `permission_level` int(11) NOT NULL DEFAULT '1',
+  `sort_order` int NOT NULL DEFAULT '0',
+  `is_active` int NOT NULL DEFAULT '1',
+  `permission_level` int NOT NULL DEFAULT '1',
   `badge_query` varchar(255) DEFAULT NULL,
   `badge_color` varchar(50) DEFAULT 'danger'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_module_admin`
@@ -14295,7 +14300,8 @@ INSERT INTO `db_module_admin` (`id`, `parent`, `name`, `icon`, `alias`, `route_n
 (107, 10, 'Nhóm quyền', 'fa-circle', 'nhom-quyen', 'admin.role.index', 2, 1, 1, NULL, 'danger'),
 (109, 10, 'Menu Hệ thống', 'fa-circle', 'system-menu', 'admin.system_menu.index', 3, 1, 1, 'Nâng cao', 'danger'),
 (110, 0, 'Hệ thống Gian hàng', 'fa-circle', 'admin.shop', 'admin.shop.index', 7, 1, 1, NULL, 'danger'),
-(111, 43, 'Biểu phí Thuế', 'fa-circle', 'tax-rate', 'admin.tax_rate.index', 9, 1, 1, NULL, 'danger');
+(111, 43, 'Biểu phí Thuế', 'fa-circle', 'tax-rate', 'admin.tax_rate.index', 9, 1, 1, NULL, 'danger'),
+(112, 8, 'Quản lý Redirect 301', 'fa-solid fa-diamond-turn-right', 'redirect', 'admin.redirect.index', 99, 1, 1, NULL, 'danger');
 
 -- --------------------------------------------------------
 
@@ -14304,7 +14310,7 @@ INSERT INTO `db_module_admin` (`id`, `parent`, `name`, `icon`, `alias`, `route_n
 --
 
 CREATE TABLE `db_newsletter` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ho_ten` varchar(255) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `sdt` varchar(20) DEFAULT NULL,
@@ -14314,10 +14320,10 @@ CREATE TABLE `db_newsletter` (
   `noi_dung` text,
   `ngay_hoi` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `tra_loi` text,
-  `ngay_traloi` int(11) NOT NULL,
+  `ngay_traloi` int NOT NULL,
   `nguoi_traloi` varchar(255) DEFAULT NULL,
   `trang_thai` tinyint(1) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -14326,7 +14332,7 @@ CREATE TABLE `db_newsletter` (
 --
 
 CREATE TABLE `db_options` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `option_key` varchar(100) NOT NULL,
   `option_value` longtext,
   `autoload` tinyint(1) DEFAULT '1',
@@ -14384,28 +14390,28 @@ INSERT INTO `db_options` (`id`, `option_key`, `option_value`, `autoload`, `creat
 --
 
 CREATE TABLE `db_orders` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `order_code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `customer_id` bigint(20) UNSIGNED DEFAULT '0',
-  `customer_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `customer_email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `customer_phone` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `shipping_address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `province_id` int(11) DEFAULT '0',
-  `district_id` int(11) DEFAULT '0',
-  `ward_id` int(11) DEFAULT '0',
+  `id` bigint UNSIGNED NOT NULL,
+  `order_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `customer_id` bigint UNSIGNED DEFAULT '0',
+  `customer_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `customer_email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `customer_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `shipping_address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `province_id` int DEFAULT '0',
+  `district_id` int DEFAULT '0',
+  `ward_id` int DEFAULT '0',
   `subtotal` decimal(15,2) NOT NULL DEFAULT '0.00',
   `shipping_fee` decimal(15,2) NOT NULL DEFAULT '0.00',
   `tax_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `discount_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `grand_total` decimal(15,2) NOT NULL DEFAULT '0.00',
-  `payment_method_id` int(11) DEFAULT '0',
-  `shipping_method_id` int(11) DEFAULT '0',
-  `promo_code_id` int(11) DEFAULT '0',
+  `payment_method_id` int DEFAULT '0',
+  `shipping_method_id` int DEFAULT '0',
+  `promo_code_id` int DEFAULT '0',
   `payment_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0: Unpaid, 1: Paid, 2: Refunded',
   `order_status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0: Pending, 1: Processing, 2: Shipping, 3: Completed, 4: Cancelled',
-  `customer_note` text COLLATE utf8mb4_unicode_ci,
-  `shop_note` text COLLATE utf8mb4_unicode_ci,
+  `customer_note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `shop_note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -14424,12 +14430,12 @@ INSERT INTO `db_orders` (`id`, `order_code`, `customer_id`, `customer_name`, `cu
 --
 
 CREATE TABLE `db_order_history` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `order_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `order_id` bigint UNSIGNED NOT NULL,
   `status_from` tinyint(1) DEFAULT NULL,
   `status_to` tinyint(1) NOT NULL,
-  `note` text COLLATE utf8mb4_unicode_ci,
-  `created_by` int(10) UNSIGNED DEFAULT '0' COMMENT '0 for system/customer, User ID for Admin',
+  `note` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `created_by` int UNSIGNED DEFAULT '0' COMMENT '0 for system/customer, User ID for Admin',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -14449,14 +14455,14 @@ INSERT INTO `db_order_history` (`id`, `order_id`, `status_from`, `status_to`, `n
 --
 
 CREATE TABLE `db_order_items` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `order_id` bigint(20) UNSIGNED NOT NULL,
-  `product_id` int(10) UNSIGNED NOT NULL,
-  `variant_id` int(10) UNSIGNED DEFAULT '0',
-  `product_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `product_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `attributes_info` text COLLATE utf8mb4_unicode_ci COMMENT 'JSON of size, color, etc.',
-  `quantity` int(11) NOT NULL DEFAULT '1',
+  `id` bigint UNSIGNED NOT NULL,
+  `order_id` bigint UNSIGNED NOT NULL,
+  `product_id` int UNSIGNED NOT NULL,
+  `variant_id` int UNSIGNED DEFAULT '0',
+  `product_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `product_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `attributes_info` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'JSON of size, color, etc.',
+  `quantity` int NOT NULL DEFAULT '1',
   `price` decimal(15,2) NOT NULL DEFAULT '0.00',
   `total` decimal(15,2) NOT NULL DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -14477,21 +14483,21 @@ INSERT INTO `db_order_items` (`id`, `order_id`, `product_id`, `variant_id`, `pro
 --
 
 CREATE TABLE `db_page` (
-  `id` int(11) NOT NULL,
-  `id_code` int(11) DEFAULT '0',
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `view` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT 'page',
-  `noi_dung` longtext COLLATE utf8mb4_unicode_ci,
-  `hinh_anh` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `seo_title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `keyword` text COLLATE utf8mb4_unicode_ci,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `so_thu_tu` int(11) DEFAULT '0',
+  `id` int NOT NULL,
+  `id_code` int DEFAULT '0',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `view` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'page',
+  `noi_dung` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `hinh_anh` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `seo_title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `keyword` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `so_thu_tu` int DEFAULT '0',
   `hien_thi` tinyint(1) DEFAULT '1',
-  `lang` varchar(2) COLLATE utf8mb4_unicode_ci DEFAULT 'vi',
-  `ngay_dang` int(11) DEFAULT NULL,
-  `cap_nhat` int(11) DEFAULT NULL
+  `lang` varchar(2) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'vi',
+  `ngay_dang` int DEFAULT NULL,
+  `cap_nhat` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -14501,21 +14507,21 @@ CREATE TABLE `db_page` (
 --
 
 CREATE TABLE `db_payment_methods` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `shop_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `logo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `fee_type` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT 'fixed',
+  `id` bigint UNSIGNED NOT NULL,
+  `shop_id` bigint UNSIGNED NOT NULL DEFAULT '0',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fee_type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'fixed',
   `fee_value` decimal(15,2) DEFAULT '0.00',
   `api_config` json DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `sort_order` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `id_code` int(11) NOT NULL DEFAULT '0',
-  `lang` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `id_code` int NOT NULL DEFAULT '0',
+  `lang` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -14537,9 +14543,9 @@ INSERT INTO `db_payment_methods` (`id`, `shop_id`, `name`, `code`, `description`
 --
 
 CREATE TABLE `db_permission_action` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `name` varchar(20) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_permission_action`
@@ -14557,8 +14563,8 @@ INSERT INTO `db_permission_action` (`id`, `name`) VALUES
 --
 
 CREATE TABLE `db_posts` (
-  `id` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `id_code` int NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `slug` varchar(255) DEFAULT NULL,
   `description` text,
@@ -14570,49 +14576,51 @@ CREATE TABLE `db_posts` (
   `keyword` varchar(255) NOT NULL,
   `tags` varchar(255) NOT NULL,
   `seo_description` text,
-  `category_id` int(11) NOT NULL DEFAULT '0',
-  `sort_order` int(11) NOT NULL DEFAULT '0',
-  `nofollow` int(11) NOT NULL DEFAULT '0',
-  `noindex` int(11) NOT NULL DEFAULT '0',
+  `category_id` int NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
+  `nofollow` int NOT NULL DEFAULT '0',
+  `noindex` int NOT NULL DEFAULT '0',
   `seo_head` text,
   `seo_body` text,
-  `created_by` int(11) NOT NULL DEFAULT '0',
-  `views` int(11) NOT NULL DEFAULT '0',
+  `seo_schema` varchar(50) DEFAULT '',
+  `seo_canonical` varchar(255) DEFAULT '',
+  `created_by` int NOT NULL DEFAULT '0',
+  `views` int NOT NULL DEFAULT '0',
   `lang` varchar(10) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `updated_by` int(11) DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `updated_by` int DEFAULT '0'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_posts`
 --
 
-INSERT INTO `db_posts` (`id`, `id_code`, `title`, `slug`, `description`, `content`, `image`, `is_featured`, `status`, `seo_title`, `keyword`, `tags`, `seo_description`, `category_id`, `sort_order`, `nofollow`, `noindex`, `seo_head`, `seo_body`, `created_by`, `views`, `lang`, `created_at`, `updated_at`, `updated_by`) VALUES
-(105, 630, 'Hoa hồi là gì? Lợi ích của hoa hồi và những cách sử dụng hoa hồi', 'hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi', '<p>Hoa hồi l&agrave; g&igrave; v&agrave; hoa hồi c&oacute; những lợi &iacute;ch v&agrave; c&ocirc;ng dụng như thế n&agrave;o? H&atilde;y c&ugrave;ng B&aacute;ch h&oacute;a XANH t&igrave;m hiểu ngay trong b&agrave;i viết n&agrave;y nh&eacute;.</p>\r\n', '<p><img alt=\" Hoa hồi\" data-id=\"6\" data-nimg=\"1\" decoding=\"async\" height=\"429\" loading=\"lazy\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202202151534168292.jpg\" title=\" Hoa hồi\" width=\"762\" />Hoa hồi</p>\r\n\r\n<p>Hoa hồi,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/bot-que-ong-cha-va-hu-35g\" target=\"_blank\">quế</a>,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/thao-qua-dh-foods-natural-hu-20g\" target=\"_blank\">thảo quả</a>,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/dinh-huong-ong-cha-va-hu-35g\" target=\"_blank\">đinh hương</a>,... đều l&agrave; những loại gia vị kh&ocirc; thường được d&ugrave;ng trong nấu ăn rất thường xuy&ecirc;n ở nhiều gia đ&igrave;nh. Trong đ&oacute; hoa hồi l&agrave; gia vị kh&ocirc;ng thể thiếu, đặc biệt trong c&aacute;c m&oacute;n ăn truyền thống như&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-nau-pho-bo-ha-noi-962092\" target=\"_blank\">phở</a>. Tuy nhi&ecirc;n&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi-hoi-que-thao-qua-dinh-huong\" target=\"_blank\">hoa hồi</a>&nbsp;c&oacute; xuất sứ từ đ&acirc;u v&agrave; hoa hồi c&oacute; những c&ocirc;ng dụng ra sao ch&iacute;nh l&agrave; những thắc mắc chung của kh&aacute; nhiều người. H&atilde;y c&ugrave;ng t&igrave;m hiểu tất tần tật về loại gia vị n&agrave;y ngay sau đ&acirc;y</p>\r\n\r\n<h3>1Hoa hồi l&agrave; g&igrave;?</h3>\r\n\r\n<p><img alt=\"\" data-id=\"2\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151237240972.jpg\" /></p>\r\n\r\n<p>Hoa hồi hay c&ograve;n gọi l&agrave; hoa đại hồi l&agrave; một loại c&acirc;y&nbsp;<b>c&oacute; nguồn gốc từ Trung Quốc v&agrave; đ&ocirc;ng bắc Việt Nam</b>. Đ&acirc;y l&agrave; lo&agrave;i c&acirc;y gia vị c&oacute; t&aacute;c dụng v&agrave; m&ugrave;i thơm tương tự như c&acirc;y tiểu hồi, thu nhặt được từ vỏ quả. Đặc điểm của lo&agrave;i c&acirc;y n&agrave;y l&agrave; c&oacute; h&igrave;nh d&aacute;ng kh&aacute; nhỏ chỉ từ 6-10m, th&acirc;n c&acirc;y thẳng v&agrave; nhẵn v&agrave; c&oacute; m&agrave;u n&acirc;u x&aacute;m.</p>\r\n\r\n<p><img alt=\"\" data-id=\"3\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151237459437.jpg\" /></p>\r\n\r\n<p>Th&ocirc;ng thường<b>&nbsp;hoa hồi sẽ c&oacute; 6-8 c&aacute;nh, xếp th&agrave;nh h&igrave;nh c&aacute;nh sao c&oacute; đường k&iacute;nh từ 2,5 đến 3 cm</b>, mỗi c&aacute;nh mang b&ecirc;n trong một hạt nhỏ h&igrave;nh quả trứng nhẵn b&oacute;ng. Đa phần hoa hồi sao khi thu hoạch sẽ được&nbsp;<b>mang đi phơi kh&ocirc;, xuất khẩu dưới dạng hoa kh&ocirc;, chỉ c&oacute; một phần nhỏ được đem chế biến th&agrave;nh tinh dầu.</b></p>\r\n\r\n<h3>2Lợi &iacute;ch v&agrave; c&aacute;ch sử dụng hoa hồi</h3>\r\n\r\n<p><img alt=\"\" data-id=\"4\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151238141137.jpg\" /></p>\r\n\r\n<p><b>D&ugrave;ng trong chăm s&oacute;c sức khỏe</b>:&nbsp;<i>Theo Đại t&aacute;, B&aacute;c sĩ Nguyễn B&aacute; Vưỡng &ndash; Ph&ograve;ng chẩn trị y học cổ truyền T&acirc;m Minh Đường</i>, khi sử dụng hoa hồi nguy&ecirc;n chất để ng&acirc;m với rượu sẽ c&oacute; t&aacute;c dụng hỗ trợ&nbsp;<b>điều trị c&aacute;c bệnh như cảm lạnh, đau đầu, đau bụng, c&aacute;c bệnh về ti&ecirc;u ho v&agrave; c&aacute;c bệnh về xương khớp</b>. Ngo&agrave;i ra, hoa hồi c&ograve;n c&oacute; t&aacute;c dụng trong chữa c&aacute;c bệnh nấm da, ghẻ lở, giảm đau, giảm bầm t&iacute;m, trị ho, long đờm... v&agrave; nhiều t&aacute;c dụng chữa bệnh kh&aacute;c.</p>\r\n\r\n<p>Ngo&agrave;i ra tinh dầu hoa hồi c&ograve;n l&agrave; một trong những loại mỹ phẩm tốt nhất trong l&agrave;m đẹp, chỉ cần sử dụng tinh dầu hoa hồi kết hợp c&ugrave;ng nước n&oacute;ng để<b>&nbsp;x&ocirc;ng mặt từ 1 đến 2 lần mỗi tuần th&igrave; sẽ mang lại cho bạn một l&agrave;n da s&aacute;ng mịn v&agrave; sạch sẽ mụn th&acirc;m.</b></p>\r\n\r\n<p><img alt=\"\" data-id=\"5\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151246488637.jpg\" /></p>\r\n\r\n<p><b>D&ugrave;ng trong ẩm thực</b>: Hoa hồi cũng l&agrave; một trong những loại gia vị cực phẩm m&agrave; c&aacute;c đầu bếp nổi tiếng lu&ocirc;n ưa chuộng sử dụng trong c&aacute;c m&oacute;n ăn. Sử dụng hoa hồi trong c&aacute;c m&oacute;n ăn một c&aacute;ch kh&eacute;o l&eacute;o sẽ gi&uacute;p n&acirc;ng tầm m&oacute;n ăn l&ecirc;n một hương vị ho&agrave;n to&agrave;n mới. Để c&oacute; thể sử dụng hết to&agrave;n bộ những hương vị tinh tế của hoa hồi, c&aacute;c đầu bếp thường<b>&nbsp;rang hoa hồi rồi mới sử dụng để tẩm ướp</b>&nbsp;hoặc d&ugrave;ng trong c&aacute;c m&oacute;n canh, s&uacute;p, c&agrave; ri hay c&aacute;c m&oacute;n hầm gi&uacute;p k&iacute;ch th&iacute;ch vị gi&aacute;c, ăn ngon miệng hơn.</p>\r\n\r\n<p>&gt;&gt;&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/huong-dan-cach-lam-mon-lau-trung-khanh-cay-xe-tru-danh-don-gian-tai-nha-1271318\">Hướng dẫn c&aacute;ch l&agrave;m m&oacute;n lẩu Tr&ugrave;ng Kh&aacute;nh cay x&egrave; trứ danh đơn giản tại nh&agrave;</a></p>\r\n\r\n<p>&gt;&gt;&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-lam-trung-ngam-tra-mon-an-doc-dao-mang-lai-may-man-doi-voi-nguoi-trung-hoa-1270984\">C&aacute;ch l&agrave;m trứng ng&acirc;m tr&agrave; - m&oacute;n ăn độc đ&aacute;o, mang lại may mắn đối với người Trung Hoa</a></p>\r\n\r\n<p><img alt=\"\" data-id=\"6\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151247056822.jpg\" /></p>\r\n\r\n<p><b>C&oacute; lợi cho b&agrave; mẹ đang cho con b&uacute;</b>:&nbsp;Theo kinh nghiệm d&acirc;n gian, người ta thường&nbsp;<b>cho hoa hồi v&agrave;o c&aacute;c m&oacute;n ăn của phụ nữ sau sinh</b>&nbsp;để&nbsp;<b>gi&uacute;p sữa c&oacute; m&ugrave;i thơm v&agrave; về nhiều hơn</b>.</p>\r\n\r\n<p><b>C&aacute;c c&ocirc;ng dụng kh&aacute;c</b>: Ngo&agrave;i c&aacute;c t&aacute;c dụng tr&ecirc;n th&igrave; hoa hồi c&ograve;n c&oacute; c&aacute;c t&aacute;c dụng kh&aacute;c như&nbsp;<b>điều chế thuốc trị cảm c&uacute;m, c&aacute;c loại rượu, b&aacute;nh kẹo, hay l&agrave;m mồi c&acirc;u c&aacute;,...</b>Đối với việc c&acirc;u c&aacute;, bạn chỉ&nbsp;<b>trộn bột hoa hồi với c&aacute;c nguy&ecirc;n liệu như bột đậu tương, c&agrave; rốt th&aacute;i nhỏ, ruột b&aacute;nh m&igrave;, c&aacute;m gạo</b>&nbsp;rồi ủ chung tất cả ch&uacute;ng lại với nước luộc thịt lợn qua đ&ecirc;m, bạn sẽ c&oacute; một mồi c&acirc;u xuất sắc.</p>\r\n\r\n<p><i>Hoa hồi với c&aacute;c c&ocirc;ng dụng tuyệt vời của m&igrave;nh sẽ l&agrave; một loại&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi\" target=\"_blank\">gia vị</a>&nbsp;tuyệt vời cho c&aacute;c m&oacute;n ăn, một loại mỹ phẩm ho&agrave;n hảo cho&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/khoe-dep-moi-ngay/1731\" target=\"_blank\">l&agrave;m đẹp</a>&nbsp;v&agrave; c&ograve;n c&oacute; v&ocirc; số c&ocirc;ng dụng kh&aacute;c trong cuộc sống.</i></p>\r\n', 'tin_tuc/hoa_hoi_la_gi_loi_ich_cua_hoa_hoi_va_nhung_cach_su_dung_hoa_hoi_202009151237459437.jpg', 1, 1, 'Hoa hồi là gì? Lợi ích của hoa hồi và những cách sử dụng hoa hồi', '', '', '', 129, 0, 0, 0, '', '', 1, 5, 'vi', '2024-06-16 05:26:00', '2026-06-12 09:22:46', 1),
-(97, 622, 'Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh', 'hoa-hoi-va-cac-gia-vi-tao-nen-nuoc-dung-pho-ngon-tru-danh', 'Nước dùng phở chính là nhân tố tạo nên hương vị thơm ngon nổi tiếng của món phở truyền thống của Việt Nam. Bên cạnh nguyên liệu quen thuộc như hành, gừng nướng, nước dùng phở không thể thiếu được hoa hồi cùng các gia vị thảo mộc khác sẽ được đề cập chi tiết trong bài viết dưới đây. Mời bạn đọc cùng UniSpice tìm hiểu ngay nhé.', '<p>Nước d&ugrave;ng phở ch&iacute;nh l&agrave; nh&acirc;n tố tạo n&ecirc;n hương vị thơm ngon nổi tiếng của m&oacute;n phở truyền thống của Việt Nam. B&ecirc;n cạnh nguy&ecirc;n liệu quen thuộc như h&agrave;nh, gừng nướng, nước d&ugrave;ng phở kh&ocirc;ng thể thiếu được&nbsp;<strong>hoa hồi</strong>&nbsp;c&ugrave;ng c&aacute;c&nbsp;<a href=\"https://unispice.vn/danh-muc-san-pham/gia-vi-tu-nhien/\"><strong>gia vị thảo mộc</strong></a>&nbsp;kh&aacute;c sẽ được đề cập chi tiết trong b&agrave;i viết dưới đ&acirc;y. Mời bạn đọc c&ugrave;ng&nbsp;<a href=\"https://unispice.vn/\"><strong>UniSpice</strong></a>&nbsp;t&igrave;m hiểu ngay nh&eacute;.</p>\r\n\r\n<p>Xem th&ecirc;m:&nbsp;<a href=\"https://unispice.vn/mon-ngon-moi-ngay/pho-bo-gia-truyen/\"><strong>C&aacute;ch nấu phở b&ograve; gia truyền</strong></a></p>\r\n\r\n<h2><b>Hoa hồi</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/hoa-hoi/\"><strong>Hoa hồi</strong></a>&nbsp;hay c&ograve;n được biết đến với một c&aacute;i t&ecirc;n kh&aacute;c l&agrave; đại hồi hay b&aacute;t gi&aacute;c. Đ&acirc;y l&agrave; một gia vị thảo mộc phổ biến trong nền ẩm thực của nhiều quốc gia Ch&acirc;u &Aacute;. Ở Việt Nam, hoa hồi l&agrave; gia vị kh&ocirc;ng thể thiếu trong nước d&ugrave;ng phở. Kh&ocirc;ng chỉ l&agrave; một vị thuốc qu&yacute; trong chữa bệnh, hoa hồi c&ograve;n g&oacute;p phần tạo n&ecirc;n hương vị tinh tế cho nước phở, với vị cay nhẹ, ngọt dịu c&ugrave;ng hương thơm nồng ấn tượng. Khi được sử dụng ở mức độ vừa phải, hoa hồi kh&ocirc;ng hề lấn &aacute;t hương vị của c&aacute;c nguy&ecirc;n liệu kh&aacute;c.&nbsp;</p>\r\n\r\n<h2><b><img alt=\"Hoa hồi gia vị không thể thiếu trong nước dùng phở\" height=\"576\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Hoa-hoi-1.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></b></h2>\r\n\r\n<h2><b>Quế thanh</b></h2>\r\n\r\n<p>L&agrave; sản phẩm thu từ vỏ của c&acirc;y quế, quế c&oacute; vị cay the v&agrave; m&ugrave;i nồng kh&oacute; trộn lẫn. D&ugrave; được sử dụng l&agrave;&nbsp;<a href=\"https://unispice.vn/san-pham/que-thanh/\"><strong>quế thanh</strong></a>&nbsp;hay&nbsp;<a href=\"https://unispice.vn/san-pham/bot-que/\"><strong>bột quế</strong></a>, kh&ocirc;ng thể phủ nhận mức độ phổ biến của gia vị n&agrave;y, từ c&aacute;c m&oacute;n mặn đến m&oacute;n ngọt. Khi được th&ecirc;m v&agrave;o nước d&ugrave;ng phở, vị cay của quế kh&ocirc;ng qu&aacute; đậm đ&agrave; m&agrave; thoảng thoảng rất dễ chịu.</p>\r\n\r\n<p><img alt=\"Quế thanh gia vị không thể thiếu trong nước dùng phở\" height=\"576\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Que.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/que/\"><strong>Quế</strong></a>&nbsp;d&ugrave;ng trong đ&ocirc;ng y nổi tiếng l&agrave; vị thuốc chữa trị hiệu quả c&aacute;c chứng bệnh về đường ti&ecirc;u h&oacute;a do cảm h&agrave;n, giảm đau, s&aacute;t khuẩn,&hellip;&nbsp;</p>\r\n\r\n<h2><b>Đinh hương</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/dinh-huong/\"><strong>Đinh hương</strong></a>&nbsp;l&agrave; loại gia vị thảo mộc đặc biệt nhờ khả năng khử m&ugrave;i hiệu quả. Với hương thơm nồng đặc trưng, đinh hương l&agrave; lựa chọn th&iacute;ch hợp khi nấu nước d&ugrave;ng từ c&aacute;c loại xương b&ograve;, xương heo.&nbsp;Kh&ocirc;ng chỉ l&agrave;m mất đi m&ugrave;i h&ocirc;i kh&oacute; chịu, đinh hương c&ograve;n rất gi&agrave;u h&agrave;m lượng vitamin B, C, D, K, E, c&ugrave;ng nhiều kho&aacute;ng chất kh&aacute;c như canxi, kali v&agrave; protein. Đ&oacute; cũng l&agrave; l&yacute; do từ xa xưa, đinh hương đ&atilde; được ứng dụng nhiều trong cả y học v&agrave; ẩm thực.</p>\r\n\r\n<h2><b><img alt=\"Đinh hương gia vị không thể thiếu trong nước dùng phở\" height=\"614\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Dinh-huong-1.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></b></h2>\r\n\r\n<h2><b>Thảo quả</b></h2>\r\n\r\n<p>Theo nhận định của nhiều chuy&ecirc;n gia,&nbsp;<a href=\"https://unispice.vn/san-pham/thao-qua/\"><strong>thảo quả</strong></a>&nbsp;c&oacute; h&agrave;m lượng dưỡng chất phong ph&uacute; như carbohydrate, protein, vitamin C c&ugrave;ng nhiều kho&aacute;ng chất kh&aacute;c như đồng, sắt, canxi, phốt pho,&hellip; Do vậy, d&ugrave; được d&ugrave;ng để l&agrave;m thuốc chữa bệnh hay gia vị nấu ăn, thảo quả đều mang đến nhiều lợi &iacute;ch cho sức khỏe. Đặc biệt, hương vị cay nồng, m&ugrave;i thơm c&ugrave;ng vị ngọt dịu đ&atilde; khiến thảo quả trở th&agrave;nh gia vị nấu nước d&ugrave;ng phở kh&ocirc;ng thể thiếu.</p>\r\n\r\n<p><img alt=\"Thảo quả gia vị trong nước dùng phở truyền thống\" height=\"744\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Thao-qua.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p>B&ecirc;n cạnh đ&oacute;, thảo quả c&ograve;n được sử dụng để tạo hương vị thơm ngon cho nhiều m&oacute;n ăn, đồ uống kh&aacute;c, k&iacute;ch th&iacute;ch vị gi&aacute;c v&agrave; cảm gi&aacute;c ngon miệng khi thưởng thức.&nbsp;</p>\r\n\r\n<h2><b>Hạt m&ugrave;i</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/hat-mui/\"><strong>Hạt m&ugrave;i</strong></a>&nbsp;ch&iacute;nh l&agrave; phần hạt của rau m&ugrave;i đ&atilde; được sấy kh&ocirc;, được sử dụng khi chế biến nhiều m&oacute;n ăn, trong đ&oacute; c&oacute; nước phở. Nhờ hương thơm dễ chịu, hạt m&ugrave;i kh&ocirc;ng chỉ l&agrave; gia vị n&ecirc;m nếm, m&agrave; c&ograve;n c&oacute; t&aacute;c dụng khử m&ugrave;i n&ecirc;n thường được sử dụng để ướp thịt heo, thịt g&agrave;, thịt vịt,.. Ngo&agrave;i ra,&nbsp;<a href=\"https://unispice.vn/san-pham/bot-hat-mui/\"><strong>bột hạt m&ugrave;i</strong>&nbsp;</a>cũng được ứng dụng cho nhiều m&oacute;n ăn kh&aacute;c như c&agrave; ri, lẩu b&ograve;, ph&aacute; lấu,&hellip;</p>\r\n\r\n<p><img alt=\"Hạt mùi gia vị có thường dùng trong nước dùng phở\" height=\"672\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Hat-mui.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p>Tr&ecirc;n đ&acirc;y l&agrave; những gia vị thảo mộc cơ bản để tạo n&ecirc;n nước d&ugrave;ng phở mang hương vị truyền thống. T&ugrave;y theo khẩu vị của người nấu, c&aacute;c gia vị n&agrave;y sẽ c&oacute; sự biến tấu theo c&ocirc;ng thức, c&aacute;ch chế biến ri&ecirc;ng để tạo n&ecirc;n n&eacute;t độc đ&aacute;o ri&ecirc;ng cho nước d&ugrave;ng phở. Th&ocirc;ng thường, khi sơ chế, người ta thường d&ugrave;ng c&aacute;c nguy&ecirc;n liệu ở dạng kh&ocirc; thay v&igrave; dạng bột, rang sơ tr&ecirc;n chảo n&oacute;ng cho dậy vị rồi cho v&agrave;o t&uacute;i lọc v&agrave; nấu với nước d&ugrave;ng phở để cho ra hương thơm tinh t&uacute;y nhất.&nbsp;</p>\r\n\r\n<p>Mong rằng b&agrave;i viết tr&ecirc;n đ&acirc;y đ&atilde; gi&uacute;p bạn đọc c&oacute; th&ecirc;m những kinh nghiệm hữu &iacute;ch trong nấu ăn, đặc biệt l&agrave; c&aacute;c b&iacute; k&iacute;p để tạo n&ecirc;n nước d&ugrave;ng phở ngon chuẩn vị.</p>\r\n', 'tin_tuc/hoa_hoi_1.jpg', 1, 1, 'Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh', '', '', '', 129, 0, 0, 0, '', '', 1, 154, 'vi', '2024-06-13 09:30:55', '2026-06-08 17:57:16', 0),
-(92, 617, 'Hạt tiêu - Loại gia vị bé nhỏ mà bùng nổ hương vị ấm nồng', 'hat-tieu-loai-gia-vi-be-nho-ma-bung-no-huong-vi-am-nong', 'Hạt tiêu là quả của cây hồ tiêu. Loài cây này có thân dạng dây leo, mọc thành đốt. Ở mỗi đốt lại mọc rễ để cây có thể bám và leo lên cột, giàn. Lá hồ tiêu có điểm tương đồng với lá trầu nhưng bé hơn, cứng và dày hơn. ', '<p dir=\"ltr\">Bạn c&oacute; bao giờ lướt qua v&ocirc; số website v&agrave; nhận ra chỉ một v&agrave;i trong số đ&oacute; để lại ấn tượng mạnh mẽ? Điều g&igrave; khiến ch&uacute;ng trở n&ecirc;n kh&aacute;c biệt? Rất c&oacute; thể, đ&oacute; ch&iacute;nh l&agrave; sức mạnh của một logo website được thiết kế tinh tế v&agrave; chuy&ecirc;n nghiệp. Tựa như con dấu nhận diện hay l&aacute; cờ hiệu của một quốc gia, logo website l&agrave; yếu tố visual quan trọng bậc nhất, quyết định cảm nhận đầu ti&ecirc;n của người d&ugrave;ng về thương hiệu của bạn. B&agrave;i viết n&agrave;y sẽ đi s&acirc;u v&agrave;o l&yacute; do tại sao logo trang web lại quan trọng đến vậy v&agrave; bật m&iacute; những b&iacute; quyết để tạo n&ecirc;n một biểu tượng đầy sức h&uacute;t tr&ecirc;n kh&ocirc;ng gian mạng.<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Bí quyết thiết kế logo website ghi điểm ngay từ cái nhìn đầu tiên\" src=\"https://phuongnamvina.com/img_data/images/bi-quyet-thiet-ke-logo-website-ghi-diem-ngay-tu-cai-nhin-dau-tien.jpg\" style=\"width:800px\" title=\"Bí quyết thiết kế logo website ghi điểm ngay từ cái nhìn đầu tiên\" /><br />\r\n&nbsp;</p>\r\n\r\n<h2><span id=\"logo-website-la-gi\">Logo website l&agrave; g&igrave;?</span></h2>\r\n\r\n<p>Logo website l&agrave; biểu tượng đại diện trực quan cho một doanh nghiệp, thương hiệu hoặc c&aacute; nh&acirc;n tr&ecirc;n giao diện trang web. Logo website kh&ocirc;ng chỉ đơn giản l&agrave; một h&igrave;nh ảnh trang tr&iacute; hay một c&aacute;i t&ecirc;n được c&aacute;ch điệu &ndash; m&agrave; l&agrave; sự chắt lọc tinh t&uacute;y nhất về mặt h&igrave;nh ảnh của thương hiệu, gi&uacute;p người truy cập nhanh ch&oacute;ng ghi nhớ, ph&acirc;n biệt v&agrave; tạo ấn tượng về website ngay từ c&aacute;i nh&igrave;n đầu ti&ecirc;n.<br />\r\n&nbsp;</p>\r\n\r\n<p style=\"text-align:center\"><img alt=\"Logo website\" src=\"https://phuongnamvina.com/img_data/images/logo-website.jpg\" style=\"width:800px\" title=\"Logo website\" /><br />\r\n&nbsp;</p>\r\n\r\n<h2><span id=\"vai-tro-cot-loi-cua-logo-website\">Vai tr&ograve; cốt l&otilde;i của logo website</span></h2>\r\n\r\n<p dir=\"ltr\">Logo kh&ocirc;ng chỉ l&agrave; một phần trang tr&iacute; trong giao diện website m&agrave; c&oacute; thể coi l&agrave; &ldquo;linh hồn&rdquo; thương hiệu, l&agrave; lời ch&agrave;o đầu ti&ecirc;n v&agrave; cũng l&agrave; ấn tượng cuối c&ugrave;ng đọng lại trong t&acirc;m tr&iacute; kh&aacute;ch h&agrave;ng.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">- <strong>Tạo dấu ấn thương hiệu tức th&igrave; v&agrave; nhất qu&aacute;n</strong>: Logo l&agrave; phần cốt l&otilde;i của <a href=\"https://phuongnamvina.com/bo-nhan-dien-thuong-hieu.html\" target=\"_blank\" title=\"bộ nhận diện thương hiệu\">bộ nhận diện thương hiệu</a> v&agrave; c&oacute; thể hoạt động như một điểm neo thị gi&aacute;c, kết nối trải nghiệm của người d&ugrave;ng tr&ecirc;n website với thương hiệu m&agrave; họ c&oacute; thể đ&atilde; thấy ở c&aacute;c k&ecirc;nh kh&aacute;c (quảng c&aacute;o, mạng x&atilde; hội, sản phẩm thực tế).&nbsp;</p>\r\n\r\n<p dir=\"ltr\">- <strong>Tăng độ tin cậy v&agrave; chuy&ecirc;n nghiệp</strong>: Một website kh&ocirc;ng c&oacute; logo hoặc c&oacute; logo thiết kế cẩu thả sẽ khiến người d&ugrave;ng ngần ngại khi tương t&aacute;c, đặc biệt l&agrave; với c&aacute;c trang thương mại điện tử hay dịch vụ online. Logo website ch&iacute;nh l&agrave; &ldquo;bằng chứng&rdquo; thương hiệu đ&atilde; đầu tư b&agrave;i bản v&agrave; nghi&ecirc;m t&uacute;c, từ đ&oacute; tạo dựng sự tin tưởng ngay từ lần truy cập đầu ti&ecirc;n.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Hỗ trợ điều hướng người d&ugrave;ng hiệu quả</strong>: Logo kh&ocirc;ng chỉ mang t&iacute;nh nhận diện, m&agrave; c&ograve;n l&agrave; một c&ocirc;ng cụ điều hướng th&ocirc;ng minh. Hầu hết c&aacute;c website hiện nay đều gắn logo với đường dẫn về trang chủ. Đ&acirc;y l&agrave; c&aacute;ch gi&uacute;p người d&ugrave;ng nhanh ch&oacute;ng quay lại điểm xuất ph&aacute;t khi đang ở bất kỳ trang con n&agrave;o &ndash; vừa tiện lợi, vừa trực quan.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Hỗ trợ SEO h&igrave;nh ảnh v&agrave; x&acirc;y dựng thương hiệu l&acirc;u d&agrave;i</strong>: Một logo được tối ưu đ&uacute;ng c&aacute;ch với t&ecirc;n tệp, thuộc t&iacute;nh Alt v&agrave; định dạng chuẩn c&oacute; thể g&oacute;p phần cải thiện SEO h&igrave;nh ảnh, gi&uacute;p website hiển thị tốt hơn tr&ecirc;n kết quả t&igrave;m kiếm, đặc biệt l&agrave; phần Google Images. Ngo&agrave;i ra, n&oacute; cũng g&oacute;p phần x&acirc;y dựng h&igrave;nh ảnh thương hiệu bền vững theo thời gian.<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Logo trang web\" src=\"https://phuongnamvina.com/img_data/images/logo-trang-web.jpg\" style=\"width:800px\" title=\"Logo trang web\" /></p>\r\n\r\n<h2><span id=\"cac-yeu-to-tao-nen-logo-website-hieu-qua-giup-ban-ghi-diem-tu-cai-nhin-dau-tie\">C&aacute;c yếu tố tạo n&ecirc;n logo website hiệu quả, gi&uacute;p bạn ghi điểm từ c&aacute;i nh&igrave;n đầu ti&ecirc;n</span></h2>\r\n\r\n<p dir=\"ltr\">Một logo website hiệu quả kh&ocirc;ng phải l&agrave; sản phẩm của sự ngẫu hứng, m&agrave; l&agrave; kết quả của việc tu&acirc;n thủ c&aacute;c nguy&ecirc;n tắc thiết kế v&agrave; thấu hiểu mục ti&ecirc;u thương hiệu. Dưới đ&acirc;y l&agrave; những yếu tố quan trọng nhất m&agrave; bạn cần xem x&eacute;t khi thiết kế logo website:</p>\r\n\r\n<h3><span id=\"1-don-gian-de-nho-de-nhan-die\">Đơn giản, dễ nhớ, dễ nhận diện</span></h3>\r\n\r\n<p dir=\"ltr\">Tr&ecirc;n website, logo thường xuất hiện ở k&iacute;ch thước rất nhỏ (đặc biệt l&agrave; favicon tr&ecirc;n tab tr&igrave;nh duyệt hoặc hiển thị tr&ecirc;n điện thoại). Một logo qu&aacute; phức tạp với nhiều chi tiết nhỏ, hiệu ứng cầu kỳ sẽ dễ bị mờ nh&ograve;e, kh&oacute; nh&igrave;n r&otilde; khi thu nhỏ.</p>\r\n\r\n<p dir=\"ltr\">Trong khi đ&oacute;, thiết kế logo website đơn giản gi&uacute;p n&atilde;o bộ xử l&yacute; h&igrave;nh ảnh đơn giản nhanh hơn, hiệu quả hơn v&agrave; dễ d&agrave;ng in s&acirc;u v&agrave;o t&acirc;m tr&iacute; người xem. Để l&agrave;m được điều n&agrave;y, logo cần kết hợp h&agrave;i h&ograve;a giữa h&igrave;nh d&aacute;ng, m&agrave;u sắc v&agrave; font chữ (nếu c&oacute;), đơn giản những vẫn tạo n&ecirc;n sự kh&aacute;c biệt v&agrave; dễ nhớ. Một c&acirc;u chuyện ẩn sau logo cũng c&oacute; thể g&oacute;p phần l&agrave;m tăng t&iacute;nh ghi nhớ cho biểu tượng website.</p>\r\n\r\n<p dir=\"ltr\">V&iacute; dụ như logo của Apple (quả t&aacute;o cắn dở), Nike (dấu Swoosh), Google (chữ đơn giản với m&agrave;u sắc đặc trưng) &ndash; tất cả đều rất đơn giản nhưng v&ocirc; c&ugrave;ng dễ nhận diện.</p>\r\n\r\n<h3><span id=\"2-the-hien-ro-ca-tinh-thong-diep-thuong-hieu\">Thể hiện r&otilde; c&aacute; t&iacute;nh, th&ocirc;ng điệp thương hiệu</span></h3>\r\n\r\n<p dir=\"ltr\">Logo phải phản &aacute;nh đ&uacute;ng lĩnh vực hoạt động, t&iacute;nh c&aacute;ch thương hiệu (v&iacute; dụ: nghi&ecirc;m t&uacute;c, vui tươi, c&ocirc;ng nghệ, nghệ thuật) phải truyền tải tinh tế th&ocirc;ng điệp doanh nghiệp muốn gửi gắm v&agrave; thu h&uacute;t được đối tượng kh&aacute;ch h&agrave;ng mục ti&ecirc;u. Khi nh&igrave;n v&agrave;o logo, người d&ugrave;ng c&oacute; thể cảm nhận được thương hiệu của bạn l&agrave; ai, hoạt động trong ng&agrave;nh n&agrave;o, c&aacute; t&iacute;nh ra sao v&agrave; hướng tới điều g&igrave;.</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Kích thước logo chuẩn cho website\" src=\"https://phuongnamvina.com/img_data/images/kich-thuoc-logo-chuan-cho-website.jpg\" style=\"width:800px\" title=\"Kích thước logo chuẩn cho website\" /></p>\r\n\r\n<h3><span id=\"3-da-nang-va-linh-hoat\">Đa năng v&agrave; linh hoạt</span></h3>\r\n\r\n<p dir=\"ltr\">Logo website kh&ocirc;ng chỉ d&ugrave;ng cho phần đầu trang m&agrave; sẽ xuất hiện ở rất nhiều nơi, nhiều chế độ hiển thị với k&iacute;ch thước kh&aacute;c nhau. Do đ&oacute;, logo cho website cần:</p>\r\n\r\n<p dir=\"ltr\">- <strong>Khả năng thay đổi k&iacute;ch thước (scalability)</strong>: Phải nh&igrave;n tốt v&agrave; r&otilde; r&agrave;ng d&ugrave; ở k&iacute;ch thước si&ecirc;u nhỏ (favicon 16x16 pixel) hay rất lớn (banner trang chủ). Định dạng vector (SVG) l&agrave; l&yacute; tưởng cho điều n&agrave;y.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Hiển thị tr&ecirc;n c&aacute;c nền kh&aacute;c nhau</strong>: Cần c&oacute; phi&ecirc;n bản hiển thị tốt tr&ecirc;n nền s&aacute;ng, nền tối (chế độ darkmode) v&agrave; c&aacute;c nền m&agrave;u kh&aacute;c nhau.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Hiển thị đơn sắc (monochrome)</strong>: Logo cần c&oacute; khả năng chuyển sang m&agrave;u đen trắng hoặc chỉ một m&agrave;u duy nhất m&agrave; vẫn giữ được h&igrave;nh d&aacute;ng v&agrave; nhận diện.</p>\r\n\r\n<p dir=\"ltr\">- <strong>C&aacute;c phi&ecirc;n bản</strong>: Đ&ocirc;i khi cần c&oacute; c&aacute;c phi&ecirc;n bản logo ngang, dọc hoặc chỉ biểu tượng để ph&ugrave; hợp với kh&ocirc;ng gian hiển thị.</p>\r\n\r\n<h3><span id=\"4-logo-doc-dao-sang-tao\">Logo độc đ&aacute;o, s&aacute;ng tạo</span></h3>\r\n\r\n<p dir=\"ltr\">Internet l&agrave; một kh&ocirc;ng gian cực kỳ đ&ocirc;ng đ&uacute;c. Do đ&oacute;, logo website của bạn cần phải kh&aacute;c biệt để kh&ocirc;ng bị h&ograve;a lẫn hoặc tệ hơn l&agrave; bị nhầm lẫn với đối thủ cạnh tranh. Logo c&agrave;ng độc đ&aacute;o c&agrave;ng dễ được bảo vệ, đăng k&yacute; bản quyền v&agrave; khẳng định gi&aacute; trị ri&ecirc;ng tr&ecirc;n thị trường. Tr&aacute;nh sao ch&eacute;p, vay mượn &yacute; tưởng từ những logo c&oacute; sẵn &ndash; vừa thiếu chuy&ecirc;n nghiệp, vừa tiềm ẩn rủi ro ph&aacute;p l&yacute;.</p>\r\n\r\n<h3><span id=\"5-logo-ben-vung-voi-thoi-gia\">Logo bền vững với thời gian</span></h3>\r\n\r\n<p dir=\"ltr\">Một logo hiệu quả kh&ocirc;ng chỉ cần đẹp ở hiện tại m&agrave; c&ograve;n phải trường tồn với thời gian. Điều n&agrave;y đ&ograve;i hỏi sự c&acirc;n bằng giữa xu hướng thiết kế hiện đại v&agrave; t&iacute;nh ổn định l&acirc;u d&agrave;i.</p>\r\n\r\n<p dir=\"ltr\">Logo theo phong c&aacute;ch &ldquo;qu&aacute; thời thượng&rdquo; c&oacute; thể g&acirc;y ấn tượng nhanh, nhưng cũng dễ lỗi thời chỉ sau v&agrave;i năm. Trong khi đ&oacute;, một logo tối giản, r&otilde; r&agrave;ng v&agrave; c&oacute; chiều s&acirc;u sẽ dễ d&agrave;ng th&iacute;ch nghi với sự thay đổi của thị trường v&agrave; c&ocirc;ng nghệ.</p>\r\n\r\n<p dir=\"ltr\">Để tạo logo bền vững, bạn n&ecirc;n:</p>\r\n\r\n<p dir=\"ltr\">- Tr&aacute;nh chạy theo tr&agrave;o lưu thiết kế ngắn hạn.</p>\r\n\r\n<p dir=\"ltr\">- Ưu ti&ecirc;n h&igrave;nh khối đơn giản, dễ mở rộng.</p>\r\n\r\n<p dir=\"ltr\">- Lu&ocirc;n giữ vững bản sắc thương hiệu, d&ugrave; c&oacute; tinh chỉnh về sau.<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Logo cho website\" src=\"https://phuongnamvina.com/img_data/images/logo-cho-website.jpg\" style=\"width:800px\" title=\"Logo cho website\" /><br />\r\n&nbsp;</p>\r\n\r\n<h2><span id=\"huong-dan-toi-uu-va-su-dung-logo-cho-website\">Hướng dẫn tối ưu v&agrave; sử dụng logo cho website</span></h2>\r\n\r\n<p dir=\"ltr\">Để logo website ph&aacute;t huy hết vai tr&ograve; nhận diện thương hiệu v&agrave; g&oacute;p phần v&agrave;o trải nghiệm người d&ugrave;ng t&iacute;ch cực, bạn cần ch&uacute; &yacute; đến việc tối ưu v&agrave; sử dụng n&oacute; một c&aacute;ch chiến lược.</p>\r\n\r\n<h3><span id=\"1-vi-tri-dat-logo\">Vị tr&iacute; đặt logo</span></h3>\r\n\r\n<p dir=\"ltr\">Vị tr&iacute; của logo tr&ecirc;n website c&oacute; ảnh hưởng lớn đến c&aacute;ch người d&ugrave;ng tương t&aacute;c v&agrave; ghi nhớ thương hiệu của bạn. Việc đặt logo ở những vị tr&iacute; quen thuộc v&agrave; dễ thấy sẽ gi&uacute;p tăng khả năng nhận diện v&agrave; tạo sự chuy&ecirc;n nghiệp. C&aacute;c vị tr&iacute; đặt logo website thường thấy l&agrave;:</p>\r\n\r\n<p dir=\"ltr\">- <a href=\"https://phuongnamvina.com/header-la-gi.html\" target=\"_blank\" title=\"Header\"><strong>Header</strong></a>: Mắt người d&ugrave;ng c&oacute; xu hướng qu&eacute;t từ tr&aacute;i sang phải v&agrave; từ tr&ecirc;n xuống dưới khi bắt đầu xem một trang web. Đặt logo ở g&oacute;c b&ecirc;n tr&aacute;i hoặc ch&iacute;nh giữa header gi&uacute;p thương hiệu được nhận diện ngay lập tức.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">- <strong>Favicon</strong>: Đ&acirc;y l&agrave; biểu tượng nhỏ xuất hiện tr&ecirc;n tab của tr&igrave;nh duyệt web, trong danh s&aacute;ch bookmark, lịch sử duyệt web v&agrave; kết quả t&igrave;m kiếm tr&ecirc;n thiết bị di động. Đặt logo website ở favicon l&agrave; cực kỳ quan trọng cho việc nhận diện thương hiệu khi người d&ugrave;ng mở nhiều tab c&ugrave;ng l&uacute;c, gi&uacute;p họ dễ d&agrave;ng quay lại website của bạn.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Footer</strong>: Nhiều website đặt logo ở ch&acirc;n trang như một c&aacute;ch nhắc lại thương hiệu sau khi người d&ugrave;ng đ&atilde; cuộn xuống hết nội dung. Mặc d&ugrave; đ&acirc;y kh&ocirc;ng phải l&agrave; vị tr&iacute; nhận diện ch&iacute;nh, nhưng c&oacute; thể bổ sung cho header.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Tr&ecirc;n c&aacute;c ảnh, infographic được chia sẻ từ website</strong>: Gi&uacute;p tăng nhận diện khi nội dung lan truyền.</p>\r\n\r\n<p dir=\"ltr\"><strong>Lưu &yacute;</strong>: Khi đặt logo cho website, bạn đừng qu&ecirc;n gắn link về trang chủ để tăng trải nghiệm người d&ugrave;ng.<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Kích thước logo website\" src=\"https://phuongnamvina.com/img_data/images/kich-thuoc-logo-website.jpg\" style=\"width:800px\" title=\"Kích thước logo website\" /><br />\r\n&nbsp;</p>\r\n\r\n<h3><span id=\"2-kich-thuoc-logo-website\">K&iacute;ch thước logo website</span></h3>\r\n\r\n<p dir=\"ltr\">K&iacute;ch thước logo cần được điều chỉnh ph&ugrave; hợp với vị tr&iacute; hiển thị tr&ecirc;n website của bạn v&agrave; phải đảm bảo c&oacute; thể nh&igrave;n r&otilde; r&agrave;ng tr&ecirc;n mọi thiết bị, vị tr&iacute;.</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<div dir=\"ltr\">\r\n<table align=\"center\" border=\"1\" style=\"margin:0 auto; max-width:800px; width:100%\">\r\n	<tbody>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Vị tr&iacute;/thiết bị</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>K&iacute;ch thước đề xuất</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Ghi ch&uacute;</strong></p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Logo ch&iacute;nh ở header</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">- Chiều cao: 50px đến 100px (phổ biến).</p>\r\n\r\n			<p dir=\"ltr\" style=\"text-align:center\">- Chiều ngang: T&ugrave;y thiết kế, tỷ lệ c&acirc;n xứng với chiều cao.</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">K&iacute;ch thước n&agrave;y c&oacute; thể thay đổi t&ugrave;y theo thiết kế header website của bạn.</p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Favicon (Biểu tượng tab)</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">16x16px, 32x32px, 48x48px, 64x64px</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">Bạn n&ecirc;n tạo một bộ Favicon với nhiều k&iacute;ch thước kh&aacute;c nhau để tương th&iacute;ch tốt nhất.</p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Logo ở <a href=\"https://phuongnamvina.com/footer-website-la-gi.html\" target=\"_blank\" title=\"footer\">footer</a></strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">- Thường nhỏ hơn logo Header</p>\r\n\r\n			<p dir=\"ltr\" style=\"text-align:center\">- Chiều cao: 30px đến 60px</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">C&oacute; thể nhỏ hơn header, giữ c&acirc;n đối với c&aacute;c th&ocirc;ng tin kh&aacute;c.</p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Logo website tr&ecirc;n mobile</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">Chiều cao: 40px - 80px (phổ biến, t&ugrave;y thiết kế responsive)</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">Tr&ecirc;n m&agrave;n h&igrave;nh nhỏ, logo thường được thu nhỏ lại. K&iacute;ch thước cụ thể phụ thuộc v&agrave;o c&aacute;ch thiết kế responsive của header mobile.</p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Apple Touch Icon</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">180x180px</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">Biểu tượng khi người d&ugrave;ng lưu website của bạn v&agrave;o m&agrave;n h&igrave;nh ch&iacute;nh (Home Screen) tr&ecirc;n thiết bị Apple</p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Android Chrome Icon</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">192x192px, 512x512px</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">Biểu tượng cho c&aacute;c thiết bị Android khi th&ecirc;m website v&agrave;o m&agrave;n h&igrave;nh ch&iacute;nh (Progressive Web Apps - PWA).</p>\r\n			</td>\r\n		</tr>\r\n	</tbody>\r\n</table>\r\n</div>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<h3><span id=\"3-dinh-dang-file-logo-cho-website\">Định dạng file logo cho website</span></h3>\r\n\r\n<p dir=\"ltr\">Lựa chọn định dạng file đ&uacute;ng l&agrave; yếu tố kỹ thuật quan trọng quyết định chất lượng hiển thị v&agrave; tốc độ tải trang của logo.</p>\r\n\r\n<p dir=\"ltr\">- <strong>SVG</strong>: Định dạng vector, kh&ocirc;ng vỡ n&eacute;t khi ph&oacute;ng to hay thu nhỏ, file thường rất nhẹ, l&yacute; tưởng cho responsive design v&agrave; c&oacute; hỗ trợ hoạt ảnh đơn giản (nếu cần). Tuy nhi&ecirc;n, file SVG kh&ocirc;ng ph&ugrave; hợp cho logo website c&oacute; chi tiết phức tạp, hiệu ứng gradient hoặc đổ b&oacute;ng rườm r&agrave;. Ngo&agrave;i ra, kh&ocirc;ng phải tất cả c&aacute;c hệ thống quản l&yacute; nội dung (CMS) cũ đều hỗ trợ nh&uacute;ng trực tiếp SVG dễ d&agrave;ng.</p>\r\n\r\n<p dir=\"ltr\">- <strong>PNG</strong>: Hỗ trợ nền trong suốt (alpha channel), giữ chất lượng h&igrave;nh ảnh tốt (lossless). Ph&ugrave; hợp cho logo c&oacute; chi tiết hoặc m&agrave;u sắc phức tạp hơn SVG. Tuy nhi&ecirc;n, đ&acirc;y l&agrave; định dạng raster, sẽ vỡ n&eacute;t khi ph&oacute;ng to qu&aacute; giới hạn v&agrave; file c&oacute; thể nặng hơn SVG hoặc JPG (với c&ugrave;ng k&iacute;ch thước hiển thị).</p>\r\n\r\n<p dir=\"ltr\">- <strong>JPG</strong>: Định dạng nhẹ nhất (lossy compression), tuy nhi&ecirc;n file JPG kh&ocirc;ng hỗ trợ nền trong suốt, chất lượng c&oacute; thể giảm đi khi n&eacute;n, dễ bị mờ hoặc vỡ n&eacute;t với c&aacute;c đường thẳng/chữ. Lời khuy&ecirc;n l&agrave; bạn chỉ n&ecirc;n sử dụng định dạng JPG cho ảnh c&oacute; ch&egrave;n logo.</p>\r\n\r\n<h3><span id=\"5-toi-uu-seo-cho-logo\">Tối ưu SEO cho logo</span></h3>\r\n\r\n<p dir=\"ltr\">Mặc d&ugrave; logo kh&ocirc;ng phải l&agrave; yếu tố ch&iacute;nh trong xếp hạng SEO như nội dung hay li&ecirc;n kết, việc tối ưu h&oacute;a n&oacute; vẫn g&oacute;p phần nhỏ v&agrave;o khả năng hiển thị tổng thể v&agrave; trải nghiệm người d&ugrave;ng.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Yếu tố quan trọng nhất khi tối ưu ảnh logo l&agrave; thuộc t&iacute;nh Alt. Đặt t&ecirc;n <a href=\"https://phuongnamvina.com/the-alt-la-gi.html\" target=\"_blank\" title=\"thẻ Alt\">thẻ Alt</a> cho logo n&ecirc;n l&agrave; t&ecirc;n thương hiệu, đồng thời bạn c&oacute; thể th&ecirc;m một m&ocirc; tả ngắn gọn về mục đ&iacute;ch. B&ecirc;n cạnh đ&oacute;, bạn cần đặt t&ecirc;n file ảnh c&oacute; li&ecirc;n quan, chẳng hạn như logo-phuong-nam-vina hay logo-favicon-phuong-nam-vina. B&ecirc;n cạnh đ&oacute;, bạn cũng n&ecirc;n tối ưu k&iacute;ch thước file logo gi&uacute;p cải thiện tốc độ tải trang v&igrave; đ&acirc;y cũng l&agrave; một yếu tố quan trọng trong SEO.<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Tạo logo cho website\" src=\"https://phuongnamvina.com/img_data/images/tao-logo-cho-website.jpg\" style=\"width:800px\" title=\"Tạo logo cho website\" /><br />\r\n&nbsp;</p>\r\n\r\n<h2><span id=\"dich-vu-thiet-ke-logo-website-chuyen-nghiep-doc-quye\">Dịch vụ thiết kế logo website chuy&ecirc;n nghiệp, độc quyền</span></h2>\r\n\r\n<p dir=\"ltr\">Bạn chỉ c&oacute; v&agrave;i gi&acirc;y để g&acirc;y ấn tượng với kh&aacute;ch truy cập website v&agrave; logo ch&iacute;nh l&agrave; &aacute;t chủ b&agrave;i đầu ti&ecirc;n gi&uacute;p bạn l&agrave;m điều đ&oacute;. Hiểu r&otilde; sức mạnh của một logo website ấn tượng, Phương Nam Vina mang đến <a href=\"https://phuongnamvina.com/thiet-ke-logo.html\" target=\"_blank\" title=\"dịch vụ thiết kế logo chuyên nghiệp\">dịch vụ thiết kế logo chuy&ecirc;n nghiệp</a>, s&aacute;ng tạo v&agrave; chuẩn chỉnh đến từng pixel.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Thiết kế độc quyền, thể hiện bản sắc ri&ecirc;ng</strong>: Mỗi logo l&agrave; một c&acirc;u chuyện thương hiệu ri&ecirc;ng biệt, được l&ecirc;n &yacute; tưởng s&aacute;ng tạo bởi đội ngũ thiết kế gi&agrave;u kinh nghiệm gi&uacute;p bạn dễ d&agrave;ng kết nối với đối tượng mục ti&ecirc;u.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Logo đẹp, kh&ocirc;ng lỗi thời</strong>: Thiết kế logo website đảm bảo t&iacute;nh thẩm mỹ, kh&ocirc;ng chạy theo xu hướng nhất thời, đảm bảo logo c&oacute; thể sử dụng l&acirc;u d&agrave;i m&agrave; kh&ocirc;ng bị lỗi thời.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Tối ưu cho mọi nền tảng</strong>: Logo được thiết kế đa dạng phi&ecirc;n bản &ndash; ph&ugrave; hợp cho website, mobile, favicon, mạng x&atilde; hội, in ấn,&hellip;.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Định dạng chuẩn web</strong>: B&agrave;n giao đầy đủ file logo (.SVG, .PNG, .JPG, .AI,&hellip;), gi&uacute;p bạn dễ d&agrave;ng chỉnh sửa, t&iacute;ch hợp v&agrave;o website v&agrave; sử dụng l&acirc;u d&agrave;i.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Chi ph&iacute; rẻ</strong>: Hiểu rằng mỗi doanh nghiệp đều c&oacute; ng&acirc;n s&aacute;ch ri&ecirc;ng, Phương Nam Vina mang đến nhiều g&oacute;i thiết kế logo linh hoạt, nhiều ưu đ&atilde;i, ph&ugrave; hợp với mọi nhu cầu &ndash; từ khởi nghiệp đến doanh nghiệp l&acirc;u năm.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Đồng h&agrave;nh v&agrave; hỗ trợ l&acirc;u d&agrave;i</strong>: Sau khi b&agrave;n giao, Phương Nam Vina vẫn hỗ trợ kỹ thuật v&agrave; chỉnh sửa miễn ph&iacute; nếu bạn cần cập nhật nhỏ cho logo (thay đổi slogan, m&agrave;u sắc, k&iacute;ch thước,&hellip;).</p>\r\n\r\n<p dir=\"ltr\">D&ugrave; bạn đang x&acirc;y dựng website mới, hay muốn t&aacute;i định vị thương hiệu bằng một logo đẳng cấp hơn, Phương Nam Vina sẵn s&agrave;ng đồng h&agrave;nh &ndash; từ kh&acirc;u ph&aacute;c thảo &yacute; tưởng, điều chỉnh bản nh&aacute;p, cho đến khi bạn ho&agrave;n to&agrave;n h&agrave;i l&ograve;ng. Vậy n&ecirc;n, h&atilde;y li&ecirc;n hệ ngay với Phương Nam Vina qua hotline <span style=\"color:#FF0000\">0912817117</span> - <span style=\"color:#FF0000\">0915101017</span> để được tư vấn thiết kế logo website v&agrave; nhận b&aacute;o gi&aacute; tốt nhất!<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Thiết kế logo cho website\" src=\"https://phuongnamvina.com/img_data/images/thiet-ke-logo-cho-website.jpg\" style=\"width:800px\" title=\"Thiết kế logo cho website\" /><br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Như vậy, ch&uacute;ng ta c&oacute; thể thấy r&otilde; tầm quan trọng kh&ocirc;ng thể phủ nhận của logo website trong chiến lược x&acirc;y dựng thương hiệu số. Một logo ấn tượng l&agrave; điểm khởi đầu cho mọi tương t&aacute;c trực tuyến, gi&uacute;p khắc s&acirc;u h&igrave;nh ảnh doanh nghiệp v&agrave;o t&acirc;m tr&iacute; kh&aacute;ch h&agrave;ng.</p>\r\n\r\n<p dir=\"ltr\">Đừng bỏ lỡ cơ hội tạo dựng một kết nối mạnh mẽ ngay từ c&aacute;i nh&igrave;n đầu ti&ecirc;n. Nếu bạn đang cần một logo trang web thật sự đ&aacute;ng nhớ &ndash; chuẩn web &ndash; đ&uacute;ng chất thương hiệu, đừng ngần ngại li&ecirc;n hệ với <a href=\"https://phuongnamvina.com/\" target=\"_blank\" title=\"Phương Nam Vina\">Phương Nam Vina</a>. Ch&uacute;ng t&ocirc;i sẵn s&agrave;ng đồng h&agrave;nh, gi&uacute;p bạn thổi hồn v&agrave;o thương hiệu bằng những thiết kế đậm dấu ấn v&agrave; bền vững với thời gian.</p>\r\n\r\n<div>\r\n<p dir=\"ltr\"><u><span style=\"color:rgb(255, 0, 0)\">Tham khảo th&ecirc;m</span></u>:</p>\r\n\r\n<p dir=\"ltr\"><img alt=\"icon thiết kế website\" src=\"https://phuongnamvina.com/img_data/images/icon-thietkewebsite.jpg\" title=\"icon thiết kế website\" />&nbsp;<a href=\"https://phuongnamvina.com/bang-bao-gia-thiet-ke-logo.html\" target=\"_blank\" title=\"Bảng báo giá thiết kế logo chuyên nghiệp, nhiều ưu đãi\">Bảng b&aacute;o gi&aacute; thiết kế logo chuy&ecirc;n nghiệp, nhiều ưu đ&atilde;i</a></p>\r\n\r\n<p dir=\"ltr\"><img alt=\"icon thiết kế website\" src=\"https://phuongnamvina.com/img_data/images/icon-thietkewebsite.jpg\" title=\"icon thiết kế website\" />&nbsp;<a href=\"https://phuongnamvina.com/y-tuong-thiet-ke-logo.html\" target=\"_blank\" title=\"Điểm danh các ý tưởng thiết kế logo sáng tạo vượt thời gian\">Điểm danh c&aacute;c &yacute; tưởng thiết kế logo s&aacute;ng tạo vượt thời gian</a></p>\r\n\r\n<p dir=\"ltr\"><img alt=\"icon thiết kế website\" src=\"https://phuongnamvina.com/img_data/images/icon-thietkewebsite.jpg\" title=\"icon thiết kế website\" />&nbsp;<a href=\"https://phuongnamvina.com/cach-thiet-ke-logo.html\" target=\"_blank\" title=\"Cách thiết kế logo miễn phí, đơn giản cho dân không chuyên\">C&aacute;ch thiết kế logo miễn ph&iacute;, đơn giản cho d&acirc;n kh&ocirc;ng chuy&ecirc;n</a></p>\r\n</div>\r\n<style type=\"text/css\">#mucluc-pnvn{margin-right: 15px;margin-bottom:25px;border: 1px solid #ccc;padding: 10px;border-radius: 5px;background-color: #f3f3f3;}#mucluc-pnvn.mucluc-left{float: left;}#mucluc-pnvn.mucluc-right{float: right;}.mucluc-pnvn{padding: 0px;list-style: none;margin-top:10px}.mucluc-pnvn a{color: #000;margin-bottom: 10px;display: block;font-size:16px}.mucluc-pnvn>li>ul{list-style: none;padding-left: 20px;}.mucluc-pnvn>li>ul>li>ul{list-style: none;padding-left: 20px;}.mucluc-pnvn>li>ul>li>ul>li>ul{list-style: none;padding-left: 30px;}.mucluc-pnvn>li>ul>li>ul>li>ul>li>ul{list-style: none;padding-left: 40px;}.mucluc-pnvn>li>a{ font-weight: 600;font-size:17px}}\r\n</style>\r\n', 'tin_tuc/161023_kham_pha_hat_tieu_buffet_poseidon_01_jpg.jpg', 1, 1, 'Hạt tiêu - Loại gia vị bé nhỏ mà bùng nổ hương vị ấm nồng', '', '', '', 129, 0, 0, 0, '', '', 1, 43, 'vi', '2024-06-13 08:46:06', '2026-06-08 17:57:16', 0);
-INSERT INTO `db_posts` (`id`, `id_code`, `title`, `slug`, `description`, `content`, `image`, `is_featured`, `status`, `seo_title`, `keyword`, `tags`, `seo_description`, `category_id`, `sort_order`, `nofollow`, `noindex`, `seo_head`, `seo_body`, `created_by`, `views`, `lang`, `created_at`, `updated_at`, `updated_by`) VALUES
-(106, 631, 'Tác dụng tuyệt diệu của hỗn hợp quế và mật ong : tốt cho tim; làm giảm đau xương khớp', 'tac-dung-tuyet-dieu-cua-hon-hop-que-va-mat-ong-tot-cho-tim-lam-giam-dau-xuong-khop-', 'Chữa tận gốc bệnh đau dạ dày do lạnh; cực kỳ tốt cho tim; làm giảm đau xương khớp; giúp cơ thể khỏe mạnh và làm đẹp da; làm giảm mỡ trong máu… là số ít trong vô số tác dụng của hỗn hợp quế và mật ong…', '<p>Chữa tận gốc bệnh đau dạ d&agrave;y do lạnh; cực kỳ tốt cho tim; l&agrave;m giảm đau xương khớp; gi&uacute;p cơ thể khỏe mạnh v&agrave; l&agrave;m đẹp da; l&agrave;m giảm mỡ trong m&aacute;u&hellip; l&agrave; số &iacute;t trong v&ocirc; số t&aacute;c dụng của hỗn hợp quế v&agrave; mật ong&hellip;</p>\r\n\r\n<p>B&agrave;i đăng tr&ecirc;n tạp ch&iacute; &ldquo;Tin tức thế giới h&agrave;ng tuần&rdquo; (Weekly World News) xuất bản tại Canada, đ&atilde; liệt k&ecirc; một số c&aacute;c chứng bệnh được chữa khỏi (cured) do hỗn hợp mật ong v&agrave; bột quế, được c&aacute;c nh&agrave; khoa học Phương T&acirc;y nghi&ecirc;n cứu kỹ lưỡng v&agrave; phổ biến.</p>\r\n\r\n<p>Theo họ th&igrave; mật ong đ&atilde; được khắp thế giới biết v&agrave; được sử dụng như l&agrave; 1 loại dược chất sinh học (Vital medicine) từ nhiều thế kỷ trước. Ng&agrave;y nay, qua khảo s&aacute;t v&agrave; nghi&ecirc;n cứu kiểm chứng, c&aacute;c khoa học gia đ&atilde; nhận thấy v&agrave; chấp nhận mật ong l&agrave; 1 loại dược chất chữa được nhiều chứng bệnh.</p>\r\n\r\n<p>Chữa bệnh bằng quế v&agrave; mật ong</p>\r\n\r\n<p>Điểm đặc biệt l&agrave; mật ong kh&ocirc;ng c&oacute; phản ứng phụ đối với bất cứ căn bệnh n&agrave;o. Trong đ&oacute; người ta cho biết, d&ugrave; mật ong tuy vị ngọt, nhưng nếu d&ugrave;ng với liều lượng vừa phải như l&agrave; 1 loại dược chất, n&oacute; cũng sẽ kh&ocirc;ng g&acirc;y ảnh hưởng nguy hại cho người tiểu đường.</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 1</p>\r\n\r\n<p>Liều lượng v&agrave; c&aacute;ch sử dụng được hưởng dẫn như sau:</p>\r\n\r\n<ol>\r\n	<li>Đau khớp xương</li>\r\n</ol>\r\n\r\n<p>a) 1 phần mật ong, 2 phần nước ấm, 1 muỗng caf&eacute; bột quế. Trộn lại th&agrave;nh 1 hỗn hợp sền sệt rồi đắp l&ecirc;n chỗ đau nhức v&agrave; thoa chầm chậm, nh&egrave; nhẹ. Cơn đau sẽ giảm nhẹ sau v&agrave;i ph&uacute;t.</p>\r\n\r\n<p>b) Người ta cũng c&oacute; thể pha 2 muỗng caf&eacute; mật ong 1 muỗng caf&eacute; bột quế trong 1 ly nước n&oacute;ng, uống đều đặn h&agrave;ng ng&agrave;y v&agrave;o buổi s&aacute;ng v&agrave; buổi tối c&oacute; thể gi&uacute;p cho những người bị đau khớp xương kinh ni&ecirc;n tho&aacute;t khỏi c&aacute;c cơn đau.</p>\r\n\r\n<p>Trong một c&ocirc;ng cuộc nghi&ecirc;n cứu tại Đại Học Copenhagen người ta đ&atilde; ghi nhận rằng: c&aacute;c BS khi điều trị c&aacute;c bệnh nh&acirc;n bị đau nhức với 1 hỗn hợp gồm: 1 muỗng mật ong v&agrave; 1/2 muỗng caf&eacute; bột quế v&agrave;o bữa điểm t&acirc;m, sau 1 tuần lễ, kết quả 200 người được điều trị 73 người đ&atilde; ho&agrave;n to&agrave;n hết đau, v&agrave; sau 1 th&aacute;ng được chữa trị hầu hết c&aacute;c bệnh</p>\r\n\r\n<ol start=\"2\">\r\n	<li>Cao mỡ trong m&aacute;u (High cholesterol)</li>\r\n</ol>\r\n\r\n<p>2 muỗng soup mật ong, 3 muỗng caf&eacute; bột quế, 16 ounce nước tr&agrave;. Quậy đều để cho người bị cao mỡ trong m&aacute;u uống, sau 2 giờ, đo lượng Cholesterol trong m&aacute;u người ta thấy giảm xuống 10%.</p>\r\n\r\n<ul>\r\n	<li>Cũng theo t&agrave;i liệu của tạp ch&iacute; Weekly World News th&igrave; nếu người bị cao Cholesterol d&ugrave;ng mật ong nguy&ecirc;n chất với thực phẩm h&agrave;ng ng&agrave;y c&oacute; thể giảm lượng cholesterol đ&aacute;ng kể.</li>\r\n	<li>Đối với người bị đau khớp xương kinh ni&ecirc;n, nếu uống theo c&ocirc;ng thức tr&ecirc;n, 3 lần trong 1 ng&agrave;y th&igrave; ngo&agrave;i giảm bớt đau nhức khớp xương ra c&ograve;n giảm được Cholesterol trong m&aacute;u nữa.</li>\r\n</ul>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 2</p>\r\n\r\n<ol start=\"3\">\r\n	<li>Bệnh về tim mạch (Heart diseases)</li>\r\n</ol>\r\n\r\n<p>Trộn mật ong v&agrave; bột quế sền sệt rồi quết l&ecirc;n b&aacute;nh m&igrave; thay cho mứt tr&aacute;i c&acirc;y (Jelly Jam) d&ugrave;ng cho bữa điểm t&acirc;m mỗi s&aacute;ng. Nếu ăn đều đặn như thế c&oacute; thể l&agrave;m giảm lượng Cholesterol trong c&aacute;c mạch m&aacute;u, điều nầy gi&uacute;p cho c&aacute;c bệnh nh&acirc;n bị bệnh tim mạch tr&aacute;nh được chứng đột qụy (heart attack).</p>\r\n\r\n<p>Nếu những ai đ&atilde; từng bị đột qụy rồi th&igrave; c&oacute; thể tr&aacute;nh xa được cơn đột qụy kết tiếp, khi tiếp tục ăn điểm t&acirc;m như kể tr&ecirc;n.</p>\r\n\r\n<ol start=\"4\">\r\n	<li>Tăng cường hệ thống miễn nhiễm (Immune system)</li>\r\n</ol>\r\n\r\n<p>Nếu d&ugrave;ng mật ong v&agrave; bột quế h&agrave;ng ng&agrave;y sẽ gi&uacute;p cho hệ thống miễn nhiễm được tăng mạnh th&ecirc;m v&agrave; gi&uacute;p bảo vệ cho cơ thể kh&oacute; bị vi tr&ugrave;ng v&agrave; si&ecirc;u vi khuẩn tấn c&ocirc;ng.</p>\r\n\r\n<p>Xử dụng mật ong đều đặn sẽ gi&uacute;p cho bạch huyết cầu tăng th&ecirc;m khả năng chống lại sự x&acirc;m nhập của vi tr&ugrave;ng v&agrave; si&ecirc;u vi khuẩn trong c&aacute;c mầm bệnh.</p>\r\n\r\n<ol start=\"5\">\r\n	<li>Nhiễm tr&ugrave;ng đường tiểu (Blađer infection) B&agrave;ng quang</li>\r\n</ol>\r\n\r\n<p>Lấy 2 muỗng canh bột quế, 1 muỗng caf&eacute; mật ong, 1 ly nước ấm. Quậy đều rồi uống cạn sẽ ti&ecirc;u điệt được c&aacute;c vi tr&ugrave;ng (Germ) mầm bệnh trong b&agrave;ng quan.</p>\r\n\r\n<ol start=\"6\">\r\n	<li>Nhức răng (Toothache)</li>\r\n</ol>\r\n\r\n<p>D&ugrave;ng 5 muỗng caf&eacute; mật ong, 1 muỗng caf&eacute; bột quế trộn lại với nhau th&agrave;nh hợp chất sền sệt rồi đắp l&ecirc;n chỗ răng đau. L&agrave;m như vậy 3 lần trong 1 ng&agrave;y cho đến khi răng kh&ocirc;ng c&ograve;n đau nữa.</p>\r\n\r\n<ol start=\"7\">\r\n	<li>C&uacute;m (Influenza).</li>\r\n</ol>\r\n\r\n<p>Một khoa học gia tại T&acirc;y Ban Nha (Spain) đ&atilde; chứng minh rằng, trong mật ong c&oacute; chứa 1 chất thi&ecirc;n nhi&ecirc;n c&oacute; khả năng ti&ecirc;u diệt được c&aacute;c mầm si&ecirc;u vi của bệnh cảm c&uacute;m gi&uacute;p cho người ta khỏi bị c&uacute;m (Flu).</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 3</p>\r\n\r\n<ol start=\"8\">\r\n	<li>Cảm lạnh (Colds)</li>\r\n</ol>\r\n\r\n<p>Đối với những người bị cảm lạnh thường hay cảm nặng c&oacute; thể d&ugrave;ng:</p>\r\n\r\n<p>1 muỗng canh mật ong h&acirc;m ấm l&ecirc;n (Warm) v&agrave; 1/4 muỗng caf&eacute; bột quế. D&ugrave;ng li&ecirc;n tục trong v&ograve;ng 3 ng&agrave;y th&igrave; c&oacute; thể chữa l&agrave;nh được c&aacute;c chứng ho kinh ni&ecirc;n, v&agrave; cảm lạnh cũng như chảy nước mũi cũng ngưng lại.</p>\r\n\r\n<ol start=\"9\">\r\n	<li>C&aacute;c chứng về ti&ecirc;u h&oacute;a (dạ d&agrave;y)</li>\r\n</ol>\r\n\r\n<p>a) Dạ d&agrave;y kh&oacute; chịu (Upset stomach): Mật ong v&agrave; bột quế c&oacute; thể chữa l&agrave;nh bệnh đau bao tử cũng như trị tận gốc bệnh bao tử.</p>\r\n\r\n<p>b) Bao tử đầy hơi (Gas): Theo những nghi&ecirc;n cứu đ&atilde; thực hiện tại Nhật Bản v&agrave; Ấn Độ cho thấy, mật ong v&agrave; bột quế đ&atilde; l&agrave;m hết bị đầy hơi trong bao tử.</p>\r\n\r\n<p>c) Bột quế được trộn chung với 2 muỗng canh mật ong d&ugrave;ng trước khi tham dự 1 bữa ăn thịnh soạn nhiều thịt th&agrave;, sẽ gi&uacute;p cho người ta ti&ecirc;u h&oacute;a được c&aacute;c bữa ăn đ&oacute; dễ d&agrave;ng.</p>\r\n\r\n<ol start=\"10\">\r\n	<li>Mệt mỏi (Fatigue).</li>\r\n</ol>\r\n\r\n<p>C&aacute;c nghi&ecirc;n cứu thấy rằng, chất ngọt trong mật ong gi&uacute;p cơ thể con người tốt hơn l&agrave; l&agrave;m hại. Cho n&ecirc;n những người cao ni&ecirc;n d&ugrave;ng mật ong v&agrave; bột quế với tỉ lệ bằng nhau gi&uacute;p cho họ dẻo dai v&agrave; tinh tường hơn. Theo BS Milton sau khi đ&atilde; nghi&ecirc;n cứu n&oacute;i rằng: Khi người ta cảm thấy sự sinh động của m&igrave;nh bắt đầu suy giảm, h&atilde;y d&ugrave;ng hằng ng&agrave;y, sau khi đ&aacute;nh răng v&agrave;o buổi s&aacute;ng v&agrave; khoảng l&uacute;c 3 giờ chiều, 1 ly nước ấm trong đ&oacute; pha 1/2 muỗng canh mật ong ngo&aacute;y đều với 1 muỗng caf&eacute; bột quế. Kết quả sẽ thấy sự sinh động của m&igrave;nh l&ecirc;n trở lại trong v&ograve;ng 1 tuần lễ.</p>\r\n\r\n<ol start=\"11\">\r\n	<li>K&eacute;o d&agrave;i tuổi thọ (Longivety)</li>\r\n</ol>\r\n\r\n<p>Khi uống nước tr&agrave; pha với mật ong v&agrave; bột quế đều đặn mỗi ng&agrave;y, người ta c&oacute; thể l&agrave;m chậm sự l&atilde;o h&oacute;a, k&eacute;o d&agrave;i th&ecirc;m tuổi thọ, theo c&ocirc;ng thức như sau: 4 muỗng mật ong, 1 muỗng bột quế bỏ v&agrave;o 1 b&igrave;nh trong đ&oacute; c&oacute; 3 ly nước rồi đem đun s&ocirc;i l&ecirc;n như người ta pha nước tr&agrave;.</p>\r\n\r\n<p>C&aacute;ch d&ugrave;ng: Mỗi lần uống 1/4 ly, mỗi ng&agrave;y 3 hay 4 lần. Kết quả tốt sẽ thấy l&agrave; da dẻ hồng h&agrave;o tươi trẻ, mịn m&agrave;ng. Thực thế t&ocirc;i quen biết 1 vị cao ni&ecirc;n t&ecirc;n l&agrave; Cụ Mai Phương 86t, đ&atilde; &aacute;p dụng phương ph&aacute;p nầy hơn 20 năm nay. C&aacute;ch uống l&agrave; th&ecirc;m v&agrave;i giọt chanh v&agrave;o ly nước trước khi uống, sức khỏe rất tốt.</p>\r\n\r\n<ol start=\"12\">\r\n	<li>Giảm c&acirc;n, chống b&eacute;o mập (Weight loss)</li>\r\n</ol>\r\n\r\n<p>H&agrave;ng ng&agrave;y 1/2 giờ trước khi ăn điểm t&acirc;m l&uacute;c bụng đ&oacute;i v&agrave; 1/2 giờ trước khi đi ngủ h&atilde;y uống 1 l&yacute; nước đun s&ocirc;i c&oacute; pha 1 muỗng mật ong v&agrave; 1 muỗng caf&eacute; bột quế. Nếu uống như vậy đều đặn h&agrave;ng ng&agrave;y th&igrave; ngay cả người bị b&eacute;o ph&igrave; cũng giảm chậm sự t&iacute;ch tụ chất b&eacute;o trong cơ th&ecirc;, v&agrave; c&oacute; hiệu quả ngay đối với người ăn c&aacute;c loại thực phẩm c&oacute; nhiều Calories trong bữa ăn h&agrave;ng ng&agrave;y.</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 4</p>\r\n\r\n<ol start=\"13\">\r\n	<li>Da bị nhiễm tr&ugrave;ng (Skin infection)</li>\r\n</ol>\r\n\r\n<p>Khi da bị l&aacute;t đồng tiền (Ring worm) v&agrave; c&aacute;c loại nhiễm tr&ugrave;ng da c&oacute; thể chữa trị bằng c&aacute;ch đắp l&ecirc;n v&ugrave;ng da bị nhiễm tr&ugrave;ng 1 hỗn hợp trộn mật ong v&agrave; bột quế với ph&acirc;n lượng bằng nhau.</p>\r\n\r\n<ol start=\"14\">\r\n	<li>Trị mụn (Pimples)</li>\r\n</ol>\r\n\r\n<p>Với c&ocirc;ng thức 3 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn lại sền sệt b&ocirc;i l&ecirc;n c&aacute;c mụn trước khi đi ngủ, s&aacute;ng h&ocirc;m sau rửa mặt bằng nước ấm. L&agrave;m như thế trong v&ograve;ng 2 tuần lễ th&igrave; c&aacute;c mụn sẽ được trị tận gốc.</p>\r\n\r\n<ol start=\"15\">\r\n	<li>Trị h&ocirc;i miệng (Bad breath)</li>\r\n</ol>\r\n\r\n<p>Để trị h&ocirc;i miệng, hơi thở được thơm tho, những người d&acirc;n tại v&ugrave;ng Nam Mỹ (South America) đ&atilde; l&agrave;m việc đầu ti&ecirc;n v&agrave;o buổi s&aacute;ng l&agrave; s&uacute;c miệng với 1 ly nước n&oacute;ng c&oacute; pha với 1 muỗng caf&eacute; mật ong v&agrave; bột quế quậy đều. Hơi thở của họ kh&ocirc;ng h&ocirc;i v&agrave; thơm m&ugrave;i quế suốt cả ng&agrave;y.</p>\r\n\r\n<ol start=\"16\">\r\n	<li>Gi&uacute;p phục hồi th&iacute;nh gi&aacute;c bị suy giảm, điếc (Hearing loss)</li>\r\n</ol>\r\n\r\n<p>H&agrave;ng ng&agrave;y uống đều đặn v&agrave;o mỗi buổi s&aacute;ng v&agrave; buổi tối trước khi ngủ 1 ly nước ấm c&oacute; pha mật ong v&agrave; bột quế với ph&acirc;n lượng bằng nhau, sẽ phục hồi lại t&igrave;nh trạng th&iacute;nh gi&aacute;c (tai) bị điếc, nghễnh ng&atilde;ng.</p>\r\n\r\n<ol start=\"17\">\r\n	<li>Rụng t&oacute;c v&agrave; h&oacute;i đầu (Hair loss &amp; Baldness)</li>\r\n</ol>\r\n\r\n<p>Những người bị rụng t&oacute;c hay h&oacute;i đầu c&oacute; thể d&ugrave;ng phương c&aacute;ch sau đ&acirc;y:</p>\r\n\r\n<p>Lấy 1 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn với dầu Olive th&agrave;nh 1 hỗn hợp rồi b&ocirc;i l&ecirc;n đầu khoảng 15 ph&uacute;t, sau đ&oacute; đi tắm v&agrave; gội đầu. Kết quả ghi nhận l&agrave; rất c&oacute; hiệu quả, ngay cả khi đi tắm v&agrave; gội đầu 5 ph&uacute;t sau khi b&ocirc;i.</p>\r\n\r\n<p>Ngo&agrave;i ra b&agrave;i b&aacute;o c&ograve;n n&oacute;i đến hiệu quả tốt đẹp của việc xử dụng hỗn hợp mật ong v&agrave; bột quế trong c&aacute;c trường hợp bị v&ocirc; sinh (Infertility) v&agrave; bệnh ung thư (Cancer).</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 5</p>\r\n\r\n<ol start=\"18\">\r\n	<li>V&ocirc; sinh (Infertility)</li>\r\n</ol>\r\n\r\n<ul>\r\n	<li>Yunami &amp; Ayurredic đ&atilde; d&ugrave;ng mật ong từ l&acirc;u trong Y Học để gi&uacute;p cho tinh dịch của người Nam (Male) được tăng th&ecirc;m sức mạnh của n&oacute;.</li>\r\n	<li>Người ta cũng ghi nhận người đ&agrave;n &ocirc;ng bị bất lực, nếu uống 2 muỗng canh mật ong mỗi ng&agrave;y trước khi đi ngủ th&igrave; t&igrave;nh trạng bất lực c&oacute; thể được giải quyết tốt đẹp.</li>\r\n	<li>Tại Trung Hoa, Nhật Bản v&agrave; một số c&aacute;c nước v&ugrave;ng Viễn Đ&ocirc;ng, đối với c&aacute;c phụ nữ kh&ocirc;ng thể đậu thai từ nhiều thế kỷ đ&atilde; được khuy&ecirc;n d&ugrave;ng bột quế để gi&uacute;p cho buồng trứng v&agrave; tử cung cải thiện dễ thụ tinh, mang bầu.</li>\r\n	<li>C&aacute;c phụ nữ kh&ocirc;ng thể c&oacute; bầu th&igrave; c&oacute; thể d&ugrave;ng 1 Pinch bột quế h&ograve;a với 1/2 muỗng caf&eacute; mật ong, rồi ngậm trong miệng thường xuy&ecirc;n suốt ng&agrave;ỵ 2 thứ n&agrave;y được trộn lẫn với nước bọt trong miệng rồi từ từ ngấm v&agrave;o cơ thể để mang lại thuận lợi cho người phụ nữ đậu thai.</li>\r\n</ul>\r\n\r\n<p>Người ta đ&atilde; ghi nhận 1 cặp vợ chồng tại tiểu bang Maryland , Hoa Kỳ; cưới nhau 14 năm kh&ocirc;ng c&oacute; con v&agrave; họ gần như tuyệt vọng&hellip;</p>\r\n\r\n<p>Nhưng khi được m&aacute;ch bảo phương c&aacute;c d&ugrave;ng mật ong v&agrave; bột quế, 2 vợ chồng đ&atilde; c&ugrave;ng &aacute;p dụng phương ph&aacute;p tr&ecirc;n; chỉ v&agrave;i th&aacute;ng sau người vợ đ&atilde; mang thai v&agrave; sinh đ&ocirc;i với 2 đứa con khỏe mạnh b&igrave;nh thường.</p>\r\n\r\n<ol start=\"19\">\r\n	<li>Đối với bệnh ung thư (Cancer)</li>\r\n</ol>\r\n\r\n<p>Những nghi&ecirc;n cứu mới đ&acirc;y tại Nhật Bản v&agrave; &Uacute;c Ch&acirc;u đ&atilde; ghi nhận t&igrave;nh trạng ung thư bao tử v&agrave; ung thư xương đang ph&aacute;t t&aacute;c, đ&atilde;</p>\r\n\r\n<p>được điều trị 1 c&aacute;ch hiệu quả bằng mật ong v&agrave; quế. Sau khi những bệnh nh&acirc;n đang mắc phải ung thư bao tử v&agrave; xương d&ugrave;ng như sau:</p>\r\n\r\n<p>Uống 1 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn đều, mỗi ng&agrave;y 3 lần li&ecirc;n tiếp trong 1 th&aacute;ng.</p>\r\n', 'tin_tuc/shutterstock_338983799_1635216_2362_5994_1635216756.jpg', 1, 1, 'Tác dụng tuyệt diệu của hỗn hợp quế và mật ong : tốt cho tim; làm giảm đau xương khớp', '', '', '', 129, 0, 0, 0, '', '', 1, 9, 'vi', '2024-06-16 06:11:12', '2026-06-08 17:57:16', 0),
-(110, 653, 'Cành nhánh quế trở thành hàng hóa, không chỉ dùng trong nước mà còn để xuất khẩu.', 'canh-nhanh-que-tro-thanh-hang-hoa-khong-chi-dung-trong-nuoc-ma-con-de-xuat-khau-', 'Khi khai thác quế cây, người ta bỏ những cành nhánh nhỏ. Mỗi năm chỉ riêng ở huyện Trà My, Quảng Nam, số cành nhánh đó phải đến 200 tấn.', '<p>Năm đ&oacute;, nh&agrave; bu&ocirc;n quế Nguyễn Văn Qu&acirc;n (Tam Kỳ, Quảng Nam) t&igrave;nh cờ nh&igrave;n thấy một mẫu quế chi của Trung Quốc b&aacute;n cho kh&aacute;ch bu&ocirc;n Đ&agrave;i Loan. Quế chi l&agrave; một loại dược liệu kh&ocirc;ng thể thiếu trong mọi thang thuốc Bắc, v&agrave; điều đặc biệt l&agrave; quế chi được chế biến từ c&agrave;nh nh&aacute;nh bỏ đi của c&acirc;y quế (chi: c&agrave;nh, nh&aacute;nh). Qu&acirc;n thấy ngay một hướng kinh doanh mới, v&agrave; biết chắc rằng do c&agrave;nh nh&aacute;nh quế Tr&agrave; My chất lượng tốt hơn, mặt h&agrave;ng quế chi Tr&agrave; My sẽ c&oacute; sực cạnh tranh mạnh hơn quế chi Trung Quốc.</p>\r\n\r\n<p>Việc đầu ti&ecirc;n của Qu&acirc;n l&agrave; v&agrave;o TP Hồ Ch&iacute; Minh t&igrave;m xem c&aacute;c loại m&aacute;y cắt thuốc Bắc do Đ&agrave;i Loan sản xuất, c&oacute; gi&aacute; đến 2.000 USD/m&aacute;y. Đ&acirc;y l&agrave; những m&aacute;y cắt thuốc n&oacute;i chung, trừ c&agrave;nh nh&aacute;nh quế. Thật ra, vẫn c&oacute; thể d&ugrave;ng để cắt nh&aacute;nh quế nhưng l&aacute;t cắt th&ocirc; vụng, h&agrave;ng kh&ocirc;ng đẹp, v&agrave; chậm, mỗi ng&agrave;y cắt được tối đa 100 kg quế. Qu&acirc;n vừa xem vừa &acirc;m thầm nghi&ecirc;n cứu cải tiến c&aacute;c chi tiết rồi tự tạo cho m&igrave;nh một c&aacute;i m&aacute;y chuy&ecirc;n cắt c&agrave;nh nh&aacute;nh quế. M&aacute;y của Đ&agrave;i Loan trục cắt đứng, c&ograve;n m&aacute;y của Qu&acirc;n trục cắt nằm ngang. Sự thay đổi n&agrave;y đ&atilde; n&acirc;ng c&ocirc;ng suất cắt của m&aacute;y l&ecirc;n gấp ba lần, mỗi ng&agrave;y cắt được 300 kg, l&aacute;t cắt lại sắc sảo, đều v&agrave; đẹp. Trước kia muốn cắt quế phải lựa những nh&aacute;nh c&ugrave;ng cỡ nhau, c&ograve;n b&acirc;y giờ nh&aacute;nh quế to nhỏ g&igrave; cũng được, cứ nắm cả b&oacute; cho v&agrave;o m&aacute;y cắt. Từ c&aacute;i m&aacute;y cắt Đ&agrave;i Loan gi&aacute; 2.000 USD, Qu&acirc;n đ&atilde; tạo ra một c&aacute;i m&aacute;y tốt hơn, gi&aacute; chỉ c&oacute; 10 triệu đồng.</p>\r\n\r\n<p>Bằng chiếc m&aacute;y cắt quế chi, Qu&acirc;n đ&atilde; dần dần chiếm được thị trường quế chi của Đ&agrave;i Loan, v&agrave; trở th&agrave;nh nh&agrave; cung cấp chủ yếu mặt h&agrave;ng quế chi cho phố thuốc Bắc Hải thượng L&atilde;n &ocirc;ng ở TP Hồ Ch&iacute; Minh (chỉ ri&ecirc;ng con phố n&agrave;y mỗi năm mua của Qu&acirc;n 60 tấn quế chi). Mỗi năm Qu&acirc;n xuất khẩu quế chi thu được hơn 70.000 USD. Cứ b&aacute;n mỗi tấn quế, Qu&acirc;n lời hai triệu đồng, mỗi năm Qu&acirc;n b&aacute;n hơn 100 tấn quế chi v&agrave; bỏ t&uacute;i tối thiểu 200 triệu đồng tiền l&atilde;i. Kh&ocirc;ng chỉ Qu&acirc;n được lợi m&agrave; người trồng quế ở Tr&agrave; My cũng c&oacute; th&ecirc;m thu nhập. Quế c&agrave;nh nh&aacute;nh từ chỗ c&oacute; gi&aacute; 500 đồng/kg đ&atilde; tăng l&ecirc;n s&aacute;u lần, gi&aacute; hiện thời l&agrave; 3.000 đồng/kg. B&acirc;y giờ 200 tấn c&agrave;nh nh&aacute;nh quế Tr&agrave; My thải ra hằng năm đều được Qu&acirc;n tận dụng. Kh&ocirc;ng những thế, Qu&acirc;n c&ograve;n mở rộng địa b&agrave;n, mua th&ecirc;m quế c&agrave;nh nh&aacute;nh ở c&aacute;c huyện Ti&ecirc;n Phước, Phước Sơn, v&agrave; nhiều tỉnh kh&aacute;c để đẩy mạnh xuất khẩu, đ&aacute;p ứng nhu cầu của kh&aacute;ch Đ&agrave;i Loan v&agrave; H&agrave;n Quốc.</p>\r\n\r\n<p>Qu&acirc;n đang nghi&ecirc;n cứu l&agrave;m ly uống c&agrave; ph&ecirc;, tr&agrave;&hellip; từ th&acirc;n c&acirc;y quế để xuất cho thị trường Bắc &Acirc;u. Kh&aacute;ch h&agrave;ng Qu&acirc;n đ&atilde; c&oacute;, chỉ c&oacute; c&aacute;i m&aacute;y để cắt, đục, l&agrave;m b&oacute;ng&hellip; th&igrave; đang phải suy nghĩ th&ecirc;m. Th&acirc;n c&acirc;y quế, sau khi lột vỏ, đang l&agrave; đồ bỏ, v&igrave; d&ugrave;ng l&agrave;m củi cũng kh&ocirc;ng được do k&eacute;m bắt lửa. &ldquo;Nếu sản xuất th&agrave;nh c&ocirc;ng mặt h&agrave;ng ly, cốc bằng gỗ th&acirc;n c&acirc;y quế, lợi nhuận phải đến 300%&rdquo;, Qu&acirc;n quả quyết.</p>\r\n', 'tin_tuc/_2539_1717652388_860x0.jpg', 1, 1, 'Cành nhánh quế trở thành hàng hóa, không chỉ dùng trong nước mà còn để xuất khẩu.', '', '', '', 129, 0, 0, 0, '', '', 1, 390, 'vi', '2024-06-27 04:05:13', '2026-06-08 17:57:16', 0),
-(113, 656, 'BIỆT THỰ SÂN VƯỜN', 'biet-thu-san-vuon', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/nha_vuon_thong_tin_chi_tiet_chi_phi_xay_dung_tham_khao_va_29_mau_nha_vuon_dep_me_ly_6446008f6d1ba4a29dcf8360.webp', 1, 1, 'BIỆT THỰ SÂN VƯỜN', '', '', '', 242, 0, 0, 0, '', '', 1, 5, 'vi', '2024-06-28 02:28:33', '2026-06-08 17:57:16', 0),
-(114, 657, 'QUÁN CÀ PHÊ', 'trung-tam-thuong-mai', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/trung_tam_thuong_mai_1691035417_17079655862711524834885.jpg', 1, 1, 'QUÁN CÀ PHÊ', '', '', '', 242, 0, 0, 0, '', '', 1, 2, 'vi', '2024-06-28 02:28:55', '2026-06-08 17:57:16', 0),
-(116, 659, 'KHU DÂN CƯ', 'khu-dan-cu', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cac_buoc_trien_khai_du_an_khu_dan_cu.jpg', 1, 1, 'KHU DÂN CƯ', '', '', '', 242, 0, 0, 0, '', '', 1, 2, 'vi', '2024-06-28 02:29:45', '2026-06-08 17:57:16', 0),
-(117, 660, 'CÔNG VIÊN', 'cong-vien', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/thiet_ke_cong_vien_landscape_park_design_04_san_vuon_a_dong.jpg', 1, 1, 'CÔNG VIÊN', '', '', '', 242, 0, 0, 0, '', '', 1, 3, 'vi', '2024-06-28 02:30:04', '2026-06-08 17:57:16', 0),
-(118, 661, 'NHÀ VƯỜN', 'khu-nghi-duong', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cong_ty_tu_van_thiet_ke_resort_1.jpg', 1, 1, 'NHÀ VƯỜN', '', '', '', 242, 0, 0, 0, '', '', 1, 7, 'vi', '2024-06-28 02:30:19', '2026-06-08 17:57:16', 0),
-(119, 662, 'VĂN PHÒNG', 'san-golf', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/san_golf_vu_yen.jpg', 1, 1, 'VĂN PHÒNG', '', '', '', 242, 0, 0, 0, '', '', 1, 3, 'vi', '2024-06-28 02:30:37', '2026-07-03 00:26:35', 0),
-(124, 630, 'What is star anise? The benefits of star anise and ways to use it.', 'what-is-star-anise-the-benefits-of-star-anise-and-ways-to-use-it', '<p>Hoa hồi l&agrave; g&igrave; v&agrave; hoa hồi c&oacute; những lợi &iacute;ch v&agrave; c&ocirc;ng dụng như thế n&agrave;o? H&atilde;y c&ugrave;ng B&aacute;ch h&oacute;a XANH t&igrave;m hiểu ngay trong b&agrave;i viết n&agrave;y nh&eacute;.</p>\r\n', '<p><img alt=\" Hoa hồi\" data-id=\"6\" data-nimg=\"1\" decoding=\"async\" height=\"429\" loading=\"lazy\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202202151534168292.jpg\" title=\" Hoa hồi\" width=\"762\" />Hoa hồi</p>\r\n\r\n<p>Hoa hồi,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/bot-que-ong-cha-va-hu-35g\" target=\"_blank\">quế</a>,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/thao-qua-dh-foods-natural-hu-20g\" target=\"_blank\">thảo quả</a>,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/dinh-huong-ong-cha-va-hu-35g\" target=\"_blank\">đinh hương</a>,... đều l&agrave; những loại gia vị kh&ocirc; thường được d&ugrave;ng trong nấu ăn rất thường xuy&ecirc;n ở nhiều gia đ&igrave;nh. Trong đ&oacute; hoa hồi l&agrave; gia vị kh&ocirc;ng thể thiếu, đặc biệt trong c&aacute;c m&oacute;n ăn truyền thống như&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-nau-pho-bo-ha-noi-962092\" target=\"_blank\">phở</a>. Tuy nhi&ecirc;n&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi-hoi-que-thao-qua-dinh-huong\" target=\"_blank\">hoa hồi</a>&nbsp;c&oacute; xuất sứ từ đ&acirc;u v&agrave; hoa hồi c&oacute; những c&ocirc;ng dụng ra sao ch&iacute;nh l&agrave; những thắc mắc chung của kh&aacute; nhiều người. H&atilde;y c&ugrave;ng t&igrave;m hiểu tất tần tật về loại gia vị n&agrave;y ngay sau đ&acirc;y</p>\r\n\r\n<h3>1Hoa hồi l&agrave; g&igrave;?</h3>\r\n\r\n<p><img alt=\"\" data-id=\"2\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151237240972.jpg\" /></p>\r\n\r\n<p>Hoa hồi hay c&ograve;n gọi l&agrave; hoa đại hồi l&agrave; một loại c&acirc;y&nbsp;<b>c&oacute; nguồn gốc từ Trung Quốc v&agrave; đ&ocirc;ng bắc Việt Nam</b>. Đ&acirc;y l&agrave; lo&agrave;i c&acirc;y gia vị c&oacute; t&aacute;c dụng v&agrave; m&ugrave;i thơm tương tự như c&acirc;y tiểu hồi, thu nhặt được từ vỏ quả. Đặc điểm của lo&agrave;i c&acirc;y n&agrave;y l&agrave; c&oacute; h&igrave;nh d&aacute;ng kh&aacute; nhỏ chỉ từ 6-10m, th&acirc;n c&acirc;y thẳng v&agrave; nhẵn v&agrave; c&oacute; m&agrave;u n&acirc;u x&aacute;m.</p>\r\n\r\n<p><img alt=\"\" data-id=\"3\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151237459437.jpg\" /></p>\r\n\r\n<p>Th&ocirc;ng thường<b>&nbsp;hoa hồi sẽ c&oacute; 6-8 c&aacute;nh, xếp th&agrave;nh h&igrave;nh c&aacute;nh sao c&oacute; đường k&iacute;nh từ 2,5 đến 3 cm</b>, mỗi c&aacute;nh mang b&ecirc;n trong một hạt nhỏ h&igrave;nh quả trứng nhẵn b&oacute;ng. Đa phần hoa hồi sao khi thu hoạch sẽ được&nbsp;<b>mang đi phơi kh&ocirc;, xuất khẩu dưới dạng hoa kh&ocirc;, chỉ c&oacute; một phần nhỏ được đem chế biến th&agrave;nh tinh dầu.</b></p>\r\n\r\n<h3>2Lợi &iacute;ch v&agrave; c&aacute;ch sử dụng hoa hồi</h3>\r\n\r\n<p><img alt=\"\" data-id=\"4\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151238141137.jpg\" /></p>\r\n\r\n<p><b>D&ugrave;ng trong chăm s&oacute;c sức khỏe</b>:&nbsp;<i>Theo Đại t&aacute;, B&aacute;c sĩ Nguyễn B&aacute; Vưỡng &ndash; Ph&ograve;ng chẩn trị y học cổ truyền T&acirc;m Minh Đường</i>, khi sử dụng hoa hồi nguy&ecirc;n chất để ng&acirc;m với rượu sẽ c&oacute; t&aacute;c dụng hỗ trợ&nbsp;<b>điều trị c&aacute;c bệnh như cảm lạnh, đau đầu, đau bụng, c&aacute;c bệnh về ti&ecirc;u ho v&agrave; c&aacute;c bệnh về xương khớp</b>. Ngo&agrave;i ra, hoa hồi c&ograve;n c&oacute; t&aacute;c dụng trong chữa c&aacute;c bệnh nấm da, ghẻ lở, giảm đau, giảm bầm t&iacute;m, trị ho, long đờm... v&agrave; nhiều t&aacute;c dụng chữa bệnh kh&aacute;c.</p>\r\n\r\n<p>Ngo&agrave;i ra tinh dầu hoa hồi c&ograve;n l&agrave; một trong những loại mỹ phẩm tốt nhất trong l&agrave;m đẹp, chỉ cần sử dụng tinh dầu hoa hồi kết hợp c&ugrave;ng nước n&oacute;ng để<b>&nbsp;x&ocirc;ng mặt từ 1 đến 2 lần mỗi tuần th&igrave; sẽ mang lại cho bạn một l&agrave;n da s&aacute;ng mịn v&agrave; sạch sẽ mụn th&acirc;m.</b></p>\r\n\r\n<p><img alt=\"\" data-id=\"5\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151246488637.jpg\" /></p>\r\n\r\n<p><b>D&ugrave;ng trong ẩm thực</b>: Hoa hồi cũng l&agrave; một trong những loại gia vị cực phẩm m&agrave; c&aacute;c đầu bếp nổi tiếng lu&ocirc;n ưa chuộng sử dụng trong c&aacute;c m&oacute;n ăn. Sử dụng hoa hồi trong c&aacute;c m&oacute;n ăn một c&aacute;ch kh&eacute;o l&eacute;o sẽ gi&uacute;p n&acirc;ng tầm m&oacute;n ăn l&ecirc;n một hương vị ho&agrave;n to&agrave;n mới. Để c&oacute; thể sử dụng hết to&agrave;n bộ những hương vị tinh tế của hoa hồi, c&aacute;c đầu bếp thường<b>&nbsp;rang hoa hồi rồi mới sử dụng để tẩm ướp</b>&nbsp;hoặc d&ugrave;ng trong c&aacute;c m&oacute;n canh, s&uacute;p, c&agrave; ri hay c&aacute;c m&oacute;n hầm gi&uacute;p k&iacute;ch th&iacute;ch vị gi&aacute;c, ăn ngon miệng hơn.</p>\r\n\r\n<p>&gt;&gt;&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/huong-dan-cach-lam-mon-lau-trung-khanh-cay-xe-tru-danh-don-gian-tai-nha-1271318\">Hướng dẫn c&aacute;ch l&agrave;m m&oacute;n lẩu Tr&ugrave;ng Kh&aacute;nh cay x&egrave; trứ danh đơn giản tại nh&agrave;</a></p>\r\n\r\n<p>&gt;&gt;&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-lam-trung-ngam-tra-mon-an-doc-dao-mang-lai-may-man-doi-voi-nguoi-trung-hoa-1270984\">C&aacute;ch l&agrave;m trứng ng&acirc;m tr&agrave; - m&oacute;n ăn độc đ&aacute;o, mang lại may mắn đối với người Trung Hoa</a></p>\r\n\r\n<p><img alt=\"\" data-id=\"6\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151247056822.jpg\" /></p>\r\n\r\n<p><b>C&oacute; lợi cho b&agrave; mẹ đang cho con b&uacute;</b>:&nbsp;Theo kinh nghiệm d&acirc;n gian, người ta thường&nbsp;<b>cho hoa hồi v&agrave;o c&aacute;c m&oacute;n ăn của phụ nữ sau sinh</b>&nbsp;để&nbsp;<b>gi&uacute;p sữa c&oacute; m&ugrave;i thơm v&agrave; về nhiều hơn</b>.</p>\r\n\r\n<p><b>C&aacute;c c&ocirc;ng dụng kh&aacute;c</b>: Ngo&agrave;i c&aacute;c t&aacute;c dụng tr&ecirc;n th&igrave; hoa hồi c&ograve;n c&oacute; c&aacute;c t&aacute;c dụng kh&aacute;c như&nbsp;<b>điều chế thuốc trị cảm c&uacute;m, c&aacute;c loại rượu, b&aacute;nh kẹo, hay l&agrave;m mồi c&acirc;u c&aacute;,...</b>Đối với việc c&acirc;u c&aacute;, bạn chỉ&nbsp;<b>trộn bột hoa hồi với c&aacute;c nguy&ecirc;n liệu như bột đậu tương, c&agrave; rốt th&aacute;i nhỏ, ruột b&aacute;nh m&igrave;, c&aacute;m gạo</b>&nbsp;rồi ủ chung tất cả ch&uacute;ng lại với nước luộc thịt lợn qua đ&ecirc;m, bạn sẽ c&oacute; một mồi c&acirc;u xuất sắc.</p>\r\n\r\n<p><i>Hoa hồi với c&aacute;c c&ocirc;ng dụng tuyệt vời của m&igrave;nh sẽ l&agrave; một loại&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi\" target=\"_blank\">gia vị</a>&nbsp;tuyệt vời cho c&aacute;c m&oacute;n ăn, một loại mỹ phẩm ho&agrave;n hảo cho&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/khoe-dep-moi-ngay/1731\" target=\"_blank\">l&agrave;m đẹp</a>&nbsp;v&agrave; c&ograve;n c&oacute; v&ocirc; số c&ocirc;ng dụng kh&aacute;c trong cuộc sống.</i></p>\r\n', 'tin_tuc/hoa_hoi_la_gi_loi_ich_cua_hoa_hoi_va_nhung_cach_su_dung_hoa_hoi_202009151237459437.jpg', 1, 1, 'What is star anise? The benefits of star anise and ways to use it.', '', '', '', 129, 0, 0, 0, '', '', 1, 10, 'en', '2024-06-16 05:26:00', '2026-06-12 09:22:46', 1),
-(125, 622, 'Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh', 'hoa-hoi-va-cac-gia-vi-tao-nen-nuoc-dung-pho-ngon-tru-danh-8', 'Nước dùng phở chính là nhân tố tạo nên hương vị thơm ngon nổi tiếng của món phở truyền thống của Việt Nam. Bên cạnh nguyên liệu quen thuộc như hành, gừng nướng, nước dùng phở không thể thiếu được hoa hồi cùng các gia vị thảo mộc khác sẽ được đề cập chi tiết trong bài viết dưới đây. Mời bạn đọc cùng UniSpice tìm hiểu ngay nhé.', '<p>Nước d&ugrave;ng phở ch&iacute;nh l&agrave; nh&acirc;n tố tạo n&ecirc;n hương vị thơm ngon nổi tiếng của m&oacute;n phở truyền thống của Việt Nam. B&ecirc;n cạnh nguy&ecirc;n liệu quen thuộc như h&agrave;nh, gừng nướng, nước d&ugrave;ng phở kh&ocirc;ng thể thiếu được&nbsp;<strong>hoa hồi</strong>&nbsp;c&ugrave;ng c&aacute;c&nbsp;<a href=\"https://unispice.vn/danh-muc-san-pham/gia-vi-tu-nhien/\"><strong>gia vị thảo mộc</strong></a>&nbsp;kh&aacute;c sẽ được đề cập chi tiết trong b&agrave;i viết dưới đ&acirc;y. Mời bạn đọc c&ugrave;ng&nbsp;<a href=\"https://unispice.vn/\"><strong>UniSpice</strong></a>&nbsp;t&igrave;m hiểu ngay nh&eacute;.</p>\r\n\r\n<p>Xem th&ecirc;m:&nbsp;<a href=\"https://unispice.vn/mon-ngon-moi-ngay/pho-bo-gia-truyen/\"><strong>C&aacute;ch nấu phở b&ograve; gia truyền</strong></a></p>\r\n\r\n<h2><b>Hoa hồi</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/hoa-hoi/\"><strong>Hoa hồi</strong></a>&nbsp;hay c&ograve;n được biết đến với một c&aacute;i t&ecirc;n kh&aacute;c l&agrave; đại hồi hay b&aacute;t gi&aacute;c. Đ&acirc;y l&agrave; một gia vị thảo mộc phổ biến trong nền ẩm thực của nhiều quốc gia Ch&acirc;u &Aacute;. Ở Việt Nam, hoa hồi l&agrave; gia vị kh&ocirc;ng thể thiếu trong nước d&ugrave;ng phở. Kh&ocirc;ng chỉ l&agrave; một vị thuốc qu&yacute; trong chữa bệnh, hoa hồi c&ograve;n g&oacute;p phần tạo n&ecirc;n hương vị tinh tế cho nước phở, với vị cay nhẹ, ngọt dịu c&ugrave;ng hương thơm nồng ấn tượng. Khi được sử dụng ở mức độ vừa phải, hoa hồi kh&ocirc;ng hề lấn &aacute;t hương vị của c&aacute;c nguy&ecirc;n liệu kh&aacute;c.&nbsp;</p>\r\n\r\n<h2><b><img alt=\"Hoa hồi gia vị không thể thiếu trong nước dùng phở\" height=\"576\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Hoa-hoi-1.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></b></h2>\r\n\r\n<h2><b>Quế thanh</b></h2>\r\n\r\n<p>L&agrave; sản phẩm thu từ vỏ của c&acirc;y quế, quế c&oacute; vị cay the v&agrave; m&ugrave;i nồng kh&oacute; trộn lẫn. D&ugrave; được sử dụng l&agrave;&nbsp;<a href=\"https://unispice.vn/san-pham/que-thanh/\"><strong>quế thanh</strong></a>&nbsp;hay&nbsp;<a href=\"https://unispice.vn/san-pham/bot-que/\"><strong>bột quế</strong></a>, kh&ocirc;ng thể phủ nhận mức độ phổ biến của gia vị n&agrave;y, từ c&aacute;c m&oacute;n mặn đến m&oacute;n ngọt. Khi được th&ecirc;m v&agrave;o nước d&ugrave;ng phở, vị cay của quế kh&ocirc;ng qu&aacute; đậm đ&agrave; m&agrave; thoảng thoảng rất dễ chịu.</p>\r\n\r\n<p><img alt=\"Quế thanh gia vị không thể thiếu trong nước dùng phở\" height=\"576\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Que.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/que/\"><strong>Quế</strong></a>&nbsp;d&ugrave;ng trong đ&ocirc;ng y nổi tiếng l&agrave; vị thuốc chữa trị hiệu quả c&aacute;c chứng bệnh về đường ti&ecirc;u h&oacute;a do cảm h&agrave;n, giảm đau, s&aacute;t khuẩn,&hellip;&nbsp;</p>\r\n\r\n<h2><b>Đinh hương</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/dinh-huong/\"><strong>Đinh hương</strong></a>&nbsp;l&agrave; loại gia vị thảo mộc đặc biệt nhờ khả năng khử m&ugrave;i hiệu quả. Với hương thơm nồng đặc trưng, đinh hương l&agrave; lựa chọn th&iacute;ch hợp khi nấu nước d&ugrave;ng từ c&aacute;c loại xương b&ograve;, xương heo.&nbsp;Kh&ocirc;ng chỉ l&agrave;m mất đi m&ugrave;i h&ocirc;i kh&oacute; chịu, đinh hương c&ograve;n rất gi&agrave;u h&agrave;m lượng vitamin B, C, D, K, E, c&ugrave;ng nhiều kho&aacute;ng chất kh&aacute;c như canxi, kali v&agrave; protein. Đ&oacute; cũng l&agrave; l&yacute; do từ xa xưa, đinh hương đ&atilde; được ứng dụng nhiều trong cả y học v&agrave; ẩm thực.</p>\r\n\r\n<h2><b><img alt=\"Đinh hương gia vị không thể thiếu trong nước dùng phở\" height=\"614\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Dinh-huong-1.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></b></h2>\r\n\r\n<h2><b>Thảo quả</b></h2>\r\n\r\n<p>Theo nhận định của nhiều chuy&ecirc;n gia,&nbsp;<a href=\"https://unispice.vn/san-pham/thao-qua/\"><strong>thảo quả</strong></a>&nbsp;c&oacute; h&agrave;m lượng dưỡng chất phong ph&uacute; như carbohydrate, protein, vitamin C c&ugrave;ng nhiều kho&aacute;ng chất kh&aacute;c như đồng, sắt, canxi, phốt pho,&hellip; Do vậy, d&ugrave; được d&ugrave;ng để l&agrave;m thuốc chữa bệnh hay gia vị nấu ăn, thảo quả đều mang đến nhiều lợi &iacute;ch cho sức khỏe. Đặc biệt, hương vị cay nồng, m&ugrave;i thơm c&ugrave;ng vị ngọt dịu đ&atilde; khiến thảo quả trở th&agrave;nh gia vị nấu nước d&ugrave;ng phở kh&ocirc;ng thể thiếu.</p>\r\n\r\n<p><img alt=\"Thảo quả gia vị trong nước dùng phở truyền thống\" height=\"744\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Thao-qua.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p>B&ecirc;n cạnh đ&oacute;, thảo quả c&ograve;n được sử dụng để tạo hương vị thơm ngon cho nhiều m&oacute;n ăn, đồ uống kh&aacute;c, k&iacute;ch th&iacute;ch vị gi&aacute;c v&agrave; cảm gi&aacute;c ngon miệng khi thưởng thức.&nbsp;</p>\r\n\r\n<h2><b>Hạt m&ugrave;i</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/hat-mui/\"><strong>Hạt m&ugrave;i</strong></a>&nbsp;ch&iacute;nh l&agrave; phần hạt của rau m&ugrave;i đ&atilde; được sấy kh&ocirc;, được sử dụng khi chế biến nhiều m&oacute;n ăn, trong đ&oacute; c&oacute; nước phở. Nhờ hương thơm dễ chịu, hạt m&ugrave;i kh&ocirc;ng chỉ l&agrave; gia vị n&ecirc;m nếm, m&agrave; c&ograve;n c&oacute; t&aacute;c dụng khử m&ugrave;i n&ecirc;n thường được sử dụng để ướp thịt heo, thịt g&agrave;, thịt vịt,.. Ngo&agrave;i ra,&nbsp;<a href=\"https://unispice.vn/san-pham/bot-hat-mui/\"><strong>bột hạt m&ugrave;i</strong>&nbsp;</a>cũng được ứng dụng cho nhiều m&oacute;n ăn kh&aacute;c như c&agrave; ri, lẩu b&ograve;, ph&aacute; lấu,&hellip;</p>\r\n\r\n<p><img alt=\"Hạt mùi gia vị có thường dùng trong nước dùng phở\" height=\"672\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Hat-mui.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p>Tr&ecirc;n đ&acirc;y l&agrave; những gia vị thảo mộc cơ bản để tạo n&ecirc;n nước d&ugrave;ng phở mang hương vị truyền thống. T&ugrave;y theo khẩu vị của người nấu, c&aacute;c gia vị n&agrave;y sẽ c&oacute; sự biến tấu theo c&ocirc;ng thức, c&aacute;ch chế biến ri&ecirc;ng để tạo n&ecirc;n n&eacute;t độc đ&aacute;o ri&ecirc;ng cho nước d&ugrave;ng phở. Th&ocirc;ng thường, khi sơ chế, người ta thường d&ugrave;ng c&aacute;c nguy&ecirc;n liệu ở dạng kh&ocirc; thay v&igrave; dạng bột, rang sơ tr&ecirc;n chảo n&oacute;ng cho dậy vị rồi cho v&agrave;o t&uacute;i lọc v&agrave; nấu với nước d&ugrave;ng phở để cho ra hương thơm tinh t&uacute;y nhất.&nbsp;</p>\r\n\r\n<p>Mong rằng b&agrave;i viết tr&ecirc;n đ&acirc;y đ&atilde; gi&uacute;p bạn đọc c&oacute; th&ecirc;m những kinh nghiệm hữu &iacute;ch trong nấu ăn, đặc biệt l&agrave; c&aacute;c b&iacute; k&iacute;p để tạo n&ecirc;n nước d&ugrave;ng phở ngon chuẩn vị.</p>\r\n', 'tin_tuc/hoa_hoi_1.jpg', 1, 1, 'Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh', '', '', '', 129, 0, 0, 0, '', '', 1, 29, 'en', '2024-06-13 09:30:55', '2026-06-08 17:57:16', 0),
-(126, 617, 'Hạt tiêu - Loại gia vị bé nhỏ mà bùng nổ hương vị ấm nồng', 'hat-tieu-loai-gia-vi-be-nho-ma-bung-no-huong-vi-am-nong-4', 'Hạt tiêu là quả của cây hồ tiêu. Loài cây này có thân dạng dây leo, mọc thành đốt. Ở mỗi đốt lại mọc rễ để cây có thể bám và leo lên cột, giàn. Lá hồ tiêu có điểm tương đồng với lá trầu nhưng bé hơn, cứng và dày hơn. ', '<h4 dir=\"ltr\">Hạt ti&ecirc;u tuy nhỏ b&eacute; nhưng lại mang trong m&igrave;nh vị cay nồng ấm, c&ugrave;ng với m&ugrave;i hương rất đặc trưng. Đ&acirc;y l&agrave; loại gia vị quen thuộc trong gian bếp của nhiều gia đ&igrave;nh Việt. Thế nhưng, bạn đ&atilde; bao giờ tự hỏi hạt ti&ecirc;u c&oacute; nguồn gốc từ đ&acirc;u v&agrave; c&oacute; tất cả bao nhi&ecirc;u loại ti&ecirc;u chưa? C&ugrave;ng Poseidon t&igrave;m hiểu nh&eacute;.&nbsp;</h4>\r\n\r\n<h4 dir=\"ltr\">Hạt ti&ecirc;u l&agrave; g&igrave;?&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">Hạt ti&ecirc;u l&agrave; quả của c&acirc;y hồ ti&ecirc;u. Lo&agrave;i c&acirc;y n&agrave;y c&oacute; th&acirc;n dạng d&acirc;y leo, mọc th&agrave;nh đốt. Ở mỗi đốt lại mọc rễ để c&acirc;y c&oacute; thể b&aacute;m v&agrave; leo l&ecirc;n cột, gi&agrave;n. L&aacute; hồ ti&ecirc;u c&oacute; điểm tương đồng với l&aacute; trầu nhưng b&eacute; hơn, cứng v&agrave; d&agrave;y hơn.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Quả hồ ti&ecirc;u mọc li&ecirc;n tiếp tr&ecirc;n chu&ocirc;i, với chiều d&agrave;i khoảng 7 - 10cm, thậm ch&iacute; 25cm. Mỗi quả l&agrave; một h&igrave;nh cầu nhỏ, b&aacute;n kinh khoảng 2 - 3mm. Thời gian thu hoạch ti&ecirc;u rơi v&agrave;o th&aacute;ng 12 v&agrave; k&eacute;o d&agrave;i đến th&aacute;ng 3 năm sau.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">C&acirc;y ti&ecirc;u c&oacute; tuổi thọ kh&ocirc;ng qu&aacute; cao, ưa th&iacute;ch những triền đồi cao r&aacute;o, m&aacute;t mẻ, tho&aacute;ng nước. V&igrave; vậy, lo&agrave;i c&acirc;y n&agrave;y được trồng nhiều ở c&aacute;c tỉnh T&acirc;y Nguy&ecirc;n, đảo Ph&uacute; Quốc, Quảng Trị, B&igrave;nh Phước, B&agrave; Rịa Vũng T&agrave;u v&agrave; c&aacute;c nước tr&ecirc;n thế giới như Trung Quốc, Ấn Độ, Th&aacute;i Lan.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-01-jpg.jpg\" />Hạt ti&ecirc;u ch&iacute;nh l&agrave; quả của c&acirc;y hồ ti&ecirc;u&nbsp;<em>(Ảnh: doanhnghiephoinhap.vn)</em></p>\r\n\r\n<h4 dir=\"ltr\">Hạt ti&ecirc;u xuất hiện từ khi n&agrave;o?&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">C&acirc;y hồ ti&ecirc;u được người Ấn Độ ph&aacute;t hiện ra c&aacute;ch đ&acirc;y khoảng 2000 năm trước C&ocirc;ng Nguy&ecirc;n, tại những khu rừng hoang ph&iacute;a T&acirc;y Nam nước n&agrave;y (v&ugrave;ng Assam v&agrave; Ghats). Thời điểm đ&oacute;, đ&acirc;y được coi l&agrave; cống phẩm qu&yacute; gi&aacute; d&acirc;ng l&ecirc;n vua ch&uacute;a, thậm ch&iacute; họ c&ograve;n d&ugrave;ng ti&ecirc;u để bồi thường thiệt hại chiến tranh.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">M&atilde;i đến đầu thế kỷ 13, c&acirc;y hồ ti&ecirc;u mới được trồng rộng r&atilde;i v&agrave; sử dụng như một loại gia vị trong nấu nướng. &nbsp;L&uacute;c đ&oacute;, hồ ti&ecirc;u được v&iacute; như v&agrave;ng đen - trở th&agrave;nh một loại đơn vị tiền tệ để trao đổi h&agrave;ng h&oacute;a.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">V&agrave;o khoảng thế kỷ 16, hồ ti&ecirc;u vượt bi&ecirc;n giới, lan rộng đến c&aacute;c nước kh&aacute;c trong khu vực Nam &aacute; v&agrave; Đ&ocirc;ng Nam &Aacute;. Đến thế kỷ 19, hồ ti&ecirc;u c&oacute; mặt tại Ch&acirc;u Mĩ v&agrave; Ch&acirc;u Phi&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Hồ ti&ecirc;u xuất hiện tại Việt nam v&agrave;o thế kỷ 17, khi thực d&acirc;n Ph&aacute;p x&acirc;m lược, người Ph&aacute;p đ&atilde; trồng ch&uacute;ng. Hiện nay, Việt Nam l&agrave; một trong những nước xuất khẩu hồ ti&ecirc;u lớn nhất tr&ecirc;n thế giới.&nbsp;</p>\r\n\r\n<h4 dir=\"ltr\">Việt nam c&oacute; bao nhi&ecirc;u loại ti&ecirc;u?&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">Tại Việt Nam c&oacute; 5 loại phổ biến, đ&oacute; l&agrave; ti&ecirc;u đen, ti&ecirc;u xanh, ti&ecirc;u trắng (ti&ecirc;u sọ), ti&ecirc;u hồng v&agrave; hạt mắc kh&eacute;n T&acirc;y Bắc.&nbsp;</p>\r\n\r\n<p><strong>1. Ti&ecirc;u đen&nbsp;</strong></p>\r\n\r\n<p dir=\"ltr\">Đ&acirc;y l&agrave; loại ti&ecirc;u quen thuộc nhất trong gian bếp của c&aacute;c gia đ&igrave;nh Việt Nam. Để c&oacute; được ti&ecirc;u đen, người n&ocirc;ng d&acirc;n sẽ thu hoạch những quả ti&ecirc;u đ&atilde; trưởng th&agrave;nh nhưng vẫn c&ograve;n xanh. Dấu hiệu nhận biết ti&ecirc;u đ&atilde; c&oacute; thể thu hoạch để l&agrave;m ti&ecirc;u đen l&agrave; khi trong ch&ugrave;m hồ ti&ecirc;u đ&atilde; bắt đầu xuất hiện một v&agrave;i quả đỏ hoặc v&agrave;ng. Sau thu hoạch, quả sẽ được đem phơi. Khi phơi kh&ocirc;, vỏ quả sẽ săn cứng lại v&agrave; c&oacute; m&agrave;u đen, đ&oacute; ch&iacute;nh l&agrave; ti&ecirc;u đen.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-05-jpg.jpg\" />&nbsp;Ba chỉ b&ograve; Mỹ ướp ti&ecirc;u đen tr&ecirc;n quầy live Buffet Poseidon</p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u đen c&oacute; vị cay, c&ugrave;ng với đ&oacute; l&agrave; m&ugrave;i thơm nhẹ. Loại ti&ecirc;u n&agrave;y thường được d&ugrave;ng để tăng vị cay ấm, tăng hương vị cho m&oacute;n ăn. Đặc biệt, sốt ti&ecirc;u đen c&ograve;n l&agrave; loại gia vị ướp thịt &ldquo;thần th&aacute;nh&rdquo;, gi&uacute;p cho&nbsp;<a href=\"https://buffetposeidon.com/tin-tuc/diem-danh-cac-loai-thit-buffet-nuong-tai-poseidon\">c&aacute;c m&oacute;n buffet nướng thơm ngon hết &yacute;</a>.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><strong>2. Ti&ecirc;u xanh</strong></p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u xanh l&agrave; quả hồ ti&ecirc;u chưa ch&iacute;n lắm. N&ocirc;ng d&acirc;n thường sẽ thu hoạch cả ch&ugrave;m khi ti&ecirc;u c&ograve;n xanh, hạt chưa tạo so ti&ecirc;u v&agrave; c&ograve;n mềm.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Loại ti&ecirc;u n&agrave;y c&oacute; vị cay nhẹ v&agrave; hương thơm thoang thoảng ở mức độ vừa phải. Ti&ecirc;u xanh c&oacute; t&iacute;nh n&oacute;ng ẩm, thường được d&ugrave;ng trong c&aacute;c m&oacute;n hầm để lấy hương v&agrave; khử m&ugrave;i của nguy&ecirc;n liệu. Ngo&agrave;i ra, ti&ecirc;u xanh c&ograve;n được sử dụng trong c&aacute;c m&oacute;n nướng, trong đ&oacute; kh&ocirc;ng thể kh&ocirc;ng nhắc tới&nbsp;<a href=\"https://buffetposeidon.com/default/oc-nuong-tieu-mon-ngon-nhat-dinh-phai-lam-mot-lan-cho-ca-nha\">ốc bươu nướng ti&ecirc;u xanh</a>&nbsp;d&acirc;n gi&atilde; m&agrave; v&ocirc; c&ugrave;ng hấp dẫn.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-04-jpg.jpg\" />Thơm ngon kh&oacute; cưỡng với m&oacute;n ốc bươu nướng ti&ecirc;u xanh nh&agrave; Poseidon</p>\r\n\r\n<p dir=\"ltr\"><strong>3. Ti&ecirc;u sọ (hồ ti&ecirc;u trắng)</strong></p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u sọ hay hồ ti&ecirc;u trắng ch&iacute;nh l&agrave; loại ti&ecirc;u thu được khi h&aacute;i những quả hồ ti&ecirc;u thật ch&iacute;n, vỏ đ&atilde; chuyển đỏ v&agrave; loại bỏ phần vỏ của ch&uacute;ng.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Loại ti&ecirc;u n&agrave;y c&oacute; m&agrave;u trắng x&aacute;m hoặc trắng ng&agrave;, c&oacute; m&ugrave;i thơm hơn v&igrave; đ&atilde; được loại bỏ phần tinh dầu cay v&agrave; phần vỏ. Tuy nhi&ecirc;n, ti&ecirc;u sọ lại cay hơn bởi quả được thu hoạch khi đ&atilde; rất ch&iacute;n.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">V&igrave; m&agrave;u sắc đẹp, kh&ocirc;ng l&agrave;m mất đi t&iacute;nh thẩm mỹ của m&oacute;n ăn n&ecirc;n ti&ecirc;u sọ thường được d&ugrave;ng để tạo m&ugrave;i hương cho c&aacute;c thực đơn sang trọng.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><strong>4. Ti&ecirc;u hồng (ti&ecirc;u đỏ)</strong></p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u hồng hay c&ograve;n được gọi l&agrave; ti&ecirc;u đỏ. Đ&acirc;y l&agrave; một loại c&acirc;y bụi nhỏ c&oacute; t&ecirc;n tiếng Anh Pink Pepper.</p>\r\n\r\n<p dir=\"ltr\">Tuy gọi l&agrave; ti&ecirc;u hồng trong tiếng Việt nhưng ch&uacute;ng vốn dĩ kh&ocirc;ng thuộc họ nh&agrave; c&acirc;y hồ ti&ecirc;u v&agrave; cũng kh&ocirc;ng phải hạt ti&ecirc;u. Ch&uacute;ng được gọi l&agrave; ti&ecirc;u hồng bởi c&oacute; vỏ hồng thắm v&agrave; mang vị cay nồng ấm như c&aacute;c loại ti&ecirc;u kh&aacute;c.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><strong>5. Hạt mắc kh&eacute;n</strong></p>\r\n\r\n<p dir=\"ltr\">Hạt mắc kh&eacute;n c&oacute; vị cay v&agrave; hương thơm kh&aacute; tương đồng với ti&ecirc;u. Đ&acirc;y l&agrave; loại gia vị nổi tiếng của T&acirc;y Bắc. Ch&uacute;ng xuất hiện hầu hết trong c&aacute;c m&oacute;n ăn của người d&acirc;n tộc khu vực n&agrave;y, đặc biệt l&agrave; d&acirc;n tộc Th&aacute;i.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Đặc biệt, hạt mắc kh&eacute;n c&ograve;n cho cảm gi&aacute;c cay, t&ecirc; t&ecirc; đầu lưỡi v&agrave; c&oacute; hương thơm nồng gấp nhiều lần hạt ti&ecirc;u.&nbsp;</p>\r\n\r\n<h4 dir=\"ltr\">Hạt ti&ecirc;u trong văn h&oacute;a ẩm thực&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">Từ l&acirc;u đời, hạt ti&ecirc;u được con người sử dụng l&agrave;m gia vị khi chế biến c&aacute;c m&oacute;n ăn. Hạt ti&ecirc;u xuất hiện trong gian bếp của mọi gia đ&igrave;nh, từ những m&oacute;n ăn b&igrave;nh d&acirc;n, tới những m&oacute;n ăn đắt đỏ, sang trọng. Đ&acirc;y l&agrave; loại gia vị quốc d&acirc;n tại nhiều nước tr&ecirc;n thế giới, trong đ&oacute; c&oacute; Việt Nam.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-03-jpg.jpg\" />Ti&ecirc;u l&agrave; loại gia vị kh&ocirc;ng thể thiếu trong gian bếp của nhiều gia đ&igrave;nh&nbsp;<em>(Ảnh: hoptri.com)</em></p>\r\n\r\n<p dir=\"ltr\">Vị cay của ti&ecirc;u cũng v&ocirc; c&ugrave;ng đặc biệt m&agrave; kh&ocirc;ng một loại gia vị n&agrave;o c&oacute; thể thay thế tr&ecirc;n bản đồ gia vị. Ch&uacute;ng kh&ocirc;ng cay nồng &ldquo;ứa lệ&rdquo; như ớt, cũng kh&ocirc;ng khiến thực kh&aacute;ch phải &ldquo;nghẹn ng&agrave;o&rdquo; như m&ugrave; tạt. Vị cay của ti&ecirc;u nồng ấm, nhẹ nh&agrave;ng nhưng c&oacute; sức lan tỏa m&atilde;nh liệt.</p>\r\n\r\n<p dir=\"ltr\">C&oacute; thể v&iacute; ti&ecirc;u như một vị &ldquo;qu&acirc;n sư&rdquo; trong l&agrave;ng gia vị. Bởi hạt ti&ecirc;u c&oacute; t&aacute;c dụng khử tanh, tạo m&ugrave;i thơm cho m&oacute;n ăn nhưng kh&ocirc;ng l&agrave;m đổi vị hay lấn &aacute;t mất nguy&ecirc;n liệu. Hương thơm hay vị cay của ti&ecirc;u thật vừa vặn cho mọi m&oacute;n ăn.&nbsp;</p>\r\n', 'tin_tuc/161023_kham_pha_hat_tieu_buffet_poseidon_01_jpg.jpg', 1, 1, 'Hạt tiêu - Loại gia vị bé nhỏ mà bùng nổ hương vị ấm nồng', '', '', '', 129, 0, 0, 0, '', '', 1, 18, 'en', '2024-06-13 08:46:06', '2026-06-08 17:57:16', 0);
-INSERT INTO `db_posts` (`id`, `id_code`, `title`, `slug`, `description`, `content`, `image`, `is_featured`, `status`, `seo_title`, `keyword`, `tags`, `seo_description`, `category_id`, `sort_order`, `nofollow`, `noindex`, `seo_head`, `seo_body`, `created_by`, `views`, `lang`, `created_at`, `updated_at`, `updated_by`) VALUES
-(127, 631, 'Tác dụng tuyệt diệu của hỗn hợp quế và mật ong : tốt cho tim; làm giảm đau xương khớp', 'tac-dung-tuyet-dieu-cua-hon-hop-que-va-mat-ong-tot-cho-tim-lam-giam-dau-xuong-khop--4', 'Chữa tận gốc bệnh đau dạ dày do lạnh; cực kỳ tốt cho tim; làm giảm đau xương khớp; giúp cơ thể khỏe mạnh và làm đẹp da; làm giảm mỡ trong máu… là số ít trong vô số tác dụng của hỗn hợp quế và mật ong…', '<p>Chữa tận gốc bệnh đau dạ d&agrave;y do lạnh; cực kỳ tốt cho tim; l&agrave;m giảm đau xương khớp; gi&uacute;p cơ thể khỏe mạnh v&agrave; l&agrave;m đẹp da; l&agrave;m giảm mỡ trong m&aacute;u&hellip; l&agrave; số &iacute;t trong v&ocirc; số t&aacute;c dụng của hỗn hợp quế v&agrave; mật ong&hellip;</p>\r\n\r\n<p>B&agrave;i đăng tr&ecirc;n tạp ch&iacute; &ldquo;Tin tức thế giới h&agrave;ng tuần&rdquo; (Weekly World News) xuất bản tại Canada, đ&atilde; liệt k&ecirc; một số c&aacute;c chứng bệnh được chữa khỏi (cured) do hỗn hợp mật ong v&agrave; bột quế, được c&aacute;c nh&agrave; khoa học Phương T&acirc;y nghi&ecirc;n cứu kỹ lưỡng v&agrave; phổ biến.</p>\r\n\r\n<p>Theo họ th&igrave; mật ong đ&atilde; được khắp thế giới biết v&agrave; được sử dụng như l&agrave; 1 loại dược chất sinh học (Vital medicine) từ nhiều thế kỷ trước. Ng&agrave;y nay, qua khảo s&aacute;t v&agrave; nghi&ecirc;n cứu kiểm chứng, c&aacute;c khoa học gia đ&atilde; nhận thấy v&agrave; chấp nhận mật ong l&agrave; 1 loại dược chất chữa được nhiều chứng bệnh.</p>\r\n\r\n<p>Chữa bệnh bằng quế v&agrave; mật ong</p>\r\n\r\n<p>Điểm đặc biệt l&agrave; mật ong kh&ocirc;ng c&oacute; phản ứng phụ đối với bất cứ căn bệnh n&agrave;o. Trong đ&oacute; người ta cho biết, d&ugrave; mật ong tuy vị ngọt, nhưng nếu d&ugrave;ng với liều lượng vừa phải như l&agrave; 1 loại dược chất, n&oacute; cũng sẽ kh&ocirc;ng g&acirc;y ảnh hưởng nguy hại cho người tiểu đường.</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 1</p>\r\n\r\n<p>Liều lượng v&agrave; c&aacute;ch sử dụng được hưởng dẫn như sau:</p>\r\n\r\n<ol>\r\n	<li>Đau khớp xương</li>\r\n</ol>\r\n\r\n<p>a) 1 phần mật ong, 2 phần nước ấm, 1 muỗng caf&eacute; bột quế. Trộn lại th&agrave;nh 1 hỗn hợp sền sệt rồi đắp l&ecirc;n chỗ đau nhức v&agrave; thoa chầm chậm, nh&egrave; nhẹ. Cơn đau sẽ giảm nhẹ sau v&agrave;i ph&uacute;t.</p>\r\n\r\n<p>b) Người ta cũng c&oacute; thể pha 2 muỗng caf&eacute; mật ong 1 muỗng caf&eacute; bột quế trong 1 ly nước n&oacute;ng, uống đều đặn h&agrave;ng ng&agrave;y v&agrave;o buổi s&aacute;ng v&agrave; buổi tối c&oacute; thể gi&uacute;p cho những người bị đau khớp xương kinh ni&ecirc;n tho&aacute;t khỏi c&aacute;c cơn đau.</p>\r\n\r\n<p>Trong một c&ocirc;ng cuộc nghi&ecirc;n cứu tại Đại Học Copenhagen người ta đ&atilde; ghi nhận rằng: c&aacute;c BS khi điều trị c&aacute;c bệnh nh&acirc;n bị đau nhức với 1 hỗn hợp gồm: 1 muỗng mật ong v&agrave; 1/2 muỗng caf&eacute; bột quế v&agrave;o bữa điểm t&acirc;m, sau 1 tuần lễ, kết quả 200 người được điều trị 73 người đ&atilde; ho&agrave;n to&agrave;n hết đau, v&agrave; sau 1 th&aacute;ng được chữa trị hầu hết c&aacute;c bệnh</p>\r\n\r\n<ol start=\"2\">\r\n	<li>Cao mỡ trong m&aacute;u (High cholesterol)</li>\r\n</ol>\r\n\r\n<p>2 muỗng soup mật ong, 3 muỗng caf&eacute; bột quế, 16 ounce nước tr&agrave;. Quậy đều để cho người bị cao mỡ trong m&aacute;u uống, sau 2 giờ, đo lượng Cholesterol trong m&aacute;u người ta thấy giảm xuống 10%.</p>\r\n\r\n<ul>\r\n	<li>Cũng theo t&agrave;i liệu của tạp ch&iacute; Weekly World News th&igrave; nếu người bị cao Cholesterol d&ugrave;ng mật ong nguy&ecirc;n chất với thực phẩm h&agrave;ng ng&agrave;y c&oacute; thể giảm lượng cholesterol đ&aacute;ng kể.</li>\r\n	<li>Đối với người bị đau khớp xương kinh ni&ecirc;n, nếu uống theo c&ocirc;ng thức tr&ecirc;n, 3 lần trong 1 ng&agrave;y th&igrave; ngo&agrave;i giảm bớt đau nhức khớp xương ra c&ograve;n giảm được Cholesterol trong m&aacute;u nữa.</li>\r\n</ul>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 2</p>\r\n\r\n<ol start=\"3\">\r\n	<li>Bệnh về tim mạch (Heart diseases)</li>\r\n</ol>\r\n\r\n<p>Trộn mật ong v&agrave; bột quế sền sệt rồi quết l&ecirc;n b&aacute;nh m&igrave; thay cho mứt tr&aacute;i c&acirc;y (Jelly Jam) d&ugrave;ng cho bữa điểm t&acirc;m mỗi s&aacute;ng. Nếu ăn đều đặn như thế c&oacute; thể l&agrave;m giảm lượng Cholesterol trong c&aacute;c mạch m&aacute;u, điều nầy gi&uacute;p cho c&aacute;c bệnh nh&acirc;n bị bệnh tim mạch tr&aacute;nh được chứng đột qụy (heart attack).</p>\r\n\r\n<p>Nếu những ai đ&atilde; từng bị đột qụy rồi th&igrave; c&oacute; thể tr&aacute;nh xa được cơn đột qụy kết tiếp, khi tiếp tục ăn điểm t&acirc;m như kể tr&ecirc;n.</p>\r\n\r\n<ol start=\"4\">\r\n	<li>Tăng cường hệ thống miễn nhiễm (Immune system)</li>\r\n</ol>\r\n\r\n<p>Nếu d&ugrave;ng mật ong v&agrave; bột quế h&agrave;ng ng&agrave;y sẽ gi&uacute;p cho hệ thống miễn nhiễm được tăng mạnh th&ecirc;m v&agrave; gi&uacute;p bảo vệ cho cơ thể kh&oacute; bị vi tr&ugrave;ng v&agrave; si&ecirc;u vi khuẩn tấn c&ocirc;ng.</p>\r\n\r\n<p>Xử dụng mật ong đều đặn sẽ gi&uacute;p cho bạch huyết cầu tăng th&ecirc;m khả năng chống lại sự x&acirc;m nhập của vi tr&ugrave;ng v&agrave; si&ecirc;u vi khuẩn trong c&aacute;c mầm bệnh.</p>\r\n\r\n<ol start=\"5\">\r\n	<li>Nhiễm tr&ugrave;ng đường tiểu (Blađer infection) B&agrave;ng quang</li>\r\n</ol>\r\n\r\n<p>Lấy 2 muỗng canh bột quế, 1 muỗng caf&eacute; mật ong, 1 ly nước ấm. Quậy đều rồi uống cạn sẽ ti&ecirc;u điệt được c&aacute;c vi tr&ugrave;ng (Germ) mầm bệnh trong b&agrave;ng quan.</p>\r\n\r\n<ol start=\"6\">\r\n	<li>Nhức răng (Toothache)</li>\r\n</ol>\r\n\r\n<p>D&ugrave;ng 5 muỗng caf&eacute; mật ong, 1 muỗng caf&eacute; bột quế trộn lại với nhau th&agrave;nh hợp chất sền sệt rồi đắp l&ecirc;n chỗ răng đau. L&agrave;m như vậy 3 lần trong 1 ng&agrave;y cho đến khi răng kh&ocirc;ng c&ograve;n đau nữa.</p>\r\n\r\n<ol start=\"7\">\r\n	<li>C&uacute;m (Influenza).</li>\r\n</ol>\r\n\r\n<p>Một khoa học gia tại T&acirc;y Ban Nha (Spain) đ&atilde; chứng minh rằng, trong mật ong c&oacute; chứa 1 chất thi&ecirc;n nhi&ecirc;n c&oacute; khả năng ti&ecirc;u diệt được c&aacute;c mầm si&ecirc;u vi của bệnh cảm c&uacute;m gi&uacute;p cho người ta khỏi bị c&uacute;m (Flu).</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 3</p>\r\n\r\n<ol start=\"8\">\r\n	<li>Cảm lạnh (Colds)</li>\r\n</ol>\r\n\r\n<p>Đối với những người bị cảm lạnh thường hay cảm nặng c&oacute; thể d&ugrave;ng:</p>\r\n\r\n<p>1 muỗng canh mật ong h&acirc;m ấm l&ecirc;n (Warm) v&agrave; 1/4 muỗng caf&eacute; bột quế. D&ugrave;ng li&ecirc;n tục trong v&ograve;ng 3 ng&agrave;y th&igrave; c&oacute; thể chữa l&agrave;nh được c&aacute;c chứng ho kinh ni&ecirc;n, v&agrave; cảm lạnh cũng như chảy nước mũi cũng ngưng lại.</p>\r\n\r\n<ol start=\"9\">\r\n	<li>C&aacute;c chứng về ti&ecirc;u h&oacute;a (dạ d&agrave;y)</li>\r\n</ol>\r\n\r\n<p>a) Dạ d&agrave;y kh&oacute; chịu (Upset stomach): Mật ong v&agrave; bột quế c&oacute; thể chữa l&agrave;nh bệnh đau bao tử cũng như trị tận gốc bệnh bao tử.</p>\r\n\r\n<p>b) Bao tử đầy hơi (Gas): Theo những nghi&ecirc;n cứu đ&atilde; thực hiện tại Nhật Bản v&agrave; Ấn Độ cho thấy, mật ong v&agrave; bột quế đ&atilde; l&agrave;m hết bị đầy hơi trong bao tử.</p>\r\n\r\n<p>c) Bột quế được trộn chung với 2 muỗng canh mật ong d&ugrave;ng trước khi tham dự 1 bữa ăn thịnh soạn nhiều thịt th&agrave;, sẽ gi&uacute;p cho người ta ti&ecirc;u h&oacute;a được c&aacute;c bữa ăn đ&oacute; dễ d&agrave;ng.</p>\r\n\r\n<ol start=\"10\">\r\n	<li>Mệt mỏi (Fatigue).</li>\r\n</ol>\r\n\r\n<p>C&aacute;c nghi&ecirc;n cứu thấy rằng, chất ngọt trong mật ong gi&uacute;p cơ thể con người tốt hơn l&agrave; l&agrave;m hại. Cho n&ecirc;n những người cao ni&ecirc;n d&ugrave;ng mật ong v&agrave; bột quế với tỉ lệ bằng nhau gi&uacute;p cho họ dẻo dai v&agrave; tinh tường hơn. Theo BS Milton sau khi đ&atilde; nghi&ecirc;n cứu n&oacute;i rằng: Khi người ta cảm thấy sự sinh động của m&igrave;nh bắt đầu suy giảm, h&atilde;y d&ugrave;ng hằng ng&agrave;y, sau khi đ&aacute;nh răng v&agrave;o buổi s&aacute;ng v&agrave; khoảng l&uacute;c 3 giờ chiều, 1 ly nước ấm trong đ&oacute; pha 1/2 muỗng canh mật ong ngo&aacute;y đều với 1 muỗng caf&eacute; bột quế. Kết quả sẽ thấy sự sinh động của m&igrave;nh l&ecirc;n trở lại trong v&ograve;ng 1 tuần lễ.</p>\r\n\r\n<ol start=\"11\">\r\n	<li>K&eacute;o d&agrave;i tuổi thọ (Longivety)</li>\r\n</ol>\r\n\r\n<p>Khi uống nước tr&agrave; pha với mật ong v&agrave; bột quế đều đặn mỗi ng&agrave;y, người ta c&oacute; thể l&agrave;m chậm sự l&atilde;o h&oacute;a, k&eacute;o d&agrave;i th&ecirc;m tuổi thọ, theo c&ocirc;ng thức như sau: 4 muỗng mật ong, 1 muỗng bột quế bỏ v&agrave;o 1 b&igrave;nh trong đ&oacute; c&oacute; 3 ly nước rồi đem đun s&ocirc;i l&ecirc;n như người ta pha nước tr&agrave;.</p>\r\n\r\n<p>C&aacute;ch d&ugrave;ng: Mỗi lần uống 1/4 ly, mỗi ng&agrave;y 3 hay 4 lần. Kết quả tốt sẽ thấy l&agrave; da dẻ hồng h&agrave;o tươi trẻ, mịn m&agrave;ng. Thực thế t&ocirc;i quen biết 1 vị cao ni&ecirc;n t&ecirc;n l&agrave; Cụ Mai Phương 86t, đ&atilde; &aacute;p dụng phương ph&aacute;p nầy hơn 20 năm nay. C&aacute;ch uống l&agrave; th&ecirc;m v&agrave;i giọt chanh v&agrave;o ly nước trước khi uống, sức khỏe rất tốt.</p>\r\n\r\n<ol start=\"12\">\r\n	<li>Giảm c&acirc;n, chống b&eacute;o mập (Weight loss)</li>\r\n</ol>\r\n\r\n<p>H&agrave;ng ng&agrave;y 1/2 giờ trước khi ăn điểm t&acirc;m l&uacute;c bụng đ&oacute;i v&agrave; 1/2 giờ trước khi đi ngủ h&atilde;y uống 1 l&yacute; nước đun s&ocirc;i c&oacute; pha 1 muỗng mật ong v&agrave; 1 muỗng caf&eacute; bột quế. Nếu uống như vậy đều đặn h&agrave;ng ng&agrave;y th&igrave; ngay cả người bị b&eacute;o ph&igrave; cũng giảm chậm sự t&iacute;ch tụ chất b&eacute;o trong cơ th&ecirc;, v&agrave; c&oacute; hiệu quả ngay đối với người ăn c&aacute;c loại thực phẩm c&oacute; nhiều Calories trong bữa ăn h&agrave;ng ng&agrave;y.</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 4</p>\r\n\r\n<ol start=\"13\">\r\n	<li>Da bị nhiễm tr&ugrave;ng (Skin infection)</li>\r\n</ol>\r\n\r\n<p>Khi da bị l&aacute;t đồng tiền (Ring worm) v&agrave; c&aacute;c loại nhiễm tr&ugrave;ng da c&oacute; thể chữa trị bằng c&aacute;ch đắp l&ecirc;n v&ugrave;ng da bị nhiễm tr&ugrave;ng 1 hỗn hợp trộn mật ong v&agrave; bột quế với ph&acirc;n lượng bằng nhau.</p>\r\n\r\n<ol start=\"14\">\r\n	<li>Trị mụn (Pimples)</li>\r\n</ol>\r\n\r\n<p>Với c&ocirc;ng thức 3 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn lại sền sệt b&ocirc;i l&ecirc;n c&aacute;c mụn trước khi đi ngủ, s&aacute;ng h&ocirc;m sau rửa mặt bằng nước ấm. L&agrave;m như thế trong v&ograve;ng 2 tuần lễ th&igrave; c&aacute;c mụn sẽ được trị tận gốc.</p>\r\n\r\n<ol start=\"15\">\r\n	<li>Trị h&ocirc;i miệng (Bad breath)</li>\r\n</ol>\r\n\r\n<p>Để trị h&ocirc;i miệng, hơi thở được thơm tho, những người d&acirc;n tại v&ugrave;ng Nam Mỹ (South America) đ&atilde; l&agrave;m việc đầu ti&ecirc;n v&agrave;o buổi s&aacute;ng l&agrave; s&uacute;c miệng với 1 ly nước n&oacute;ng c&oacute; pha với 1 muỗng caf&eacute; mật ong v&agrave; bột quế quậy đều. Hơi thở của họ kh&ocirc;ng h&ocirc;i v&agrave; thơm m&ugrave;i quế suốt cả ng&agrave;y.</p>\r\n\r\n<ol start=\"16\">\r\n	<li>Gi&uacute;p phục hồi th&iacute;nh gi&aacute;c bị suy giảm, điếc (Hearing loss)</li>\r\n</ol>\r\n\r\n<p>H&agrave;ng ng&agrave;y uống đều đặn v&agrave;o mỗi buổi s&aacute;ng v&agrave; buổi tối trước khi ngủ 1 ly nước ấm c&oacute; pha mật ong v&agrave; bột quế với ph&acirc;n lượng bằng nhau, sẽ phục hồi lại t&igrave;nh trạng th&iacute;nh gi&aacute;c (tai) bị điếc, nghễnh ng&atilde;ng.</p>\r\n\r\n<ol start=\"17\">\r\n	<li>Rụng t&oacute;c v&agrave; h&oacute;i đầu (Hair loss &amp; Baldness)</li>\r\n</ol>\r\n\r\n<p>Những người bị rụng t&oacute;c hay h&oacute;i đầu c&oacute; thể d&ugrave;ng phương c&aacute;ch sau đ&acirc;y:</p>\r\n\r\n<p>Lấy 1 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn với dầu Olive th&agrave;nh 1 hỗn hợp rồi b&ocirc;i l&ecirc;n đầu khoảng 15 ph&uacute;t, sau đ&oacute; đi tắm v&agrave; gội đầu. Kết quả ghi nhận l&agrave; rất c&oacute; hiệu quả, ngay cả khi đi tắm v&agrave; gội đầu 5 ph&uacute;t sau khi b&ocirc;i.</p>\r\n\r\n<p>Ngo&agrave;i ra b&agrave;i b&aacute;o c&ograve;n n&oacute;i đến hiệu quả tốt đẹp của việc xử dụng hỗn hợp mật ong v&agrave; bột quế trong c&aacute;c trường hợp bị v&ocirc; sinh (Infertility) v&agrave; bệnh ung thư (Cancer).</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 5</p>\r\n\r\n<ol start=\"18\">\r\n	<li>V&ocirc; sinh (Infertility)</li>\r\n</ol>\r\n\r\n<ul>\r\n	<li>Yunami &amp; Ayurredic đ&atilde; d&ugrave;ng mật ong từ l&acirc;u trong Y Học để gi&uacute;p cho tinh dịch của người Nam (Male) được tăng th&ecirc;m sức mạnh của n&oacute;.</li>\r\n	<li>Người ta cũng ghi nhận người đ&agrave;n &ocirc;ng bị bất lực, nếu uống 2 muỗng canh mật ong mỗi ng&agrave;y trước khi đi ngủ th&igrave; t&igrave;nh trạng bất lực c&oacute; thể được giải quyết tốt đẹp.</li>\r\n	<li>Tại Trung Hoa, Nhật Bản v&agrave; một số c&aacute;c nước v&ugrave;ng Viễn Đ&ocirc;ng, đối với c&aacute;c phụ nữ kh&ocirc;ng thể đậu thai từ nhiều thế kỷ đ&atilde; được khuy&ecirc;n d&ugrave;ng bột quế để gi&uacute;p cho buồng trứng v&agrave; tử cung cải thiện dễ thụ tinh, mang bầu.</li>\r\n	<li>C&aacute;c phụ nữ kh&ocirc;ng thể c&oacute; bầu th&igrave; c&oacute; thể d&ugrave;ng 1 Pinch bột quế h&ograve;a với 1/2 muỗng caf&eacute; mật ong, rồi ngậm trong miệng thường xuy&ecirc;n suốt ng&agrave;ỵ 2 thứ n&agrave;y được trộn lẫn với nước bọt trong miệng rồi từ từ ngấm v&agrave;o cơ thể để mang lại thuận lợi cho người phụ nữ đậu thai.</li>\r\n</ul>\r\n\r\n<p>Người ta đ&atilde; ghi nhận 1 cặp vợ chồng tại tiểu bang Maryland , Hoa Kỳ; cưới nhau 14 năm kh&ocirc;ng c&oacute; con v&agrave; họ gần như tuyệt vọng&hellip;</p>\r\n\r\n<p>Nhưng khi được m&aacute;ch bảo phương c&aacute;c d&ugrave;ng mật ong v&agrave; bột quế, 2 vợ chồng đ&atilde; c&ugrave;ng &aacute;p dụng phương ph&aacute;p tr&ecirc;n; chỉ v&agrave;i th&aacute;ng sau người vợ đ&atilde; mang thai v&agrave; sinh đ&ocirc;i với 2 đứa con khỏe mạnh b&igrave;nh thường.</p>\r\n\r\n<ol start=\"19\">\r\n	<li>Đối với bệnh ung thư (Cancer)</li>\r\n</ol>\r\n\r\n<p>Những nghi&ecirc;n cứu mới đ&acirc;y tại Nhật Bản v&agrave; &Uacute;c Ch&acirc;u đ&atilde; ghi nhận t&igrave;nh trạng ung thư bao tử v&agrave; ung thư xương đang ph&aacute;t t&aacute;c, đ&atilde;</p>\r\n\r\n<p>được điều trị 1 c&aacute;ch hiệu quả bằng mật ong v&agrave; quế. Sau khi những bệnh nh&acirc;n đang mắc phải ung thư bao tử v&agrave; xương d&ugrave;ng như sau:</p>\r\n\r\n<p>Uống 1 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn đều, mỗi ng&agrave;y 3 lần li&ecirc;n tiếp trong 1 th&aacute;ng.</p>\r\n', 'tin_tuc/shutterstock_338983799_1635216_2362_5994_1635216756.jpg', 1, 1, 'Tác dụng tuyệt diệu của hỗn hợp quế và mật ong : tốt cho tim; làm giảm đau xương khớp', '', '', '', 129, 0, 0, 0, '', '', 1, 9, 'en', '2024-06-16 06:11:12', '2026-06-08 17:57:16', 0),
-(130, 653, 'Cành nhánh quế trở thành hàng hóa, không chỉ dùng trong nước mà còn để xuất khẩu.', 'canh-nhanh-que-tro-thanh-hang-hoa-khong-chi-dung-trong-nuoc-ma-con-de-xuat-khau--6', 'Khi khai thác quế cây, người ta bỏ những cành nhánh nhỏ. Mỗi năm chỉ riêng ở huyện Trà My, Quảng Nam, số cành nhánh đó phải đến 200 tấn.', '<p>Năm đ&oacute;, nh&agrave; bu&ocirc;n quế Nguyễn Văn Qu&acirc;n (Tam Kỳ, Quảng Nam) t&igrave;nh cờ nh&igrave;n thấy một mẫu quế chi của Trung Quốc b&aacute;n cho kh&aacute;ch bu&ocirc;n Đ&agrave;i Loan. Quế chi l&agrave; một loại dược liệu kh&ocirc;ng thể thiếu trong mọi thang thuốc Bắc, v&agrave; điều đặc biệt l&agrave; quế chi được chế biến từ c&agrave;nh nh&aacute;nh bỏ đi của c&acirc;y quế (chi: c&agrave;nh, nh&aacute;nh). Qu&acirc;n thấy ngay một hướng kinh doanh mới, v&agrave; biết chắc rằng do c&agrave;nh nh&aacute;nh quế Tr&agrave; My chất lượng tốt hơn, mặt h&agrave;ng quế chi Tr&agrave; My sẽ c&oacute; sực cạnh tranh mạnh hơn quế chi Trung Quốc.</p>\r\n\r\n<p>Việc đầu ti&ecirc;n của Qu&acirc;n l&agrave; v&agrave;o TP Hồ Ch&iacute; Minh t&igrave;m xem c&aacute;c loại m&aacute;y cắt thuốc Bắc do Đ&agrave;i Loan sản xuất, c&oacute; gi&aacute; đến 2.000 USD/m&aacute;y. Đ&acirc;y l&agrave; những m&aacute;y cắt thuốc n&oacute;i chung, trừ c&agrave;nh nh&aacute;nh quế. Thật ra, vẫn c&oacute; thể d&ugrave;ng để cắt nh&aacute;nh quế nhưng l&aacute;t cắt th&ocirc; vụng, h&agrave;ng kh&ocirc;ng đẹp, v&agrave; chậm, mỗi ng&agrave;y cắt được tối đa 100 kg quế. Qu&acirc;n vừa xem vừa &acirc;m thầm nghi&ecirc;n cứu cải tiến c&aacute;c chi tiết rồi tự tạo cho m&igrave;nh một c&aacute;i m&aacute;y chuy&ecirc;n cắt c&agrave;nh nh&aacute;nh quế. M&aacute;y của Đ&agrave;i Loan trục cắt đứng, c&ograve;n m&aacute;y của Qu&acirc;n trục cắt nằm ngang. Sự thay đổi n&agrave;y đ&atilde; n&acirc;ng c&ocirc;ng suất cắt của m&aacute;y l&ecirc;n gấp ba lần, mỗi ng&agrave;y cắt được 300 kg, l&aacute;t cắt lại sắc sảo, đều v&agrave; đẹp. Trước kia muốn cắt quế phải lựa những nh&aacute;nh c&ugrave;ng cỡ nhau, c&ograve;n b&acirc;y giờ nh&aacute;nh quế to nhỏ g&igrave; cũng được, cứ nắm cả b&oacute; cho v&agrave;o m&aacute;y cắt. Từ c&aacute;i m&aacute;y cắt Đ&agrave;i Loan gi&aacute; 2.000 USD, Qu&acirc;n đ&atilde; tạo ra một c&aacute;i m&aacute;y tốt hơn, gi&aacute; chỉ c&oacute; 10 triệu đồng.</p>\r\n\r\n<p>Bằng chiếc m&aacute;y cắt quế chi, Qu&acirc;n đ&atilde; dần dần chiếm được thị trường quế chi của Đ&agrave;i Loan, v&agrave; trở th&agrave;nh nh&agrave; cung cấp chủ yếu mặt h&agrave;ng quế chi cho phố thuốc Bắc Hải thượng L&atilde;n &ocirc;ng ở TP Hồ Ch&iacute; Minh (chỉ ri&ecirc;ng con phố n&agrave;y mỗi năm mua của Qu&acirc;n 60 tấn quế chi). Mỗi năm Qu&acirc;n xuất khẩu quế chi thu được hơn 70.000 USD. Cứ b&aacute;n mỗi tấn quế, Qu&acirc;n lời hai triệu đồng, mỗi năm Qu&acirc;n b&aacute;n hơn 100 tấn quế chi v&agrave; bỏ t&uacute;i tối thiểu 200 triệu đồng tiền l&atilde;i. Kh&ocirc;ng chỉ Qu&acirc;n được lợi m&agrave; người trồng quế ở Tr&agrave; My cũng c&oacute; th&ecirc;m thu nhập. Quế c&agrave;nh nh&aacute;nh từ chỗ c&oacute; gi&aacute; 500 đồng/kg đ&atilde; tăng l&ecirc;n s&aacute;u lần, gi&aacute; hiện thời l&agrave; 3.000 đồng/kg. B&acirc;y giờ 200 tấn c&agrave;nh nh&aacute;nh quế Tr&agrave; My thải ra hằng năm đều được Qu&acirc;n tận dụng. Kh&ocirc;ng những thế, Qu&acirc;n c&ograve;n mở rộng địa b&agrave;n, mua th&ecirc;m quế c&agrave;nh nh&aacute;nh ở c&aacute;c huyện Ti&ecirc;n Phước, Phước Sơn, v&agrave; nhiều tỉnh kh&aacute;c để đẩy mạnh xuất khẩu, đ&aacute;p ứng nhu cầu của kh&aacute;ch Đ&agrave;i Loan v&agrave; H&agrave;n Quốc.</p>\r\n\r\n<p>Qu&acirc;n đang nghi&ecirc;n cứu l&agrave;m ly uống c&agrave; ph&ecirc;, tr&agrave;&hellip; từ th&acirc;n c&acirc;y quế để xuất cho thị trường Bắc &Acirc;u. Kh&aacute;ch h&agrave;ng Qu&acirc;n đ&atilde; c&oacute;, chỉ c&oacute; c&aacute;i m&aacute;y để cắt, đục, l&agrave;m b&oacute;ng&hellip; th&igrave; đang phải suy nghĩ th&ecirc;m. Th&acirc;n c&acirc;y quế, sau khi lột vỏ, đang l&agrave; đồ bỏ, v&igrave; d&ugrave;ng l&agrave;m củi cũng kh&ocirc;ng được do k&eacute;m bắt lửa. &ldquo;Nếu sản xuất th&agrave;nh c&ocirc;ng mặt h&agrave;ng ly, cốc bằng gỗ th&acirc;n c&acirc;y quế, lợi nhuận phải đến 300%&rdquo;, Qu&acirc;n quả quyết.</p>\r\n', 'tin_tuc/_2539_1717652388_860x0.jpg', 1, 1, 'Cành nhánh quế trở thành hàng hóa, không chỉ dùng trong nước mà còn để xuất khẩu.', '', '', '', 129, 0, 0, 0, '', '', 1, 60, 'en', '2024-06-27 04:05:13', '2026-06-08 17:57:16', 0),
-(131, 656, 'BIỆT THỰ SÂN VƯỜN', 'biet-thu-san-vuon', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/nha_vuon_thong_tin_chi_tiet_chi_phi_xay_dung_tham_khao_va_29_mau_nha_vuon_dep_me_ly_6446008f6d1ba4a29dcf8360.webp', 1, 1, 'BIỆT THỰ SÂN VƯỜN', '', '', '', 242, 0, 0, 0, '', '', 1, 5, 'en', '2024-06-28 02:28:33', '2026-06-08 17:57:16', 0),
-(132, 657, 'QUÁN CÀ PHÊ', 'trung-tam-thuong-mai', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/trung_tam_thuong_mai_1691035417_17079655862711524834885.jpg', 1, 1, 'QUÁN CÀ PHÊ', '', '', '', 242, 0, 0, 0, '', '', 1, 2, 'en', '2024-06-28 02:28:55', '2026-06-08 17:57:16', 0),
-(133, 659, 'KHU DÂN CƯ', 'khu-dan-cu', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cac_buoc_trien_khai_du_an_khu_dan_cu.jpg', 1, 1, 'KHU DÂN CƯ', '', '', '', 242, 0, 0, 0, '', '', 1, 2, 'en', '2024-06-28 02:29:45', '2026-06-08 17:57:16', 0),
-(134, 660, 'CÔNG VIÊN', 'cong-vien', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/thiet_ke_cong_vien_landscape_park_design_04_san_vuon_a_dong.jpg', 1, 1, 'CÔNG VIÊN', '', '', '', 242, 0, 0, 0, '', '', 1, 3, 'en', '2024-06-28 02:30:04', '2026-06-08 17:57:16', 0),
-(135, 661, 'NHÀ VƯỜN', 'khu-nghi-duong', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cong_ty_tu_van_thiet_ke_resort_1.jpg', 1, 1, 'NHÀ VƯỜN', '', '', '', 242, 0, 0, 0, '', '', 1, 7, 'en', '2024-06-28 02:30:19', '2026-06-08 17:57:16', 0),
-(136, 662, 'VĂN PHÒNG', 'san-golf', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/san_golf_vu_yen.jpg', 1, 1, 'VĂN PHÒNG', '', '', '', 242, 0, 0, 0, '', '', 1, 3, 'en', '2024-06-28 02:30:37', '2026-07-03 00:26:35', 0);
+INSERT INTO `db_posts` (`id`, `id_code`, `title`, `slug`, `description`, `content`, `image`, `is_featured`, `status`, `seo_title`, `keyword`, `tags`, `seo_description`, `category_id`, `sort_order`, `nofollow`, `noindex`, `seo_head`, `seo_body`, `seo_schema`, `seo_canonical`, `created_by`, `views`, `lang`, `created_at`, `updated_at`, `updated_by`) VALUES
+(105, 630, 'Hoa hồi là gì? Lợi ích của hoa hồi và những cách sử dụng hoa hồi', 'hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi', '<p>Hoa hồi l&agrave; g&igrave; v&agrave; hoa hồi c&oacute; những lợi &iacute;ch v&agrave; c&ocirc;ng dụng như thế n&agrave;o? H&atilde;y c&ugrave;ng B&aacute;ch h&oacute;a XANH t&igrave;m hiểu ngay trong b&agrave;i viết n&agrave;y nh&eacute;.</p>\r\n', '<p><img alt=\" Hoa hồi\" data-id=\"6\" data-nimg=\"1\" decoding=\"async\" height=\"429\" loading=\"lazy\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202202151534168292.jpg\" title=\" Hoa hồi\" width=\"762\" />Hoa hồi</p>\r\n\r\n<p>Hoa hồi,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/bot-que-ong-cha-va-hu-35g\" target=\"_blank\">quế</a>,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/thao-qua-dh-foods-natural-hu-20g\" target=\"_blank\">thảo quả</a>,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/dinh-huong-ong-cha-va-hu-35g\" target=\"_blank\">đinh hương</a>,... đều l&agrave; những loại gia vị kh&ocirc; thường được d&ugrave;ng trong nấu ăn rất thường xuy&ecirc;n ở nhiều gia đ&igrave;nh. Trong đ&oacute; hoa hồi l&agrave; gia vị kh&ocirc;ng thể thiếu, đặc biệt trong c&aacute;c m&oacute;n ăn truyền thống như&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-nau-pho-bo-ha-noi-962092\" target=\"_blank\">phở</a>. Tuy nhi&ecirc;n&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi-hoi-que-thao-qua-dinh-huong\" target=\"_blank\">hoa hồi</a>&nbsp;c&oacute; xuất sứ từ đ&acirc;u v&agrave; hoa hồi c&oacute; những c&ocirc;ng dụng ra sao ch&iacute;nh l&agrave; những thắc mắc chung của kh&aacute; nhiều người. H&atilde;y c&ugrave;ng t&igrave;m hiểu tất tần tật về loại gia vị n&agrave;y ngay sau đ&acirc;y</p>\r\n\r\n<h3>1Hoa hồi l&agrave; g&igrave;?</h3>\r\n\r\n<p><img alt=\"\" data-id=\"2\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151237240972.jpg\" /></p>\r\n\r\n<p>Hoa hồi hay c&ograve;n gọi l&agrave; hoa đại hồi l&agrave; một loại c&acirc;y&nbsp;<b>c&oacute; nguồn gốc từ Trung Quốc v&agrave; đ&ocirc;ng bắc Việt Nam</b>. Đ&acirc;y l&agrave; lo&agrave;i c&acirc;y gia vị c&oacute; t&aacute;c dụng v&agrave; m&ugrave;i thơm tương tự như c&acirc;y tiểu hồi, thu nhặt được từ vỏ quả. Đặc điểm của lo&agrave;i c&acirc;y n&agrave;y l&agrave; c&oacute; h&igrave;nh d&aacute;ng kh&aacute; nhỏ chỉ từ 6-10m, th&acirc;n c&acirc;y thẳng v&agrave; nhẵn v&agrave; c&oacute; m&agrave;u n&acirc;u x&aacute;m.</p>\r\n\r\n<p><img alt=\"\" data-id=\"3\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151237459437.jpg\" /></p>\r\n\r\n<p>Th&ocirc;ng thường<b>&nbsp;hoa hồi sẽ c&oacute; 6-8 c&aacute;nh, xếp th&agrave;nh h&igrave;nh c&aacute;nh sao c&oacute; đường k&iacute;nh từ 2,5 đến 3 cm</b>, mỗi c&aacute;nh mang b&ecirc;n trong một hạt nhỏ h&igrave;nh quả trứng nhẵn b&oacute;ng. Đa phần hoa hồi sao khi thu hoạch sẽ được&nbsp;<b>mang đi phơi kh&ocirc;, xuất khẩu dưới dạng hoa kh&ocirc;, chỉ c&oacute; một phần nhỏ được đem chế biến th&agrave;nh tinh dầu.</b></p>\r\n\r\n<h3>2Lợi &iacute;ch v&agrave; c&aacute;ch sử dụng hoa hồi</h3>\r\n\r\n<p><img alt=\"\" data-id=\"4\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151238141137.jpg\" /></p>\r\n\r\n<p><b>D&ugrave;ng trong chăm s&oacute;c sức khỏe</b>:&nbsp;<i>Theo Đại t&aacute;, B&aacute;c sĩ Nguyễn B&aacute; Vưỡng &ndash; Ph&ograve;ng chẩn trị y học cổ truyền T&acirc;m Minh Đường</i>, khi sử dụng hoa hồi nguy&ecirc;n chất để ng&acirc;m với rượu sẽ c&oacute; t&aacute;c dụng hỗ trợ&nbsp;<b>điều trị c&aacute;c bệnh như cảm lạnh, đau đầu, đau bụng, c&aacute;c bệnh về ti&ecirc;u ho v&agrave; c&aacute;c bệnh về xương khớp</b>. Ngo&agrave;i ra, hoa hồi c&ograve;n c&oacute; t&aacute;c dụng trong chữa c&aacute;c bệnh nấm da, ghẻ lở, giảm đau, giảm bầm t&iacute;m, trị ho, long đờm... v&agrave; nhiều t&aacute;c dụng chữa bệnh kh&aacute;c.</p>\r\n\r\n<p>Ngo&agrave;i ra tinh dầu hoa hồi c&ograve;n l&agrave; một trong những loại mỹ phẩm tốt nhất trong l&agrave;m đẹp, chỉ cần sử dụng tinh dầu hoa hồi kết hợp c&ugrave;ng nước n&oacute;ng để<b>&nbsp;x&ocirc;ng mặt từ 1 đến 2 lần mỗi tuần th&igrave; sẽ mang lại cho bạn một l&agrave;n da s&aacute;ng mịn v&agrave; sạch sẽ mụn th&acirc;m.</b></p>\r\n\r\n<p><img alt=\"\" data-id=\"5\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151246488637.jpg\" /></p>\r\n\r\n<p><b>D&ugrave;ng trong ẩm thực</b>: Hoa hồi cũng l&agrave; một trong những loại gia vị cực phẩm m&agrave; c&aacute;c đầu bếp nổi tiếng lu&ocirc;n ưa chuộng sử dụng trong c&aacute;c m&oacute;n ăn. Sử dụng hoa hồi trong c&aacute;c m&oacute;n ăn một c&aacute;ch kh&eacute;o l&eacute;o sẽ gi&uacute;p n&acirc;ng tầm m&oacute;n ăn l&ecirc;n một hương vị ho&agrave;n to&agrave;n mới. Để c&oacute; thể sử dụng hết to&agrave;n bộ những hương vị tinh tế của hoa hồi, c&aacute;c đầu bếp thường<b>&nbsp;rang hoa hồi rồi mới sử dụng để tẩm ướp</b>&nbsp;hoặc d&ugrave;ng trong c&aacute;c m&oacute;n canh, s&uacute;p, c&agrave; ri hay c&aacute;c m&oacute;n hầm gi&uacute;p k&iacute;ch th&iacute;ch vị gi&aacute;c, ăn ngon miệng hơn.</p>\r\n\r\n<p>&gt;&gt;&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/huong-dan-cach-lam-mon-lau-trung-khanh-cay-xe-tru-danh-don-gian-tai-nha-1271318\">Hướng dẫn c&aacute;ch l&agrave;m m&oacute;n lẩu Tr&ugrave;ng Kh&aacute;nh cay x&egrave; trứ danh đơn giản tại nh&agrave;</a></p>\r\n\r\n<p>&gt;&gt;&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-lam-trung-ngam-tra-mon-an-doc-dao-mang-lai-may-man-doi-voi-nguoi-trung-hoa-1270984\">C&aacute;ch l&agrave;m trứng ng&acirc;m tr&agrave; - m&oacute;n ăn độc đ&aacute;o, mang lại may mắn đối với người Trung Hoa</a></p>\r\n\r\n<p><img alt=\"\" data-id=\"6\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151247056822.jpg\" /></p>\r\n\r\n<p><b>C&oacute; lợi cho b&agrave; mẹ đang cho con b&uacute;</b>:&nbsp;Theo kinh nghiệm d&acirc;n gian, người ta thường&nbsp;<b>cho hoa hồi v&agrave;o c&aacute;c m&oacute;n ăn của phụ nữ sau sinh</b>&nbsp;để&nbsp;<b>gi&uacute;p sữa c&oacute; m&ugrave;i thơm v&agrave; về nhiều hơn</b>.</p>\r\n\r\n<p><b>C&aacute;c c&ocirc;ng dụng kh&aacute;c</b>: Ngo&agrave;i c&aacute;c t&aacute;c dụng tr&ecirc;n th&igrave; hoa hồi c&ograve;n c&oacute; c&aacute;c t&aacute;c dụng kh&aacute;c như&nbsp;<b>điều chế thuốc trị cảm c&uacute;m, c&aacute;c loại rượu, b&aacute;nh kẹo, hay l&agrave;m mồi c&acirc;u c&aacute;,...</b>Đối với việc c&acirc;u c&aacute;, bạn chỉ&nbsp;<b>trộn bột hoa hồi với c&aacute;c nguy&ecirc;n liệu như bột đậu tương, c&agrave; rốt th&aacute;i nhỏ, ruột b&aacute;nh m&igrave;, c&aacute;m gạo</b>&nbsp;rồi ủ chung tất cả ch&uacute;ng lại với nước luộc thịt lợn qua đ&ecirc;m, bạn sẽ c&oacute; một mồi c&acirc;u xuất sắc.</p>\r\n\r\n<p><i>Hoa hồi với c&aacute;c c&ocirc;ng dụng tuyệt vời của m&igrave;nh sẽ l&agrave; một loại&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi\" target=\"_blank\">gia vị</a>&nbsp;tuyệt vời cho c&aacute;c m&oacute;n ăn, một loại mỹ phẩm ho&agrave;n hảo cho&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/khoe-dep-moi-ngay/1731\" target=\"_blank\">l&agrave;m đẹp</a>&nbsp;v&agrave; c&ograve;n c&oacute; v&ocirc; số c&ocirc;ng dụng kh&aacute;c trong cuộc sống.</i></p>\r\n', 'tin_tuc/hoa_hoi_la_gi_loi_ich_cua_hoa_hoi_va_nhung_cach_su_dung_hoa_hoi_202009151237459437.jpg', 1, 1, 'Hoa hồi là gì? Lợi ích của hoa hồi và những cách sử dụng hoa hồi', '', '', '', 129, 0, 0, 0, '', '', '', '', 1, 5, 'vi', '2024-06-16 05:26:00', '2026-06-12 09:22:46', 1),
+(97, 622, 'Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh', 'hoa-hoi-va-cac-gia-vi-tao-nen-nuoc-dung-pho-ngon-tru-danh', 'Nước dùng phở chính là nhân tố tạo nên hương vị thơm ngon nổi tiếng của món phở truyền thống của Việt Nam. Bên cạnh nguyên liệu quen thuộc như hành, gừng nướng, nước dùng phở không thể thiếu được hoa hồi cùng các gia vị thảo mộc khác sẽ được đề cập chi tiết trong bài viết dưới đây. Mời bạn đọc cùng UniSpice tìm hiểu ngay nhé.', '<p>Nước d&ugrave;ng phở ch&iacute;nh l&agrave; nh&acirc;n tố tạo n&ecirc;n hương vị thơm ngon nổi tiếng của m&oacute;n phở truyền thống của Việt Nam. B&ecirc;n cạnh nguy&ecirc;n liệu quen thuộc như h&agrave;nh, gừng nướng, nước d&ugrave;ng phở kh&ocirc;ng thể thiếu được&nbsp;<strong>hoa hồi</strong>&nbsp;c&ugrave;ng c&aacute;c&nbsp;<a href=\"https://unispice.vn/danh-muc-san-pham/gia-vi-tu-nhien/\"><strong>gia vị thảo mộc</strong></a>&nbsp;kh&aacute;c sẽ được đề cập chi tiết trong b&agrave;i viết dưới đ&acirc;y. Mời bạn đọc c&ugrave;ng&nbsp;<a href=\"https://unispice.vn/\"><strong>UniSpice</strong></a>&nbsp;t&igrave;m hiểu ngay nh&eacute;.</p>\r\n\r\n<p>Xem th&ecirc;m:&nbsp;<a href=\"https://unispice.vn/mon-ngon-moi-ngay/pho-bo-gia-truyen/\"><strong>C&aacute;ch nấu phở b&ograve; gia truyền</strong></a></p>\r\n\r\n<h2><b>Hoa hồi</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/hoa-hoi/\"><strong>Hoa hồi</strong></a>&nbsp;hay c&ograve;n được biết đến với một c&aacute;i t&ecirc;n kh&aacute;c l&agrave; đại hồi hay b&aacute;t gi&aacute;c. Đ&acirc;y l&agrave; một gia vị thảo mộc phổ biến trong nền ẩm thực của nhiều quốc gia Ch&acirc;u &Aacute;. Ở Việt Nam, hoa hồi l&agrave; gia vị kh&ocirc;ng thể thiếu trong nước d&ugrave;ng phở. Kh&ocirc;ng chỉ l&agrave; một vị thuốc qu&yacute; trong chữa bệnh, hoa hồi c&ograve;n g&oacute;p phần tạo n&ecirc;n hương vị tinh tế cho nước phở, với vị cay nhẹ, ngọt dịu c&ugrave;ng hương thơm nồng ấn tượng. Khi được sử dụng ở mức độ vừa phải, hoa hồi kh&ocirc;ng hề lấn &aacute;t hương vị của c&aacute;c nguy&ecirc;n liệu kh&aacute;c.&nbsp;</p>\r\n\r\n<h2><b><img alt=\"Hoa hồi gia vị không thể thiếu trong nước dùng phở\" height=\"576\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Hoa-hoi-1.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></b></h2>\r\n\r\n<h2><b>Quế thanh</b></h2>\r\n\r\n<p>L&agrave; sản phẩm thu từ vỏ của c&acirc;y quế, quế c&oacute; vị cay the v&agrave; m&ugrave;i nồng kh&oacute; trộn lẫn. D&ugrave; được sử dụng l&agrave;&nbsp;<a href=\"https://unispice.vn/san-pham/que-thanh/\"><strong>quế thanh</strong></a>&nbsp;hay&nbsp;<a href=\"https://unispice.vn/san-pham/bot-que/\"><strong>bột quế</strong></a>, kh&ocirc;ng thể phủ nhận mức độ phổ biến của gia vị n&agrave;y, từ c&aacute;c m&oacute;n mặn đến m&oacute;n ngọt. Khi được th&ecirc;m v&agrave;o nước d&ugrave;ng phở, vị cay của quế kh&ocirc;ng qu&aacute; đậm đ&agrave; m&agrave; thoảng thoảng rất dễ chịu.</p>\r\n\r\n<p><img alt=\"Quế thanh gia vị không thể thiếu trong nước dùng phở\" height=\"576\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Que.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/que/\"><strong>Quế</strong></a>&nbsp;d&ugrave;ng trong đ&ocirc;ng y nổi tiếng l&agrave; vị thuốc chữa trị hiệu quả c&aacute;c chứng bệnh về đường ti&ecirc;u h&oacute;a do cảm h&agrave;n, giảm đau, s&aacute;t khuẩn,&hellip;&nbsp;</p>\r\n\r\n<h2><b>Đinh hương</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/dinh-huong/\"><strong>Đinh hương</strong></a>&nbsp;l&agrave; loại gia vị thảo mộc đặc biệt nhờ khả năng khử m&ugrave;i hiệu quả. Với hương thơm nồng đặc trưng, đinh hương l&agrave; lựa chọn th&iacute;ch hợp khi nấu nước d&ugrave;ng từ c&aacute;c loại xương b&ograve;, xương heo.&nbsp;Kh&ocirc;ng chỉ l&agrave;m mất đi m&ugrave;i h&ocirc;i kh&oacute; chịu, đinh hương c&ograve;n rất gi&agrave;u h&agrave;m lượng vitamin B, C, D, K, E, c&ugrave;ng nhiều kho&aacute;ng chất kh&aacute;c như canxi, kali v&agrave; protein. Đ&oacute; cũng l&agrave; l&yacute; do từ xa xưa, đinh hương đ&atilde; được ứng dụng nhiều trong cả y học v&agrave; ẩm thực.</p>\r\n\r\n<h2><b><img alt=\"Đinh hương gia vị không thể thiếu trong nước dùng phở\" height=\"614\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Dinh-huong-1.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></b></h2>\r\n\r\n<h2><b>Thảo quả</b></h2>\r\n\r\n<p>Theo nhận định của nhiều chuy&ecirc;n gia,&nbsp;<a href=\"https://unispice.vn/san-pham/thao-qua/\"><strong>thảo quả</strong></a>&nbsp;c&oacute; h&agrave;m lượng dưỡng chất phong ph&uacute; như carbohydrate, protein, vitamin C c&ugrave;ng nhiều kho&aacute;ng chất kh&aacute;c như đồng, sắt, canxi, phốt pho,&hellip; Do vậy, d&ugrave; được d&ugrave;ng để l&agrave;m thuốc chữa bệnh hay gia vị nấu ăn, thảo quả đều mang đến nhiều lợi &iacute;ch cho sức khỏe. Đặc biệt, hương vị cay nồng, m&ugrave;i thơm c&ugrave;ng vị ngọt dịu đ&atilde; khiến thảo quả trở th&agrave;nh gia vị nấu nước d&ugrave;ng phở kh&ocirc;ng thể thiếu.</p>\r\n\r\n<p><img alt=\"Thảo quả gia vị trong nước dùng phở truyền thống\" height=\"744\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Thao-qua.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p>B&ecirc;n cạnh đ&oacute;, thảo quả c&ograve;n được sử dụng để tạo hương vị thơm ngon cho nhiều m&oacute;n ăn, đồ uống kh&aacute;c, k&iacute;ch th&iacute;ch vị gi&aacute;c v&agrave; cảm gi&aacute;c ngon miệng khi thưởng thức.&nbsp;</p>\r\n\r\n<h2><b>Hạt m&ugrave;i</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/hat-mui/\"><strong>Hạt m&ugrave;i</strong></a>&nbsp;ch&iacute;nh l&agrave; phần hạt của rau m&ugrave;i đ&atilde; được sấy kh&ocirc;, được sử dụng khi chế biến nhiều m&oacute;n ăn, trong đ&oacute; c&oacute; nước phở. Nhờ hương thơm dễ chịu, hạt m&ugrave;i kh&ocirc;ng chỉ l&agrave; gia vị n&ecirc;m nếm, m&agrave; c&ograve;n c&oacute; t&aacute;c dụng khử m&ugrave;i n&ecirc;n thường được sử dụng để ướp thịt heo, thịt g&agrave;, thịt vịt,.. Ngo&agrave;i ra,&nbsp;<a href=\"https://unispice.vn/san-pham/bot-hat-mui/\"><strong>bột hạt m&ugrave;i</strong>&nbsp;</a>cũng được ứng dụng cho nhiều m&oacute;n ăn kh&aacute;c như c&agrave; ri, lẩu b&ograve;, ph&aacute; lấu,&hellip;</p>\r\n\r\n<p><img alt=\"Hạt mùi gia vị có thường dùng trong nước dùng phở\" height=\"672\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Hat-mui.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p>Tr&ecirc;n đ&acirc;y l&agrave; những gia vị thảo mộc cơ bản để tạo n&ecirc;n nước d&ugrave;ng phở mang hương vị truyền thống. T&ugrave;y theo khẩu vị của người nấu, c&aacute;c gia vị n&agrave;y sẽ c&oacute; sự biến tấu theo c&ocirc;ng thức, c&aacute;ch chế biến ri&ecirc;ng để tạo n&ecirc;n n&eacute;t độc đ&aacute;o ri&ecirc;ng cho nước d&ugrave;ng phở. Th&ocirc;ng thường, khi sơ chế, người ta thường d&ugrave;ng c&aacute;c nguy&ecirc;n liệu ở dạng kh&ocirc; thay v&igrave; dạng bột, rang sơ tr&ecirc;n chảo n&oacute;ng cho dậy vị rồi cho v&agrave;o t&uacute;i lọc v&agrave; nấu với nước d&ugrave;ng phở để cho ra hương thơm tinh t&uacute;y nhất.&nbsp;</p>\r\n\r\n<p>Mong rằng b&agrave;i viết tr&ecirc;n đ&acirc;y đ&atilde; gi&uacute;p bạn đọc c&oacute; th&ecirc;m những kinh nghiệm hữu &iacute;ch trong nấu ăn, đặc biệt l&agrave; c&aacute;c b&iacute; k&iacute;p để tạo n&ecirc;n nước d&ugrave;ng phở ngon chuẩn vị.</p>\r\n', 'tin_tuc/hoa_hoi_1.jpg', 1, 1, 'Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh', '', '', '', 129, 0, 0, 0, '', '', '', '', 1, 154, 'vi', '2024-06-13 09:30:55', '2026-06-08 17:57:16', 0),
+(92, 617, 'Hạt tiêu - Loại gia vị bé nhỏ mà bùng nổ hương vị ấm nồng', 'hat-tieu-loai-gia-vi-be-nho-ma-bung-no-huong-vi-am-nong', 'Hạt tiêu là quả của cây hồ tiêu. Loài cây này có thân dạng dây leo, mọc thành đốt. Ở mỗi đốt lại mọc rễ để cây có thể bám và leo lên cột, giàn. Lá hồ tiêu có điểm tương đồng với lá trầu nhưng bé hơn, cứng và dày hơn. ', '<p dir=\"ltr\">Bạn c&oacute; bao giờ lướt qua v&ocirc; số website v&agrave; nhận ra chỉ một v&agrave;i trong số đ&oacute; để lại ấn tượng mạnh mẽ? Điều g&igrave; khiến ch&uacute;ng trở n&ecirc;n kh&aacute;c biệt? Rất c&oacute; thể, đ&oacute; ch&iacute;nh l&agrave; sức mạnh của một logo website được thiết kế tinh tế v&agrave; chuy&ecirc;n nghiệp. Tựa như con dấu nhận diện hay l&aacute; cờ hiệu của một quốc gia, logo website l&agrave; yếu tố visual quan trọng bậc nhất, quyết định cảm nhận đầu ti&ecirc;n của người d&ugrave;ng về thương hiệu của bạn. B&agrave;i viết n&agrave;y sẽ đi s&acirc;u v&agrave;o l&yacute; do tại sao logo trang web lại quan trọng đến vậy v&agrave; bật m&iacute; những b&iacute; quyết để tạo n&ecirc;n một biểu tượng đầy sức h&uacute;t tr&ecirc;n kh&ocirc;ng gian mạng.<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Bí quyết thiết kế logo website ghi điểm ngay từ cái nhìn đầu tiên\" src=\"https://phuongnamvina.com/img_data/images/bi-quyet-thiet-ke-logo-website-ghi-diem-ngay-tu-cai-nhin-dau-tien.jpg\" style=\"width:800px\" title=\"Bí quyết thiết kế logo website ghi điểm ngay từ cái nhìn đầu tiên\" /><br />\r\n&nbsp;</p>\r\n\r\n<h2><span id=\"logo-website-la-gi\">Logo website l&agrave; g&igrave;?</span></h2>\r\n\r\n<p>Logo website l&agrave; biểu tượng đại diện trực quan cho một doanh nghiệp, thương hiệu hoặc c&aacute; nh&acirc;n tr&ecirc;n giao diện trang web. Logo website kh&ocirc;ng chỉ đơn giản l&agrave; một h&igrave;nh ảnh trang tr&iacute; hay một c&aacute;i t&ecirc;n được c&aacute;ch điệu &ndash; m&agrave; l&agrave; sự chắt lọc tinh t&uacute;y nhất về mặt h&igrave;nh ảnh của thương hiệu, gi&uacute;p người truy cập nhanh ch&oacute;ng ghi nhớ, ph&acirc;n biệt v&agrave; tạo ấn tượng về website ngay từ c&aacute;i nh&igrave;n đầu ti&ecirc;n.<br />\r\n&nbsp;</p>\r\n\r\n<p style=\"text-align:center\"><img alt=\"Logo website\" src=\"https://phuongnamvina.com/img_data/images/logo-website.jpg\" style=\"width:800px\" title=\"Logo website\" /><br />\r\n&nbsp;</p>\r\n\r\n<h2><span id=\"vai-tro-cot-loi-cua-logo-website\">Vai tr&ograve; cốt l&otilde;i của logo website</span></h2>\r\n\r\n<p dir=\"ltr\">Logo kh&ocirc;ng chỉ l&agrave; một phần trang tr&iacute; trong giao diện website m&agrave; c&oacute; thể coi l&agrave; &ldquo;linh hồn&rdquo; thương hiệu, l&agrave; lời ch&agrave;o đầu ti&ecirc;n v&agrave; cũng l&agrave; ấn tượng cuối c&ugrave;ng đọng lại trong t&acirc;m tr&iacute; kh&aacute;ch h&agrave;ng.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">- <strong>Tạo dấu ấn thương hiệu tức th&igrave; v&agrave; nhất qu&aacute;n</strong>: Logo l&agrave; phần cốt l&otilde;i của <a href=\"https://phuongnamvina.com/bo-nhan-dien-thuong-hieu.html\" target=\"_blank\" title=\"bộ nhận diện thương hiệu\">bộ nhận diện thương hiệu</a> v&agrave; c&oacute; thể hoạt động như một điểm neo thị gi&aacute;c, kết nối trải nghiệm của người d&ugrave;ng tr&ecirc;n website với thương hiệu m&agrave; họ c&oacute; thể đ&atilde; thấy ở c&aacute;c k&ecirc;nh kh&aacute;c (quảng c&aacute;o, mạng x&atilde; hội, sản phẩm thực tế).&nbsp;</p>\r\n\r\n<p dir=\"ltr\">- <strong>Tăng độ tin cậy v&agrave; chuy&ecirc;n nghiệp</strong>: Một website kh&ocirc;ng c&oacute; logo hoặc c&oacute; logo thiết kế cẩu thả sẽ khiến người d&ugrave;ng ngần ngại khi tương t&aacute;c, đặc biệt l&agrave; với c&aacute;c trang thương mại điện tử hay dịch vụ online. Logo website ch&iacute;nh l&agrave; &ldquo;bằng chứng&rdquo; thương hiệu đ&atilde; đầu tư b&agrave;i bản v&agrave; nghi&ecirc;m t&uacute;c, từ đ&oacute; tạo dựng sự tin tưởng ngay từ lần truy cập đầu ti&ecirc;n.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Hỗ trợ điều hướng người d&ugrave;ng hiệu quả</strong>: Logo kh&ocirc;ng chỉ mang t&iacute;nh nhận diện, m&agrave; c&ograve;n l&agrave; một c&ocirc;ng cụ điều hướng th&ocirc;ng minh. Hầu hết c&aacute;c website hiện nay đều gắn logo với đường dẫn về trang chủ. Đ&acirc;y l&agrave; c&aacute;ch gi&uacute;p người d&ugrave;ng nhanh ch&oacute;ng quay lại điểm xuất ph&aacute;t khi đang ở bất kỳ trang con n&agrave;o &ndash; vừa tiện lợi, vừa trực quan.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Hỗ trợ SEO h&igrave;nh ảnh v&agrave; x&acirc;y dựng thương hiệu l&acirc;u d&agrave;i</strong>: Một logo được tối ưu đ&uacute;ng c&aacute;ch với t&ecirc;n tệp, thuộc t&iacute;nh Alt v&agrave; định dạng chuẩn c&oacute; thể g&oacute;p phần cải thiện SEO h&igrave;nh ảnh, gi&uacute;p website hiển thị tốt hơn tr&ecirc;n kết quả t&igrave;m kiếm, đặc biệt l&agrave; phần Google Images. Ngo&agrave;i ra, n&oacute; cũng g&oacute;p phần x&acirc;y dựng h&igrave;nh ảnh thương hiệu bền vững theo thời gian.<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Logo trang web\" src=\"https://phuongnamvina.com/img_data/images/logo-trang-web.jpg\" style=\"width:800px\" title=\"Logo trang web\" /></p>\r\n\r\n<h2><span id=\"cac-yeu-to-tao-nen-logo-website-hieu-qua-giup-ban-ghi-diem-tu-cai-nhin-dau-tie\">C&aacute;c yếu tố tạo n&ecirc;n logo website hiệu quả, gi&uacute;p bạn ghi điểm từ c&aacute;i nh&igrave;n đầu ti&ecirc;n</span></h2>\r\n\r\n<p dir=\"ltr\">Một logo website hiệu quả kh&ocirc;ng phải l&agrave; sản phẩm của sự ngẫu hứng, m&agrave; l&agrave; kết quả của việc tu&acirc;n thủ c&aacute;c nguy&ecirc;n tắc thiết kế v&agrave; thấu hiểu mục ti&ecirc;u thương hiệu. Dưới đ&acirc;y l&agrave; những yếu tố quan trọng nhất m&agrave; bạn cần xem x&eacute;t khi thiết kế logo website:</p>\r\n\r\n<h3><span id=\"1-don-gian-de-nho-de-nhan-die\">Đơn giản, dễ nhớ, dễ nhận diện</span></h3>\r\n\r\n<p dir=\"ltr\">Tr&ecirc;n website, logo thường xuất hiện ở k&iacute;ch thước rất nhỏ (đặc biệt l&agrave; favicon tr&ecirc;n tab tr&igrave;nh duyệt hoặc hiển thị tr&ecirc;n điện thoại). Một logo qu&aacute; phức tạp với nhiều chi tiết nhỏ, hiệu ứng cầu kỳ sẽ dễ bị mờ nh&ograve;e, kh&oacute; nh&igrave;n r&otilde; khi thu nhỏ.</p>\r\n\r\n<p dir=\"ltr\">Trong khi đ&oacute;, thiết kế logo website đơn giản gi&uacute;p n&atilde;o bộ xử l&yacute; h&igrave;nh ảnh đơn giản nhanh hơn, hiệu quả hơn v&agrave; dễ d&agrave;ng in s&acirc;u v&agrave;o t&acirc;m tr&iacute; người xem. Để l&agrave;m được điều n&agrave;y, logo cần kết hợp h&agrave;i h&ograve;a giữa h&igrave;nh d&aacute;ng, m&agrave;u sắc v&agrave; font chữ (nếu c&oacute;), đơn giản những vẫn tạo n&ecirc;n sự kh&aacute;c biệt v&agrave; dễ nhớ. Một c&acirc;u chuyện ẩn sau logo cũng c&oacute; thể g&oacute;p phần l&agrave;m tăng t&iacute;nh ghi nhớ cho biểu tượng website.</p>\r\n\r\n<p dir=\"ltr\">V&iacute; dụ như logo của Apple (quả t&aacute;o cắn dở), Nike (dấu Swoosh), Google (chữ đơn giản với m&agrave;u sắc đặc trưng) &ndash; tất cả đều rất đơn giản nhưng v&ocirc; c&ugrave;ng dễ nhận diện.</p>\r\n\r\n<h3><span id=\"2-the-hien-ro-ca-tinh-thong-diep-thuong-hieu\">Thể hiện r&otilde; c&aacute; t&iacute;nh, th&ocirc;ng điệp thương hiệu</span></h3>\r\n\r\n<p dir=\"ltr\">Logo phải phản &aacute;nh đ&uacute;ng lĩnh vực hoạt động, t&iacute;nh c&aacute;ch thương hiệu (v&iacute; dụ: nghi&ecirc;m t&uacute;c, vui tươi, c&ocirc;ng nghệ, nghệ thuật) phải truyền tải tinh tế th&ocirc;ng điệp doanh nghiệp muốn gửi gắm v&agrave; thu h&uacute;t được đối tượng kh&aacute;ch h&agrave;ng mục ti&ecirc;u. Khi nh&igrave;n v&agrave;o logo, người d&ugrave;ng c&oacute; thể cảm nhận được thương hiệu của bạn l&agrave; ai, hoạt động trong ng&agrave;nh n&agrave;o, c&aacute; t&iacute;nh ra sao v&agrave; hướng tới điều g&igrave;.</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Kích thước logo chuẩn cho website\" src=\"https://phuongnamvina.com/img_data/images/kich-thuoc-logo-chuan-cho-website.jpg\" style=\"width:800px\" title=\"Kích thước logo chuẩn cho website\" /></p>\r\n\r\n<h3><span id=\"3-da-nang-va-linh-hoat\">Đa năng v&agrave; linh hoạt</span></h3>\r\n\r\n<p dir=\"ltr\">Logo website kh&ocirc;ng chỉ d&ugrave;ng cho phần đầu trang m&agrave; sẽ xuất hiện ở rất nhiều nơi, nhiều chế độ hiển thị với k&iacute;ch thước kh&aacute;c nhau. Do đ&oacute;, logo cho website cần:</p>\r\n\r\n<p dir=\"ltr\">- <strong>Khả năng thay đổi k&iacute;ch thước (scalability)</strong>: Phải nh&igrave;n tốt v&agrave; r&otilde; r&agrave;ng d&ugrave; ở k&iacute;ch thước si&ecirc;u nhỏ (favicon 16x16 pixel) hay rất lớn (banner trang chủ). Định dạng vector (SVG) l&agrave; l&yacute; tưởng cho điều n&agrave;y.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Hiển thị tr&ecirc;n c&aacute;c nền kh&aacute;c nhau</strong>: Cần c&oacute; phi&ecirc;n bản hiển thị tốt tr&ecirc;n nền s&aacute;ng, nền tối (chế độ darkmode) v&agrave; c&aacute;c nền m&agrave;u kh&aacute;c nhau.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Hiển thị đơn sắc (monochrome)</strong>: Logo cần c&oacute; khả năng chuyển sang m&agrave;u đen trắng hoặc chỉ một m&agrave;u duy nhất m&agrave; vẫn giữ được h&igrave;nh d&aacute;ng v&agrave; nhận diện.</p>\r\n\r\n<p dir=\"ltr\">- <strong>C&aacute;c phi&ecirc;n bản</strong>: Đ&ocirc;i khi cần c&oacute; c&aacute;c phi&ecirc;n bản logo ngang, dọc hoặc chỉ biểu tượng để ph&ugrave; hợp với kh&ocirc;ng gian hiển thị.</p>\r\n\r\n<h3><span id=\"4-logo-doc-dao-sang-tao\">Logo độc đ&aacute;o, s&aacute;ng tạo</span></h3>\r\n\r\n<p dir=\"ltr\">Internet l&agrave; một kh&ocirc;ng gian cực kỳ đ&ocirc;ng đ&uacute;c. Do đ&oacute;, logo website của bạn cần phải kh&aacute;c biệt để kh&ocirc;ng bị h&ograve;a lẫn hoặc tệ hơn l&agrave; bị nhầm lẫn với đối thủ cạnh tranh. Logo c&agrave;ng độc đ&aacute;o c&agrave;ng dễ được bảo vệ, đăng k&yacute; bản quyền v&agrave; khẳng định gi&aacute; trị ri&ecirc;ng tr&ecirc;n thị trường. Tr&aacute;nh sao ch&eacute;p, vay mượn &yacute; tưởng từ những logo c&oacute; sẵn &ndash; vừa thiếu chuy&ecirc;n nghiệp, vừa tiềm ẩn rủi ro ph&aacute;p l&yacute;.</p>\r\n\r\n<h3><span id=\"5-logo-ben-vung-voi-thoi-gia\">Logo bền vững với thời gian</span></h3>\r\n\r\n<p dir=\"ltr\">Một logo hiệu quả kh&ocirc;ng chỉ cần đẹp ở hiện tại m&agrave; c&ograve;n phải trường tồn với thời gian. Điều n&agrave;y đ&ograve;i hỏi sự c&acirc;n bằng giữa xu hướng thiết kế hiện đại v&agrave; t&iacute;nh ổn định l&acirc;u d&agrave;i.</p>\r\n\r\n<p dir=\"ltr\">Logo theo phong c&aacute;ch &ldquo;qu&aacute; thời thượng&rdquo; c&oacute; thể g&acirc;y ấn tượng nhanh, nhưng cũng dễ lỗi thời chỉ sau v&agrave;i năm. Trong khi đ&oacute;, một logo tối giản, r&otilde; r&agrave;ng v&agrave; c&oacute; chiều s&acirc;u sẽ dễ d&agrave;ng th&iacute;ch nghi với sự thay đổi của thị trường v&agrave; c&ocirc;ng nghệ.</p>\r\n\r\n<p dir=\"ltr\">Để tạo logo bền vững, bạn n&ecirc;n:</p>\r\n\r\n<p dir=\"ltr\">- Tr&aacute;nh chạy theo tr&agrave;o lưu thiết kế ngắn hạn.</p>\r\n\r\n<p dir=\"ltr\">- Ưu ti&ecirc;n h&igrave;nh khối đơn giản, dễ mở rộng.</p>\r\n\r\n<p dir=\"ltr\">- Lu&ocirc;n giữ vững bản sắc thương hiệu, d&ugrave; c&oacute; tinh chỉnh về sau.<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Logo cho website\" src=\"https://phuongnamvina.com/img_data/images/logo-cho-website.jpg\" style=\"width:800px\" title=\"Logo cho website\" /><br />\r\n&nbsp;</p>\r\n\r\n<h2><span id=\"huong-dan-toi-uu-va-su-dung-logo-cho-website\">Hướng dẫn tối ưu v&agrave; sử dụng logo cho website</span></h2>\r\n\r\n<p dir=\"ltr\">Để logo website ph&aacute;t huy hết vai tr&ograve; nhận diện thương hiệu v&agrave; g&oacute;p phần v&agrave;o trải nghiệm người d&ugrave;ng t&iacute;ch cực, bạn cần ch&uacute; &yacute; đến việc tối ưu v&agrave; sử dụng n&oacute; một c&aacute;ch chiến lược.</p>\r\n\r\n<h3><span id=\"1-vi-tri-dat-logo\">Vị tr&iacute; đặt logo</span></h3>\r\n\r\n<p dir=\"ltr\">Vị tr&iacute; của logo tr&ecirc;n website c&oacute; ảnh hưởng lớn đến c&aacute;ch người d&ugrave;ng tương t&aacute;c v&agrave; ghi nhớ thương hiệu của bạn. Việc đặt logo ở những vị tr&iacute; quen thuộc v&agrave; dễ thấy sẽ gi&uacute;p tăng khả năng nhận diện v&agrave; tạo sự chuy&ecirc;n nghiệp. C&aacute;c vị tr&iacute; đặt logo website thường thấy l&agrave;:</p>\r\n\r\n<p dir=\"ltr\">- <a href=\"https://phuongnamvina.com/header-la-gi.html\" target=\"_blank\" title=\"Header\"><strong>Header</strong></a>: Mắt người d&ugrave;ng c&oacute; xu hướng qu&eacute;t từ tr&aacute;i sang phải v&agrave; từ tr&ecirc;n xuống dưới khi bắt đầu xem một trang web. Đặt logo ở g&oacute;c b&ecirc;n tr&aacute;i hoặc ch&iacute;nh giữa header gi&uacute;p thương hiệu được nhận diện ngay lập tức.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">- <strong>Favicon</strong>: Đ&acirc;y l&agrave; biểu tượng nhỏ xuất hiện tr&ecirc;n tab của tr&igrave;nh duyệt web, trong danh s&aacute;ch bookmark, lịch sử duyệt web v&agrave; kết quả t&igrave;m kiếm tr&ecirc;n thiết bị di động. Đặt logo website ở favicon l&agrave; cực kỳ quan trọng cho việc nhận diện thương hiệu khi người d&ugrave;ng mở nhiều tab c&ugrave;ng l&uacute;c, gi&uacute;p họ dễ d&agrave;ng quay lại website của bạn.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Footer</strong>: Nhiều website đặt logo ở ch&acirc;n trang như một c&aacute;ch nhắc lại thương hiệu sau khi người d&ugrave;ng đ&atilde; cuộn xuống hết nội dung. Mặc d&ugrave; đ&acirc;y kh&ocirc;ng phải l&agrave; vị tr&iacute; nhận diện ch&iacute;nh, nhưng c&oacute; thể bổ sung cho header.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Tr&ecirc;n c&aacute;c ảnh, infographic được chia sẻ từ website</strong>: Gi&uacute;p tăng nhận diện khi nội dung lan truyền.</p>\r\n\r\n<p dir=\"ltr\"><strong>Lưu &yacute;</strong>: Khi đặt logo cho website, bạn đừng qu&ecirc;n gắn link về trang chủ để tăng trải nghiệm người d&ugrave;ng.<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Kích thước logo website\" src=\"https://phuongnamvina.com/img_data/images/kich-thuoc-logo-website.jpg\" style=\"width:800px\" title=\"Kích thước logo website\" /><br />\r\n&nbsp;</p>\r\n\r\n<h3><span id=\"2-kich-thuoc-logo-website\">K&iacute;ch thước logo website</span></h3>\r\n\r\n<p dir=\"ltr\">K&iacute;ch thước logo cần được điều chỉnh ph&ugrave; hợp với vị tr&iacute; hiển thị tr&ecirc;n website của bạn v&agrave; phải đảm bảo c&oacute; thể nh&igrave;n r&otilde; r&agrave;ng tr&ecirc;n mọi thiết bị, vị tr&iacute;.</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<div dir=\"ltr\">\r\n<table align=\"center\" border=\"1\" style=\"margin:0 auto; max-width:800px; width:100%\">\r\n	<tbody>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Vị tr&iacute;/thiết bị</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>K&iacute;ch thước đề xuất</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Ghi ch&uacute;</strong></p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Logo ch&iacute;nh ở header</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">- Chiều cao: 50px đến 100px (phổ biến).</p>\r\n\r\n			<p dir=\"ltr\" style=\"text-align:center\">- Chiều ngang: T&ugrave;y thiết kế, tỷ lệ c&acirc;n xứng với chiều cao.</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">K&iacute;ch thước n&agrave;y c&oacute; thể thay đổi t&ugrave;y theo thiết kế header website của bạn.</p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Favicon (Biểu tượng tab)</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">16x16px, 32x32px, 48x48px, 64x64px</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">Bạn n&ecirc;n tạo một bộ Favicon với nhiều k&iacute;ch thước kh&aacute;c nhau để tương th&iacute;ch tốt nhất.</p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Logo ở <a href=\"https://phuongnamvina.com/footer-website-la-gi.html\" target=\"_blank\" title=\"footer\">footer</a></strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">- Thường nhỏ hơn logo Header</p>\r\n\r\n			<p dir=\"ltr\" style=\"text-align:center\">- Chiều cao: 30px đến 60px</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">C&oacute; thể nhỏ hơn header, giữ c&acirc;n đối với c&aacute;c th&ocirc;ng tin kh&aacute;c.</p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Logo website tr&ecirc;n mobile</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">Chiều cao: 40px - 80px (phổ biến, t&ugrave;y thiết kế responsive)</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">Tr&ecirc;n m&agrave;n h&igrave;nh nhỏ, logo thường được thu nhỏ lại. K&iacute;ch thước cụ thể phụ thuộc v&agrave;o c&aacute;ch thiết kế responsive của header mobile.</p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Apple Touch Icon</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">180x180px</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">Biểu tượng khi người d&ugrave;ng lưu website của bạn v&agrave;o m&agrave;n h&igrave;nh ch&iacute;nh (Home Screen) tr&ecirc;n thiết bị Apple</p>\r\n			</td>\r\n		</tr>\r\n		<tr>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\"><strong>Android Chrome Icon</strong></p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">192x192px, 512x512px</p>\r\n			</td>\r\n			<td>\r\n			<p dir=\"ltr\" style=\"text-align:center\">Biểu tượng cho c&aacute;c thiết bị Android khi th&ecirc;m website v&agrave;o m&agrave;n h&igrave;nh ch&iacute;nh (Progressive Web Apps - PWA).</p>\r\n			</td>\r\n		</tr>\r\n	</tbody>\r\n</table>\r\n</div>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<h3><span id=\"3-dinh-dang-file-logo-cho-website\">Định dạng file logo cho website</span></h3>\r\n\r\n<p dir=\"ltr\">Lựa chọn định dạng file đ&uacute;ng l&agrave; yếu tố kỹ thuật quan trọng quyết định chất lượng hiển thị v&agrave; tốc độ tải trang của logo.</p>\r\n\r\n<p dir=\"ltr\">- <strong>SVG</strong>: Định dạng vector, kh&ocirc;ng vỡ n&eacute;t khi ph&oacute;ng to hay thu nhỏ, file thường rất nhẹ, l&yacute; tưởng cho responsive design v&agrave; c&oacute; hỗ trợ hoạt ảnh đơn giản (nếu cần). Tuy nhi&ecirc;n, file SVG kh&ocirc;ng ph&ugrave; hợp cho logo website c&oacute; chi tiết phức tạp, hiệu ứng gradient hoặc đổ b&oacute;ng rườm r&agrave;. Ngo&agrave;i ra, kh&ocirc;ng phải tất cả c&aacute;c hệ thống quản l&yacute; nội dung (CMS) cũ đều hỗ trợ nh&uacute;ng trực tiếp SVG dễ d&agrave;ng.</p>\r\n\r\n<p dir=\"ltr\">- <strong>PNG</strong>: Hỗ trợ nền trong suốt (alpha channel), giữ chất lượng h&igrave;nh ảnh tốt (lossless). Ph&ugrave; hợp cho logo c&oacute; chi tiết hoặc m&agrave;u sắc phức tạp hơn SVG. Tuy nhi&ecirc;n, đ&acirc;y l&agrave; định dạng raster, sẽ vỡ n&eacute;t khi ph&oacute;ng to qu&aacute; giới hạn v&agrave; file c&oacute; thể nặng hơn SVG hoặc JPG (với c&ugrave;ng k&iacute;ch thước hiển thị).</p>\r\n\r\n<p dir=\"ltr\">- <strong>JPG</strong>: Định dạng nhẹ nhất (lossy compression), tuy nhi&ecirc;n file JPG kh&ocirc;ng hỗ trợ nền trong suốt, chất lượng c&oacute; thể giảm đi khi n&eacute;n, dễ bị mờ hoặc vỡ n&eacute;t với c&aacute;c đường thẳng/chữ. Lời khuy&ecirc;n l&agrave; bạn chỉ n&ecirc;n sử dụng định dạng JPG cho ảnh c&oacute; ch&egrave;n logo.</p>\r\n\r\n<h3><span id=\"5-toi-uu-seo-cho-logo\">Tối ưu SEO cho logo</span></h3>\r\n\r\n<p dir=\"ltr\">Mặc d&ugrave; logo kh&ocirc;ng phải l&agrave; yếu tố ch&iacute;nh trong xếp hạng SEO như nội dung hay li&ecirc;n kết, việc tối ưu h&oacute;a n&oacute; vẫn g&oacute;p phần nhỏ v&agrave;o khả năng hiển thị tổng thể v&agrave; trải nghiệm người d&ugrave;ng.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Yếu tố quan trọng nhất khi tối ưu ảnh logo l&agrave; thuộc t&iacute;nh Alt. Đặt t&ecirc;n <a href=\"https://phuongnamvina.com/the-alt-la-gi.html\" target=\"_blank\" title=\"thẻ Alt\">thẻ Alt</a> cho logo n&ecirc;n l&agrave; t&ecirc;n thương hiệu, đồng thời bạn c&oacute; thể th&ecirc;m một m&ocirc; tả ngắn gọn về mục đ&iacute;ch. B&ecirc;n cạnh đ&oacute;, bạn cần đặt t&ecirc;n file ảnh c&oacute; li&ecirc;n quan, chẳng hạn như logo-phuong-nam-vina hay logo-favicon-phuong-nam-vina. B&ecirc;n cạnh đ&oacute;, bạn cũng n&ecirc;n tối ưu k&iacute;ch thước file logo gi&uacute;p cải thiện tốc độ tải trang v&igrave; đ&acirc;y cũng l&agrave; một yếu tố quan trọng trong SEO.<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Tạo logo cho website\" src=\"https://phuongnamvina.com/img_data/images/tao-logo-cho-website.jpg\" style=\"width:800px\" title=\"Tạo logo cho website\" /><br />\r\n&nbsp;</p>\r\n\r\n<h2><span id=\"dich-vu-thiet-ke-logo-website-chuyen-nghiep-doc-quye\">Dịch vụ thiết kế logo website chuy&ecirc;n nghiệp, độc quyền</span></h2>\r\n\r\n<p dir=\"ltr\">Bạn chỉ c&oacute; v&agrave;i gi&acirc;y để g&acirc;y ấn tượng với kh&aacute;ch truy cập website v&agrave; logo ch&iacute;nh l&agrave; &aacute;t chủ b&agrave;i đầu ti&ecirc;n gi&uacute;p bạn l&agrave;m điều đ&oacute;. Hiểu r&otilde; sức mạnh của một logo website ấn tượng, Phương Nam Vina mang đến <a href=\"https://phuongnamvina.com/thiet-ke-logo.html\" target=\"_blank\" title=\"dịch vụ thiết kế logo chuyên nghiệp\">dịch vụ thiết kế logo chuy&ecirc;n nghiệp</a>, s&aacute;ng tạo v&agrave; chuẩn chỉnh đến từng pixel.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Thiết kế độc quyền, thể hiện bản sắc ri&ecirc;ng</strong>: Mỗi logo l&agrave; một c&acirc;u chuyện thương hiệu ri&ecirc;ng biệt, được l&ecirc;n &yacute; tưởng s&aacute;ng tạo bởi đội ngũ thiết kế gi&agrave;u kinh nghiệm gi&uacute;p bạn dễ d&agrave;ng kết nối với đối tượng mục ti&ecirc;u.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Logo đẹp, kh&ocirc;ng lỗi thời</strong>: Thiết kế logo website đảm bảo t&iacute;nh thẩm mỹ, kh&ocirc;ng chạy theo xu hướng nhất thời, đảm bảo logo c&oacute; thể sử dụng l&acirc;u d&agrave;i m&agrave; kh&ocirc;ng bị lỗi thời.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Tối ưu cho mọi nền tảng</strong>: Logo được thiết kế đa dạng phi&ecirc;n bản &ndash; ph&ugrave; hợp cho website, mobile, favicon, mạng x&atilde; hội, in ấn,&hellip;.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Định dạng chuẩn web</strong>: B&agrave;n giao đầy đủ file logo (.SVG, .PNG, .JPG, .AI,&hellip;), gi&uacute;p bạn dễ d&agrave;ng chỉnh sửa, t&iacute;ch hợp v&agrave;o website v&agrave; sử dụng l&acirc;u d&agrave;i.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Chi ph&iacute; rẻ</strong>: Hiểu rằng mỗi doanh nghiệp đều c&oacute; ng&acirc;n s&aacute;ch ri&ecirc;ng, Phương Nam Vina mang đến nhiều g&oacute;i thiết kế logo linh hoạt, nhiều ưu đ&atilde;i, ph&ugrave; hợp với mọi nhu cầu &ndash; từ khởi nghiệp đến doanh nghiệp l&acirc;u năm.</p>\r\n\r\n<p dir=\"ltr\">- <strong>Đồng h&agrave;nh v&agrave; hỗ trợ l&acirc;u d&agrave;i</strong>: Sau khi b&agrave;n giao, Phương Nam Vina vẫn hỗ trợ kỹ thuật v&agrave; chỉnh sửa miễn ph&iacute; nếu bạn cần cập nhật nhỏ cho logo (thay đổi slogan, m&agrave;u sắc, k&iacute;ch thước,&hellip;).</p>\r\n\r\n<p dir=\"ltr\">D&ugrave; bạn đang x&acirc;y dựng website mới, hay muốn t&aacute;i định vị thương hiệu bằng một logo đẳng cấp hơn, Phương Nam Vina sẵn s&agrave;ng đồng h&agrave;nh &ndash; từ kh&acirc;u ph&aacute;c thảo &yacute; tưởng, điều chỉnh bản nh&aacute;p, cho đến khi bạn ho&agrave;n to&agrave;n h&agrave;i l&ograve;ng. Vậy n&ecirc;n, h&atilde;y li&ecirc;n hệ ngay với Phương Nam Vina qua hotline <span style=\"color:#FF0000\">0912817117</span> - <span style=\"color:#FF0000\">0915101017</span> để được tư vấn thiết kế logo website v&agrave; nhận b&aacute;o gi&aacute; tốt nhất!<br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\" style=\"text-align:center\"><img alt=\"Thiết kế logo cho website\" src=\"https://phuongnamvina.com/img_data/images/thiet-ke-logo-cho-website.jpg\" style=\"width:800px\" title=\"Thiết kế logo cho website\" /><br />\r\n&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Như vậy, ch&uacute;ng ta c&oacute; thể thấy r&otilde; tầm quan trọng kh&ocirc;ng thể phủ nhận của logo website trong chiến lược x&acirc;y dựng thương hiệu số. Một logo ấn tượng l&agrave; điểm khởi đầu cho mọi tương t&aacute;c trực tuyến, gi&uacute;p khắc s&acirc;u h&igrave;nh ảnh doanh nghiệp v&agrave;o t&acirc;m tr&iacute; kh&aacute;ch h&agrave;ng.</p>\r\n\r\n<p dir=\"ltr\">Đừng bỏ lỡ cơ hội tạo dựng một kết nối mạnh mẽ ngay từ c&aacute;i nh&igrave;n đầu ti&ecirc;n. Nếu bạn đang cần một logo trang web thật sự đ&aacute;ng nhớ &ndash; chuẩn web &ndash; đ&uacute;ng chất thương hiệu, đừng ngần ngại li&ecirc;n hệ với <a href=\"https://phuongnamvina.com/\" target=\"_blank\" title=\"Phương Nam Vina\">Phương Nam Vina</a>. Ch&uacute;ng t&ocirc;i sẵn s&agrave;ng đồng h&agrave;nh, gi&uacute;p bạn thổi hồn v&agrave;o thương hiệu bằng những thiết kế đậm dấu ấn v&agrave; bền vững với thời gian.</p>\r\n\r\n<div>\r\n<p dir=\"ltr\"><u><span style=\"color:rgb(255, 0, 0)\">Tham khảo th&ecirc;m</span></u>:</p>\r\n\r\n<p dir=\"ltr\"><img alt=\"icon thiết kế website\" src=\"https://phuongnamvina.com/img_data/images/icon-thietkewebsite.jpg\" title=\"icon thiết kế website\" />&nbsp;<a href=\"https://phuongnamvina.com/bang-bao-gia-thiet-ke-logo.html\" target=\"_blank\" title=\"Bảng báo giá thiết kế logo chuyên nghiệp, nhiều ưu đãi\">Bảng b&aacute;o gi&aacute; thiết kế logo chuy&ecirc;n nghiệp, nhiều ưu đ&atilde;i</a></p>\r\n\r\n<p dir=\"ltr\"><img alt=\"icon thiết kế website\" src=\"https://phuongnamvina.com/img_data/images/icon-thietkewebsite.jpg\" title=\"icon thiết kế website\" />&nbsp;<a href=\"https://phuongnamvina.com/y-tuong-thiet-ke-logo.html\" target=\"_blank\" title=\"Điểm danh các ý tưởng thiết kế logo sáng tạo vượt thời gian\">Điểm danh c&aacute;c &yacute; tưởng thiết kế logo s&aacute;ng tạo vượt thời gian</a></p>\r\n\r\n<p dir=\"ltr\"><img alt=\"icon thiết kế website\" src=\"https://phuongnamvina.com/img_data/images/icon-thietkewebsite.jpg\" title=\"icon thiết kế website\" />&nbsp;<a href=\"https://phuongnamvina.com/cach-thiet-ke-logo.html\" target=\"_blank\" title=\"Cách thiết kế logo miễn phí, đơn giản cho dân không chuyên\">C&aacute;ch thiết kế logo miễn ph&iacute;, đơn giản cho d&acirc;n kh&ocirc;ng chuy&ecirc;n</a></p>\r\n</div>\r\n<style type=\"text/css\">#mucluc-pnvn{margin-right: 15px;margin-bottom:25px;border: 1px solid #ccc;padding: 10px;border-radius: 5px;background-color: #f3f3f3;}#mucluc-pnvn.mucluc-left{float: left;}#mucluc-pnvn.mucluc-right{float: right;}.mucluc-pnvn{padding: 0px;list-style: none;margin-top:10px}.mucluc-pnvn a{color: #000;margin-bottom: 10px;display: block;font-size:16px}.mucluc-pnvn>li>ul{list-style: none;padding-left: 20px;}.mucluc-pnvn>li>ul>li>ul{list-style: none;padding-left: 20px;}.mucluc-pnvn>li>ul>li>ul>li>ul{list-style: none;padding-left: 30px;}.mucluc-pnvn>li>ul>li>ul>li>ul>li>ul{list-style: none;padding-left: 40px;}.mucluc-pnvn>li>a{ font-weight: 600;font-size:17px}}\r\n</style>\r\n', 'tin_tuc/161023_kham_pha_hat_tieu_buffet_poseidon_01_jpg.jpg', 1, 1, 'Hạt tiêu - Loại gia vị bé nhỏ mà bùng nổ hương vị ấm nồng', '', '', '', 129, 0, 0, 0, '', '', '', '', 1, 43, 'vi', '2024-06-13 08:46:06', '2026-06-08 17:57:16', 0);
+INSERT INTO `db_posts` (`id`, `id_code`, `title`, `slug`, `description`, `content`, `image`, `is_featured`, `status`, `seo_title`, `keyword`, `tags`, `seo_description`, `category_id`, `sort_order`, `nofollow`, `noindex`, `seo_head`, `seo_body`, `seo_schema`, `seo_canonical`, `created_by`, `views`, `lang`, `created_at`, `updated_at`, `updated_by`) VALUES
+(106, 631, 'Tác dụng tuyệt diệu của hỗn hợp quế và mật ong : tốt cho tim; làm giảm đau xương khớp', 'tac-dung-tuyet-dieu-cua-hon-hop-que-va-mat-ong-tot-cho-tim-lam-giam-dau-xuong-khop-', 'Chữa tận gốc bệnh đau dạ dày do lạnh; cực kỳ tốt cho tim; làm giảm đau xương khớp; giúp cơ thể khỏe mạnh và làm đẹp da; làm giảm mỡ trong máu… là số ít trong vô số tác dụng của hỗn hợp quế và mật ong…', '<p>Chữa tận gốc bệnh đau dạ d&agrave;y do lạnh; cực kỳ tốt cho tim; l&agrave;m giảm đau xương khớp; gi&uacute;p cơ thể khỏe mạnh v&agrave; l&agrave;m đẹp da; l&agrave;m giảm mỡ trong m&aacute;u&hellip; l&agrave; số &iacute;t trong v&ocirc; số t&aacute;c dụng của hỗn hợp quế v&agrave; mật ong&hellip;</p>\r\n\r\n<p>B&agrave;i đăng tr&ecirc;n tạp ch&iacute; &ldquo;Tin tức thế giới h&agrave;ng tuần&rdquo; (Weekly World News) xuất bản tại Canada, đ&atilde; liệt k&ecirc; một số c&aacute;c chứng bệnh được chữa khỏi (cured) do hỗn hợp mật ong v&agrave; bột quế, được c&aacute;c nh&agrave; khoa học Phương T&acirc;y nghi&ecirc;n cứu kỹ lưỡng v&agrave; phổ biến.</p>\r\n\r\n<p>Theo họ th&igrave; mật ong đ&atilde; được khắp thế giới biết v&agrave; được sử dụng như l&agrave; 1 loại dược chất sinh học (Vital medicine) từ nhiều thế kỷ trước. Ng&agrave;y nay, qua khảo s&aacute;t v&agrave; nghi&ecirc;n cứu kiểm chứng, c&aacute;c khoa học gia đ&atilde; nhận thấy v&agrave; chấp nhận mật ong l&agrave; 1 loại dược chất chữa được nhiều chứng bệnh.</p>\r\n\r\n<p>Chữa bệnh bằng quế v&agrave; mật ong</p>\r\n\r\n<p>Điểm đặc biệt l&agrave; mật ong kh&ocirc;ng c&oacute; phản ứng phụ đối với bất cứ căn bệnh n&agrave;o. Trong đ&oacute; người ta cho biết, d&ugrave; mật ong tuy vị ngọt, nhưng nếu d&ugrave;ng với liều lượng vừa phải như l&agrave; 1 loại dược chất, n&oacute; cũng sẽ kh&ocirc;ng g&acirc;y ảnh hưởng nguy hại cho người tiểu đường.</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 1</p>\r\n\r\n<p>Liều lượng v&agrave; c&aacute;ch sử dụng được hưởng dẫn như sau:</p>\r\n\r\n<ol>\r\n	<li>Đau khớp xương</li>\r\n</ol>\r\n\r\n<p>a) 1 phần mật ong, 2 phần nước ấm, 1 muỗng caf&eacute; bột quế. Trộn lại th&agrave;nh 1 hỗn hợp sền sệt rồi đắp l&ecirc;n chỗ đau nhức v&agrave; thoa chầm chậm, nh&egrave; nhẹ. Cơn đau sẽ giảm nhẹ sau v&agrave;i ph&uacute;t.</p>\r\n\r\n<p>b) Người ta cũng c&oacute; thể pha 2 muỗng caf&eacute; mật ong 1 muỗng caf&eacute; bột quế trong 1 ly nước n&oacute;ng, uống đều đặn h&agrave;ng ng&agrave;y v&agrave;o buổi s&aacute;ng v&agrave; buổi tối c&oacute; thể gi&uacute;p cho những người bị đau khớp xương kinh ni&ecirc;n tho&aacute;t khỏi c&aacute;c cơn đau.</p>\r\n\r\n<p>Trong một c&ocirc;ng cuộc nghi&ecirc;n cứu tại Đại Học Copenhagen người ta đ&atilde; ghi nhận rằng: c&aacute;c BS khi điều trị c&aacute;c bệnh nh&acirc;n bị đau nhức với 1 hỗn hợp gồm: 1 muỗng mật ong v&agrave; 1/2 muỗng caf&eacute; bột quế v&agrave;o bữa điểm t&acirc;m, sau 1 tuần lễ, kết quả 200 người được điều trị 73 người đ&atilde; ho&agrave;n to&agrave;n hết đau, v&agrave; sau 1 th&aacute;ng được chữa trị hầu hết c&aacute;c bệnh</p>\r\n\r\n<ol start=\"2\">\r\n	<li>Cao mỡ trong m&aacute;u (High cholesterol)</li>\r\n</ol>\r\n\r\n<p>2 muỗng soup mật ong, 3 muỗng caf&eacute; bột quế, 16 ounce nước tr&agrave;. Quậy đều để cho người bị cao mỡ trong m&aacute;u uống, sau 2 giờ, đo lượng Cholesterol trong m&aacute;u người ta thấy giảm xuống 10%.</p>\r\n\r\n<ul>\r\n	<li>Cũng theo t&agrave;i liệu của tạp ch&iacute; Weekly World News th&igrave; nếu người bị cao Cholesterol d&ugrave;ng mật ong nguy&ecirc;n chất với thực phẩm h&agrave;ng ng&agrave;y c&oacute; thể giảm lượng cholesterol đ&aacute;ng kể.</li>\r\n	<li>Đối với người bị đau khớp xương kinh ni&ecirc;n, nếu uống theo c&ocirc;ng thức tr&ecirc;n, 3 lần trong 1 ng&agrave;y th&igrave; ngo&agrave;i giảm bớt đau nhức khớp xương ra c&ograve;n giảm được Cholesterol trong m&aacute;u nữa.</li>\r\n</ul>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 2</p>\r\n\r\n<ol start=\"3\">\r\n	<li>Bệnh về tim mạch (Heart diseases)</li>\r\n</ol>\r\n\r\n<p>Trộn mật ong v&agrave; bột quế sền sệt rồi quết l&ecirc;n b&aacute;nh m&igrave; thay cho mứt tr&aacute;i c&acirc;y (Jelly Jam) d&ugrave;ng cho bữa điểm t&acirc;m mỗi s&aacute;ng. Nếu ăn đều đặn như thế c&oacute; thể l&agrave;m giảm lượng Cholesterol trong c&aacute;c mạch m&aacute;u, điều nầy gi&uacute;p cho c&aacute;c bệnh nh&acirc;n bị bệnh tim mạch tr&aacute;nh được chứng đột qụy (heart attack).</p>\r\n\r\n<p>Nếu những ai đ&atilde; từng bị đột qụy rồi th&igrave; c&oacute; thể tr&aacute;nh xa được cơn đột qụy kết tiếp, khi tiếp tục ăn điểm t&acirc;m như kể tr&ecirc;n.</p>\r\n\r\n<ol start=\"4\">\r\n	<li>Tăng cường hệ thống miễn nhiễm (Immune system)</li>\r\n</ol>\r\n\r\n<p>Nếu d&ugrave;ng mật ong v&agrave; bột quế h&agrave;ng ng&agrave;y sẽ gi&uacute;p cho hệ thống miễn nhiễm được tăng mạnh th&ecirc;m v&agrave; gi&uacute;p bảo vệ cho cơ thể kh&oacute; bị vi tr&ugrave;ng v&agrave; si&ecirc;u vi khuẩn tấn c&ocirc;ng.</p>\r\n\r\n<p>Xử dụng mật ong đều đặn sẽ gi&uacute;p cho bạch huyết cầu tăng th&ecirc;m khả năng chống lại sự x&acirc;m nhập của vi tr&ugrave;ng v&agrave; si&ecirc;u vi khuẩn trong c&aacute;c mầm bệnh.</p>\r\n\r\n<ol start=\"5\">\r\n	<li>Nhiễm tr&ugrave;ng đường tiểu (Blađer infection) B&agrave;ng quang</li>\r\n</ol>\r\n\r\n<p>Lấy 2 muỗng canh bột quế, 1 muỗng caf&eacute; mật ong, 1 ly nước ấm. Quậy đều rồi uống cạn sẽ ti&ecirc;u điệt được c&aacute;c vi tr&ugrave;ng (Germ) mầm bệnh trong b&agrave;ng quan.</p>\r\n\r\n<ol start=\"6\">\r\n	<li>Nhức răng (Toothache)</li>\r\n</ol>\r\n\r\n<p>D&ugrave;ng 5 muỗng caf&eacute; mật ong, 1 muỗng caf&eacute; bột quế trộn lại với nhau th&agrave;nh hợp chất sền sệt rồi đắp l&ecirc;n chỗ răng đau. L&agrave;m như vậy 3 lần trong 1 ng&agrave;y cho đến khi răng kh&ocirc;ng c&ograve;n đau nữa.</p>\r\n\r\n<ol start=\"7\">\r\n	<li>C&uacute;m (Influenza).</li>\r\n</ol>\r\n\r\n<p>Một khoa học gia tại T&acirc;y Ban Nha (Spain) đ&atilde; chứng minh rằng, trong mật ong c&oacute; chứa 1 chất thi&ecirc;n nhi&ecirc;n c&oacute; khả năng ti&ecirc;u diệt được c&aacute;c mầm si&ecirc;u vi của bệnh cảm c&uacute;m gi&uacute;p cho người ta khỏi bị c&uacute;m (Flu).</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 3</p>\r\n\r\n<ol start=\"8\">\r\n	<li>Cảm lạnh (Colds)</li>\r\n</ol>\r\n\r\n<p>Đối với những người bị cảm lạnh thường hay cảm nặng c&oacute; thể d&ugrave;ng:</p>\r\n\r\n<p>1 muỗng canh mật ong h&acirc;m ấm l&ecirc;n (Warm) v&agrave; 1/4 muỗng caf&eacute; bột quế. D&ugrave;ng li&ecirc;n tục trong v&ograve;ng 3 ng&agrave;y th&igrave; c&oacute; thể chữa l&agrave;nh được c&aacute;c chứng ho kinh ni&ecirc;n, v&agrave; cảm lạnh cũng như chảy nước mũi cũng ngưng lại.</p>\r\n\r\n<ol start=\"9\">\r\n	<li>C&aacute;c chứng về ti&ecirc;u h&oacute;a (dạ d&agrave;y)</li>\r\n</ol>\r\n\r\n<p>a) Dạ d&agrave;y kh&oacute; chịu (Upset stomach): Mật ong v&agrave; bột quế c&oacute; thể chữa l&agrave;nh bệnh đau bao tử cũng như trị tận gốc bệnh bao tử.</p>\r\n\r\n<p>b) Bao tử đầy hơi (Gas): Theo những nghi&ecirc;n cứu đ&atilde; thực hiện tại Nhật Bản v&agrave; Ấn Độ cho thấy, mật ong v&agrave; bột quế đ&atilde; l&agrave;m hết bị đầy hơi trong bao tử.</p>\r\n\r\n<p>c) Bột quế được trộn chung với 2 muỗng canh mật ong d&ugrave;ng trước khi tham dự 1 bữa ăn thịnh soạn nhiều thịt th&agrave;, sẽ gi&uacute;p cho người ta ti&ecirc;u h&oacute;a được c&aacute;c bữa ăn đ&oacute; dễ d&agrave;ng.</p>\r\n\r\n<ol start=\"10\">\r\n	<li>Mệt mỏi (Fatigue).</li>\r\n</ol>\r\n\r\n<p>C&aacute;c nghi&ecirc;n cứu thấy rằng, chất ngọt trong mật ong gi&uacute;p cơ thể con người tốt hơn l&agrave; l&agrave;m hại. Cho n&ecirc;n những người cao ni&ecirc;n d&ugrave;ng mật ong v&agrave; bột quế với tỉ lệ bằng nhau gi&uacute;p cho họ dẻo dai v&agrave; tinh tường hơn. Theo BS Milton sau khi đ&atilde; nghi&ecirc;n cứu n&oacute;i rằng: Khi người ta cảm thấy sự sinh động của m&igrave;nh bắt đầu suy giảm, h&atilde;y d&ugrave;ng hằng ng&agrave;y, sau khi đ&aacute;nh răng v&agrave;o buổi s&aacute;ng v&agrave; khoảng l&uacute;c 3 giờ chiều, 1 ly nước ấm trong đ&oacute; pha 1/2 muỗng canh mật ong ngo&aacute;y đều với 1 muỗng caf&eacute; bột quế. Kết quả sẽ thấy sự sinh động của m&igrave;nh l&ecirc;n trở lại trong v&ograve;ng 1 tuần lễ.</p>\r\n\r\n<ol start=\"11\">\r\n	<li>K&eacute;o d&agrave;i tuổi thọ (Longivety)</li>\r\n</ol>\r\n\r\n<p>Khi uống nước tr&agrave; pha với mật ong v&agrave; bột quế đều đặn mỗi ng&agrave;y, người ta c&oacute; thể l&agrave;m chậm sự l&atilde;o h&oacute;a, k&eacute;o d&agrave;i th&ecirc;m tuổi thọ, theo c&ocirc;ng thức như sau: 4 muỗng mật ong, 1 muỗng bột quế bỏ v&agrave;o 1 b&igrave;nh trong đ&oacute; c&oacute; 3 ly nước rồi đem đun s&ocirc;i l&ecirc;n như người ta pha nước tr&agrave;.</p>\r\n\r\n<p>C&aacute;ch d&ugrave;ng: Mỗi lần uống 1/4 ly, mỗi ng&agrave;y 3 hay 4 lần. Kết quả tốt sẽ thấy l&agrave; da dẻ hồng h&agrave;o tươi trẻ, mịn m&agrave;ng. Thực thế t&ocirc;i quen biết 1 vị cao ni&ecirc;n t&ecirc;n l&agrave; Cụ Mai Phương 86t, đ&atilde; &aacute;p dụng phương ph&aacute;p nầy hơn 20 năm nay. C&aacute;ch uống l&agrave; th&ecirc;m v&agrave;i giọt chanh v&agrave;o ly nước trước khi uống, sức khỏe rất tốt.</p>\r\n\r\n<ol start=\"12\">\r\n	<li>Giảm c&acirc;n, chống b&eacute;o mập (Weight loss)</li>\r\n</ol>\r\n\r\n<p>H&agrave;ng ng&agrave;y 1/2 giờ trước khi ăn điểm t&acirc;m l&uacute;c bụng đ&oacute;i v&agrave; 1/2 giờ trước khi đi ngủ h&atilde;y uống 1 l&yacute; nước đun s&ocirc;i c&oacute; pha 1 muỗng mật ong v&agrave; 1 muỗng caf&eacute; bột quế. Nếu uống như vậy đều đặn h&agrave;ng ng&agrave;y th&igrave; ngay cả người bị b&eacute;o ph&igrave; cũng giảm chậm sự t&iacute;ch tụ chất b&eacute;o trong cơ th&ecirc;, v&agrave; c&oacute; hiệu quả ngay đối với người ăn c&aacute;c loại thực phẩm c&oacute; nhiều Calories trong bữa ăn h&agrave;ng ng&agrave;y.</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 4</p>\r\n\r\n<ol start=\"13\">\r\n	<li>Da bị nhiễm tr&ugrave;ng (Skin infection)</li>\r\n</ol>\r\n\r\n<p>Khi da bị l&aacute;t đồng tiền (Ring worm) v&agrave; c&aacute;c loại nhiễm tr&ugrave;ng da c&oacute; thể chữa trị bằng c&aacute;ch đắp l&ecirc;n v&ugrave;ng da bị nhiễm tr&ugrave;ng 1 hỗn hợp trộn mật ong v&agrave; bột quế với ph&acirc;n lượng bằng nhau.</p>\r\n\r\n<ol start=\"14\">\r\n	<li>Trị mụn (Pimples)</li>\r\n</ol>\r\n\r\n<p>Với c&ocirc;ng thức 3 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn lại sền sệt b&ocirc;i l&ecirc;n c&aacute;c mụn trước khi đi ngủ, s&aacute;ng h&ocirc;m sau rửa mặt bằng nước ấm. L&agrave;m như thế trong v&ograve;ng 2 tuần lễ th&igrave; c&aacute;c mụn sẽ được trị tận gốc.</p>\r\n\r\n<ol start=\"15\">\r\n	<li>Trị h&ocirc;i miệng (Bad breath)</li>\r\n</ol>\r\n\r\n<p>Để trị h&ocirc;i miệng, hơi thở được thơm tho, những người d&acirc;n tại v&ugrave;ng Nam Mỹ (South America) đ&atilde; l&agrave;m việc đầu ti&ecirc;n v&agrave;o buổi s&aacute;ng l&agrave; s&uacute;c miệng với 1 ly nước n&oacute;ng c&oacute; pha với 1 muỗng caf&eacute; mật ong v&agrave; bột quế quậy đều. Hơi thở của họ kh&ocirc;ng h&ocirc;i v&agrave; thơm m&ugrave;i quế suốt cả ng&agrave;y.</p>\r\n\r\n<ol start=\"16\">\r\n	<li>Gi&uacute;p phục hồi th&iacute;nh gi&aacute;c bị suy giảm, điếc (Hearing loss)</li>\r\n</ol>\r\n\r\n<p>H&agrave;ng ng&agrave;y uống đều đặn v&agrave;o mỗi buổi s&aacute;ng v&agrave; buổi tối trước khi ngủ 1 ly nước ấm c&oacute; pha mật ong v&agrave; bột quế với ph&acirc;n lượng bằng nhau, sẽ phục hồi lại t&igrave;nh trạng th&iacute;nh gi&aacute;c (tai) bị điếc, nghễnh ng&atilde;ng.</p>\r\n\r\n<ol start=\"17\">\r\n	<li>Rụng t&oacute;c v&agrave; h&oacute;i đầu (Hair loss &amp; Baldness)</li>\r\n</ol>\r\n\r\n<p>Những người bị rụng t&oacute;c hay h&oacute;i đầu c&oacute; thể d&ugrave;ng phương c&aacute;ch sau đ&acirc;y:</p>\r\n\r\n<p>Lấy 1 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn với dầu Olive th&agrave;nh 1 hỗn hợp rồi b&ocirc;i l&ecirc;n đầu khoảng 15 ph&uacute;t, sau đ&oacute; đi tắm v&agrave; gội đầu. Kết quả ghi nhận l&agrave; rất c&oacute; hiệu quả, ngay cả khi đi tắm v&agrave; gội đầu 5 ph&uacute;t sau khi b&ocirc;i.</p>\r\n\r\n<p>Ngo&agrave;i ra b&agrave;i b&aacute;o c&ograve;n n&oacute;i đến hiệu quả tốt đẹp của việc xử dụng hỗn hợp mật ong v&agrave; bột quế trong c&aacute;c trường hợp bị v&ocirc; sinh (Infertility) v&agrave; bệnh ung thư (Cancer).</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 5</p>\r\n\r\n<ol start=\"18\">\r\n	<li>V&ocirc; sinh (Infertility)</li>\r\n</ol>\r\n\r\n<ul>\r\n	<li>Yunami &amp; Ayurredic đ&atilde; d&ugrave;ng mật ong từ l&acirc;u trong Y Học để gi&uacute;p cho tinh dịch của người Nam (Male) được tăng th&ecirc;m sức mạnh của n&oacute;.</li>\r\n	<li>Người ta cũng ghi nhận người đ&agrave;n &ocirc;ng bị bất lực, nếu uống 2 muỗng canh mật ong mỗi ng&agrave;y trước khi đi ngủ th&igrave; t&igrave;nh trạng bất lực c&oacute; thể được giải quyết tốt đẹp.</li>\r\n	<li>Tại Trung Hoa, Nhật Bản v&agrave; một số c&aacute;c nước v&ugrave;ng Viễn Đ&ocirc;ng, đối với c&aacute;c phụ nữ kh&ocirc;ng thể đậu thai từ nhiều thế kỷ đ&atilde; được khuy&ecirc;n d&ugrave;ng bột quế để gi&uacute;p cho buồng trứng v&agrave; tử cung cải thiện dễ thụ tinh, mang bầu.</li>\r\n	<li>C&aacute;c phụ nữ kh&ocirc;ng thể c&oacute; bầu th&igrave; c&oacute; thể d&ugrave;ng 1 Pinch bột quế h&ograve;a với 1/2 muỗng caf&eacute; mật ong, rồi ngậm trong miệng thường xuy&ecirc;n suốt ng&agrave;ỵ 2 thứ n&agrave;y được trộn lẫn với nước bọt trong miệng rồi từ từ ngấm v&agrave;o cơ thể để mang lại thuận lợi cho người phụ nữ đậu thai.</li>\r\n</ul>\r\n\r\n<p>Người ta đ&atilde; ghi nhận 1 cặp vợ chồng tại tiểu bang Maryland , Hoa Kỳ; cưới nhau 14 năm kh&ocirc;ng c&oacute; con v&agrave; họ gần như tuyệt vọng&hellip;</p>\r\n\r\n<p>Nhưng khi được m&aacute;ch bảo phương c&aacute;c d&ugrave;ng mật ong v&agrave; bột quế, 2 vợ chồng đ&atilde; c&ugrave;ng &aacute;p dụng phương ph&aacute;p tr&ecirc;n; chỉ v&agrave;i th&aacute;ng sau người vợ đ&atilde; mang thai v&agrave; sinh đ&ocirc;i với 2 đứa con khỏe mạnh b&igrave;nh thường.</p>\r\n\r\n<ol start=\"19\">\r\n	<li>Đối với bệnh ung thư (Cancer)</li>\r\n</ol>\r\n\r\n<p>Những nghi&ecirc;n cứu mới đ&acirc;y tại Nhật Bản v&agrave; &Uacute;c Ch&acirc;u đ&atilde; ghi nhận t&igrave;nh trạng ung thư bao tử v&agrave; ung thư xương đang ph&aacute;t t&aacute;c, đ&atilde;</p>\r\n\r\n<p>được điều trị 1 c&aacute;ch hiệu quả bằng mật ong v&agrave; quế. Sau khi những bệnh nh&acirc;n đang mắc phải ung thư bao tử v&agrave; xương d&ugrave;ng như sau:</p>\r\n\r\n<p>Uống 1 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn đều, mỗi ng&agrave;y 3 lần li&ecirc;n tiếp trong 1 th&aacute;ng.</p>\r\n', 'tin_tuc/shutterstock_338983799_1635216_2362_5994_1635216756.jpg', 1, 1, 'Tác dụng tuyệt diệu của hỗn hợp quế và mật ong : tốt cho tim; làm giảm đau xương khớp', '', '', '', 129, 0, 0, 0, '', '', '', '', 1, 9, 'vi', '2024-06-16 06:11:12', '2026-06-08 17:57:16', 0),
+(110, 653, 'Cành nhánh quế trở thành hàng hóa, không chỉ dùng trong nước mà còn để xuất khẩu.', 'canh-nhanh-que-tro-thanh-hang-hoa-khong-chi-dung-trong-nuoc-ma-con-de-xuat-khau-', 'Khi khai thác quế cây, người ta bỏ những cành nhánh nhỏ. Mỗi năm chỉ riêng ở huyện Trà My, Quảng Nam, số cành nhánh đó phải đến 200 tấn.', '<p>Năm đ&oacute;, nh&agrave; bu&ocirc;n quế Nguyễn Văn Qu&acirc;n (Tam Kỳ, Quảng Nam) t&igrave;nh cờ nh&igrave;n thấy một mẫu quế chi của Trung Quốc b&aacute;n cho kh&aacute;ch bu&ocirc;n Đ&agrave;i Loan. Quế chi l&agrave; một loại dược liệu kh&ocirc;ng thể thiếu trong mọi thang thuốc Bắc, v&agrave; điều đặc biệt l&agrave; quế chi được chế biến từ c&agrave;nh nh&aacute;nh bỏ đi của c&acirc;y quế (chi: c&agrave;nh, nh&aacute;nh). Qu&acirc;n thấy ngay một hướng kinh doanh mới, v&agrave; biết chắc rằng do c&agrave;nh nh&aacute;nh quế Tr&agrave; My chất lượng tốt hơn, mặt h&agrave;ng quế chi Tr&agrave; My sẽ c&oacute; sực cạnh tranh mạnh hơn quế chi Trung Quốc.</p>\r\n\r\n<p>Việc đầu ti&ecirc;n của Qu&acirc;n l&agrave; v&agrave;o TP Hồ Ch&iacute; Minh t&igrave;m xem c&aacute;c loại m&aacute;y cắt thuốc Bắc do Đ&agrave;i Loan sản xuất, c&oacute; gi&aacute; đến 2.000 USD/m&aacute;y. Đ&acirc;y l&agrave; những m&aacute;y cắt thuốc n&oacute;i chung, trừ c&agrave;nh nh&aacute;nh quế. Thật ra, vẫn c&oacute; thể d&ugrave;ng để cắt nh&aacute;nh quế nhưng l&aacute;t cắt th&ocirc; vụng, h&agrave;ng kh&ocirc;ng đẹp, v&agrave; chậm, mỗi ng&agrave;y cắt được tối đa 100 kg quế. Qu&acirc;n vừa xem vừa &acirc;m thầm nghi&ecirc;n cứu cải tiến c&aacute;c chi tiết rồi tự tạo cho m&igrave;nh một c&aacute;i m&aacute;y chuy&ecirc;n cắt c&agrave;nh nh&aacute;nh quế. M&aacute;y của Đ&agrave;i Loan trục cắt đứng, c&ograve;n m&aacute;y của Qu&acirc;n trục cắt nằm ngang. Sự thay đổi n&agrave;y đ&atilde; n&acirc;ng c&ocirc;ng suất cắt của m&aacute;y l&ecirc;n gấp ba lần, mỗi ng&agrave;y cắt được 300 kg, l&aacute;t cắt lại sắc sảo, đều v&agrave; đẹp. Trước kia muốn cắt quế phải lựa những nh&aacute;nh c&ugrave;ng cỡ nhau, c&ograve;n b&acirc;y giờ nh&aacute;nh quế to nhỏ g&igrave; cũng được, cứ nắm cả b&oacute; cho v&agrave;o m&aacute;y cắt. Từ c&aacute;i m&aacute;y cắt Đ&agrave;i Loan gi&aacute; 2.000 USD, Qu&acirc;n đ&atilde; tạo ra một c&aacute;i m&aacute;y tốt hơn, gi&aacute; chỉ c&oacute; 10 triệu đồng.</p>\r\n\r\n<p>Bằng chiếc m&aacute;y cắt quế chi, Qu&acirc;n đ&atilde; dần dần chiếm được thị trường quế chi của Đ&agrave;i Loan, v&agrave; trở th&agrave;nh nh&agrave; cung cấp chủ yếu mặt h&agrave;ng quế chi cho phố thuốc Bắc Hải thượng L&atilde;n &ocirc;ng ở TP Hồ Ch&iacute; Minh (chỉ ri&ecirc;ng con phố n&agrave;y mỗi năm mua của Qu&acirc;n 60 tấn quế chi). Mỗi năm Qu&acirc;n xuất khẩu quế chi thu được hơn 70.000 USD. Cứ b&aacute;n mỗi tấn quế, Qu&acirc;n lời hai triệu đồng, mỗi năm Qu&acirc;n b&aacute;n hơn 100 tấn quế chi v&agrave; bỏ t&uacute;i tối thiểu 200 triệu đồng tiền l&atilde;i. Kh&ocirc;ng chỉ Qu&acirc;n được lợi m&agrave; người trồng quế ở Tr&agrave; My cũng c&oacute; th&ecirc;m thu nhập. Quế c&agrave;nh nh&aacute;nh từ chỗ c&oacute; gi&aacute; 500 đồng/kg đ&atilde; tăng l&ecirc;n s&aacute;u lần, gi&aacute; hiện thời l&agrave; 3.000 đồng/kg. B&acirc;y giờ 200 tấn c&agrave;nh nh&aacute;nh quế Tr&agrave; My thải ra hằng năm đều được Qu&acirc;n tận dụng. Kh&ocirc;ng những thế, Qu&acirc;n c&ograve;n mở rộng địa b&agrave;n, mua th&ecirc;m quế c&agrave;nh nh&aacute;nh ở c&aacute;c huyện Ti&ecirc;n Phước, Phước Sơn, v&agrave; nhiều tỉnh kh&aacute;c để đẩy mạnh xuất khẩu, đ&aacute;p ứng nhu cầu của kh&aacute;ch Đ&agrave;i Loan v&agrave; H&agrave;n Quốc.</p>\r\n\r\n<p>Qu&acirc;n đang nghi&ecirc;n cứu l&agrave;m ly uống c&agrave; ph&ecirc;, tr&agrave;&hellip; từ th&acirc;n c&acirc;y quế để xuất cho thị trường Bắc &Acirc;u. Kh&aacute;ch h&agrave;ng Qu&acirc;n đ&atilde; c&oacute;, chỉ c&oacute; c&aacute;i m&aacute;y để cắt, đục, l&agrave;m b&oacute;ng&hellip; th&igrave; đang phải suy nghĩ th&ecirc;m. Th&acirc;n c&acirc;y quế, sau khi lột vỏ, đang l&agrave; đồ bỏ, v&igrave; d&ugrave;ng l&agrave;m củi cũng kh&ocirc;ng được do k&eacute;m bắt lửa. &ldquo;Nếu sản xuất th&agrave;nh c&ocirc;ng mặt h&agrave;ng ly, cốc bằng gỗ th&acirc;n c&acirc;y quế, lợi nhuận phải đến 300%&rdquo;, Qu&acirc;n quả quyết.</p>\r\n', 'tin_tuc/_2539_1717652388_860x0.jpg', 1, 1, 'Cành nhánh quế trở thành hàng hóa, không chỉ dùng trong nước mà còn để xuất khẩu.', '', '', '', 129, 0, 0, 0, '', '', '', '', 1, 390, 'vi', '2024-06-27 04:05:13', '2026-06-08 17:57:16', 0),
+(113, 656, 'BIỆT THỰ SÂN VƯỜN', 'biet-thu-san-vuon', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/nha_vuon_thong_tin_chi_tiet_chi_phi_xay_dung_tham_khao_va_29_mau_nha_vuon_dep_me_ly_6446008f6d1ba4a29dcf8360.webp', 1, 1, 'BIỆT THỰ SÂN VƯỜN', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 5, 'vi', '2024-06-28 02:28:33', '2026-06-08 17:57:16', 0),
+(114, 657, 'QUÁN CÀ PHÊ', 'trung-tam-thuong-mai', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/trung_tam_thuong_mai_1691035417_17079655862711524834885.jpg', 1, 1, 'QUÁN CÀ PHÊ', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 2, 'vi', '2024-06-28 02:28:55', '2026-06-08 17:57:16', 0),
+(116, 659, 'KHU DÂN CƯ', 'khu-dan-cu', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cac_buoc_trien_khai_du_an_khu_dan_cu.jpg', 1, 1, 'KHU DÂN CƯ', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 2, 'vi', '2024-06-28 02:29:45', '2026-06-08 17:57:16', 0),
+(117, 660, 'CÔNG VIÊN', 'cong-vien', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/thiet_ke_cong_vien_landscape_park_design_04_san_vuon_a_dong.jpg', 1, 1, 'CÔNG VIÊN', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 3, 'vi', '2024-06-28 02:30:04', '2026-06-08 17:57:16', 0),
+(118, 661, 'NHÀ VƯỜN', 'khu-nghi-duong', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cong_ty_tu_van_thiet_ke_resort_1.jpg', 1, 1, 'NHÀ VƯỜN', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 7, 'vi', '2024-06-28 02:30:19', '2026-06-08 17:57:16', 0),
+(119, 662, 'VĂN PHÒNG', 'san-golf', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/san_golf_vu_yen.jpg', 1, 1, 'VĂN PHÒNG', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 3, 'vi', '2024-06-28 02:30:37', '2026-07-03 00:26:35', 0),
+(124, 630, 'What is star anise? The benefits of star anise and ways to use it.', 'what-is-star-anise-the-benefits-of-star-anise-and-ways-to-use-it', '<p>Hoa hồi l&agrave; g&igrave; v&agrave; hoa hồi c&oacute; những lợi &iacute;ch v&agrave; c&ocirc;ng dụng như thế n&agrave;o? H&atilde;y c&ugrave;ng B&aacute;ch h&oacute;a XANH t&igrave;m hiểu ngay trong b&agrave;i viết n&agrave;y nh&eacute;.</p>\r\n', '<p><img alt=\" Hoa hồi\" data-id=\"6\" data-nimg=\"1\" decoding=\"async\" height=\"429\" loading=\"lazy\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202202151534168292.jpg\" title=\" Hoa hồi\" width=\"762\" />Hoa hồi</p>\r\n\r\n<p>Hoa hồi,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/bot-que-ong-cha-va-hu-35g\" target=\"_blank\">quế</a>,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/thao-qua-dh-foods-natural-hu-20g\" target=\"_blank\">thảo quả</a>,&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi/dinh-huong-ong-cha-va-hu-35g\" target=\"_blank\">đinh hương</a>,... đều l&agrave; những loại gia vị kh&ocirc; thường được d&ugrave;ng trong nấu ăn rất thường xuy&ecirc;n ở nhiều gia đ&igrave;nh. Trong đ&oacute; hoa hồi l&agrave; gia vị kh&ocirc;ng thể thiếu, đặc biệt trong c&aacute;c m&oacute;n ăn truyền thống như&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-nau-pho-bo-ha-noi-962092\" target=\"_blank\">phở</a>. Tuy nhi&ecirc;n&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi-hoi-que-thao-qua-dinh-huong\" target=\"_blank\">hoa hồi</a>&nbsp;c&oacute; xuất sứ từ đ&acirc;u v&agrave; hoa hồi c&oacute; những c&ocirc;ng dụng ra sao ch&iacute;nh l&agrave; những thắc mắc chung của kh&aacute; nhiều người. H&atilde;y c&ugrave;ng t&igrave;m hiểu tất tần tật về loại gia vị n&agrave;y ngay sau đ&acirc;y</p>\r\n\r\n<h3>1Hoa hồi l&agrave; g&igrave;?</h3>\r\n\r\n<p><img alt=\"\" data-id=\"2\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151237240972.jpg\" /></p>\r\n\r\n<p>Hoa hồi hay c&ograve;n gọi l&agrave; hoa đại hồi l&agrave; một loại c&acirc;y&nbsp;<b>c&oacute; nguồn gốc từ Trung Quốc v&agrave; đ&ocirc;ng bắc Việt Nam</b>. Đ&acirc;y l&agrave; lo&agrave;i c&acirc;y gia vị c&oacute; t&aacute;c dụng v&agrave; m&ugrave;i thơm tương tự như c&acirc;y tiểu hồi, thu nhặt được từ vỏ quả. Đặc điểm của lo&agrave;i c&acirc;y n&agrave;y l&agrave; c&oacute; h&igrave;nh d&aacute;ng kh&aacute; nhỏ chỉ từ 6-10m, th&acirc;n c&acirc;y thẳng v&agrave; nhẵn v&agrave; c&oacute; m&agrave;u n&acirc;u x&aacute;m.</p>\r\n\r\n<p><img alt=\"\" data-id=\"3\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151237459437.jpg\" /></p>\r\n\r\n<p>Th&ocirc;ng thường<b>&nbsp;hoa hồi sẽ c&oacute; 6-8 c&aacute;nh, xếp th&agrave;nh h&igrave;nh c&aacute;nh sao c&oacute; đường k&iacute;nh từ 2,5 đến 3 cm</b>, mỗi c&aacute;nh mang b&ecirc;n trong một hạt nhỏ h&igrave;nh quả trứng nhẵn b&oacute;ng. Đa phần hoa hồi sao khi thu hoạch sẽ được&nbsp;<b>mang đi phơi kh&ocirc;, xuất khẩu dưới dạng hoa kh&ocirc;, chỉ c&oacute; một phần nhỏ được đem chế biến th&agrave;nh tinh dầu.</b></p>\r\n\r\n<h3>2Lợi &iacute;ch v&agrave; c&aacute;ch sử dụng hoa hồi</h3>\r\n\r\n<p><img alt=\"\" data-id=\"4\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151238141137.jpg\" /></p>\r\n\r\n<p><b>D&ugrave;ng trong chăm s&oacute;c sức khỏe</b>:&nbsp;<i>Theo Đại t&aacute;, B&aacute;c sĩ Nguyễn B&aacute; Vưỡng &ndash; Ph&ograve;ng chẩn trị y học cổ truyền T&acirc;m Minh Đường</i>, khi sử dụng hoa hồi nguy&ecirc;n chất để ng&acirc;m với rượu sẽ c&oacute; t&aacute;c dụng hỗ trợ&nbsp;<b>điều trị c&aacute;c bệnh như cảm lạnh, đau đầu, đau bụng, c&aacute;c bệnh về ti&ecirc;u ho v&agrave; c&aacute;c bệnh về xương khớp</b>. Ngo&agrave;i ra, hoa hồi c&ograve;n c&oacute; t&aacute;c dụng trong chữa c&aacute;c bệnh nấm da, ghẻ lở, giảm đau, giảm bầm t&iacute;m, trị ho, long đờm... v&agrave; nhiều t&aacute;c dụng chữa bệnh kh&aacute;c.</p>\r\n\r\n<p>Ngo&agrave;i ra tinh dầu hoa hồi c&ograve;n l&agrave; một trong những loại mỹ phẩm tốt nhất trong l&agrave;m đẹp, chỉ cần sử dụng tinh dầu hoa hồi kết hợp c&ugrave;ng nước n&oacute;ng để<b>&nbsp;x&ocirc;ng mặt từ 1 đến 2 lần mỗi tuần th&igrave; sẽ mang lại cho bạn một l&agrave;n da s&aacute;ng mịn v&agrave; sạch sẽ mụn th&acirc;m.</b></p>\r\n\r\n<p><img alt=\"\" data-id=\"5\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151246488637.jpg\" /></p>\r\n\r\n<p><b>D&ugrave;ng trong ẩm thực</b>: Hoa hồi cũng l&agrave; một trong những loại gia vị cực phẩm m&agrave; c&aacute;c đầu bếp nổi tiếng lu&ocirc;n ưa chuộng sử dụng trong c&aacute;c m&oacute;n ăn. Sử dụng hoa hồi trong c&aacute;c m&oacute;n ăn một c&aacute;ch kh&eacute;o l&eacute;o sẽ gi&uacute;p n&acirc;ng tầm m&oacute;n ăn l&ecirc;n một hương vị ho&agrave;n to&agrave;n mới. Để c&oacute; thể sử dụng hết to&agrave;n bộ những hương vị tinh tế của hoa hồi, c&aacute;c đầu bếp thường<b>&nbsp;rang hoa hồi rồi mới sử dụng để tẩm ướp</b>&nbsp;hoặc d&ugrave;ng trong c&aacute;c m&oacute;n canh, s&uacute;p, c&agrave; ri hay c&aacute;c m&oacute;n hầm gi&uacute;p k&iacute;ch th&iacute;ch vị gi&aacute;c, ăn ngon miệng hơn.</p>\r\n\r\n<p>&gt;&gt;&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/huong-dan-cach-lam-mon-lau-trung-khanh-cay-xe-tru-danh-don-gian-tai-nha-1271318\">Hướng dẫn c&aacute;ch l&agrave;m m&oacute;n lẩu Tr&ugrave;ng Kh&aacute;nh cay x&egrave; trứ danh đơn giản tại nh&agrave;</a></p>\r\n\r\n<p>&gt;&gt;&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/cach-lam-trung-ngam-tra-mon-an-doc-dao-mang-lai-may-man-doi-voi-nguoi-trung-hoa-1270984\">C&aacute;ch l&agrave;m trứng ng&acirc;m tr&agrave; - m&oacute;n ăn độc đ&aacute;o, mang lại may mắn đối với người Trung Hoa</a></p>\r\n\r\n<p><img alt=\"\" data-id=\"6\" src=\"https://cdn.tgdd.vn/Files/2020/09/15/1290311/hoa-hoi-la-gi-loi-ich-cua-hoa-hoi-va-nhung-cach-su-dung-hoa-hoi-202009151247056822.jpg\" /></p>\r\n\r\n<p><b>C&oacute; lợi cho b&agrave; mẹ đang cho con b&uacute;</b>:&nbsp;Theo kinh nghiệm d&acirc;n gian, người ta thường&nbsp;<b>cho hoa hồi v&agrave;o c&aacute;c m&oacute;n ăn của phụ nữ sau sinh</b>&nbsp;để&nbsp;<b>gi&uacute;p sữa c&oacute; m&ugrave;i thơm v&agrave; về nhiều hơn</b>.</p>\r\n\r\n<p><b>C&aacute;c c&ocirc;ng dụng kh&aacute;c</b>: Ngo&agrave;i c&aacute;c t&aacute;c dụng tr&ecirc;n th&igrave; hoa hồi c&ograve;n c&oacute; c&aacute;c t&aacute;c dụng kh&aacute;c như&nbsp;<b>điều chế thuốc trị cảm c&uacute;m, c&aacute;c loại rượu, b&aacute;nh kẹo, hay l&agrave;m mồi c&acirc;u c&aacute;,...</b>Đối với việc c&acirc;u c&aacute;, bạn chỉ&nbsp;<b>trộn bột hoa hồi với c&aacute;c nguy&ecirc;n liệu như bột đậu tương, c&agrave; rốt th&aacute;i nhỏ, ruột b&aacute;nh m&igrave;, c&aacute;m gạo</b>&nbsp;rồi ủ chung tất cả ch&uacute;ng lại với nước luộc thịt lợn qua đ&ecirc;m, bạn sẽ c&oacute; một mồi c&acirc;u xuất sắc.</p>\r\n\r\n<p><i>Hoa hồi với c&aacute;c c&ocirc;ng dụng tuyệt vời của m&igrave;nh sẽ l&agrave; một loại&nbsp;<a href=\"https://www.bachhoaxanh.com/bot-gia-vi\" target=\"_blank\">gia vị</a>&nbsp;tuyệt vời cho c&aacute;c m&oacute;n ăn, một loại mỹ phẩm ho&agrave;n hảo cho&nbsp;<a href=\"https://www.bachhoaxanh.com/kinh-nghiem-hay/khoe-dep-moi-ngay/1731\" target=\"_blank\">l&agrave;m đẹp</a>&nbsp;v&agrave; c&ograve;n c&oacute; v&ocirc; số c&ocirc;ng dụng kh&aacute;c trong cuộc sống.</i></p>\r\n', 'tin_tuc/hoa_hoi_la_gi_loi_ich_cua_hoa_hoi_va_nhung_cach_su_dung_hoa_hoi_202009151237459437.jpg', 1, 1, 'What is star anise? The benefits of star anise and ways to use it.', '', '', '', 129, 0, 0, 0, '', '', '', '', 1, 10, 'en', '2024-06-16 05:26:00', '2026-06-12 09:22:46', 1),
+(125, 622, 'Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh', 'hoa-hoi-va-cac-gia-vi-tao-nen-nuoc-dung-pho-ngon-tru-danh-8', 'Nước dùng phở chính là nhân tố tạo nên hương vị thơm ngon nổi tiếng của món phở truyền thống của Việt Nam. Bên cạnh nguyên liệu quen thuộc như hành, gừng nướng, nước dùng phở không thể thiếu được hoa hồi cùng các gia vị thảo mộc khác sẽ được đề cập chi tiết trong bài viết dưới đây. Mời bạn đọc cùng UniSpice tìm hiểu ngay nhé.', '<p>Nước d&ugrave;ng phở ch&iacute;nh l&agrave; nh&acirc;n tố tạo n&ecirc;n hương vị thơm ngon nổi tiếng của m&oacute;n phở truyền thống của Việt Nam. B&ecirc;n cạnh nguy&ecirc;n liệu quen thuộc như h&agrave;nh, gừng nướng, nước d&ugrave;ng phở kh&ocirc;ng thể thiếu được&nbsp;<strong>hoa hồi</strong>&nbsp;c&ugrave;ng c&aacute;c&nbsp;<a href=\"https://unispice.vn/danh-muc-san-pham/gia-vi-tu-nhien/\"><strong>gia vị thảo mộc</strong></a>&nbsp;kh&aacute;c sẽ được đề cập chi tiết trong b&agrave;i viết dưới đ&acirc;y. Mời bạn đọc c&ugrave;ng&nbsp;<a href=\"https://unispice.vn/\"><strong>UniSpice</strong></a>&nbsp;t&igrave;m hiểu ngay nh&eacute;.</p>\r\n\r\n<p>Xem th&ecirc;m:&nbsp;<a href=\"https://unispice.vn/mon-ngon-moi-ngay/pho-bo-gia-truyen/\"><strong>C&aacute;ch nấu phở b&ograve; gia truyền</strong></a></p>\r\n\r\n<h2><b>Hoa hồi</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/hoa-hoi/\"><strong>Hoa hồi</strong></a>&nbsp;hay c&ograve;n được biết đến với một c&aacute;i t&ecirc;n kh&aacute;c l&agrave; đại hồi hay b&aacute;t gi&aacute;c. Đ&acirc;y l&agrave; một gia vị thảo mộc phổ biến trong nền ẩm thực của nhiều quốc gia Ch&acirc;u &Aacute;. Ở Việt Nam, hoa hồi l&agrave; gia vị kh&ocirc;ng thể thiếu trong nước d&ugrave;ng phở. Kh&ocirc;ng chỉ l&agrave; một vị thuốc qu&yacute; trong chữa bệnh, hoa hồi c&ograve;n g&oacute;p phần tạo n&ecirc;n hương vị tinh tế cho nước phở, với vị cay nhẹ, ngọt dịu c&ugrave;ng hương thơm nồng ấn tượng. Khi được sử dụng ở mức độ vừa phải, hoa hồi kh&ocirc;ng hề lấn &aacute;t hương vị của c&aacute;c nguy&ecirc;n liệu kh&aacute;c.&nbsp;</p>\r\n\r\n<h2><b><img alt=\"Hoa hồi gia vị không thể thiếu trong nước dùng phở\" height=\"576\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Hoa-hoi-1.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></b></h2>\r\n\r\n<h2><b>Quế thanh</b></h2>\r\n\r\n<p>L&agrave; sản phẩm thu từ vỏ của c&acirc;y quế, quế c&oacute; vị cay the v&agrave; m&ugrave;i nồng kh&oacute; trộn lẫn. D&ugrave; được sử dụng l&agrave;&nbsp;<a href=\"https://unispice.vn/san-pham/que-thanh/\"><strong>quế thanh</strong></a>&nbsp;hay&nbsp;<a href=\"https://unispice.vn/san-pham/bot-que/\"><strong>bột quế</strong></a>, kh&ocirc;ng thể phủ nhận mức độ phổ biến của gia vị n&agrave;y, từ c&aacute;c m&oacute;n mặn đến m&oacute;n ngọt. Khi được th&ecirc;m v&agrave;o nước d&ugrave;ng phở, vị cay của quế kh&ocirc;ng qu&aacute; đậm đ&agrave; m&agrave; thoảng thoảng rất dễ chịu.</p>\r\n\r\n<p><img alt=\"Quế thanh gia vị không thể thiếu trong nước dùng phở\" height=\"576\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Que.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/que/\"><strong>Quế</strong></a>&nbsp;d&ugrave;ng trong đ&ocirc;ng y nổi tiếng l&agrave; vị thuốc chữa trị hiệu quả c&aacute;c chứng bệnh về đường ti&ecirc;u h&oacute;a do cảm h&agrave;n, giảm đau, s&aacute;t khuẩn,&hellip;&nbsp;</p>\r\n\r\n<h2><b>Đinh hương</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/dinh-huong/\"><strong>Đinh hương</strong></a>&nbsp;l&agrave; loại gia vị thảo mộc đặc biệt nhờ khả năng khử m&ugrave;i hiệu quả. Với hương thơm nồng đặc trưng, đinh hương l&agrave; lựa chọn th&iacute;ch hợp khi nấu nước d&ugrave;ng từ c&aacute;c loại xương b&ograve;, xương heo.&nbsp;Kh&ocirc;ng chỉ l&agrave;m mất đi m&ugrave;i h&ocirc;i kh&oacute; chịu, đinh hương c&ograve;n rất gi&agrave;u h&agrave;m lượng vitamin B, C, D, K, E, c&ugrave;ng nhiều kho&aacute;ng chất kh&aacute;c như canxi, kali v&agrave; protein. Đ&oacute; cũng l&agrave; l&yacute; do từ xa xưa, đinh hương đ&atilde; được ứng dụng nhiều trong cả y học v&agrave; ẩm thực.</p>\r\n\r\n<h2><b><img alt=\"Đinh hương gia vị không thể thiếu trong nước dùng phở\" height=\"614\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Dinh-huong-1.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></b></h2>\r\n\r\n<h2><b>Thảo quả</b></h2>\r\n\r\n<p>Theo nhận định của nhiều chuy&ecirc;n gia,&nbsp;<a href=\"https://unispice.vn/san-pham/thao-qua/\"><strong>thảo quả</strong></a>&nbsp;c&oacute; h&agrave;m lượng dưỡng chất phong ph&uacute; như carbohydrate, protein, vitamin C c&ugrave;ng nhiều kho&aacute;ng chất kh&aacute;c như đồng, sắt, canxi, phốt pho,&hellip; Do vậy, d&ugrave; được d&ugrave;ng để l&agrave;m thuốc chữa bệnh hay gia vị nấu ăn, thảo quả đều mang đến nhiều lợi &iacute;ch cho sức khỏe. Đặc biệt, hương vị cay nồng, m&ugrave;i thơm c&ugrave;ng vị ngọt dịu đ&atilde; khiến thảo quả trở th&agrave;nh gia vị nấu nước d&ugrave;ng phở kh&ocirc;ng thể thiếu.</p>\r\n\r\n<p><img alt=\"Thảo quả gia vị trong nước dùng phở truyền thống\" height=\"744\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Thao-qua.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p>B&ecirc;n cạnh đ&oacute;, thảo quả c&ograve;n được sử dụng để tạo hương vị thơm ngon cho nhiều m&oacute;n ăn, đồ uống kh&aacute;c, k&iacute;ch th&iacute;ch vị gi&aacute;c v&agrave; cảm gi&aacute;c ngon miệng khi thưởng thức.&nbsp;</p>\r\n\r\n<h2><b>Hạt m&ugrave;i</b></h2>\r\n\r\n<p><a href=\"https://unispice.vn/kham-pha/hat-mui/\"><strong>Hạt m&ugrave;i</strong></a>&nbsp;ch&iacute;nh l&agrave; phần hạt của rau m&ugrave;i đ&atilde; được sấy kh&ocirc;, được sử dụng khi chế biến nhiều m&oacute;n ăn, trong đ&oacute; c&oacute; nước phở. Nhờ hương thơm dễ chịu, hạt m&ugrave;i kh&ocirc;ng chỉ l&agrave; gia vị n&ecirc;m nếm, m&agrave; c&ograve;n c&oacute; t&aacute;c dụng khử m&ugrave;i n&ecirc;n thường được sử dụng để ướp thịt heo, thịt g&agrave;, thịt vịt,.. Ngo&agrave;i ra,&nbsp;<a href=\"https://unispice.vn/san-pham/bot-hat-mui/\"><strong>bột hạt m&ugrave;i</strong>&nbsp;</a>cũng được ứng dụng cho nhiều m&oacute;n ăn kh&aacute;c như c&agrave; ri, lẩu b&ograve;, ph&aacute; lấu,&hellip;</p>\r\n\r\n<p><img alt=\"Hạt mùi gia vị có thường dùng trong nước dùng phở\" height=\"672\" loading=\"lazy\" src=\"https://unispice.vn/wp-content/uploads/2021/12/Hat-mui.jpg\" title=\"Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh\" width=\"1024\" /></p>\r\n\r\n<p>Tr&ecirc;n đ&acirc;y l&agrave; những gia vị thảo mộc cơ bản để tạo n&ecirc;n nước d&ugrave;ng phở mang hương vị truyền thống. T&ugrave;y theo khẩu vị của người nấu, c&aacute;c gia vị n&agrave;y sẽ c&oacute; sự biến tấu theo c&ocirc;ng thức, c&aacute;ch chế biến ri&ecirc;ng để tạo n&ecirc;n n&eacute;t độc đ&aacute;o ri&ecirc;ng cho nước d&ugrave;ng phở. Th&ocirc;ng thường, khi sơ chế, người ta thường d&ugrave;ng c&aacute;c nguy&ecirc;n liệu ở dạng kh&ocirc; thay v&igrave; dạng bột, rang sơ tr&ecirc;n chảo n&oacute;ng cho dậy vị rồi cho v&agrave;o t&uacute;i lọc v&agrave; nấu với nước d&ugrave;ng phở để cho ra hương thơm tinh t&uacute;y nhất.&nbsp;</p>\r\n\r\n<p>Mong rằng b&agrave;i viết tr&ecirc;n đ&acirc;y đ&atilde; gi&uacute;p bạn đọc c&oacute; th&ecirc;m những kinh nghiệm hữu &iacute;ch trong nấu ăn, đặc biệt l&agrave; c&aacute;c b&iacute; k&iacute;p để tạo n&ecirc;n nước d&ugrave;ng phở ngon chuẩn vị.</p>\r\n', 'tin_tuc/hoa_hoi_1.jpg', 1, 1, 'Hoa hồi và các gia vị tạo nên nước dùng phở ngon trứ danh', '', '', '', 129, 0, 0, 0, '', '', '', '', 1, 29, 'en', '2024-06-13 09:30:55', '2026-06-08 17:57:16', 0),
+(126, 617, 'Hạt tiêu - Loại gia vị bé nhỏ mà bùng nổ hương vị ấm nồng', 'hat-tieu-loai-gia-vi-be-nho-ma-bung-no-huong-vi-am-nong-4', 'Hạt tiêu là quả của cây hồ tiêu. Loài cây này có thân dạng dây leo, mọc thành đốt. Ở mỗi đốt lại mọc rễ để cây có thể bám và leo lên cột, giàn. Lá hồ tiêu có điểm tương đồng với lá trầu nhưng bé hơn, cứng và dày hơn. ', '<h4 dir=\"ltr\">Hạt ti&ecirc;u tuy nhỏ b&eacute; nhưng lại mang trong m&igrave;nh vị cay nồng ấm, c&ugrave;ng với m&ugrave;i hương rất đặc trưng. Đ&acirc;y l&agrave; loại gia vị quen thuộc trong gian bếp của nhiều gia đ&igrave;nh Việt. Thế nhưng, bạn đ&atilde; bao giờ tự hỏi hạt ti&ecirc;u c&oacute; nguồn gốc từ đ&acirc;u v&agrave; c&oacute; tất cả bao nhi&ecirc;u loại ti&ecirc;u chưa? C&ugrave;ng Poseidon t&igrave;m hiểu nh&eacute;.&nbsp;</h4>\r\n\r\n<h4 dir=\"ltr\">Hạt ti&ecirc;u l&agrave; g&igrave;?&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">Hạt ti&ecirc;u l&agrave; quả của c&acirc;y hồ ti&ecirc;u. Lo&agrave;i c&acirc;y n&agrave;y c&oacute; th&acirc;n dạng d&acirc;y leo, mọc th&agrave;nh đốt. Ở mỗi đốt lại mọc rễ để c&acirc;y c&oacute; thể b&aacute;m v&agrave; leo l&ecirc;n cột, gi&agrave;n. L&aacute; hồ ti&ecirc;u c&oacute; điểm tương đồng với l&aacute; trầu nhưng b&eacute; hơn, cứng v&agrave; d&agrave;y hơn.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Quả hồ ti&ecirc;u mọc li&ecirc;n tiếp tr&ecirc;n chu&ocirc;i, với chiều d&agrave;i khoảng 7 - 10cm, thậm ch&iacute; 25cm. Mỗi quả l&agrave; một h&igrave;nh cầu nhỏ, b&aacute;n kinh khoảng 2 - 3mm. Thời gian thu hoạch ti&ecirc;u rơi v&agrave;o th&aacute;ng 12 v&agrave; k&eacute;o d&agrave;i đến th&aacute;ng 3 năm sau.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">C&acirc;y ti&ecirc;u c&oacute; tuổi thọ kh&ocirc;ng qu&aacute; cao, ưa th&iacute;ch những triền đồi cao r&aacute;o, m&aacute;t mẻ, tho&aacute;ng nước. V&igrave; vậy, lo&agrave;i c&acirc;y n&agrave;y được trồng nhiều ở c&aacute;c tỉnh T&acirc;y Nguy&ecirc;n, đảo Ph&uacute; Quốc, Quảng Trị, B&igrave;nh Phước, B&agrave; Rịa Vũng T&agrave;u v&agrave; c&aacute;c nước tr&ecirc;n thế giới như Trung Quốc, Ấn Độ, Th&aacute;i Lan.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-01-jpg.jpg\" />Hạt ti&ecirc;u ch&iacute;nh l&agrave; quả của c&acirc;y hồ ti&ecirc;u&nbsp;<em>(Ảnh: doanhnghiephoinhap.vn)</em></p>\r\n\r\n<h4 dir=\"ltr\">Hạt ti&ecirc;u xuất hiện từ khi n&agrave;o?&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">C&acirc;y hồ ti&ecirc;u được người Ấn Độ ph&aacute;t hiện ra c&aacute;ch đ&acirc;y khoảng 2000 năm trước C&ocirc;ng Nguy&ecirc;n, tại những khu rừng hoang ph&iacute;a T&acirc;y Nam nước n&agrave;y (v&ugrave;ng Assam v&agrave; Ghats). Thời điểm đ&oacute;, đ&acirc;y được coi l&agrave; cống phẩm qu&yacute; gi&aacute; d&acirc;ng l&ecirc;n vua ch&uacute;a, thậm ch&iacute; họ c&ograve;n d&ugrave;ng ti&ecirc;u để bồi thường thiệt hại chiến tranh.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">M&atilde;i đến đầu thế kỷ 13, c&acirc;y hồ ti&ecirc;u mới được trồng rộng r&atilde;i v&agrave; sử dụng như một loại gia vị trong nấu nướng. &nbsp;L&uacute;c đ&oacute;, hồ ti&ecirc;u được v&iacute; như v&agrave;ng đen - trở th&agrave;nh một loại đơn vị tiền tệ để trao đổi h&agrave;ng h&oacute;a.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">V&agrave;o khoảng thế kỷ 16, hồ ti&ecirc;u vượt bi&ecirc;n giới, lan rộng đến c&aacute;c nước kh&aacute;c trong khu vực Nam &aacute; v&agrave; Đ&ocirc;ng Nam &Aacute;. Đến thế kỷ 19, hồ ti&ecirc;u c&oacute; mặt tại Ch&acirc;u Mĩ v&agrave; Ch&acirc;u Phi&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Hồ ti&ecirc;u xuất hiện tại Việt nam v&agrave;o thế kỷ 17, khi thực d&acirc;n Ph&aacute;p x&acirc;m lược, người Ph&aacute;p đ&atilde; trồng ch&uacute;ng. Hiện nay, Việt Nam l&agrave; một trong những nước xuất khẩu hồ ti&ecirc;u lớn nhất tr&ecirc;n thế giới.&nbsp;</p>\r\n\r\n<h4 dir=\"ltr\">Việt nam c&oacute; bao nhi&ecirc;u loại ti&ecirc;u?&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">Tại Việt Nam c&oacute; 5 loại phổ biến, đ&oacute; l&agrave; ti&ecirc;u đen, ti&ecirc;u xanh, ti&ecirc;u trắng (ti&ecirc;u sọ), ti&ecirc;u hồng v&agrave; hạt mắc kh&eacute;n T&acirc;y Bắc.&nbsp;</p>\r\n\r\n<p><strong>1. Ti&ecirc;u đen&nbsp;</strong></p>\r\n\r\n<p dir=\"ltr\">Đ&acirc;y l&agrave; loại ti&ecirc;u quen thuộc nhất trong gian bếp của c&aacute;c gia đ&igrave;nh Việt Nam. Để c&oacute; được ti&ecirc;u đen, người n&ocirc;ng d&acirc;n sẽ thu hoạch những quả ti&ecirc;u đ&atilde; trưởng th&agrave;nh nhưng vẫn c&ograve;n xanh. Dấu hiệu nhận biết ti&ecirc;u đ&atilde; c&oacute; thể thu hoạch để l&agrave;m ti&ecirc;u đen l&agrave; khi trong ch&ugrave;m hồ ti&ecirc;u đ&atilde; bắt đầu xuất hiện một v&agrave;i quả đỏ hoặc v&agrave;ng. Sau thu hoạch, quả sẽ được đem phơi. Khi phơi kh&ocirc;, vỏ quả sẽ săn cứng lại v&agrave; c&oacute; m&agrave;u đen, đ&oacute; ch&iacute;nh l&agrave; ti&ecirc;u đen.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-05-jpg.jpg\" />&nbsp;Ba chỉ b&ograve; Mỹ ướp ti&ecirc;u đen tr&ecirc;n quầy live Buffet Poseidon</p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u đen c&oacute; vị cay, c&ugrave;ng với đ&oacute; l&agrave; m&ugrave;i thơm nhẹ. Loại ti&ecirc;u n&agrave;y thường được d&ugrave;ng để tăng vị cay ấm, tăng hương vị cho m&oacute;n ăn. Đặc biệt, sốt ti&ecirc;u đen c&ograve;n l&agrave; loại gia vị ướp thịt &ldquo;thần th&aacute;nh&rdquo;, gi&uacute;p cho&nbsp;<a href=\"https://buffetposeidon.com/tin-tuc/diem-danh-cac-loai-thit-buffet-nuong-tai-poseidon\">c&aacute;c m&oacute;n buffet nướng thơm ngon hết &yacute;</a>.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><strong>2. Ti&ecirc;u xanh</strong></p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u xanh l&agrave; quả hồ ti&ecirc;u chưa ch&iacute;n lắm. N&ocirc;ng d&acirc;n thường sẽ thu hoạch cả ch&ugrave;m khi ti&ecirc;u c&ograve;n xanh, hạt chưa tạo so ti&ecirc;u v&agrave; c&ograve;n mềm.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Loại ti&ecirc;u n&agrave;y c&oacute; vị cay nhẹ v&agrave; hương thơm thoang thoảng ở mức độ vừa phải. Ti&ecirc;u xanh c&oacute; t&iacute;nh n&oacute;ng ẩm, thường được d&ugrave;ng trong c&aacute;c m&oacute;n hầm để lấy hương v&agrave; khử m&ugrave;i của nguy&ecirc;n liệu. Ngo&agrave;i ra, ti&ecirc;u xanh c&ograve;n được sử dụng trong c&aacute;c m&oacute;n nướng, trong đ&oacute; kh&ocirc;ng thể kh&ocirc;ng nhắc tới&nbsp;<a href=\"https://buffetposeidon.com/default/oc-nuong-tieu-mon-ngon-nhat-dinh-phai-lam-mot-lan-cho-ca-nha\">ốc bươu nướng ti&ecirc;u xanh</a>&nbsp;d&acirc;n gi&atilde; m&agrave; v&ocirc; c&ugrave;ng hấp dẫn.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-04-jpg.jpg\" />Thơm ngon kh&oacute; cưỡng với m&oacute;n ốc bươu nướng ti&ecirc;u xanh nh&agrave; Poseidon</p>\r\n\r\n<p dir=\"ltr\"><strong>3. Ti&ecirc;u sọ (hồ ti&ecirc;u trắng)</strong></p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u sọ hay hồ ti&ecirc;u trắng ch&iacute;nh l&agrave; loại ti&ecirc;u thu được khi h&aacute;i những quả hồ ti&ecirc;u thật ch&iacute;n, vỏ đ&atilde; chuyển đỏ v&agrave; loại bỏ phần vỏ của ch&uacute;ng.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Loại ti&ecirc;u n&agrave;y c&oacute; m&agrave;u trắng x&aacute;m hoặc trắng ng&agrave;, c&oacute; m&ugrave;i thơm hơn v&igrave; đ&atilde; được loại bỏ phần tinh dầu cay v&agrave; phần vỏ. Tuy nhi&ecirc;n, ti&ecirc;u sọ lại cay hơn bởi quả được thu hoạch khi đ&atilde; rất ch&iacute;n.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">V&igrave; m&agrave;u sắc đẹp, kh&ocirc;ng l&agrave;m mất đi t&iacute;nh thẩm mỹ của m&oacute;n ăn n&ecirc;n ti&ecirc;u sọ thường được d&ugrave;ng để tạo m&ugrave;i hương cho c&aacute;c thực đơn sang trọng.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><strong>4. Ti&ecirc;u hồng (ti&ecirc;u đỏ)</strong></p>\r\n\r\n<p dir=\"ltr\">Ti&ecirc;u hồng hay c&ograve;n được gọi l&agrave; ti&ecirc;u đỏ. Đ&acirc;y l&agrave; một loại c&acirc;y bụi nhỏ c&oacute; t&ecirc;n tiếng Anh Pink Pepper.</p>\r\n\r\n<p dir=\"ltr\">Tuy gọi l&agrave; ti&ecirc;u hồng trong tiếng Việt nhưng ch&uacute;ng vốn dĩ kh&ocirc;ng thuộc họ nh&agrave; c&acirc;y hồ ti&ecirc;u v&agrave; cũng kh&ocirc;ng phải hạt ti&ecirc;u. Ch&uacute;ng được gọi l&agrave; ti&ecirc;u hồng bởi c&oacute; vỏ hồng thắm v&agrave; mang vị cay nồng ấm như c&aacute;c loại ti&ecirc;u kh&aacute;c.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><strong>5. Hạt mắc kh&eacute;n</strong></p>\r\n\r\n<p dir=\"ltr\">Hạt mắc kh&eacute;n c&oacute; vị cay v&agrave; hương thơm kh&aacute; tương đồng với ti&ecirc;u. Đ&acirc;y l&agrave; loại gia vị nổi tiếng của T&acirc;y Bắc. Ch&uacute;ng xuất hiện hầu hết trong c&aacute;c m&oacute;n ăn của người d&acirc;n tộc khu vực n&agrave;y, đặc biệt l&agrave; d&acirc;n tộc Th&aacute;i.&nbsp;</p>\r\n\r\n<p dir=\"ltr\">Đặc biệt, hạt mắc kh&eacute;n c&ograve;n cho cảm gi&aacute;c cay, t&ecirc; t&ecirc; đầu lưỡi v&agrave; c&oacute; hương thơm nồng gấp nhiều lần hạt ti&ecirc;u.&nbsp;</p>\r\n\r\n<h4 dir=\"ltr\">Hạt ti&ecirc;u trong văn h&oacute;a ẩm thực&nbsp;</h4>\r\n\r\n<p dir=\"ltr\">Từ l&acirc;u đời, hạt ti&ecirc;u được con người sử dụng l&agrave;m gia vị khi chế biến c&aacute;c m&oacute;n ăn. Hạt ti&ecirc;u xuất hiện trong gian bếp của mọi gia đ&igrave;nh, từ những m&oacute;n ăn b&igrave;nh d&acirc;n, tới những m&oacute;n ăn đắt đỏ, sang trọng. Đ&acirc;y l&agrave; loại gia vị quốc d&acirc;n tại nhiều nước tr&ecirc;n thế giới, trong đ&oacute; c&oacute; Việt Nam.&nbsp;</p>\r\n\r\n<p dir=\"ltr\"><img src=\"https://buffetposeidon.com/storage/app/media/Kham-pha-am-thuc/10.2023/161023-kham-pha-hat-tieu-buffet-poseidon-03-jpg.jpg\" />Ti&ecirc;u l&agrave; loại gia vị kh&ocirc;ng thể thiếu trong gian bếp của nhiều gia đ&igrave;nh&nbsp;<em>(Ảnh: hoptri.com)</em></p>\r\n\r\n<p dir=\"ltr\">Vị cay của ti&ecirc;u cũng v&ocirc; c&ugrave;ng đặc biệt m&agrave; kh&ocirc;ng một loại gia vị n&agrave;o c&oacute; thể thay thế tr&ecirc;n bản đồ gia vị. Ch&uacute;ng kh&ocirc;ng cay nồng &ldquo;ứa lệ&rdquo; như ớt, cũng kh&ocirc;ng khiến thực kh&aacute;ch phải &ldquo;nghẹn ng&agrave;o&rdquo; như m&ugrave; tạt. Vị cay của ti&ecirc;u nồng ấm, nhẹ nh&agrave;ng nhưng c&oacute; sức lan tỏa m&atilde;nh liệt.</p>\r\n\r\n<p dir=\"ltr\">C&oacute; thể v&iacute; ti&ecirc;u như một vị &ldquo;qu&acirc;n sư&rdquo; trong l&agrave;ng gia vị. Bởi hạt ti&ecirc;u c&oacute; t&aacute;c dụng khử tanh, tạo m&ugrave;i thơm cho m&oacute;n ăn nhưng kh&ocirc;ng l&agrave;m đổi vị hay lấn &aacute;t mất nguy&ecirc;n liệu. Hương thơm hay vị cay của ti&ecirc;u thật vừa vặn cho mọi m&oacute;n ăn.&nbsp;</p>\r\n', 'tin_tuc/161023_kham_pha_hat_tieu_buffet_poseidon_01_jpg.jpg', 1, 1, 'Hạt tiêu - Loại gia vị bé nhỏ mà bùng nổ hương vị ấm nồng', '', '', '', 129, 0, 0, 0, '', '', '', '', 1, 18, 'en', '2024-06-13 08:46:06', '2026-06-08 17:57:16', 0);
+INSERT INTO `db_posts` (`id`, `id_code`, `title`, `slug`, `description`, `content`, `image`, `is_featured`, `status`, `seo_title`, `keyword`, `tags`, `seo_description`, `category_id`, `sort_order`, `nofollow`, `noindex`, `seo_head`, `seo_body`, `seo_schema`, `seo_canonical`, `created_by`, `views`, `lang`, `created_at`, `updated_at`, `updated_by`) VALUES
+(127, 631, 'Tác dụng tuyệt diệu của hỗn hợp quế và mật ong : tốt cho tim; làm giảm đau xương khớp', 'tac-dung-tuyet-dieu-cua-hon-hop-que-va-mat-ong-tot-cho-tim-lam-giam-dau-xuong-khop--4', 'Chữa tận gốc bệnh đau dạ dày do lạnh; cực kỳ tốt cho tim; làm giảm đau xương khớp; giúp cơ thể khỏe mạnh và làm đẹp da; làm giảm mỡ trong máu… là số ít trong vô số tác dụng của hỗn hợp quế và mật ong…', '<p>Chữa tận gốc bệnh đau dạ d&agrave;y do lạnh; cực kỳ tốt cho tim; l&agrave;m giảm đau xương khớp; gi&uacute;p cơ thể khỏe mạnh v&agrave; l&agrave;m đẹp da; l&agrave;m giảm mỡ trong m&aacute;u&hellip; l&agrave; số &iacute;t trong v&ocirc; số t&aacute;c dụng của hỗn hợp quế v&agrave; mật ong&hellip;</p>\r\n\r\n<p>B&agrave;i đăng tr&ecirc;n tạp ch&iacute; &ldquo;Tin tức thế giới h&agrave;ng tuần&rdquo; (Weekly World News) xuất bản tại Canada, đ&atilde; liệt k&ecirc; một số c&aacute;c chứng bệnh được chữa khỏi (cured) do hỗn hợp mật ong v&agrave; bột quế, được c&aacute;c nh&agrave; khoa học Phương T&acirc;y nghi&ecirc;n cứu kỹ lưỡng v&agrave; phổ biến.</p>\r\n\r\n<p>Theo họ th&igrave; mật ong đ&atilde; được khắp thế giới biết v&agrave; được sử dụng như l&agrave; 1 loại dược chất sinh học (Vital medicine) từ nhiều thế kỷ trước. Ng&agrave;y nay, qua khảo s&aacute;t v&agrave; nghi&ecirc;n cứu kiểm chứng, c&aacute;c khoa học gia đ&atilde; nhận thấy v&agrave; chấp nhận mật ong l&agrave; 1 loại dược chất chữa được nhiều chứng bệnh.</p>\r\n\r\n<p>Chữa bệnh bằng quế v&agrave; mật ong</p>\r\n\r\n<p>Điểm đặc biệt l&agrave; mật ong kh&ocirc;ng c&oacute; phản ứng phụ đối với bất cứ căn bệnh n&agrave;o. Trong đ&oacute; người ta cho biết, d&ugrave; mật ong tuy vị ngọt, nhưng nếu d&ugrave;ng với liều lượng vừa phải như l&agrave; 1 loại dược chất, n&oacute; cũng sẽ kh&ocirc;ng g&acirc;y ảnh hưởng nguy hại cho người tiểu đường.</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 1</p>\r\n\r\n<p>Liều lượng v&agrave; c&aacute;ch sử dụng được hưởng dẫn như sau:</p>\r\n\r\n<ol>\r\n	<li>Đau khớp xương</li>\r\n</ol>\r\n\r\n<p>a) 1 phần mật ong, 2 phần nước ấm, 1 muỗng caf&eacute; bột quế. Trộn lại th&agrave;nh 1 hỗn hợp sền sệt rồi đắp l&ecirc;n chỗ đau nhức v&agrave; thoa chầm chậm, nh&egrave; nhẹ. Cơn đau sẽ giảm nhẹ sau v&agrave;i ph&uacute;t.</p>\r\n\r\n<p>b) Người ta cũng c&oacute; thể pha 2 muỗng caf&eacute; mật ong 1 muỗng caf&eacute; bột quế trong 1 ly nước n&oacute;ng, uống đều đặn h&agrave;ng ng&agrave;y v&agrave;o buổi s&aacute;ng v&agrave; buổi tối c&oacute; thể gi&uacute;p cho những người bị đau khớp xương kinh ni&ecirc;n tho&aacute;t khỏi c&aacute;c cơn đau.</p>\r\n\r\n<p>Trong một c&ocirc;ng cuộc nghi&ecirc;n cứu tại Đại Học Copenhagen người ta đ&atilde; ghi nhận rằng: c&aacute;c BS khi điều trị c&aacute;c bệnh nh&acirc;n bị đau nhức với 1 hỗn hợp gồm: 1 muỗng mật ong v&agrave; 1/2 muỗng caf&eacute; bột quế v&agrave;o bữa điểm t&acirc;m, sau 1 tuần lễ, kết quả 200 người được điều trị 73 người đ&atilde; ho&agrave;n to&agrave;n hết đau, v&agrave; sau 1 th&aacute;ng được chữa trị hầu hết c&aacute;c bệnh</p>\r\n\r\n<ol start=\"2\">\r\n	<li>Cao mỡ trong m&aacute;u (High cholesterol)</li>\r\n</ol>\r\n\r\n<p>2 muỗng soup mật ong, 3 muỗng caf&eacute; bột quế, 16 ounce nước tr&agrave;. Quậy đều để cho người bị cao mỡ trong m&aacute;u uống, sau 2 giờ, đo lượng Cholesterol trong m&aacute;u người ta thấy giảm xuống 10%.</p>\r\n\r\n<ul>\r\n	<li>Cũng theo t&agrave;i liệu của tạp ch&iacute; Weekly World News th&igrave; nếu người bị cao Cholesterol d&ugrave;ng mật ong nguy&ecirc;n chất với thực phẩm h&agrave;ng ng&agrave;y c&oacute; thể giảm lượng cholesterol đ&aacute;ng kể.</li>\r\n	<li>Đối với người bị đau khớp xương kinh ni&ecirc;n, nếu uống theo c&ocirc;ng thức tr&ecirc;n, 3 lần trong 1 ng&agrave;y th&igrave; ngo&agrave;i giảm bớt đau nhức khớp xương ra c&ograve;n giảm được Cholesterol trong m&aacute;u nữa.</li>\r\n</ul>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 2</p>\r\n\r\n<ol start=\"3\">\r\n	<li>Bệnh về tim mạch (Heart diseases)</li>\r\n</ol>\r\n\r\n<p>Trộn mật ong v&agrave; bột quế sền sệt rồi quết l&ecirc;n b&aacute;nh m&igrave; thay cho mứt tr&aacute;i c&acirc;y (Jelly Jam) d&ugrave;ng cho bữa điểm t&acirc;m mỗi s&aacute;ng. Nếu ăn đều đặn như thế c&oacute; thể l&agrave;m giảm lượng Cholesterol trong c&aacute;c mạch m&aacute;u, điều nầy gi&uacute;p cho c&aacute;c bệnh nh&acirc;n bị bệnh tim mạch tr&aacute;nh được chứng đột qụy (heart attack).</p>\r\n\r\n<p>Nếu những ai đ&atilde; từng bị đột qụy rồi th&igrave; c&oacute; thể tr&aacute;nh xa được cơn đột qụy kết tiếp, khi tiếp tục ăn điểm t&acirc;m như kể tr&ecirc;n.</p>\r\n\r\n<ol start=\"4\">\r\n	<li>Tăng cường hệ thống miễn nhiễm (Immune system)</li>\r\n</ol>\r\n\r\n<p>Nếu d&ugrave;ng mật ong v&agrave; bột quế h&agrave;ng ng&agrave;y sẽ gi&uacute;p cho hệ thống miễn nhiễm được tăng mạnh th&ecirc;m v&agrave; gi&uacute;p bảo vệ cho cơ thể kh&oacute; bị vi tr&ugrave;ng v&agrave; si&ecirc;u vi khuẩn tấn c&ocirc;ng.</p>\r\n\r\n<p>Xử dụng mật ong đều đặn sẽ gi&uacute;p cho bạch huyết cầu tăng th&ecirc;m khả năng chống lại sự x&acirc;m nhập của vi tr&ugrave;ng v&agrave; si&ecirc;u vi khuẩn trong c&aacute;c mầm bệnh.</p>\r\n\r\n<ol start=\"5\">\r\n	<li>Nhiễm tr&ugrave;ng đường tiểu (Blađer infection) B&agrave;ng quang</li>\r\n</ol>\r\n\r\n<p>Lấy 2 muỗng canh bột quế, 1 muỗng caf&eacute; mật ong, 1 ly nước ấm. Quậy đều rồi uống cạn sẽ ti&ecirc;u điệt được c&aacute;c vi tr&ugrave;ng (Germ) mầm bệnh trong b&agrave;ng quan.</p>\r\n\r\n<ol start=\"6\">\r\n	<li>Nhức răng (Toothache)</li>\r\n</ol>\r\n\r\n<p>D&ugrave;ng 5 muỗng caf&eacute; mật ong, 1 muỗng caf&eacute; bột quế trộn lại với nhau th&agrave;nh hợp chất sền sệt rồi đắp l&ecirc;n chỗ răng đau. L&agrave;m như vậy 3 lần trong 1 ng&agrave;y cho đến khi răng kh&ocirc;ng c&ograve;n đau nữa.</p>\r\n\r\n<ol start=\"7\">\r\n	<li>C&uacute;m (Influenza).</li>\r\n</ol>\r\n\r\n<p>Một khoa học gia tại T&acirc;y Ban Nha (Spain) đ&atilde; chứng minh rằng, trong mật ong c&oacute; chứa 1 chất thi&ecirc;n nhi&ecirc;n c&oacute; khả năng ti&ecirc;u diệt được c&aacute;c mầm si&ecirc;u vi của bệnh cảm c&uacute;m gi&uacute;p cho người ta khỏi bị c&uacute;m (Flu).</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 3</p>\r\n\r\n<ol start=\"8\">\r\n	<li>Cảm lạnh (Colds)</li>\r\n</ol>\r\n\r\n<p>Đối với những người bị cảm lạnh thường hay cảm nặng c&oacute; thể d&ugrave;ng:</p>\r\n\r\n<p>1 muỗng canh mật ong h&acirc;m ấm l&ecirc;n (Warm) v&agrave; 1/4 muỗng caf&eacute; bột quế. D&ugrave;ng li&ecirc;n tục trong v&ograve;ng 3 ng&agrave;y th&igrave; c&oacute; thể chữa l&agrave;nh được c&aacute;c chứng ho kinh ni&ecirc;n, v&agrave; cảm lạnh cũng như chảy nước mũi cũng ngưng lại.</p>\r\n\r\n<ol start=\"9\">\r\n	<li>C&aacute;c chứng về ti&ecirc;u h&oacute;a (dạ d&agrave;y)</li>\r\n</ol>\r\n\r\n<p>a) Dạ d&agrave;y kh&oacute; chịu (Upset stomach): Mật ong v&agrave; bột quế c&oacute; thể chữa l&agrave;nh bệnh đau bao tử cũng như trị tận gốc bệnh bao tử.</p>\r\n\r\n<p>b) Bao tử đầy hơi (Gas): Theo những nghi&ecirc;n cứu đ&atilde; thực hiện tại Nhật Bản v&agrave; Ấn Độ cho thấy, mật ong v&agrave; bột quế đ&atilde; l&agrave;m hết bị đầy hơi trong bao tử.</p>\r\n\r\n<p>c) Bột quế được trộn chung với 2 muỗng canh mật ong d&ugrave;ng trước khi tham dự 1 bữa ăn thịnh soạn nhiều thịt th&agrave;, sẽ gi&uacute;p cho người ta ti&ecirc;u h&oacute;a được c&aacute;c bữa ăn đ&oacute; dễ d&agrave;ng.</p>\r\n\r\n<ol start=\"10\">\r\n	<li>Mệt mỏi (Fatigue).</li>\r\n</ol>\r\n\r\n<p>C&aacute;c nghi&ecirc;n cứu thấy rằng, chất ngọt trong mật ong gi&uacute;p cơ thể con người tốt hơn l&agrave; l&agrave;m hại. Cho n&ecirc;n những người cao ni&ecirc;n d&ugrave;ng mật ong v&agrave; bột quế với tỉ lệ bằng nhau gi&uacute;p cho họ dẻo dai v&agrave; tinh tường hơn. Theo BS Milton sau khi đ&atilde; nghi&ecirc;n cứu n&oacute;i rằng: Khi người ta cảm thấy sự sinh động của m&igrave;nh bắt đầu suy giảm, h&atilde;y d&ugrave;ng hằng ng&agrave;y, sau khi đ&aacute;nh răng v&agrave;o buổi s&aacute;ng v&agrave; khoảng l&uacute;c 3 giờ chiều, 1 ly nước ấm trong đ&oacute; pha 1/2 muỗng canh mật ong ngo&aacute;y đều với 1 muỗng caf&eacute; bột quế. Kết quả sẽ thấy sự sinh động của m&igrave;nh l&ecirc;n trở lại trong v&ograve;ng 1 tuần lễ.</p>\r\n\r\n<ol start=\"11\">\r\n	<li>K&eacute;o d&agrave;i tuổi thọ (Longivety)</li>\r\n</ol>\r\n\r\n<p>Khi uống nước tr&agrave; pha với mật ong v&agrave; bột quế đều đặn mỗi ng&agrave;y, người ta c&oacute; thể l&agrave;m chậm sự l&atilde;o h&oacute;a, k&eacute;o d&agrave;i th&ecirc;m tuổi thọ, theo c&ocirc;ng thức như sau: 4 muỗng mật ong, 1 muỗng bột quế bỏ v&agrave;o 1 b&igrave;nh trong đ&oacute; c&oacute; 3 ly nước rồi đem đun s&ocirc;i l&ecirc;n như người ta pha nước tr&agrave;.</p>\r\n\r\n<p>C&aacute;ch d&ugrave;ng: Mỗi lần uống 1/4 ly, mỗi ng&agrave;y 3 hay 4 lần. Kết quả tốt sẽ thấy l&agrave; da dẻ hồng h&agrave;o tươi trẻ, mịn m&agrave;ng. Thực thế t&ocirc;i quen biết 1 vị cao ni&ecirc;n t&ecirc;n l&agrave; Cụ Mai Phương 86t, đ&atilde; &aacute;p dụng phương ph&aacute;p nầy hơn 20 năm nay. C&aacute;ch uống l&agrave; th&ecirc;m v&agrave;i giọt chanh v&agrave;o ly nước trước khi uống, sức khỏe rất tốt.</p>\r\n\r\n<ol start=\"12\">\r\n	<li>Giảm c&acirc;n, chống b&eacute;o mập (Weight loss)</li>\r\n</ol>\r\n\r\n<p>H&agrave;ng ng&agrave;y 1/2 giờ trước khi ăn điểm t&acirc;m l&uacute;c bụng đ&oacute;i v&agrave; 1/2 giờ trước khi đi ngủ h&atilde;y uống 1 l&yacute; nước đun s&ocirc;i c&oacute; pha 1 muỗng mật ong v&agrave; 1 muỗng caf&eacute; bột quế. Nếu uống như vậy đều đặn h&agrave;ng ng&agrave;y th&igrave; ngay cả người bị b&eacute;o ph&igrave; cũng giảm chậm sự t&iacute;ch tụ chất b&eacute;o trong cơ th&ecirc;, v&agrave; c&oacute; hiệu quả ngay đối với người ăn c&aacute;c loại thực phẩm c&oacute; nhiều Calories trong bữa ăn h&agrave;ng ng&agrave;y.</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 4</p>\r\n\r\n<ol start=\"13\">\r\n	<li>Da bị nhiễm tr&ugrave;ng (Skin infection)</li>\r\n</ol>\r\n\r\n<p>Khi da bị l&aacute;t đồng tiền (Ring worm) v&agrave; c&aacute;c loại nhiễm tr&ugrave;ng da c&oacute; thể chữa trị bằng c&aacute;ch đắp l&ecirc;n v&ugrave;ng da bị nhiễm tr&ugrave;ng 1 hỗn hợp trộn mật ong v&agrave; bột quế với ph&acirc;n lượng bằng nhau.</p>\r\n\r\n<ol start=\"14\">\r\n	<li>Trị mụn (Pimples)</li>\r\n</ol>\r\n\r\n<p>Với c&ocirc;ng thức 3 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn lại sền sệt b&ocirc;i l&ecirc;n c&aacute;c mụn trước khi đi ngủ, s&aacute;ng h&ocirc;m sau rửa mặt bằng nước ấm. L&agrave;m như thế trong v&ograve;ng 2 tuần lễ th&igrave; c&aacute;c mụn sẽ được trị tận gốc.</p>\r\n\r\n<ol start=\"15\">\r\n	<li>Trị h&ocirc;i miệng (Bad breath)</li>\r\n</ol>\r\n\r\n<p>Để trị h&ocirc;i miệng, hơi thở được thơm tho, những người d&acirc;n tại v&ugrave;ng Nam Mỹ (South America) đ&atilde; l&agrave;m việc đầu ti&ecirc;n v&agrave;o buổi s&aacute;ng l&agrave; s&uacute;c miệng với 1 ly nước n&oacute;ng c&oacute; pha với 1 muỗng caf&eacute; mật ong v&agrave; bột quế quậy đều. Hơi thở của họ kh&ocirc;ng h&ocirc;i v&agrave; thơm m&ugrave;i quế suốt cả ng&agrave;y.</p>\r\n\r\n<ol start=\"16\">\r\n	<li>Gi&uacute;p phục hồi th&iacute;nh gi&aacute;c bị suy giảm, điếc (Hearing loss)</li>\r\n</ol>\r\n\r\n<p>H&agrave;ng ng&agrave;y uống đều đặn v&agrave;o mỗi buổi s&aacute;ng v&agrave; buổi tối trước khi ngủ 1 ly nước ấm c&oacute; pha mật ong v&agrave; bột quế với ph&acirc;n lượng bằng nhau, sẽ phục hồi lại t&igrave;nh trạng th&iacute;nh gi&aacute;c (tai) bị điếc, nghễnh ng&atilde;ng.</p>\r\n\r\n<ol start=\"17\">\r\n	<li>Rụng t&oacute;c v&agrave; h&oacute;i đầu (Hair loss &amp; Baldness)</li>\r\n</ol>\r\n\r\n<p>Những người bị rụng t&oacute;c hay h&oacute;i đầu c&oacute; thể d&ugrave;ng phương c&aacute;ch sau đ&acirc;y:</p>\r\n\r\n<p>Lấy 1 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn với dầu Olive th&agrave;nh 1 hỗn hợp rồi b&ocirc;i l&ecirc;n đầu khoảng 15 ph&uacute;t, sau đ&oacute; đi tắm v&agrave; gội đầu. Kết quả ghi nhận l&agrave; rất c&oacute; hiệu quả, ngay cả khi đi tắm v&agrave; gội đầu 5 ph&uacute;t sau khi b&ocirc;i.</p>\r\n\r\n<p>Ngo&agrave;i ra b&agrave;i b&aacute;o c&ograve;n n&oacute;i đến hiệu quả tốt đẹp của việc xử dụng hỗn hợp mật ong v&agrave; bột quế trong c&aacute;c trường hợp bị v&ocirc; sinh (Infertility) v&agrave; bệnh ung thư (Cancer).</p>\r\n\r\n<p>T&aacute;c dụng tuyệt diệu của hỗn hợp quế v&agrave; mật ong &ndash; 5</p>\r\n\r\n<ol start=\"18\">\r\n	<li>V&ocirc; sinh (Infertility)</li>\r\n</ol>\r\n\r\n<ul>\r\n	<li>Yunami &amp; Ayurredic đ&atilde; d&ugrave;ng mật ong từ l&acirc;u trong Y Học để gi&uacute;p cho tinh dịch của người Nam (Male) được tăng th&ecirc;m sức mạnh của n&oacute;.</li>\r\n	<li>Người ta cũng ghi nhận người đ&agrave;n &ocirc;ng bị bất lực, nếu uống 2 muỗng canh mật ong mỗi ng&agrave;y trước khi đi ngủ th&igrave; t&igrave;nh trạng bất lực c&oacute; thể được giải quyết tốt đẹp.</li>\r\n	<li>Tại Trung Hoa, Nhật Bản v&agrave; một số c&aacute;c nước v&ugrave;ng Viễn Đ&ocirc;ng, đối với c&aacute;c phụ nữ kh&ocirc;ng thể đậu thai từ nhiều thế kỷ đ&atilde; được khuy&ecirc;n d&ugrave;ng bột quế để gi&uacute;p cho buồng trứng v&agrave; tử cung cải thiện dễ thụ tinh, mang bầu.</li>\r\n	<li>C&aacute;c phụ nữ kh&ocirc;ng thể c&oacute; bầu th&igrave; c&oacute; thể d&ugrave;ng 1 Pinch bột quế h&ograve;a với 1/2 muỗng caf&eacute; mật ong, rồi ngậm trong miệng thường xuy&ecirc;n suốt ng&agrave;ỵ 2 thứ n&agrave;y được trộn lẫn với nước bọt trong miệng rồi từ từ ngấm v&agrave;o cơ thể để mang lại thuận lợi cho người phụ nữ đậu thai.</li>\r\n</ul>\r\n\r\n<p>Người ta đ&atilde; ghi nhận 1 cặp vợ chồng tại tiểu bang Maryland , Hoa Kỳ; cưới nhau 14 năm kh&ocirc;ng c&oacute; con v&agrave; họ gần như tuyệt vọng&hellip;</p>\r\n\r\n<p>Nhưng khi được m&aacute;ch bảo phương c&aacute;c d&ugrave;ng mật ong v&agrave; bột quế, 2 vợ chồng đ&atilde; c&ugrave;ng &aacute;p dụng phương ph&aacute;p tr&ecirc;n; chỉ v&agrave;i th&aacute;ng sau người vợ đ&atilde; mang thai v&agrave; sinh đ&ocirc;i với 2 đứa con khỏe mạnh b&igrave;nh thường.</p>\r\n\r\n<ol start=\"19\">\r\n	<li>Đối với bệnh ung thư (Cancer)</li>\r\n</ol>\r\n\r\n<p>Những nghi&ecirc;n cứu mới đ&acirc;y tại Nhật Bản v&agrave; &Uacute;c Ch&acirc;u đ&atilde; ghi nhận t&igrave;nh trạng ung thư bao tử v&agrave; ung thư xương đang ph&aacute;t t&aacute;c, đ&atilde;</p>\r\n\r\n<p>được điều trị 1 c&aacute;ch hiệu quả bằng mật ong v&agrave; quế. Sau khi những bệnh nh&acirc;n đang mắc phải ung thư bao tử v&agrave; xương d&ugrave;ng như sau:</p>\r\n\r\n<p>Uống 1 muỗng canh mật ong v&agrave; 1 muỗng caf&eacute; bột quế trộn đều, mỗi ng&agrave;y 3 lần li&ecirc;n tiếp trong 1 th&aacute;ng.</p>\r\n', 'tin_tuc/shutterstock_338983799_1635216_2362_5994_1635216756.jpg', 1, 1, 'Tác dụng tuyệt diệu của hỗn hợp quế và mật ong : tốt cho tim; làm giảm đau xương khớp', '', '', '', 129, 0, 0, 0, '', '', '', '', 1, 9, 'en', '2024-06-16 06:11:12', '2026-06-08 17:57:16', 0),
+(130, 653, 'Cành nhánh quế trở thành hàng hóa, không chỉ dùng trong nước mà còn để xuất khẩu.', 'canh-nhanh-que-tro-thanh-hang-hoa-khong-chi-dung-trong-nuoc-ma-con-de-xuat-khau--6', 'Khi khai thác quế cây, người ta bỏ những cành nhánh nhỏ. Mỗi năm chỉ riêng ở huyện Trà My, Quảng Nam, số cành nhánh đó phải đến 200 tấn.', '<p>Năm đ&oacute;, nh&agrave; bu&ocirc;n quế Nguyễn Văn Qu&acirc;n (Tam Kỳ, Quảng Nam) t&igrave;nh cờ nh&igrave;n thấy một mẫu quế chi của Trung Quốc b&aacute;n cho kh&aacute;ch bu&ocirc;n Đ&agrave;i Loan. Quế chi l&agrave; một loại dược liệu kh&ocirc;ng thể thiếu trong mọi thang thuốc Bắc, v&agrave; điều đặc biệt l&agrave; quế chi được chế biến từ c&agrave;nh nh&aacute;nh bỏ đi của c&acirc;y quế (chi: c&agrave;nh, nh&aacute;nh). Qu&acirc;n thấy ngay một hướng kinh doanh mới, v&agrave; biết chắc rằng do c&agrave;nh nh&aacute;nh quế Tr&agrave; My chất lượng tốt hơn, mặt h&agrave;ng quế chi Tr&agrave; My sẽ c&oacute; sực cạnh tranh mạnh hơn quế chi Trung Quốc.</p>\r\n\r\n<p>Việc đầu ti&ecirc;n của Qu&acirc;n l&agrave; v&agrave;o TP Hồ Ch&iacute; Minh t&igrave;m xem c&aacute;c loại m&aacute;y cắt thuốc Bắc do Đ&agrave;i Loan sản xuất, c&oacute; gi&aacute; đến 2.000 USD/m&aacute;y. Đ&acirc;y l&agrave; những m&aacute;y cắt thuốc n&oacute;i chung, trừ c&agrave;nh nh&aacute;nh quế. Thật ra, vẫn c&oacute; thể d&ugrave;ng để cắt nh&aacute;nh quế nhưng l&aacute;t cắt th&ocirc; vụng, h&agrave;ng kh&ocirc;ng đẹp, v&agrave; chậm, mỗi ng&agrave;y cắt được tối đa 100 kg quế. Qu&acirc;n vừa xem vừa &acirc;m thầm nghi&ecirc;n cứu cải tiến c&aacute;c chi tiết rồi tự tạo cho m&igrave;nh một c&aacute;i m&aacute;y chuy&ecirc;n cắt c&agrave;nh nh&aacute;nh quế. M&aacute;y của Đ&agrave;i Loan trục cắt đứng, c&ograve;n m&aacute;y của Qu&acirc;n trục cắt nằm ngang. Sự thay đổi n&agrave;y đ&atilde; n&acirc;ng c&ocirc;ng suất cắt của m&aacute;y l&ecirc;n gấp ba lần, mỗi ng&agrave;y cắt được 300 kg, l&aacute;t cắt lại sắc sảo, đều v&agrave; đẹp. Trước kia muốn cắt quế phải lựa những nh&aacute;nh c&ugrave;ng cỡ nhau, c&ograve;n b&acirc;y giờ nh&aacute;nh quế to nhỏ g&igrave; cũng được, cứ nắm cả b&oacute; cho v&agrave;o m&aacute;y cắt. Từ c&aacute;i m&aacute;y cắt Đ&agrave;i Loan gi&aacute; 2.000 USD, Qu&acirc;n đ&atilde; tạo ra một c&aacute;i m&aacute;y tốt hơn, gi&aacute; chỉ c&oacute; 10 triệu đồng.</p>\r\n\r\n<p>Bằng chiếc m&aacute;y cắt quế chi, Qu&acirc;n đ&atilde; dần dần chiếm được thị trường quế chi của Đ&agrave;i Loan, v&agrave; trở th&agrave;nh nh&agrave; cung cấp chủ yếu mặt h&agrave;ng quế chi cho phố thuốc Bắc Hải thượng L&atilde;n &ocirc;ng ở TP Hồ Ch&iacute; Minh (chỉ ri&ecirc;ng con phố n&agrave;y mỗi năm mua của Qu&acirc;n 60 tấn quế chi). Mỗi năm Qu&acirc;n xuất khẩu quế chi thu được hơn 70.000 USD. Cứ b&aacute;n mỗi tấn quế, Qu&acirc;n lời hai triệu đồng, mỗi năm Qu&acirc;n b&aacute;n hơn 100 tấn quế chi v&agrave; bỏ t&uacute;i tối thiểu 200 triệu đồng tiền l&atilde;i. Kh&ocirc;ng chỉ Qu&acirc;n được lợi m&agrave; người trồng quế ở Tr&agrave; My cũng c&oacute; th&ecirc;m thu nhập. Quế c&agrave;nh nh&aacute;nh từ chỗ c&oacute; gi&aacute; 500 đồng/kg đ&atilde; tăng l&ecirc;n s&aacute;u lần, gi&aacute; hiện thời l&agrave; 3.000 đồng/kg. B&acirc;y giờ 200 tấn c&agrave;nh nh&aacute;nh quế Tr&agrave; My thải ra hằng năm đều được Qu&acirc;n tận dụng. Kh&ocirc;ng những thế, Qu&acirc;n c&ograve;n mở rộng địa b&agrave;n, mua th&ecirc;m quế c&agrave;nh nh&aacute;nh ở c&aacute;c huyện Ti&ecirc;n Phước, Phước Sơn, v&agrave; nhiều tỉnh kh&aacute;c để đẩy mạnh xuất khẩu, đ&aacute;p ứng nhu cầu của kh&aacute;ch Đ&agrave;i Loan v&agrave; H&agrave;n Quốc.</p>\r\n\r\n<p>Qu&acirc;n đang nghi&ecirc;n cứu l&agrave;m ly uống c&agrave; ph&ecirc;, tr&agrave;&hellip; từ th&acirc;n c&acirc;y quế để xuất cho thị trường Bắc &Acirc;u. Kh&aacute;ch h&agrave;ng Qu&acirc;n đ&atilde; c&oacute;, chỉ c&oacute; c&aacute;i m&aacute;y để cắt, đục, l&agrave;m b&oacute;ng&hellip; th&igrave; đang phải suy nghĩ th&ecirc;m. Th&acirc;n c&acirc;y quế, sau khi lột vỏ, đang l&agrave; đồ bỏ, v&igrave; d&ugrave;ng l&agrave;m củi cũng kh&ocirc;ng được do k&eacute;m bắt lửa. &ldquo;Nếu sản xuất th&agrave;nh c&ocirc;ng mặt h&agrave;ng ly, cốc bằng gỗ th&acirc;n c&acirc;y quế, lợi nhuận phải đến 300%&rdquo;, Qu&acirc;n quả quyết.</p>\r\n', 'tin_tuc/_2539_1717652388_860x0.jpg', 1, 1, 'Cành nhánh quế trở thành hàng hóa, không chỉ dùng trong nước mà còn để xuất khẩu.', '', '', '', 129, 0, 0, 0, '', '', '', '', 1, 60, 'en', '2024-06-27 04:05:13', '2026-06-08 17:57:16', 0),
+(131, 656, 'BIỆT THỰ SÂN VƯỜN', 'biet-thu-san-vuon', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/nha_vuon_thong_tin_chi_tiet_chi_phi_xay_dung_tham_khao_va_29_mau_nha_vuon_dep_me_ly_6446008f6d1ba4a29dcf8360.webp', 1, 1, 'BIỆT THỰ SÂN VƯỜN', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 5, 'en', '2024-06-28 02:28:33', '2026-06-08 17:57:16', 0),
+(132, 657, 'QUÁN CÀ PHÊ', 'trung-tam-thuong-mai', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/trung_tam_thuong_mai_1691035417_17079655862711524834885.jpg', 1, 1, 'QUÁN CÀ PHÊ', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 2, 'en', '2024-06-28 02:28:55', '2026-06-08 17:57:16', 0),
+(133, 659, 'KHU DÂN CƯ', 'khu-dan-cu', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cac_buoc_trien_khai_du_an_khu_dan_cu.jpg', 1, 1, 'KHU DÂN CƯ', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 2, 'en', '2024-06-28 02:29:45', '2026-06-08 17:57:16', 0),
+(134, 660, 'CÔNG VIÊN', 'cong-vien', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/thiet_ke_cong_vien_landscape_park_design_04_san_vuon_a_dong.jpg', 1, 1, 'CÔNG VIÊN', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 3, 'en', '2024-06-28 02:30:04', '2026-06-08 17:57:16', 0),
+(135, 661, 'NHÀ VƯỜN', 'khu-nghi-duong', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/cong_ty_tu_van_thiet_ke_resort_1.jpg', 1, 1, 'NHÀ VƯỜN', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 7, 'en', '2024-06-28 02:30:19', '2026-06-08 17:57:16', 0),
+(136, 662, 'VĂN PHÒNG', 'san-golf', 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type', '', 'dich_vu/san_golf_vu_yen.jpg', 1, 1, 'VĂN PHÒNG', '', '', '', 242, 0, 0, 0, '', '', '', '', 1, 3, 'en', '2024-06-28 02:30:37', '2026-07-03 00:26:35', 0);
 
 -- --------------------------------------------------------
 
@@ -14621,13 +14629,13 @@ INSERT INTO `db_posts` (`id`, `id_code`, `title`, `slug`, `description`, `conten
 --
 
 CREATE TABLE `db_products` (
-  `id` int(11) NOT NULL,
-  `shop_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `category_id` int(11) NOT NULL DEFAULT '0',
-  `tax_class_id` int(11) NOT NULL DEFAULT '0',
-  `brand_id` int(11) DEFAULT '0',
+  `id` int NOT NULL,
+  `shop_id` bigint UNSIGNED NOT NULL DEFAULT '0',
+  `category_id` int NOT NULL DEFAULT '0',
+  `tax_class_id` int NOT NULL DEFAULT '0',
+  `brand_id` int DEFAULT '0',
   `product_type` varchar(50) DEFAULT 'simple',
-  `id_code` int(11) NOT NULL,
+  `id_code` int NOT NULL,
   `slug` varchar(255) NOT NULL,
   `sku` varchar(255) NOT NULL,
   `barcode` varchar(255) DEFAULT NULL,
@@ -14635,35 +14643,37 @@ CREATE TABLE `db_products` (
   `description` text NOT NULL,
   `thumbnail` varchar(255) DEFAULT NULL,
   `gallery` text,
-  `price` int(11) NOT NULL DEFAULT '0',
-  `promotional_price` int(11) NOT NULL DEFAULT '0',
-  `cost_price` int(11) DEFAULT '0',
+  `price` int NOT NULL DEFAULT '0',
+  `promotional_price` int NOT NULL DEFAULT '0',
+  `cost_price` int DEFAULT '0',
   `content` text NOT NULL,
   `specifications` text,
   `unit` varchar(225) DEFAULT NULL,
   `is_featured` tinyint(1) NOT NULL DEFAULT '0',
   `is_new` tinyint(1) NOT NULL DEFAULT '0',
-  `is_hot` tinyint(4) NOT NULL DEFAULT '0',
-  `is_sale` tinyint(4) NOT NULL DEFAULT '0',
-  `sp_top` tinyint(4) NOT NULL DEFAULT '0',
+  `is_hot` tinyint NOT NULL DEFAULT '0',
+  `is_sale` tinyint NOT NULL DEFAULT '0',
+  `sp_top` tinyint NOT NULL DEFAULT '0',
   `seo_title` varchar(255) NOT NULL,
   `seo_keyword` varchar(255) DEFAULT NULL,
   `seo_description` varchar(255) DEFAULT NULL,
-  `view` int(11) NOT NULL DEFAULT '0',
+  `view` int NOT NULL DEFAULT '0',
   `status` tinyint(1) NOT NULL DEFAULT '1',
-  `nofollow` int(11) NOT NULL DEFAULT '0',
-  `noindex` int(11) NOT NULL DEFAULT '0',
+  `nofollow` int NOT NULL DEFAULT '0',
+  `noindex` int NOT NULL DEFAULT '0',
   `seo_head` text,
   `seo_body` text,
+  `seo_schema` varchar(50) DEFAULT '',
+  `seo_canonical` varchar(255) DEFAULT '',
   `lang` varchar(10) NOT NULL,
-  `flash_sale` int(11) NOT NULL DEFAULT '0',
+  `flash_sale` int NOT NULL DEFAULT '0',
   `flash_sale_start` datetime DEFAULT NULL,
   `flash_sale_end` datetime DEFAULT NULL,
-  `gia_flash_sale` int(11) DEFAULT '0',
-  `sold_count` int(11) DEFAULT '0',
-  `stock_quantity` int(11) DEFAULT '0',
+  `gia_flash_sale` int DEFAULT '0',
+  `sold_count` int DEFAULT '0',
+  `stock_quantity` int DEFAULT '0',
   `stock_status` varchar(50) DEFAULT 'in_stock',
-  `low_stock_amount` int(11) DEFAULT '5',
+  `low_stock_amount` int DEFAULT '5',
   `product_attributes` text,
   `weight` decimal(10,2) DEFAULT '0.00',
   `length` decimal(10,2) DEFAULT '0.00',
@@ -14671,17 +14681,17 @@ CREATE TABLE `db_products` (
   `height` decimal(10,2) DEFAULT '0.00',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_products`
 --
 
-INSERT INTO `db_products` (`id`, `shop_id`, `category_id`, `tax_class_id`, `brand_id`, `product_type`, `id_code`, `slug`, `sku`, `barcode`, `title`, `description`, `thumbnail`, `gallery`, `price`, `promotional_price`, `cost_price`, `content`, `specifications`, `unit`, `is_featured`, `is_new`, `is_hot`, `is_sale`, `sp_top`, `seo_title`, `seo_keyword`, `seo_description`, `view`, `status`, `nofollow`, `noindex`, `seo_head`, `seo_body`, `lang`, `flash_sale`, `flash_sale_start`, `flash_sale_end`, `gia_flash_sale`, `sold_count`, `stock_quantity`, `stock_status`, `low_stock_amount`, `product_attributes`, `weight`, `length`, `width`, `height`, `created_at`, `updated_at`) VALUES
-(187, 0, 100, 0, 0, 'variable', 187, 'san-pham-co-bien-the', 'SDFDFRE', '', 'Sản phẩm có biến thể', '', '19.png', '[\"album\\/que_la_gia_vi_tuoi_tho.jpg\",\"album\\/15_thuhoachtieu02.jpg\",\"album\\/243385_que1.jpg\",\"album\\/cach_che_bien_va_bao_quan_que_1_640x348.jpg\",\"album\\/cayque_lcai.jpg\",\"album\\/images1780776_aa.jpg\",\"album\\/p1770217.jpg\",\"album\\/que_la_gia_vi_tuoi_tho.jpg\"]', 550000, 450000, 300000, '', '', 'Cái', 1, 0, 0, 0, 0, 'Test sản phẩm biến thể seo', '', '', 0, 1, 0, 0, '', '', 'vi', 1, '2026-07-04 19:42:00', '2026-07-23 19:42:00', 0, 0, 15, 'in_stock', 5, '{\"731\":[\"732\",\"733\",\"779\"],\"734\":[\"735\",\"744\"]}', '0.00', '0.00', '0.00', '0.00', '2026-06-12 08:39:00', '2026-06-12 08:40:14'),
-(188, 0, 100, 0, 0, 'variable', 187, 'product-has-variants', 'SDFDFRE', '', 'Product has variants', '', '19.png', '[\"album\\/que_la_gia_vi_tuoi_tho.jpg\",\"album\\/15_thuhoachtieu02.jpg\",\"album\\/243385_que1.jpg\",\"album\\/cach_che_bien_va_bao_quan_que_1_640x348.jpg\",\"album\\/cayque_lcai.jpg\",\"album\\/images1780776_aa.jpg\",\"album\\/p1770217.jpg\",\"album\\/que_la_gia_vi_tuoi_tho.jpg\"]', 550000, 450000, 300000, '', '', '', 1, 0, 0, 0, 0, 'Product has variants', '', '', 0, 1, 0, 0, '', '', 'en', 1, '2026-06-12 22:31:00', '2026-06-25 22:32:00', 0, 0, 15, 'in_stock', 5, '{\"731\":[\"732\",\"733\",\"779\"],\"734\":[\"735\",\"744\"]}', '0.00', '0.00', '0.00', '0.00', '2026-06-12 08:39:00', '2026-06-12 08:40:14'),
-(189, 0, 0, 0, 0, 'simple', 189, 'san-pham-khong-co-bien-the', '', '', 'Sản phẩm không có biến thể', '', 'ts522t.jpg', NULL, 0, 0, 0, '', '', '', 1, 0, 0, 0, 0, 'Sản phẩm không có biến thể', '', '', 0, 1, 0, 0, '', '', 'vi', 0, NULL, NULL, 0, 0, 0, 'in_stock', 5, NULL, '0.00', '0.00', '0.00', '0.00', '2026-06-12 08:47:00', '2026-06-16 02:32:56'),
-(190, 0, 0, 0, 0, 'simple', 189, 'product-hasn-t-variants', '', '', 'Product hasn\'t variants', '', 'ts522t.jpg', NULL, 0, 0, 0, '', '', '', 1, 0, 0, 0, 0, 'Product hasn\'t variants', '', '', 0, 1, 0, 0, '', '', 'en', 0, NULL, NULL, 0, 0, 0, 'in_stock', 5, NULL, '0.00', '0.00', '0.00', '0.00', '2026-06-12 08:47:00', '2026-06-16 02:32:56');
+INSERT INTO `db_products` (`id`, `shop_id`, `category_id`, `tax_class_id`, `brand_id`, `product_type`, `id_code`, `slug`, `sku`, `barcode`, `title`, `description`, `thumbnail`, `gallery`, `price`, `promotional_price`, `cost_price`, `content`, `specifications`, `unit`, `is_featured`, `is_new`, `is_hot`, `is_sale`, `sp_top`, `seo_title`, `seo_keyword`, `seo_description`, `view`, `status`, `nofollow`, `noindex`, `seo_head`, `seo_body`, `seo_schema`, `seo_canonical`, `lang`, `flash_sale`, `flash_sale_start`, `flash_sale_end`, `gia_flash_sale`, `sold_count`, `stock_quantity`, `stock_status`, `low_stock_amount`, `product_attributes`, `weight`, `length`, `width`, `height`, `created_at`, `updated_at`) VALUES
+(187, 0, 100, 0, 0, 'variable', 187, 'san-pham-co-bien-the', 'SDFDFRE', '', 'Sản phẩm có biến thể', '', '19.png', '[\"album\\/que_la_gia_vi_tuoi_tho.jpg\",\"album\\/15_thuhoachtieu02.jpg\",\"album\\/243385_que1.jpg\",\"album\\/cach_che_bien_va_bao_quan_que_1_640x348.jpg\",\"album\\/cayque_lcai.jpg\",\"album\\/images1780776_aa.jpg\",\"album\\/p1770217.jpg\",\"album\\/que_la_gia_vi_tuoi_tho.jpg\"]', 550000, 450000, 300000, '', '', 'Cái', 1, 0, 0, 0, 0, 'Test sản phẩm biến thể seo', '', '', 0, 1, 0, 0, '', '', '', '', 'vi', 1, '2026-07-04 19:42:00', '2026-07-23 19:42:00', 0, 0, 15, 'in_stock', 5, '{\"731\":[\"732\",\"733\",\"779\"],\"734\":[\"735\",\"744\"]}', '0.00', '0.00', '0.00', '0.00', '2026-06-12 08:39:00', '2026-06-12 08:40:14'),
+(188, 0, 100, 0, 0, 'variable', 187, 'product-has-variants', 'SDFDFRE', '', 'Product has variants', '', '19.png', '[\"album\\/que_la_gia_vi_tuoi_tho.jpg\",\"album\\/15_thuhoachtieu02.jpg\",\"album\\/243385_que1.jpg\",\"album\\/cach_che_bien_va_bao_quan_que_1_640x348.jpg\",\"album\\/cayque_lcai.jpg\",\"album\\/images1780776_aa.jpg\",\"album\\/p1770217.jpg\",\"album\\/que_la_gia_vi_tuoi_tho.jpg\"]', 550000, 450000, 300000, '', '', '', 1, 0, 0, 0, 0, 'Product has variants', '', '', 0, 1, 0, 0, '', '', '', '', 'en', 1, '2026-06-12 22:31:00', '2026-06-25 22:32:00', 0, 0, 15, 'in_stock', 5, '{\"731\":[\"732\",\"733\",\"779\"],\"734\":[\"735\",\"744\"]}', '0.00', '0.00', '0.00', '0.00', '2026-06-12 08:39:00', '2026-06-12 08:40:14'),
+(189, 0, 0, 0, 0, 'simple', 189, 'san-pham-khong-co-bien-the', '', '', 'Sản phẩm không có biến thể', '', 'ts522t.jpg', NULL, 0, 0, 0, '', '', '', 1, 0, 0, 0, 0, 'Sản phẩm không có biến thể', '', '', 0, 1, 0, 0, '', '', '', '', 'vi', 0, NULL, NULL, 0, 0, 0, 'in_stock', 5, NULL, '0.00', '0.00', '0.00', '0.00', '2026-06-12 08:47:00', '2026-06-16 02:32:56'),
+(190, 0, 0, 0, 0, 'simple', 189, 'product-hasn-t-variants', '', '', 'Product hasn\'t variants', '', 'ts522t.jpg', NULL, 0, 0, 0, '', '', '', 1, 0, 0, 0, 0, 'Product hasn\'t variants', '', '', 0, 1, 0, 0, '', '', '', '', 'en', 0, NULL, NULL, 0, 0, 0, 'in_stock', 5, NULL, '0.00', '0.00', '0.00', '0.00', '2026-06-12 08:47:00', '2026-06-16 02:32:56');
 
 -- --------------------------------------------------------
 
@@ -14690,18 +14700,18 @@ INSERT INTO `db_products` (`id`, `shop_id`, `category_id`, `tax_class_id`, `bran
 --
 
 CREATE TABLE `db_product_variants` (
-  `id` int(11) NOT NULL,
-  `product_id` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL,
+  `product_id` int NOT NULL DEFAULT '0',
   `sku` varchar(100) NOT NULL,
   `barcode` varchar(255) DEFAULT NULL,
-  `price` int(11) NOT NULL DEFAULT '0',
-  `promotional_price` int(11) NOT NULL DEFAULT '0',
-  `gia_flash_sale` int(11) DEFAULT '0',
-  `stock_quantity` int(11) NOT NULL DEFAULT '0',
+  `price` int NOT NULL DEFAULT '0',
+  `promotional_price` int NOT NULL DEFAULT '0',
+  `gia_flash_sale` int DEFAULT '0',
+  `stock_quantity` int NOT NULL DEFAULT '0',
   `image` varchar(255) DEFAULT NULL,
   `status` tinyint(1) DEFAULT '1',
   `weight` double DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_product_variants`
@@ -14724,10 +14734,10 @@ INSERT INTO `db_product_variants` (`id`, `product_id`, `sku`, `barcode`, `price`
 --
 
 CREATE TABLE `db_product_variant_attributes` (
-  `id` int(11) NOT NULL,
-  `variant_id` int(11) NOT NULL,
-  `attribute_id` int(11) NOT NULL,
-  `attribute_value_id` int(11) NOT NULL
+  `id` int NOT NULL,
+  `variant_id` int NOT NULL,
+  `attribute_id` int NOT NULL,
+  `attribute_value_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -14757,19 +14767,19 @@ INSERT INTO `db_product_variant_attributes` (`id`, `variant_id`, `attribute_id`,
 --
 
 CREATE TABLE `db_promo_codes` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `shop_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `id` bigint UNSIGNED NOT NULL,
+  `shop_id` bigint UNSIGNED NOT NULL DEFAULT '0',
+  `code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `discount_type` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1: Percentage, 2: Fixed Amount, 3: Free Shipping',
   `discount_value` decimal(15,2) NOT NULL DEFAULT '0.00',
   `max_discount_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `min_order_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `start_date` datetime NOT NULL,
   `end_date` datetime NOT NULL,
-  `usage_limit` int(11) NOT NULL DEFAULT '0' COMMENT '0: Unlimited',
-  `usage_per_user` int(11) NOT NULL DEFAULT '1' COMMENT '0: Unlimited',
+  `usage_limit` int NOT NULL DEFAULT '0' COMMENT '0: Unlimited',
+  `usage_per_user` int NOT NULL DEFAULT '1' COMMENT '0: Unlimited',
   `apply_to` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1: All Orders, 2: Specific Products, 3: Specific Categories',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -14790,13 +14800,35 @@ INSERT INTO `db_promo_codes` (`id`, `shop_id`, `code`, `name`, `description`, `d
 --
 
 CREATE TABLE `db_promo_code_usage` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `promo_code_id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED NOT NULL,
-  `order_id` bigint(20) UNSIGNED NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `promo_code_id` bigint UNSIGNED NOT NULL,
+  `user_id` bigint UNSIGNED NOT NULL,
+  `order_id` bigint UNSIGNED NOT NULL,
   `discount_applied` decimal(15,2) NOT NULL DEFAULT '0.00',
   `used_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `db_redirects`
+--
+
+CREATE TABLE `db_redirects` (
+  `id` int NOT NULL,
+  `old_url` varchar(255) NOT NULL,
+  `new_url` varchar(255) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `db_redirects`
+--
+
+INSERT INTO `db_redirects` (`id`, `old_url`, `new_url`, `status`, `created_at`, `updated_at`) VALUES
+(1, 'https://demo15.phuongnam24h.net', 'https://demo25.phuongnam24h.net', 1, '2026-07-06 17:37:53', '2026-07-06 17:55:53');
 
 -- --------------------------------------------------------
 
@@ -14805,14 +14837,14 @@ CREATE TABLE `db_promo_code_usage` (
 --
 
 CREATE TABLE `db_roles` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `name` varchar(255) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `is_system` tinyint(1) DEFAULT '0',
-  `created_at` int(11) DEFAULT NULL,
-  `updated_at` int(11) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `created_at` int DEFAULT NULL,
+  `updated_at` int DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_roles`
@@ -14830,9 +14862,9 @@ INSERT INTO `db_roles` (`id`, `name`, `description`, `is_active`, `is_system`, `
 --
 
 CREATE TABLE `db_role_permissions` (
-  `id` int(11) NOT NULL,
-  `role_id` int(11) NOT NULL,
-  `module_id` int(11) NOT NULL,
+  `id` int NOT NULL,
+  `role_id` int NOT NULL,
+  `module_id` int NOT NULL,
   `can_view` tinyint(1) DEFAULT '0',
   `can_add` tinyint(1) DEFAULT '0',
   `can_edit` tinyint(1) DEFAULT '0',
@@ -14896,14 +14928,14 @@ INSERT INTO `db_role_permissions` (`id`, `role_id`, `module_id`, `can_view`, `ca
 --
 
 CREATE TABLE `db_sanpham_ctv` (
-  `id` int(11) NOT NULL,
-  `id_sp` int(11) NOT NULL DEFAULT '0',
-  `id_thanhvien` int(11) NOT NULL DEFAULT '0',
-  `gia_goc` int(11) NOT NULL,
-  `gia` int(11) NOT NULL DEFAULT '0',
-  `khuyen_mai` int(11) NOT NULL DEFAULT '0',
-  `token` text COLLATE utf8mb4_unicode_ci,
-  `hien_thi` int(11) NOT NULL DEFAULT '1'
+  `id` int NOT NULL,
+  `id_sp` int NOT NULL DEFAULT '0',
+  `id_thanhvien` int NOT NULL DEFAULT '0',
+  `gia_goc` int NOT NULL,
+  `gia` int NOT NULL DEFAULT '0',
+  `khuyen_mai` int NOT NULL DEFAULT '0',
+  `token` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `hien_thi` int NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -14913,10 +14945,10 @@ CREATE TABLE `db_sanpham_ctv` (
 --
 
 CREATE TABLE `db_seo` (
-  `id` int(11) NOT NULL,
-  `title` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `keyword` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  `des` text CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  `id` int NOT NULL,
+  `title` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `keyword` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `des` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `lang` varchar(10) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
@@ -14935,11 +14967,11 @@ INSERT INTO `db_seo` (`id`, `title`, `keyword`, `des`, `lang`) VALUES
 --
 
 CREATE TABLE `db_settings` (
-  `id` int(11) NOT NULL,
-  `lang` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `company_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
-  `logo_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
-  `favicon_image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `id` int NOT NULL,
+  `lang` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `company_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `logo_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `favicon_image` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT '',
   `schema_config` json DEFAULT NULL,
   `data_payload` json DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -14961,14 +14993,14 @@ INSERT INTO `db_settings` (`id`, `lang`, `company_name`, `logo_image`, `favicon_
 --
 
 CREATE TABLE `db_shipping_methods` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `shop_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '0 = Sàn, > 0 = Gian hàng',
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Tên hiển thị (Giao chuẩn, Hỏa tốc, GHN, DHL)',
-  `carrier_code` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Mã hãng (custom, ghn, ghtk, dhl)',
+  `id` bigint UNSIGNED NOT NULL,
+  `shop_id` bigint UNSIGNED NOT NULL DEFAULT '0' COMMENT '0 = Sàn, > 0 = Gian hàng',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Tên hiển thị (Giao chuẩn, Hỏa tốc, GHN, DHL)',
+  `carrier_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Mã hãng (custom, ghn, ghtk, dhl)',
   `is_api` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0: Phí thủ công theo bảng Rates, 1: Phí động gọi từ API của Hãng',
   `api_config` json DEFAULT NULL COMMENT 'Cấu hình Token, API Key của hãng',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
-  `sort_order` int(11) NOT NULL DEFAULT '0',
+  `sort_order` int NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -14987,17 +15019,17 @@ INSERT INTO `db_shipping_methods` (`id`, `shop_id`, `name`, `carrier_code`, `is_
 --
 
 CREATE TABLE `db_shipping_rates` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `shipping_method_id` bigint(20) UNSIGNED NOT NULL COMMENT 'Liên kết với bảng methods ở trên',
-  `country_id` int(11) NOT NULL DEFAULT '0',
-  `province_id` int(11) NOT NULL DEFAULT '0',
-  `district_id` int(11) NOT NULL DEFAULT '0',
-  `ward_id` int(11) NOT NULL DEFAULT '0',
+  `id` bigint UNSIGNED NOT NULL,
+  `shipping_method_id` bigint UNSIGNED NOT NULL COMMENT 'Liên kết với bảng methods ở trên',
+  `country_id` int NOT NULL DEFAULT '0',
+  `province_id` int NOT NULL DEFAULT '0',
+  `district_id` int NOT NULL DEFAULT '0',
+  `ward_id` int NOT NULL DEFAULT '0',
   `base_fee` decimal(15,0) NOT NULL DEFAULT '0' COMMENT 'Phí ship cơ bản',
   `extra_fee_per_kg` decimal(15,0) NOT NULL DEFAULT '0' COMMENT 'Phí phụ thu vượt mức kg',
   `free_weight_kg` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT 'Khối lượng miễn phí ban đầu',
-  `estimated_time` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ví dụ: 2-3 ngày',
-  `priority` int(11) NOT NULL DEFAULT '0' COMMENT 'Độ ưu tiên',
+  `estimated_time` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ví dụ: 2-3 ngày',
+  `priority` int NOT NULL DEFAULT '0' COMMENT 'Độ ưu tiên',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -15010,20 +15042,20 @@ CREATE TABLE `db_shipping_rates` (
 --
 
 CREATE TABLE `db_shops` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED DEFAULT '0',
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'vi',
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `slug` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `logo` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `banner` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `phone` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `map_iframe` text COLLATE utf8mb4_unicode_ci,
-  `sort_order` int(11) NOT NULL DEFAULT '0',
+  `id` bigint UNSIGNED NOT NULL,
+  `user_id` int UNSIGNED DEFAULT '0',
+  `id_code` int NOT NULL,
+  `lang` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'vi',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `banner` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `map_iframe` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `sort_order` int NOT NULL DEFAULT '0',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '0: Locked, 1: Active, 2: Pending',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -15044,12 +15076,12 @@ INSERT INTO `db_shops` (`id`, `user_id`, `id_code`, `lang`, `name`, `slug`, `log
 --
 
 CREATE TABLE `db_tags` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` varchar(255) NOT NULL,
   `alias` varchar(255) NOT NULL,
-  `hien_thi` tinyint(4) NOT NULL,
+  `hien_thi` tinyint NOT NULL,
   `lang` varchar(10) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -15058,10 +15090,10 @@ CREATE TABLE `db_tags` (
 --
 
 CREATE TABLE `db_tax_classes` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `lang` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `id_code` int NOT NULL,
+  `lang` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `is_default` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
@@ -15087,17 +15119,17 @@ INSERT INTO `db_tax_classes` (`id`, `id_code`, `lang`, `name`, `is_active`, `is_
 --
 
 CREATE TABLE `db_tax_rates` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `shop_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `tax_class_id` int(11) NOT NULL,
-  `country_id` int(11) NOT NULL DEFAULT '0',
-  `province_id` int(11) NOT NULL DEFAULT '0',
-  `district_id` int(11) NOT NULL DEFAULT '0',
-  `ward_id` int(11) NOT NULL DEFAULT '0',
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` bigint UNSIGNED NOT NULL,
+  `shop_id` bigint UNSIGNED NOT NULL DEFAULT '0',
+  `tax_class_id` int NOT NULL,
+  `country_id` int NOT NULL DEFAULT '0',
+  `province_id` int NOT NULL DEFAULT '0',
+  `district_id` int NOT NULL DEFAULT '0',
+  `ward_id` int NOT NULL DEFAULT '0',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `rate` decimal(8,4) NOT NULL DEFAULT '0.0000',
   `is_compound` tinyint(1) NOT NULL DEFAULT '0',
-  `priority` int(11) NOT NULL DEFAULT '0',
+  `priority` int NOT NULL DEFAULT '0',
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -15118,11 +15150,11 @@ INSERT INTO `db_tax_rates` (`id`, `shop_id`, `tax_class_id`, `country_id`, `prov
 --
 
 CREATE TABLE `db_text` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `key_name` varchar(255) DEFAULT NULL,
   `group_name` varchar(50) DEFAULT 'uncategorized',
   `text` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_text`
@@ -15302,9 +15334,9 @@ INSERT INTO `db_text` (`id`, `key_name`, `group_name`, `text`) VALUES
 --
 
 CREATE TABLE `db_thanhpho` (
-  `id` int(11) NOT NULL,
-  `ten` text CHARACTER SET utf8 NOT NULL,
-  `code` varchar(30) CHARACTER SET utf8 NOT NULL
+  `id` int NOT NULL,
+  `ten` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `code` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
 --
@@ -15383,14 +15415,14 @@ INSERT INTO `db_thanhpho` (`id`, `ten`, `code`) VALUES
 --
 
 CREATE TABLE `db_thanhtoan_ctv` (
-  `id` int(11) NOT NULL,
-  `id_ctv` int(11) NOT NULL,
-  `du_no_dau` int(11) NOT NULL,
-  `thanh_toan` int(11) NOT NULL,
-  `du_no_cuoi` int(11) NOT NULL,
-  `ma_hoadon` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id` int NOT NULL,
+  `id_ctv` int NOT NULL,
+  `du_no_dau` int NOT NULL,
+  `thanh_toan` int NOT NULL,
+  `du_no_cuoi` int NOT NULL,
+  `ma_hoadon` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ngay_thanhtoan` date NOT NULL,
-  `ghi_chu` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ghi_chu` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `ngay_tao` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -15408,15 +15440,15 @@ INSERT INTO `db_thanhtoan_ctv` (`id`, `id_ctv`, `du_no_dau`, `thanh_toan`, `du_n
 --
 
 CREATE TABLE `db_thongke` (
-  `id` int(11) NOT NULL,
-  `trong_ngay` int(11) NOT NULL,
-  `trong_ngay_date` int(11) NOT NULL,
-  `trong_tuan` int(11) NOT NULL,
-  `trong_tuan_date` int(11) NOT NULL,
-  `trong_thang` int(11) NOT NULL,
-  `trong_thang_date` int(11) NOT NULL,
-  `tong_truy_cap` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `id` int NOT NULL,
+  `trong_ngay` int NOT NULL,
+  `trong_ngay_date` int NOT NULL,
+  `trong_tuan` int NOT NULL,
+  `trong_tuan_date` int NOT NULL,
+  `trong_thang` int NOT NULL,
+  `trong_thang_date` int NOT NULL,
+  `tong_truy_cap` int NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_thongke`
@@ -15433,8 +15465,8 @@ INSERT INTO `db_thongke` (`id`, `trong_ngay`, `trong_ngay_date`, `trong_tuan`, `
 
 CREATE TABLE `db_thongke_detail` (
   `session_id` varchar(255) NOT NULL,
-  `time` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `time` int NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_thongke_detail`
@@ -15450,21 +15482,21 @@ INSERT INTO `db_thongke_detail` (`session_id`, `time`) VALUES
 --
 
 CREATE TABLE `db_users` (
-  `id` int(11) NOT NULL,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `fullname` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `avatar` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` int NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fullname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `birthday` date DEFAULT NULL,
   `gender` tinyint(1) DEFAULT '0',
-  `role_id` int(11) DEFAULT '0',
+  `role_id` int DEFAULT '0',
   `is_admin` tinyint(1) DEFAULT '0',
   `is_active` tinyint(1) DEFAULT '1',
-  `created_at` int(11) DEFAULT NULL
+  `created_at` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -15482,11 +15514,11 @@ INSERT INTO `db_users` (`id`, `token`, `username`, `password`, `email`, `fullnam
 --
 
 CREATE TABLE `db_user_permission_group` (
-  `id` int(11) NOT NULL,
-  `id_user` int(11) NOT NULL,
-  `id_permission` int(11) NOT NULL,
-  `action` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `id` int NOT NULL,
+  `id_user` int NOT NULL,
+  `id_permission` int NOT NULL,
+  `action` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_user_permission_group`
@@ -15504,7 +15536,7 @@ INSERT INTO `db_user_permission_group` (`id`, `id_user`, `id_permission`, `actio
 --
 
 CREATE TABLE `db_video` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `ten` text NOT NULL,
   `alias` varchar(255) NOT NULL,
   `noi_dung` text NOT NULL,
@@ -15514,13 +15546,13 @@ CREATE TABLE `db_video` (
   `title` varchar(255) NOT NULL,
   `keyword` text NOT NULL,
   `des` text NOT NULL,
-  `id_loai` int(11) NOT NULL,
-  `id_code` int(11) NOT NULL,
-  `so_thu_tu` int(11) NOT NULL,
-  `cap_nhat` int(11) NOT NULL,
-  `hien_thi` tinyint(4) NOT NULL,
+  `id_loai` int NOT NULL,
+  `id_code` int NOT NULL,
+  `so_thu_tu` int NOT NULL,
+  `cap_nhat` int NOT NULL,
+  `hien_thi` tinyint NOT NULL,
   `lang` varchar(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_video`
@@ -15536,12 +15568,12 @@ INSERT INTO `db_video` (`id`, `ten`, `alias`, `noi_dung`, `hinh_anh`, `ma_video`
 --
 
 CREATE TABLE `db_xa` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `code_tinh` varchar(255) NOT NULL,
   `code_huyen` varchar(255) NOT NULL,
   `code` varchar(255) NOT NULL,
   `ten` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `db_xa`
@@ -26708,9 +26740,9 @@ INSERT INTO `db_xa` (`id`, `code_tinh`, `code_huyen`, `code`, `ten`) VALUES
 --
 
 CREATE TABLE `db_yeuthich` (
-  `id` int(11) NOT NULL,
-  `id_thanhvien` int(11) NOT NULL,
-  `id_sp` int(11) NOT NULL
+  `id` int NOT NULL,
+  `id_thanhvien` int NOT NULL,
+  `id_sp` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -27046,6 +27078,13 @@ ALTER TABLE `db_promo_code_usage`
   ADD KEY `order_id` (`order_id`);
 
 --
+-- Indexes for table `db_redirects`
+--
+ALTER TABLE `db_redirects`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `old_url` (`old_url`);
+
+--
 -- Indexes for table `db_roles`
 --
 ALTER TABLE `db_roles`
@@ -27190,403 +27229,409 @@ ALTER TABLE `db_yeuthich`
 -- AUTO_INCREMENT for table `cf_code`
 --
 ALTER TABLE `cf_code`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=785;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=785;
 
 --
 -- AUTO_INCREMENT for table `cf_parent`
 --
 ALTER TABLE `cf_parent`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=718;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=718;
 
 --
 -- AUTO_INCREMENT for table `db_attributes`
 --
 ALTER TABLE `db_attributes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `db_attribute_values`
 --
 ALTER TABLE `db_attribute_values`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `db_binhluan`
 --
 ALTER TABLE `db_binhluan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `db_binhluan_media`
 --
 ALTER TABLE `db_binhluan_media`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `db_blocks`
 --
 ALTER TABLE `db_blocks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_block_items`
 --
 ALTER TABLE `db_block_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `db_button_contact`
 --
 ALTER TABLE `db_button_contact`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `db_categories`
 --
 ALTER TABLE `db_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=374;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=374;
 
 --
 -- AUTO_INCREMENT for table `db_coupon`
 --
 ALTER TABLE `db_coupon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `db_customers`
 --
 ALTER TABLE `db_customers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_dathang_backup`
 --
 ALTER TABLE `db_dathang_backup`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_dathang_chitiet_backup`
 --
 ALTER TABLE `db_dathang_chitiet_backup`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `db_dathang_xuly`
 --
 ALTER TABLE `db_dathang_xuly`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `db_diachi`
 --
 ALTER TABLE `db_diachi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `db_files`
 --
 ALTER TABLE `db_files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_filter`
 --
 ALTER TABLE `db_filter`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_filter_content`
 --
 ALTER TABLE `db_filter_content`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT for table `db_flash_sale`
 --
 ALTER TABLE `db_flash_sale`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_flash_sales`
 --
 ALTER TABLE `db_flash_sales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_forms`
 --
 ALTER TABLE `db_forms`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_form_fields`
 --
 ALTER TABLE `db_form_fields`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `db_form_submissions`
 --
 ALTER TABLE `db_form_submissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_galleries`
 --
 ALTER TABLE `db_galleries`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `db_huyen`
 --
 ALTER TABLE `db_huyen`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=730;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=730;
 
 --
 -- AUTO_INCREMENT for table `db_lang`
 --
 ALTER TABLE `db_lang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_lienhe`
 --
 ALTER TABLE `db_lienhe`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `db_locations`
 --
 ALTER TABLE `db_locations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17529;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17529;
 
 --
 -- AUTO_INCREMENT for table `db_menus`
 --
 ALTER TABLE `db_menus`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `db_menu_items`
 --
 ALTER TABLE `db_menu_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=698;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=698;
 
 --
 -- AUTO_INCREMENT for table `db_module`
 --
 ALTER TABLE `db_module`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `db_module_admin`
 --
 ALTER TABLE `db_module_admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
 
 --
 -- AUTO_INCREMENT for table `db_newsletter`
 --
 ALTER TABLE `db_newsletter`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `db_options`
 --
 ALTER TABLE `db_options`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `db_orders`
 --
 ALTER TABLE `db_orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_order_history`
 --
 ALTER TABLE `db_order_history`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `db_order_items`
 --
 ALTER TABLE `db_order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_page`
 --
 ALTER TABLE `db_page`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_payment_methods`
 --
 ALTER TABLE `db_payment_methods`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `db_permission_action`
 --
 ALTER TABLE `db_permission_action`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `db_posts`
 --
 ALTER TABLE `db_posts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
 
 --
 -- AUTO_INCREMENT for table `db_products`
 --
 ALTER TABLE `db_products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
 
 --
 -- AUTO_INCREMENT for table `db_product_variants`
 --
 ALTER TABLE `db_product_variants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=382;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=382;
 
 --
 -- AUTO_INCREMENT for table `db_product_variant_attributes`
 --
 ALTER TABLE `db_product_variant_attributes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1435;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1435;
 
 --
 -- AUTO_INCREMENT for table `db_promo_codes`
 --
 ALTER TABLE `db_promo_codes`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_promo_code_usage`
 --
 ALTER TABLE `db_promo_code_usage`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `db_redirects`
+--
+ALTER TABLE `db_redirects`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_roles`
 --
 ALTER TABLE `db_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `db_role_permissions`
 --
 ALTER TABLE `db_role_permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `db_sanpham_ctv`
 --
 ALTER TABLE `db_sanpham_ctv`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_seo`
 --
 ALTER TABLE `db_seo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `db_settings`
 --
 ALTER TABLE `db_settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_shipping_methods`
 --
 ALTER TABLE `db_shipping_methods`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_shipping_rates`
 --
 ALTER TABLE `db_shipping_rates`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `db_shops`
 --
 ALTER TABLE `db_shops`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_tags`
 --
 ALTER TABLE `db_tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `db_tax_classes`
 --
 ALTER TABLE `db_tax_classes`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `db_tax_rates`
 --
 ALTER TABLE `db_tax_rates`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `db_text`
 --
 ALTER TABLE `db_text`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=183;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=183;
 
 --
 -- AUTO_INCREMENT for table `db_thanhpho`
 --
 ALTER TABLE `db_thanhpho`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT for table `db_thanhtoan_ctv`
 --
 ALTER TABLE `db_thanhtoan_ctv`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_thongke`
 --
 ALTER TABLE `db_thongke`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_users`
 --
 ALTER TABLE `db_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `db_user_permission_group`
 --
 ALTER TABLE `db_user_permission_group`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `db_video`
 --
 ALTER TABLE `db_video`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `db_xa`
 --
 ALTER TABLE `db_xa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11145;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11145;
 
 --
 -- AUTO_INCREMENT for table `db_yeuthich`
 --
 ALTER TABLE `db_yeuthich`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables

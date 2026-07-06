@@ -28,6 +28,8 @@ class PostService {
             'nofollow'        => isset($inputData['nofollow'][$lang]) ? 1 : 0,
             'seo_head'        => $inputData['seo_head'][$lang] ?? '',
             'seo_body'        => $inputData['seo_body'][$lang] ?? '',
+            'seo_schema'      => $inputData['seo_schema'][$lang] ?? '',
+            'seo_canonical'   => $inputData['seo_canonical'][$lang] ?? '',
             'sort_order'      => $sortOrder,
             'status'          => $status,
             'is_featured'     => isset($inputData['is_featured']) ? 1 : 0,

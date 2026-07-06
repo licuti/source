@@ -94,6 +94,8 @@ class CategoryController extends BaseAdminController {
             $item["seo_description"][$lang] = $t->seo_description;
             $item["seo_head"][$lang] = $t->seo_head;
             $item["seo_body"][$lang] = $t->seo_body;
+            $item["seo_schema"][$lang] = $t->seo_schema;
+            $item["seo_canonical"][$lang] = $t->seo_canonical;
         }
         
         $parentCategories = CategoryModel::getTreeForAdmin();
@@ -116,6 +118,8 @@ class CategoryController extends BaseAdminController {
             'seo_description'=> $request->input('seo_description')[$langCode] ?? '',
             'seo_head'       => $request->input('seo_head')[$langCode] ?? '',
             'seo_body'       => $request->input('seo_body')[$langCode] ?? '',
+            'seo_schema'     => $request->input('seo_schema')[$langCode] ?? '',
+            'seo_canonical'  => $request->input('seo_canonical')[$langCode] ?? '',
             'image'          => $request->input('image', ''),
             'banner'         => $request->input('banner', ''),
             'parent_id'      => (int)$request->input('parent_id', 0),

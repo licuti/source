@@ -50,6 +50,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 25 | **Cấu hình Website** (`setting`) | `SettingController` | 🟢 Hoàn thành |
 | 28 | **Cấu hình SEO cơ bản** (`seo-config`) | `SeoConfigController` | 🟢 Hoàn thành |
 | 39 | **Sitemap** (`sitemap`) | `SitemapController` | 🟢 Hoàn thành |
+| 52 | **Module Redirect 301** (`redirect-301`) | `RedirectController` | 🟢 Hoàn thành |
 | 53 | **Button Contact** (`button-contact`) | `ContactButtonController` | 🔴 Chưa làm |
 
 ### 🟢 Chi tiết: LanguageSettingController (Cấu hình Ngôn ngữ)
@@ -126,7 +127,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 |---|---|---|---|
 | 23 | **Bài viết** (`bai-viet`) | `PostController` | 🟢 Hoàn thành |
 | 24 | **Khối Giao Diện (Blocks)** (`noi-dung`) | `BlockController` | 🟢 Hoàn thành |
-| 36 | **Album ảnh** (`quan-ly-album`) | `GalleryController` | 🟡 Đang phát triển |
+| 36 | **Album ảnh** (`quan-ly-album`) | `GalleryController` | 🟢 Hoàn thành |
 | 37 | **Videos** (`video`) | `VideoController` | 🔴 Chưa làm |
 | 38 | **Upload file** (`upload-file`) | `FileManagerController` | 🔴 Chưa làm |
 
@@ -197,7 +198,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 55 | **Cấu hình vận chuyển** (`quan-ly-van-chuyen`) | `ShippingController` | 🟢 Hoàn thành |
 | 56 | **Quản lý thuế** (`quan-ly-thue`) | `TaxClassController`, `TaxRateController` | 🟢 Hoàn thành |
 | 46 | **Mã giảm giá** (`promo-code`) | `PromoCodeController` | 🟢 Hoàn thành |
-| 47 | **Flash Sale** (`flash-sale`) | `FlashSaleController` | 🟡 Đang phát triển |
+| 47 | **Flash Sale** (`flash-sale`) | `FlashSaleController` | 🟢 Hoàn thành |
 | 51 | **Đăng ký nhận ưu đãi** (`coupon`) | `CouponController` | 🔴 Chưa làm |
 
 ### 🟢 Chi tiết: PaymentController (Cổng thanh toán)
@@ -225,10 +226,9 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **Phát triển tương lai (Checkout/Cart Integration):** Sẽ được gọi trong quá trình xử lý thanh toán (Kiểm tra `is_active`, thời hạn, điều kiện min order, và tính toán số tiền giảm cuối cùng, đồng thời ghi log vào `db_promo_code_usage`).
 - **Phát triển tương lai (Apply To):** Mở rộng áp dụng mã giảm giá cho Từng Sản phẩm cụ thể hoặc Danh mục cụ thể (Hiện tại đang áp dụng cho Tổng đơn hàng).
 
-### 🟡 Đang phát triển: FlashSaleController (Flash Sale Campaign)
+### 🟢 Chi tiết: FlashSaleController (Flash Sale Campaign)
 - **Kiến trúc:** Đã nâng cấp lên cấu trúc Campaign (`db_flash_sales`), đồng bộ tự động `flash_sale_start` và `flash_sale_end` xuống từng sản phẩm.
-- **Hoàn thành:** Thêm/Sửa/Xóa Campaign, hiển thị danh sách sản phẩm trong Campaign.
-- **Đang mắc phải:** Lỗi ở khung tìm kiếm Select2 (Gõ tìm kiếm Ajax không xổ ra dữ liệu dù SQL truy vấn đã trả về đúng hoặc dùng `whereRaw`). Tạm gác lại để kiểm tra sau.
+- **Hoàn thành:** Thêm/Sửa/Xóa Campaign, hiển thị danh sách sản phẩm trong Campaign. Tìm kiếm AJAX sản phẩm hoạt động mượt mà.
 
 ---
 
@@ -268,9 +268,9 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **Kỹ thuật Lõi Sinh XML:** Sử dụng `XMLWriter` bản địa của PHP để ghi trực tiếp luồng dữ liệu XML vào ổ cứng (streaming) thay vì gộp chuỗi bằng `DOMDocument`. Điều này giúp hệ thống tạo sitemap cho website hàng trăm ngàn bài viết nhưng chỉ tốn chưa tới 2MB RAM, mở rộng (scale) vô cùng tốt.
 - **Tối ưu hóa Database (Refactor):** Đã viết script thực thi việc đồng bộ hóa cơ sở dữ liệu. Đổi tên cột `is_active` của bảng `db_categories` thành `status` để **đồng bộ hóa 100%** kiến trúc trạng thái với 2 bảng `db_posts` và `db_products`. Tự động scan và cập nhật toàn bộ `CategoryModel` cùng các Views liên quan để loại bỏ các lỗi truy vấn tiềm ẩn.
 
-### 🟡 Chi tiết: GalleryController (Album ảnh đa phương tiện) - [ĐANG PHÁT TRIỂN]
-- **Tái cấu trúc CSDL:** Xóa bỏ 2 bảng cũ (`db_album` và `db_album_hinhanh`). Chuyển sang bảng `db_galleries` duy nhất với kiến trúc **JSON Đa ngôn ngữ** tối ưu tốc độ.
-- **Tính năng mới:** Tích hợp Component `gallery_upload` (CKFinder + Kéo thả sắp xếp SortableJS) trực tiếp vào trong cùng một màn hình Form Thêm Mới. Bỏ hoàn toàn trang Quản lý ảnh riêng lẻ. Mọi dữ liệu (Nội dung, SEO, Ảnh con) được lưu đồng bộ qua 1 nút Lưu duy nhất.
-- **Tồn đọng chờ kiểm tra:** Người dùng cần test chi tiết Form thêm mới. Giao diện Frontend ngoài trang chủ chắc chắn sẽ vỡ do thay đổi CSDL, cần cập nhật lại vòng lặp đọc JSON ở Frontend sau này.
+### 🟢 Chi tiết: GalleryController (Album ảnh đa phương tiện)
+- **Tái cấu trúc CSDL:** Xóa bỏ 2 bảng cũ (`db_album` và `db_album_hinhanh`). Chuyển sang bảng `db_galleries` duy nhất.
+- **Kiến trúc Đa Ngôn Ngữ mới (Polylang):** Đã nâng cấp đồng bộ theo chuẩn chung của Post/Product, sử dụng `id_code` và `lang` tách biệt theo từng dòng để tiện lợi cho Frontend truy xuất dữ liệu độc lập. Tích hợp Component `polylang` để gộp nhóm các ngôn ngữ.
+- **Tính năng ảnh con (Gallery):** Tích hợp Component `gallery_upload` (CKFinder + Kéo thả sắp xếp SortableJS) trực tiếp vào Form Thêm Mới, lưu thẳng dưới dạng mảng JSON trên 1 cột `gallery`. Bỏ hoàn toàn trang Quản lý ảnh riêng lẻ.
 
-> **📊 Tổng kết tiến độ:** Hoàn thành **20/33 module** (60%) (Module Album ảnh tạm thời đánh dấu lại là Đang phát triển). Hệ thống phân quyền (RBAC), Quản lý User, Cấu hình chung, Cấu hình SEO, Dynamic Form Builder, Sitemap, Quản lý Bài viết, Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu đã hoàn thiện.
+> **📊 Tổng kết tiến độ:** Hoàn thành **21/33 module** (63%). Hệ thống phân quyền (RBAC), Quản lý User, Cấu hình chung, Cấu hình SEO, Dynamic Form Builder, Sitemap, Quản lý Bài viết, Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu, Album ảnh đa phương tiện đã hoàn thiện.

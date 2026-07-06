@@ -74,7 +74,15 @@ class Router {
                 return $this->execute($match['callback'], $match['params']);
             }
 
-            // Không khớp bất kỳ route nào → 404
+            // Không khớp bất kỳ route nào → Kiểm tra Redirect 301
+            $checkUrl = '/' . ltrim($request->uri, '/');
+            $redirect = \App\Models\RedirectModel::where('old_url', $checkUrl)->where('status', 1)->first();
+            if ($redirect) {
+                header("Location: " . $redirect->new_url, true, 301);
+                exit;
+            }
+
+            // Không có redirect → 404
             return new Response(view('pages/404', ['com' => trim($request->uri, '/')]), 404);
         });
     }

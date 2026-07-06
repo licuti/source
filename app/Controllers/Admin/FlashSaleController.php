@@ -113,7 +113,7 @@ class FlashSaleController extends BaseAdminController {
         
         $products = $query->orderBy('updated_at', 'desc')
                           ->limit(20)
-                          ->get(['id', 'title', 'thumbnail', 'price', 'flash_sale']);
+                          ->get('id, title, thumbnail, price, flash_sale');
                                 
         $results = [];
         foreach ($products as $p) {

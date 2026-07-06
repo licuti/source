@@ -58,6 +58,8 @@ class ProductService {
             'seo_keyword'       => $inputData['keyword'][$lang] ?? '',
             'seo_head'          => $inputData['seo_head'][$lang] ?? '',
             'seo_body'          => $inputData['seo_body'][$lang] ?? '',
+            'seo_schema'        => $inputData['seo_schema'][$lang] ?? '',
+            'seo_canonical'     => $inputData['seo_canonical'][$lang] ?? '',
             'noindex'           => isset($inputData['noindex'][$lang]) ? 1 : 0,
             'nofollow'          => isset($inputData['nofollow'][$lang]) ? 1 : 0,
             'status'            => $status,
