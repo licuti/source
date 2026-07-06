@@ -6,32 +6,9 @@ use App\Models\GalleryModel;
 class GalleryService {
 
     /**
-     * Trích xuất dữ liệu cho một ngôn ngữ cụ thể từ request
+     * Lưu mới hoặc cập nhật Gallery (Dành cho 1 ngôn ngữ độc lập)
      */
-    private function extractLangData(array $inputData, string $lang, int $categoryId, int $status, int $sortOrder): array {
-        $title = $inputData['title'][$lang] ?? '';
-        $alias = empty($inputData['alias'][$lang]) ? str_slug($title) : $inputData['alias'][$lang];
-
-        return [
-            'title'           => $title,
-            'slug'            => $alias,
-            'description'     => $inputData['description'][$lang] ?? '',
-            'content'         => $inputData['content'][$lang] ?? '',
-            'seo_title'       => $inputData['seo_title'][$lang] ?? '',
-            'seo_description' => $inputData['seo_description'][$lang] ?? '',
-            'keyword'         => $inputData['keyword'][$lang] ?? '',
-            'tags'            => $inputData['tags'][$lang] ?? '',
-            'noindex'         => isset($inputData['noindex'][$lang]) ? 1 : 0,
-            'nofollow'        => isset($inputData['nofollow'][$lang]) ? 1 : 0,
-            'seo_head'        => $inputData['seo_head'][$lang] ?? '',
-            'seo_body'        => $inputData['seo_body'][$lang] ?? '',
-        ];
-    }
-
-    /**
-     * Lưu mới hoặc cập nhật Gallery đa ngôn ngữ
-     */
-    public function saveGallery(array $inputData, array $langs, int $userId, ?int $id = null) {
+    public function saveGallery(array $inputData, int $userId) {
         $categoryId = (int)($inputData['category_id'] ?? 0);
         $sortOrder = (int)($inputData['sort_order'] ?? 0);
         $statusVal = (isset($inputData['status']) && ($inputData['status'] == '1' || $inputData['status'] === 'publish')) ? 1 : 0;
@@ -39,63 +16,99 @@ class GalleryService {
         $image = $inputData['image'] ?? '';
         
         // Gallery array (from Dropzone component)
-        $gallery = $inputData['gallery'] ?? [];
-        if (!is_array($gallery)) {
-            $gallery = [];
+        $galleryInput = $inputData['gallery'] ?? [];
+        if (!is_array($galleryInput)) {
+            $galleryInput = [];
         }
         
-        $jsonFields = [
-            'title' => [], 'slug' => [], 'description' => [], 'content' => [],
-            'seo_title' => [], 'seo_description' => [], 'keyword' => [], 'tags' => [],
-            'noindex' => [], 'nofollow' => [], 'seo_head' => [], 'seo_body' => []
-        ];
-
-        // Lấy dữ liệu từng ngôn ngữ
-        foreach ($langs as $langCode => $langName) {
-            // Sửa lại thành lấy đúng mã ngôn ngữ
-            $c = is_array($langName) ? $langName['code'] : $langCode;
-            
-            $langData = $this->extractLangData($inputData, $c, $categoryId, $statusVal, $sortOrder);
-            foreach ($jsonFields as $field => $arr) {
-                $jsonFields[$field][$c] = $langData[$field];
+        $processedGallery = [];
+        foreach ($galleryInput as $imgUrl) {
+            if (!empty($imgUrl)) {
+                $processedGallery[] = $imgUrl;
             }
         }
+        $galleryJson = json_encode($processedGallery, JSON_UNESCAPED_UNICODE);
+        
+        // Basic fields
+        $lang = $inputData['lang'] ?? 'vi';
+        $idCode = $inputData['id_code'] ?? null;
+        $id = $inputData['id'] ?? null;
 
+        $title = $inputData['title'] ?? '';
+        $slug = empty($inputData['alias']) ? str_slug($title) : $inputData['alias'];
+
+        // Kiểm tra update hay create
+        $needsIdCodeUpdate = false;
         if ($id) {
-            $model = GalleryModel::find($id);
+            $model = GalleryModel::adminQuery()->qbFind($id);
             if (!$model) return false;
+            $idCode = $model->id_code; // Bảo toàn id_code
         } else {
             $model = new GalleryModel();
             $model->created_by = $userId;
+            $model->lang = $lang;
+            if (!$idCode) {
+                $model->id_code = 0; // Tạm thời để 0, sẽ update sau khi save
+                $needsIdCodeUpdate = true;
+            } else {
+                $model->id_code = $idCode;
+            }
         }
 
+        // Cập nhật các trường dùng chung
         $model->category_id = $categoryId;
         $model->status = $statusVal;
         $model->sort_order = $sortOrder;
         $model->is_featured = isset($inputData['is_featured']) ? 1 : 0;
+        $model->gallery = $galleryJson;
         
-        // Xử lý upload ảnh bìa (avatar) - image_upload component trả về URL hoặc basename
+        if (!empty($inputData['created_at'])) {
+            $model->created_at = date('Y-m-d H:i:s', strtotime($inputData['created_at']));
+        }
+        
         if (!empty($image)) {
-            $model->image = basename($image);
+            $model->image = $image;
         } elseif (!$id) {
             $model->image = '';
         }
-        
-        // Xử lý mảng gallery: chỉ lưu basename để tiết kiệm
-        $processedGallery = [];
-        foreach ($gallery as $imgUrl) {
-            if (!empty($imgUrl)) {
-                $processedGallery[] = basename($imgUrl);
-            }
-        }
-        $model->gallery = json_encode($processedGallery, JSON_UNESCAPED_UNICODE);
 
-        // Gán JSON
-        foreach ($jsonFields as $field => $dataArray) {
-            $model->{$field} = json_encode($dataArray, JSON_UNESCAPED_UNICODE);
-        }
+        // Cập nhật các trường ngôn ngữ
+        $model->title = $title;
+        $model->slug = $slug;
+        $model->description = $inputData['description'] ?? '';
+        $model->content = $inputData['content'] ?? '';
+        $model->seo_title = $inputData['seo_title'] ?? '';
+        $model->seo_description = $inputData['seo_description'] ?? '';
+        $model->keyword = $inputData['keyword'] ?? '';
+        $model->tags = $inputData['tags'] ?? '';
+        $model->noindex = isset($inputData['noindex']) ? 1 : 0;
+        $model->nofollow = isset($inputData['nofollow']) ? 1 : 0;
+        $model->seo_head = $inputData['seo_head'] ?? '';
+        $model->seo_body = $inputData['seo_body'] ?? '';
 
         $model->save();
+        
+        if ($needsIdCodeUpdate) {
+            $idCode = $model->id;
+            $model->id_code = $idCode;
+            $model->save();
+        }
+
+        // Đồng bộ chéo các trường dùng chung cho các bản dịch khác (nếu có)
+        if ($idCode) {
+            GalleryModel::adminQuery()
+                ->where('id_code', $idCode)
+                ->where('id', '!=', $model->id)
+                ->update([
+                    'category_id' => $model->category_id,
+                    'image'       => $model->image,
+                    'gallery'     => $model->gallery,
+                    'status'      => $model->status,
+                    'is_featured' => $model->is_featured,
+                    'sort_order'  => $model->sort_order
+                ]);
+        }
+
         return $model->id;
     }
 }

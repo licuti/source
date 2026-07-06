@@ -56,6 +56,7 @@ $breadcrumbActions = [
                                 </th>
                                 <th style="width: 100px;" class="text-center">Hình bìa</th>
                                 <th>Tên Album</th>
+                                <th style="width: 150px;" class="text-center">Ngôn ngữ</th>
                                 <th style="width: 120px;" class="text-center">Số lượng ảnh</th>
                                 <th style="width: 100px;" class="text-center">Sắp xếp</th>
                                 <th style="width: 120px;" class="text-center">Hiển thị</th>
@@ -80,7 +81,7 @@ $breadcrumbActions = [
                                         </td>
                                         
                                         <td class="align-middle">
-                                            <strong><a href="<?= route('admin.gallery.edit', ['id' => $item->id]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->title['vi'] ?? '') ?></a></strong>
+                                            <strong><a href="<?= route('admin.gallery.edit', ['id' => $item->id]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->title ?? '') ?></a></strong>
                                             
                                             <?php
                                             $actions = [];
@@ -97,6 +98,25 @@ $breadcrumbActions = [
                                             ];
                                             echo view('admin.components.row_actions', ['actions' => $actions]);
                                             ?>
+                                        </td>
+                                        
+                                        <td class="text-center align-middle">
+                                            <?php foreach ($langs as $l): ?>
+                                                <?php
+                                                $lCode = $l['code'];
+                                                $hasTranslation = isset($translations[$item->id_code][$lCode]);
+                                                $transId = $hasTranslation ? $translations[$item->id_code][$lCode] : null;
+                                                ?>
+                                                <?php if ($hasTranslation): ?>
+                                                    <a href="<?= route('admin.gallery.edit', ['id' => $transId]) ?>" class="text-decoration-none me-1" title="Sửa bản <?= htmlspecialchars($l['name']) ?>">
+                                                        <i class="fa-solid fa-pencil text-primary" style="font-size: 14px;"></i> <?= strtoupper($lCode) ?>
+                                                    </a>
+                                                <?php else: ?>
+                                                    <a href="<?= route('admin.gallery.create', ['lang' => $lCode, 'source_id' => $item->id_code]) ?>" class="text-decoration-none text-muted me-1" title="Thêm bản <?= htmlspecialchars($l['name']) ?>">
+                                                        <i class="fa-solid fa-plus text-secondary" style="font-size: 14px;"></i> <?= strtoupper($lCode) ?>
+                                                    </a>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
                                         </td>
                                         
                                         <td class="text-center align-middle">
@@ -122,7 +142,7 @@ $breadcrumbActions = [
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="6" class="text-center text-muted py-4">Chưa có album nào được tạo.</td>
+                                    <td colspan="7" class="text-center text-muted py-4">Chưa có album nào được tạo.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>

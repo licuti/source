@@ -20,7 +20,7 @@ if (!isset($attrs['id'])) {
 }
 $id = $attrs['id'];
 
-$imageSrc = (!empty($value)) ? $path . $value : '/assets/admin/img/no-image.png';
+$imageSrc = getImageUrl($value);
 
 $attrString = render_attrs($attrs);
 ?>

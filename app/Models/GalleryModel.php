@@ -8,10 +8,12 @@ class GalleryModel extends \Model {
     protected string $createdAt = 'created_at';
     protected string $updatedAt = 'updated_at';
 
-    // Các cột JSON hỗ trợ đa ngôn ngữ
-    protected array $jsonColumns = [
-        'title', 'slug', 'description', 'content', 'gallery',
-        'seo_title', 'seo_description', 'keyword', 'tags',
-        'noindex', 'nofollow', 'seo_head', 'seo_body'
-    ];
+    /**
+     * Query scope: Áp dụng cấu hình mặc định cho Admin (tắt use_lang)
+     */
+    public static function adminQuery() {
+        $query = static::query();
+        $query->use_lang = false;
+        return $query;
+    }
 }

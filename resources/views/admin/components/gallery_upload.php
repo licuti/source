@@ -42,7 +42,7 @@ $attrString = render_attrs($attrs);
         <?php foreach ($values as $img): ?>
             <?php if (empty($img)) continue; ?>
             <div class="gallery-item position-relative border bg-white shadow-sm rounded" style="width: 100px; height: 100px; cursor: grab;">
-                <img src="<?= $path . $img ?>" class="w-100 h-100 object-fit-cover rounded" alt="Gallery Image">
+                <img src="<?= getImageUrl($img) ?>" class="w-100 h-100 object-fit-cover rounded" alt="Gallery Image">
                 <input type="hidden" name="<?= htmlspecialchars($name) ?>" value="<?= htmlspecialchars($img) ?>">
                 <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1 rounded-circle p-0 d-flex justify-content-center align-items-center" style="width: 20px; height: 20px; font-size: 10px;" onclick="this.parentElement.remove()">
                     <i class="fa-solid fa-xmark"></i>
