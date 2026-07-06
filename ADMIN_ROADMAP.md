@@ -48,7 +48,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 104 | **Sao lưu & Cache** (`backup-cache`) | `BackupController` | 🟢 Hoàn thành |
 | 105 | **Chế độ bảo trì** (`maintenance`) | `MaintenanceController` | 🟢 Hoàn thành |
 | 25 | **Cấu hình Website** (`setting`) | `SettingController` | 🟢 Hoàn thành |
-| 28 | **Cấu hình SEO cơ bản** (`seo-co-ban`) | `SeoConfigController` | 🔴 Chưa làm |
+| 28 | **Cấu hình SEO cơ bản** (`seo-config`) | `SeoConfigController` | 🟢 Hoàn thành |
 | 39 | **Sitemap** (`sitemap`) | `SitemapController` | 🟢 Hoàn thành |
 | 53 | **Button Contact** (`button-contact`) | `ContactButtonController` | 🔴 Chưa làm |
 
@@ -108,6 +108,11 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **`index()`**: Lấy toàn bộ dữ liệu cấu hình chung (Company Name, Logo, Favicon...) mà không phân biệt ngôn ngữ. Giao diện được thiết kế tích hợp Component Upload ảnh trực tiếp. Cấu trúc Schema JSON được xây dựng sẵn để lưu trữ linh hoạt mọi tham số mở rộng.
 - **`update()`**: Xử lý mảng đa chiều khi submit. Cập nhật cấu hình chung, logo, favicon, và thông tin dịch thuật (data_payload) độc lập cho từng ngôn ngữ `lang`. Hỗ trợ lưu trữ không giới hạn các trường Setting.
 
+### 🟢 Chi tiết: SeoConfigController (Cấu hình SEO cơ bản)
+- **Kiến trúc:** Sử dụng cơ chế Autoload Cache của `OptionModel` giúp lưu trữ tham số vào bảng `db_options` và nạp vào RAM ngay khi hệ thống khởi động, triệt tiêu thời gian độ trễ query DB cho frontend.
+- **Tính năng:** Cấu hình Tiêu đề, Từ khóa, Mô tả SEO mặc định (Fallback) chạy qua mô hình Tabs đa ngôn ngữ. Hỗ trợ cấu hình Ảnh chia sẻ Facebook (OG:Image) qua thư viện Media, Twitter Site và Facebook App ID.
+- **Tích hợp:** Đã ghi đè thuật toán render thẻ `<head>` ở file `seo.php`. Hệ thống tự động nhận diện nếu dữ liệu SEO của Bài viết/Sản phẩm trống thì lập tức fallback về giá trị thiết lập tại module này để bảo vệ chuẩn SEO.
+
 ### 🟢 Chi tiết: ApiIntegrationController (Tích hợp API / Scripts)
 - **`index()`**: Giao diện hiển thị 3 khu vực nhập mã: `<head>`, `<body>`, `<footer>`. Được trang bị Component IDE **CodeMirror 5** với giao diện Dracula cực đẹp, tự động highlight cú pháp HTML/CSS/JS, số dòng, và đóng mở ngoặc thông minh. Tối ưu load CDN linh hoạt với cơ chế biến cờ toàn cục `$GLOBALS`.
 - **`save()`**: Trích xuất dữ liệu, lưu thẳng (Raw Text) vào bảng `#_options` sử dụng `OptionModel` thông qua 3 khóa (`api_head_scripts`, `api_body_scripts`, `api_footer_scripts`). Vô hiệu hóa tính năng Escape HTML để bảo toàn 100% nguyên bản mã của Script.
@@ -121,7 +126,7 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 |---|---|---|---|
 | 23 | **Bài viết** (`bai-viet`) | `PostController` | 🟢 Hoàn thành |
 | 24 | **Khối Giao Diện (Blocks)** (`noi-dung`) | `BlockController` | 🟢 Hoàn thành |
-| 36 | **Album ảnh** (`gallery`) | `GalleryController` | 🔴 Chưa làm |
+| 36 | **Album ảnh** (`quan-ly-album`) | `GalleryController` | 🟡 Đang phát triển |
 | 37 | **Videos** (`video`) | `VideoController` | 🔴 Chưa làm |
 | 38 | **Upload file** (`upload-file`) | `FileManagerController` | 🔴 Chưa làm |
 
@@ -186,11 +191,13 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 |---|---|---|---|
 | 106 | **Cổng thanh toán** (`payment`) | `PaymentController` | 🟢 Hoàn thành |
 | 32 | **Quản lý đơn hàng** (`quan-ly-don-hang`) | `OrderController` | 🟢 Hoàn thành |
+| 34 | **Hình thức thanh toán** (`quan-ly-hinh-thuc-thanh-toan`) | `PaymentController` | 🟢 Hoàn thành |
+| 35 | **Tài khoản ngân hàng** (`quan-ly-tai-khoan-ngan-hang`) | `PaymentController` | 🟢 Hoàn thành |
 | 45 | **Thống kê doanh thu** (`doanh-thu`) | `RevenueController` | 🟢 Hoàn thành |
 | 55 | **Cấu hình vận chuyển** (`quan-ly-van-chuyen`) | `ShippingController` | 🟢 Hoàn thành |
 | 56 | **Quản lý thuế** (`quan-ly-thue`) | `TaxClassController`, `TaxRateController` | 🟢 Hoàn thành |
 | 46 | **Mã giảm giá** (`promo-code`) | `PromoCodeController` | 🟢 Hoàn thành |
-| 47 | **Flash Sale** (`flash-sale`) | `FlashSaleController` | 🔴 Chưa làm |
+| 47 | **Flash Sale** (`flash-sale`) | `FlashSaleController` | 🟡 Đang phát triển |
 | 51 | **Đăng ký nhận ưu đãi** (`coupon`) | `CouponController` | 🔴 Chưa làm |
 
 ### 🟢 Chi tiết: PaymentController (Cổng thanh toán)
@@ -218,6 +225,11 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **Phát triển tương lai (Checkout/Cart Integration):** Sẽ được gọi trong quá trình xử lý thanh toán (Kiểm tra `is_active`, thời hạn, điều kiện min order, và tính toán số tiền giảm cuối cùng, đồng thời ghi log vào `db_promo_code_usage`).
 - **Phát triển tương lai (Apply To):** Mở rộng áp dụng mã giảm giá cho Từng Sản phẩm cụ thể hoặc Danh mục cụ thể (Hiện tại đang áp dụng cho Tổng đơn hàng).
 
+### 🟡 Đang phát triển: FlashSaleController (Flash Sale Campaign)
+- **Kiến trúc:** Đã nâng cấp lên cấu trúc Campaign (`db_flash_sales`), đồng bộ tự động `flash_sale_start` và `flash_sale_end` xuống từng sản phẩm.
+- **Hoàn thành:** Thêm/Sửa/Xóa Campaign, hiển thị danh sách sản phẩm trong Campaign.
+- **Đang mắc phải:** Lỗi ở khung tìm kiếm Select2 (Gõ tìm kiếm Ajax không xổ ra dữ liệu dù SQL truy vấn đã trả về đúng hoặc dùng `whereRaw`). Tạm gác lại để kiểm tra sau.
+
 ---
 
 ## 6. 👥 KHÁCH HÀNG & TƯƠNG TÁC (Customers & CRM)
@@ -229,8 +241,6 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 | 33 | **Khách hàng liên hệ** (`lien-he`) | `FormBuilderController` | 🟢 Hoàn thành |
 | 48 | **Quản lý bình luận** (`binh-luan`) | `CommentController` | 🔴 Chưa làm |
 | 50 | **Đăng ký nhận tin** (`newsletter`) | `NewsletterController` | 🔴 Chưa làm |
-
----
 
 ### 🟢 Chi tiết: RevenueController (Thống kê doanh thu)
 - **`index()`**: Hiển thị Dashboard toàn diện với các chỉ số báo cáo nâng cao (Doanh thu, Lợi nhuận ước tính, Đơn thành công, Số lượng SP bán ra, Thiệt hại đơn hủy). Tính toán và so sánh tự động Tỷ lệ phần trăm tăng/giảm so với kỳ trước.
@@ -258,4 +268,9 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 - **Kỹ thuật Lõi Sinh XML:** Sử dụng `XMLWriter` bản địa của PHP để ghi trực tiếp luồng dữ liệu XML vào ổ cứng (streaming) thay vì gộp chuỗi bằng `DOMDocument`. Điều này giúp hệ thống tạo sitemap cho website hàng trăm ngàn bài viết nhưng chỉ tốn chưa tới 2MB RAM, mở rộng (scale) vô cùng tốt.
 - **Tối ưu hóa Database (Refactor):** Đã viết script thực thi việc đồng bộ hóa cơ sở dữ liệu. Đổi tên cột `is_active` của bảng `db_categories` thành `status` để **đồng bộ hóa 100%** kiến trúc trạng thái với 2 bảng `db_posts` và `db_products`. Tự động scan và cập nhật toàn bộ `CategoryModel` cùng các Views liên quan để loại bỏ các lỗi truy vấn tiềm ẩn.
 
-> **📊 Tổng kết tiến độ:** Hoàn thành **19/33 module** (57%). Hệ thống phân quyền (RBAC), Quản lý User, Cấu hình chung, Dynamic Form Builder, Sitemap, Quản lý Bài viết, Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu đã hoàn thiện.
+### 🟡 Chi tiết: GalleryController (Album ảnh đa phương tiện) - [ĐANG PHÁT TRIỂN]
+- **Tái cấu trúc CSDL:** Xóa bỏ 2 bảng cũ (`db_album` và `db_album_hinhanh`). Chuyển sang bảng `db_galleries` duy nhất với kiến trúc **JSON Đa ngôn ngữ** tối ưu tốc độ.
+- **Tính năng mới:** Tích hợp Component `gallery_upload` (CKFinder + Kéo thả sắp xếp SortableJS) trực tiếp vào trong cùng một màn hình Form Thêm Mới. Bỏ hoàn toàn trang Quản lý ảnh riêng lẻ. Mọi dữ liệu (Nội dung, SEO, Ảnh con) được lưu đồng bộ qua 1 nút Lưu duy nhất.
+- **Tồn đọng chờ kiểm tra:** Người dùng cần test chi tiết Form thêm mới. Giao diện Frontend ngoài trang chủ chắc chắn sẽ vỡ do thay đổi CSDL, cần cập nhật lại vòng lặp đọc JSON ở Frontend sau này.
+
+> **📊 Tổng kết tiến độ:** Hoàn thành **20/33 module** (60%) (Module Album ảnh tạm thời đánh dấu lại là Đang phát triển). Hệ thống phân quyền (RBAC), Quản lý User, Cấu hình chung, Cấu hình SEO, Dynamic Form Builder, Sitemap, Quản lý Bài viết, Sản phẩm, Thanh toán, Vận chuyển, Mã giảm giá, Đơn hàng, Thống kê Doanh thu đã hoàn thiện.

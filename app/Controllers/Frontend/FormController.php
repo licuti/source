@@ -5,7 +5,7 @@ use App\Models\FormModel;
 use App\Models\FormFieldModel;
 use App\Models\FormSubmissionModel;
 
-class FormController extends \Controller {
+class FormController extends \App\Controllers\Controller {
     
     public function submit($id) {
         $form = FormModel::find($id);

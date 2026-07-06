@@ -1,5 +1,2 @@
 User-agent: *
-Disallow: /
-Disallow: /admin/
-Disallow: /smtp/
-Disallow: /sources/
+Sitemap: http://source.test:81/sitemap.xml

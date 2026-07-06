@@ -35,17 +35,13 @@ class SitemapController extends BaseAdminController {
             ]
         ];
         
-        $sitemapPath = public_path('sitemap.xml');
-        $sitemapInfo = null;
-        if (file_exists($sitemapPath)) {
-            $sitemapInfo = [
-                'time' => date('d/m/Y H:i:s', filemtime($sitemapPath)),
-                'size' => round(filesize($sitemapPath) / 1024, 2) . ' KB',
-                'url' => url('sitemap.xml')
-            ];
-        }
-
-        return view('admin.sitemap.index', compact('settings', 'sitemapInfo'));
+        $sitemapUrl = url('sitemap.xml');
+        
+        // Đọc file robots.txt
+        $robotsPath = public_path('robots.txt');
+        $robotsContent = file_exists($robotsPath) ? file_get_contents($robotsPath) : '';
+        
+        return view('admin.sitemap.index', compact('settings', 'sitemapUrl', 'robotsContent'));
     }
     
     public function save(Request $request) {
@@ -71,76 +67,45 @@ class SitemapController extends BaseAdminController {
             }
         }
         
+        // Cập nhật robots.txt
+        if (isset($_POST['robots_txt'])) {
+            $robotsPath = public_path('robots.txt');
+            file_put_contents($robotsPath, $_POST['robots_txt']);
+        }
+        
         return $this->redirect(route('admin.sitemap.index'))->with('success', 'Đã lưu cấu hình sitemap thành công.');
     }
     
-    public function generate() {
+    public function ping() {
         try {
-            $options = OptionModel::whereIn('option_key', [
-                'sitemap_post_enable', 'sitemap_post_priority', 'sitemap_post_freq',
-                'sitemap_product_enable', 'sitemap_product_priority', 'sitemap_product_freq',
-                'sitemap_category_enable', 'sitemap_category_priority', 'sitemap_category_freq'
-            ])->pluck('option_value', 'option_key');
+            $sitemapUrl = urlencode(url('sitemap.xml'));
             
-            $filePath = public_path('sitemap.xml');
+            // Ping Google
+            $googleUrl = "http://www.google.com/ping?sitemap=" . $sitemapUrl;
+            $ch1 = curl_init($googleUrl);
+            curl_setopt($ch1, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch1, CURLOPT_TIMEOUT, 10);
+            $res1 = curl_exec($ch1);
+            $httpCode1 = curl_getinfo($ch1, CURLINFO_HTTP_CODE);
+            curl_close($ch1);
             
-            $writer = new \XMLWriter();
-            $writer->openURI($filePath);
-            $writer->setIndent(true);
-            $writer->startDocument('1.0', 'UTF-8');
+            // Ping Bing
+            $bingUrl = "http://www.bing.com/ping?sitemap=" . $sitemapUrl;
+            $ch2 = curl_init($bingUrl);
+            curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch2, CURLOPT_TIMEOUT, 10);
+            $res2 = curl_exec($ch2);
+            $httpCode2 = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
+            curl_close($ch2);
             
-            $writer->startElement('urlset');
-            $writer->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-            
-            // 1. Home page
-            $this->addUrl($writer, url('/'), date('c'), 'daily', '1.0');
-            
-            // 2. Posts
-            if (($options['sitemap_post_enable'] ?? 1) == 1) {
-                $posts = PostModel::where('status', 1)->select('slug', 'updated_at')->get();
-                $freq = $options['sitemap_post_freq'] ?? 'daily';
-                $pri = $options['sitemap_post_priority'] ?? '0.8';
-                foreach ($posts as $post) {
-                    $this->addUrl($writer, url($post->slug), date('c', strtotime($post->updated_at)), $freq, $pri);
-                }
+            if ($httpCode1 == 200 && $httpCode2 == 200) {
+                return response()->json(['success' => true, 'message' => 'Đã gửi thông báo (Ping) thành công tới Google và Bing!']);
             }
             
-            // 3. Products
-            if (($options['sitemap_product_enable'] ?? 1) == 1) {
-                $products = ProductModel::where('status', 1)->select('slug', 'updated_at')->get();
-                $freq = $options['sitemap_product_freq'] ?? 'daily';
-                $pri = $options['sitemap_product_priority'] ?? '0.9';
-                foreach ($products as $product) {
-                    $this->addUrl($writer, url($product->slug), date('c', strtotime($product->updated_at)), $freq, $pri);
-                }
-            }
+            return response()->json(['success' => true, 'message' => "Ping Google: $httpCode1, Ping Bing: $httpCode2. Đã xử lý."]);
             
-            // 4. Categories
-            if (($options['sitemap_category_enable'] ?? 1) == 1) {
-                $cats = CategoryModel::where('status', 1)->select('slug', 'updated_at')->get();
-                $freq = $options['sitemap_category_freq'] ?? 'weekly';
-                $pri = $options['sitemap_category_priority'] ?? '0.7';
-                foreach ($cats as $cat) {
-                    $this->addUrl($writer, url($cat->slug), date('c', strtotime($cat->updated_at)), $freq, $pri);
-                }
-            }
-            
-            $writer->endElement(); // end urlset
-            $writer->endDocument();
-            $writer->flush();
-            
-            return response()->json(['success' => true, 'message' => 'Đã tạo sitemap.xml thành công!']);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => 'Lỗi: ' . $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Lỗi kết nối: ' . $e->getMessage()]);
         }
-    }
-    
-    private function addUrl($writer, $loc, $lastmod, $changefreq, $priority) {
-        $writer->startElement('url');
-        $writer->writeElement('loc', $loc);
-        $writer->writeElement('lastmod', $lastmod);
-        $writer->writeElement('changefreq', $changefreq);
-        $writer->writeElement('priority', $priority);
-        $writer->endElement();
     }
 }

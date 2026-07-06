@@ -1,21 +1,42 @@
 <?php	
 
-$seo_title = $row->title ?? '';
-$seo_keyword = $row->keyword ?? '';	
-$seo_description = $row->des ?? '';
+$current_lang = $_SESSION['lang'] ?? 'vi';
 
-// Lấy ảnh chia sẻ (ưu tiên ảnh của trang hiện tại, nếu không có thì lấy logo từ SiteInfoService)
-$getImageUrl_cn = (!empty($row->hinh_anh)) ? getImageUrl($row->hinh_anh) : site('logo');
+$seo_title = $row->title ?? '';
+if (empty($seo_title)) {
+    $seo_title = \App\Models\OptionModel::getValue('seo_title_' . $current_lang, site('company'));
+}
+
+$seo_keyword = $row->keyword ?? '';	
+if (empty($seo_keyword)) {
+    $seo_keyword = \App\Models\OptionModel::getValue('seo_keyword_' . $current_lang, '');
+}
+
+$seo_description = $row->des ?? '';
+if (empty($seo_description)) {
+    $seo_description = \App\Models\OptionModel::getValue('seo_description_' . $current_lang, '');
+}
+
+// Lấy ảnh chia sẻ (ưu tiên ảnh của trang hiện tại, sau đó ảnh cấu hình SEO, cuối cùng là logo)
+$getImageUrl_cn = (!empty($row->hinh_anh)) ? getImageUrl($row->hinh_anh) : \App\Models\OptionModel::getValue('seo_image', '');
 if (empty($getImageUrl_cn)) {
     $getImageUrl_cn = site('logo');
 }
+
+$fb_app_id = \App\Models\OptionModel::getValue('seo_facebook_app_id', '');
+$twitter_site = \App\Models\OptionModel::getValue('seo_twitter_site', '');
 
 // Xây dựng URL hiện tại chuẩn xác
 $current_url = url($_SERVER['REQUEST_URI'] ?? '');
 
 ?>
-<?php if(($row->noindex ?? 0) == 1 || ($category->noindex ?? 0) == 1): ?>
-<meta name="robots" content="noindex">
+<?php 
+$is_noindex = ($row->noindex ?? 0) == 1 || ($category->noindex ?? 0) == 1 || \App\Models\OptionModel::getValue('seo_noindex', '0') == '1';
+if($is_noindex): 
+?>
+<meta name="robots" content="noindex, nofollow">
+<?php else: ?>
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <?php endif; ?>
 
 <title><?= e($seo_title) ?></title>
@@ -27,9 +48,13 @@ $current_url = url($_SERVER['REQUEST_URI'] ?? '');
 <?php include 'sitemap/seo_head.inc';?>
 
 <!-- Twitter Card -->
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="<?= e($seo_title) ?>">
+<?php if(!empty($twitter_site)): ?>
+<meta name="twitter:site" content="<?= e($twitter_site) ?>">
+<?php else: ?>
 <meta name="twitter:site" content="@<?= $current_url ?>">
+<?php endif; ?>
 <meta name="twitter:description" content="<?= e($seo_description) ?>">
 <meta name="twitter:image" content="<?= $getImageUrl_cn ?>">
 <meta name="twitter:image:alt" content="<?= e($seo_title) ?>">
@@ -61,6 +86,9 @@ endif; ?>
 <meta property="og:title" content="<?= e($seo_title) ?>" />
 <meta property="og:image" content="<?= $getImageUrl_cn ?>" />
 <meta property="og:description" content="<?= e($seo_description) ?>" />     
+<?php if(!empty($fb_app_id)): ?>
+<meta property="fb:app_id" content="<?= e($fb_app_id) ?>" />
+<?php endif; ?>
 <meta property="fb:page_id" content="<?= site('messenger') ?>" />
 
 <!-- Khai báo ngôn ngữ -->

@@ -167,7 +167,29 @@ $router->group('/admin', function($r) {
     // Sitemap
     $r->get('/sitemap', [\App\Controllers\Admin\SitemapController::class, 'index'])->name('admin.sitemap.index');
     $r->post('/sitemap/save', [\App\Controllers\Admin\SitemapController::class, 'save'])->name('admin.sitemap.save');
-    $r->post('/sitemap/generate', [\App\Controllers\Admin\SitemapController::class, 'generate'])->name('admin.sitemap.generate');
+    $r->post('/sitemap/ping', [\App\Controllers\Admin\SitemapController::class, 'ping'])->name('admin.sitemap.ping');
+    
+    // Cấu hình SEO
+    $r->get('/seo-config', [\App\Controllers\Admin\SeoConfigController::class, 'index'])->name('admin.seo_config.index');
+    $r->post('/seo-config/save', [\App\Controllers\Admin\SeoConfigController::class, 'save'])->name('admin.seo_config.save');
+    
+    // Flash Sale
+    $r->get('/flash-sale', [\App\Controllers\Admin\FlashSaleController::class, 'index'])->name('admin.flash_sale.index');
+    $r->post('/flash-sale/store-campaign', [\App\Controllers\Admin\FlashSaleController::class, 'storeCampaign'])->name('admin.flash_sale.store_campaign');
+    $r->post('/flash-sale/delete-campaign', [\App\Controllers\Admin\FlashSaleController::class, 'destroyCampaign'])->name('admin.flash_sale.destroy_campaign');
+    
+    $r->get('/flash-sale/{id}/products', [\App\Controllers\Admin\FlashSaleController::class, 'products'])->name('admin.flash_sale.products');
+    $r->get('/flash-sale/search-products', [\App\Controllers\Admin\FlashSaleController::class, 'searchProductAjax'])->name('admin.flash_sale.search_products');
+    $r->post('/flash-sale/store-product', [\App\Controllers\Admin\FlashSaleController::class, 'storeProduct'])->name('admin.flash_sale.store_product');
+    $r->post('/flash-sale/delete-product-ajax', [\App\Controllers\Admin\FlashSaleController::class, 'destroyProduct'])->name('admin.flash_sale.destroy_product');
+
+    // Gallery
+    $r->get('/gallery', [\App\Controllers\Admin\GalleryController::class, 'index'])->name('admin.gallery.index');
+    $r->get('/gallery/create', [\App\Controllers\Admin\GalleryController::class, 'create'])->name('admin.gallery.create');
+    $r->get('/gallery/edit/{id}', [\App\Controllers\Admin\GalleryController::class, 'edit'])->name('admin.gallery.edit');
+    $r->post('/gallery/store', [\App\Controllers\Admin\GalleryController::class, 'store'])->name('admin.gallery.store');
+    $r->post('/gallery/delete-ajax', [\App\Controllers\Admin\GalleryController::class, 'destroyAjax'])->name('admin.gallery.destroy_ajax');
+
     $r->get('/language/edit/{id}', [\App\Controllers\Admin\LanguageSettingController::class, 'edit'])->name('admin.language.edit');
     $r->post('/language/update/{id}', [\App\Controllers\Admin\LanguageSettingController::class, 'update'])->name('admin.language.update');
     $r->get('/language/delete/{id}', [\App\Controllers\Admin\LanguageSettingController::class, 'destroy'])->name('admin.language.destroy');

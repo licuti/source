@@ -34,34 +34,55 @@ $title = "Cấu hình Sitemap";
                                 <h6 class="fw-bold mb-3"><i class="fa-solid fa-file-lines text-primary"></i> <?= $label ?></h6>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label class="form-label">Đưa vào Sitemap</label>
-                                        <select name="sitemap_<?= $type ?>_enable" class="form-select form-select-sm">
-                                            <option value="1" <?= $settings[$type]['enable'] == 1 ? 'selected' : '' ?>>Có</option>
-                                            <option value="0" <?= $settings[$type]['enable'] == 0 ? 'selected' : '' ?>>Không</option>
-                                        </select>
+                                        <?= view('admin.components.select', [
+                                            'name' => 'sitemap_' . $type . '_enable',
+                                            'label' => 'Đưa vào Sitemap',
+                                            'value' => $settings[$type]['enable'],
+                                            'options' => [
+                                                '1' => 'Có',
+                                                '0' => 'Không'
+                                            ]
+                                        ]) ?>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label">Tần suất cập nhật (ChangeFreq)</label>
-                                        <select name="sitemap_<?= $type ?>_freq" class="form-select form-select-sm">
-                                            <option value="always" <?= $settings[$type]['freq'] == 'always' ? 'selected' : '' ?>>Always</option>
-                                            <option value="hourly" <?= $settings[$type]['freq'] == 'hourly' ? 'selected' : '' ?>>Hourly</option>
-                                            <option value="daily" <?= $settings[$type]['freq'] == 'daily' ? 'selected' : '' ?>>Daily</option>
-                                            <option value="weekly" <?= $settings[$type]['freq'] == 'weekly' ? 'selected' : '' ?>>Weekly</option>
-                                            <option value="monthly" <?= $settings[$type]['freq'] == 'monthly' ? 'selected' : '' ?>>Monthly</option>
-                                            <option value="yearly" <?= $settings[$type]['freq'] == 'yearly' ? 'selected' : '' ?>>Yearly</option>
-                                            <option value="never" <?= $settings[$type]['freq'] == 'never' ? 'selected' : '' ?>>Never</option>
-                                        </select>
+                                        <?= view('admin.components.select', [
+                                            'name' => 'sitemap_' . $type . '_freq',
+                                            'label' => 'Tần suất cập nhật (ChangeFreq)',
+                                            'value' => $settings[$type]['freq'],
+                                            'options' => [
+                                                'always' => 'Always',
+                                                'hourly' => 'Hourly',
+                                                'daily' => 'Daily',
+                                                'weekly' => 'Weekly',
+                                                'monthly' => 'Monthly',
+                                                'yearly' => 'Yearly',
+                                                'never' => 'Never'
+                                            ]
+                                        ]) ?>
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label">Mức độ ưu tiên (Priority)</label>
-                                        <input type="number" step="0.1" min="0" max="1" name="sitemap_<?= $type ?>_priority" class="form-control form-control-sm" value="<?= htmlspecialchars((string)$settings[$type]['priority']) ?>">
+                                        <?= view('admin.components.input', [
+                                            'type' => 'number',
+                                            'name' => 'sitemap_' . $type . '_priority',
+                                            'label' => 'Mức độ ưu tiên (Priority)',
+                                            'value' => $settings[$type]['priority'],
+                                            'attrs' => ['step' => '0.1', 'min' => '0', 'max' => '1']
+                                        ]) ?>
                                     </div>
                                 </div>
                             </div>
                             <?php endforeach; ?>
+                            
+                            <!-- Tập tin robots.txt -->
+                            <div class="border rounded p-3 mb-3 bg-light">
+                                <h6 class="fw-bold mb-3"><i class="fa-brands fa-android text-success"></i> Tập tin robots.txt</h6>
+                                <p class="small text-muted mb-2">Tập tin này dùng để chỉ đường hoặc ngăn chặn các công cụ tìm kiếm (Google, Bing) quét các thư mục trên website của bạn.
+                                <br><strong class="text-danger">Lưu ý:</strong> Phải xóa ngay dòng <code>Disallow: /</code> nếu có, nếu không website của bạn sẽ bị chặn hoàn toàn khỏi Google.</p>
+                                <textarea name="robots_txt" class="form-control font-monospace" rows="8" style="background: #282c34; color: #abb2bf;"><?= htmlspecialchars($robotsContent ?? '') ?></textarea>
+                            </div>
 
-                            <div class="mt-4">
-                                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Lưu cấu hình</button>
+                            <div class="mt-2">
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-save"></i> Lưu cấu hình</button>
                             </div>
                         </form>
                     </div>
@@ -75,33 +96,32 @@ $title = "Cấu hình Sitemap";
                         <h5 class="card-title mb-0 fw-bold">Công cụ sinh XML</h5>
                     </div>
                     <div class="card-body">
-                        <?php if ($sitemapInfo): ?>
-                            <div class="alert alert-info py-2">
-                                <small>
-                                    <strong>File tồn tại:</strong> Có<br>
-                                    <strong>Cập nhật lần cuối:</strong> <?= $sitemapInfo['time'] ?><br>
-                                    <strong>Dung lượng:</strong> <?= $sitemapInfo['size'] ?>
-                                </small>
-                            </div>
-                            <div class="mb-3">
-                                <a href="<?= $sitemapInfo['url'] ?>" target="_blank" class="btn btn-outline-info btn-sm w-100"><i class="fa-solid fa-external-link"></i> Xem file hiện tại</a>
-                            </div>
-                        <?php else: ?>
-                            <div class="alert alert-warning py-2">
-                                <small>Chưa có file Sitemap nào được tạo!</small>
-                            </div>
-                        <?php endif; ?>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-muted">Sitemap Index (Tổng hợp)</label>
+                            <a href="<?= $sitemapUrl ?>" target="_blank" class="btn btn-outline-info btn-sm w-100 mb-2"><i class="fa-solid fa-sitemap"></i> Xem Sitemap Index</a>
+                            
+                            <label class="form-label fw-bold small text-muted mt-2">Sitemap Thành phần (Chi tiết)</label>
+                            <?php if ($settings['post']['enable'] == 1): ?>
+                                <a href="<?= url('/sitemap-posts.xml') ?>" target="_blank" class="btn btn-light btn-sm w-100 mb-1 text-start"><i class="fa-solid fa-file-lines text-primary"></i> Bài viết (Posts)</a>
+                            <?php endif; ?>
+                            <?php if ($settings['product']['enable'] == 1): ?>
+                                <a href="<?= url('/sitemap-products.xml') ?>" target="_blank" class="btn btn-light btn-sm w-100 mb-1 text-start"><i class="fa-solid fa-box text-success"></i> Sản phẩm (Products)</a>
+                            <?php endif; ?>
+                            <?php if ($settings['category']['enable'] == 1): ?>
+                                <a href="<?= url('/sitemap-categories.xml') ?>" target="_blank" class="btn btn-light btn-sm w-100 text-start"><i class="fa-solid fa-folder-open text-warning"></i> Danh mục (Categories)</a>
+                            <?php endif; ?>
+                        </div>
                         
                         <hr>
-                        <p class="small text-muted">Bấm nút bên dưới để hệ thống quét dữ liệu và cập nhật lại file Sitemap.xml</p>
-                        <button type="button" id="btnGenerate" class="btn btn-success w-100 fw-bold"><i class="fa-solid fa-bolt"></i> TẠO SITEMAP NGAY</button>
+                        <p class="small text-muted">Bấm nút bên dưới để hệ thống gửi thông báo (Ping) cho Google và Bing biết Sitemap đã thay đổi.</p>
+                        <button type="button" id="btnPing" class="btn btn-success btn-sm w-100 fw-bold"><i class="fa-solid fa-paper-plane"></i> PING MÁY CHỦ TÌM KIẾM</button>
                     </div>
                 </div>
                 
                 <div class="card mb-4 shadow-sm border-0">
                     <div class="card-body bg-light">
                         <h6 class="fw-bold"><i class="fa-solid fa-circle-info text-primary"></i> Mẹo SEO</h6>
-                        <p class="small text-muted mb-0">Việc tạo Sitemap giúp Google Bot dễ dàng tìm thấy các URL ẩn sâu trên web. Sau khi tạo, hãy khai báo đường dẫn này trên Google Search Console.</p>
+                        <p class="small text-muted mb-0">Việc tạo Sitemap giúp Google Bot dễ dàng tìm thấy các URL ẩn sâu trên web. Sau khi cập nhật, hãy bấm Ping để báo cho Search Engines.</p>
                     </div>
                 </div>
             </div>
@@ -111,13 +131,13 @@ $title = "Cấu hình Sitemap";
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const btn = document.getElementById('btnGenerate');
+    const btn = document.getElementById('btnPing');
     if (btn) {
         btn.addEventListener('click', function() {
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tạo...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang Ping...';
             
-            fetch('<?= route('admin.sitemap.generate') ?>', {
+            fetch('<?= route('admin.sitemap.ping') ?>', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -127,19 +147,17 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(res => res.json())
             .then(data => {
                 if(data.success) {
-                    Swal.fire('Thành công!', data.message, 'success').then(() => {
-                        window.location.reload();
-                    });
+                    Swal.fire('Thành công!', data.message, 'success');
                 } else {
                     Swal.fire('Lỗi!', data.message, 'error');
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-bolt"></i> TẠO SITEMAP NGAY';
                 }
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> PING MÁY CHỦ TÌM KIẾM';
             })
             .catch(err => {
                 Swal.fire('Lỗi!', 'Lỗi kết nối máy chủ.', 'error');
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> TẠO SITEMAP NGAY';
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> PING MÁY CHỦ TÌM KIẾM';
             });
         });
     }

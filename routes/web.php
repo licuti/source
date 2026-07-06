@@ -83,6 +83,14 @@ $router->group('/ajax', function($r) {
 });
 
 // ————————————————————————————————————————
+// Sitemap Động (Dynamic Sitemap)
+// ————————————————————————————————————————
+$router->get('/sitemap.xml', [\App\Controllers\Frontend\SitemapController::class, 'index'])->name('sitemap.index');
+$router->get('/sitemap-posts.xml', [\App\Controllers\Frontend\SitemapController::class, 'posts'])->name('sitemap.posts');
+$router->get('/sitemap-products.xml', [\App\Controllers\Frontend\SitemapController::class, 'products'])->name('sitemap.products');
+$router->get('/sitemap-categories.xml', [\App\Controllers\Frontend\SitemapController::class, 'categories'])->name('sitemap.categories');
+
+// ————————————————————————————————————————
 // 5. Catch-all — Trang CMS + trang đặc biệt (giỏ hàng, thanh toán, tra cứu...)
 //    PHẢI đặt CUỐI CÙNG.
 // ————————————————————————————————————————
