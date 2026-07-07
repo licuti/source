@@ -95,6 +95,7 @@ if ($canAdd) {
                                 </th>
                                 <th style="width: 100px;" class="text-center">Hình ảnh</th>
                                 <th>Tiêu đề bài viết</th>
+                                <th style="width: 150px;" class="text-center">Ngôn ngữ</th>
                                 <th style="width: 120px;" class="text-center">Người đăng</th>
                                 <th style="width: 120px;" class="text-center">Lượt xem</th>
                                 <th style="width: 100px;" class="text-center">Sắp xếp</th>
@@ -157,6 +158,37 @@ if ($canAdd) {
                                                 echo view('admin.components.row_actions', ['actions' => $actions]);
                                             }
                                             ?>
+                                        </td>
+                                        
+                                        <!-- Ngôn ngữ -->
+                                        <td class="text-center align-middle">
+                                            <?php foreach ($langs as $l): ?>
+                                                <?php
+                                                $lCode = $l['code'];
+                                                $hasTranslation = isset($translations[$item->id_code][$lCode]);
+                                                $transId = $hasTranslation ? $translations[$item->id_code][$lCode] : null;
+                                                $flagSrc = !empty($l['image']) ? getImageUrl($l['image']) : '';
+                                                ?>
+                                                <?php if ($hasTranslation): ?>
+                                                    <a href="<?= route('admin.post.edit', ['id' => $transId]) ?>" class="text-decoration-none d-inline-flex align-items-center me-2 mb-1" title="Sửa bản <?= htmlspecialchars($l['name']) ?>">
+                                                        <?php if($flagSrc): ?>
+                                                            <img src="<?= $flagSrc ?>" alt="<?= $lCode ?>" style="width: 20px; height: 14px; object-fit: cover; border-radius: 2px;" class="border shadow-sm me-1">
+                                                        <?php else: ?>
+                                                            <span class="badge bg-light text-dark border me-1"><?= strtoupper($lCode) ?></span>
+                                                        <?php endif; ?>
+                                                        <i class="fa-solid fa-pencil text-primary" style="font-size: 11px;"></i>
+                                                    </a>
+                                                <?php else: ?>
+                                                    <a href="<?= route('admin.post.create', ['lang' => $lCode, 'source_id' => $item->id_code]) ?>" class="text-decoration-none d-inline-flex align-items-center me-2 mb-1 opacity-50" title="Thêm bản <?= htmlspecialchars($l['name']) ?>">
+                                                        <?php if($flagSrc): ?>
+                                                            <img src="<?= $flagSrc ?>" alt="<?= $lCode ?>" style="width: 20px; height: 14px; object-fit: cover; border-radius: 2px;" class="border shadow-sm me-1 grayscale">
+                                                        <?php else: ?>
+                                                            <span class="badge bg-light text-dark border me-1"><?= strtoupper($lCode) ?></span>
+                                                        <?php endif; ?>
+                                                        <i class="fa-solid fa-plus text-secondary" style="font-size: 12px;"></i>
+                                                    </a>
+                                                <?php endif; ?>
+                                            <?php endforeach; ?>
                                         </td>
                                         
                                         <!-- Người đăng -->

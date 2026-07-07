@@ -48,7 +48,18 @@ class PostController extends BaseAdminController {
         $categories = $this->getCategories();
         $langs = $this->langs;
 
-        return $this->render('admin.post.index', compact('posts', 'keyword', 'status', 'categoryId', 'categories', 'langs', 'currentLang'));
+        $idCodes = array_map(function($a) { return is_array($a) ? ($a['id_code'] ?? 0) : $a->id_code; }, $posts->items());
+        $translations = [];
+        if (!empty($idCodes)) {
+            $allTrans = PostModel::adminQuery()
+                ->whereIn('id_code', $idCodes)
+                ->get();
+            foreach ($allTrans as $t) {
+                $translations[$t->id_code][$t->lang] = $t->id;
+            }
+        }
+
+        return $this->render('admin.post.index', compact('posts', 'keyword', 'status', 'categoryId', 'categories', 'langs', 'currentLang', 'translations'));
     }
 
     /**
