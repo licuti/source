@@ -85,8 +85,13 @@ class PostController extends BaseAdminController {
         $langs = $this->langs;
         $categories = $this->getCategories();
         
-        $currentLangItem = collect($langs)->firstWhere('code', $langCode);
-        $currentLangName = $currentLangItem ? $currentLangItem['name'] : 'Unknown';
+        $currentLangName = 'Unknown';
+        foreach ($langs as $l) {
+            if ($l['code'] === $langCode) {
+                $currentLangName = $l['name'];
+                break;
+            }
+        }
         
         $translations = [];
         if (!empty($item['id_code'])) {
@@ -123,8 +128,13 @@ class PostController extends BaseAdminController {
         $categories = $this->getCategories();
         
         $langCode = $item['lang'];
-        $currentLangItem = collect($langs)->firstWhere('code', $langCode);
-        $currentLangName = $currentLangItem ? $currentLangItem['name'] : 'Unknown';
+        $currentLangName = 'Unknown';
+        foreach ($langs as $l) {
+            if ($l['code'] === $langCode) {
+                $currentLangName = $l['name'];
+                break;
+            }
+        }
         
         $translations = [];
         if (!empty($item['id_code'])) {
