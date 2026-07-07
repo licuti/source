@@ -91,7 +91,6 @@ if ($canAdd) {
                                 <th>Tiêu đề bài viết</th>
                                 <th style="width: 150px;" class="text-center">Ngôn ngữ</th>
                                 <th style="width: 120px;" class="text-center">Người đăng</th>
-                                <th style="width: 100px;" class="text-center">Sắp xếp</th>
                                 <th style="width: 100px;" class="text-center">Nổi bật</th>
                                 <th style="width: 120px;" class="text-center">Hiển thị</th>
                             </tr>
@@ -188,10 +187,6 @@ if ($canAdd) {
                                         <td class="text-center align-middle">
                                             <span class="badge bg-secondary"><?= $item->created_by == $user->id ? 'Bạn' : 'ID: '.$item->created_by ?></span>
                                         </td>
-                                        
-                                        <!-- Sắp xếp -->
-                                        <td class="text-center align-middle"><?= $item->sort_order ?></td>
-                                        
                                         <!-- is_featured -->
                                         <td class="text-center align-middle">
                                             <div class="form-check form-switch d-flex justify-content-center">
@@ -217,7 +212,7 @@ if ($canAdd) {
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="6" class="text-center py-5 text-muted">
+                                    <td colspan="5" class="text-center py-5 text-muted">
                                         <i class="fa-regular fa-file-lines fs-1 mb-2"></i><br>
                                         Chưa có bài viết nào được tìm thấy.
                                     </td>
