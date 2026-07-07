@@ -6,111 +6,74 @@ use App\Models\PostModel;
 class PostService {
 
     /**
-     * Trích xuất dữ liệu cho một ngôn ngữ cụ thể từ request
+     * Lưu mới hoặc cập nhật bài viết (Polylang - dành cho 1 ngôn ngữ độc lập)
      */
-    private function extractLangData(array $inputData, string $lang, int $categoryId, int $status, int $sortOrder, ?string $createdAt): array {
-        $title = $inputData['title'][$lang] ?? '';
-        $alias = empty($inputData['alias'][$lang]) ? str_slug($title) : $inputData['alias'][$lang];
-
-        $data = [
-            'category_id'     => $categoryId,
-            'lang'            => $lang,
-            'title'           => $title,
-            'alias'           => $alias,
-            'description'     => $inputData['description'][$lang] ?? '',
-            'content'         => $inputData['content'][$lang] ?? '',
-            'image'           => $inputData['image'] ?? '',
-            'seo_title'       => $inputData['seo_title'][$lang] ?? '',
-            'seo_description' => $inputData['seo_description'][$lang] ?? '',
-            'keyword'         => $inputData['keyword'][$lang] ?? '',
-            'tags'            => $inputData['tags'][$lang] ?? '',
-            'noindex'         => isset($inputData['noindex'][$lang]) ? 1 : 0,
-            'nofollow'        => isset($inputData['nofollow'][$lang]) ? 1 : 0,
-            'seo_head'        => $inputData['seo_head'][$lang] ?? '',
-            'seo_body'        => $inputData['seo_body'][$lang] ?? '',
-            'seo_schema'      => $inputData['seo_schema'][$lang] ?? '',
-            'seo_canonical'   => $inputData['seo_canonical'][$lang] ?? '',
-            'sort_order'      => $sortOrder,
-            'status'          => $status,
-            'is_featured'     => isset($inputData['is_featured']) ? 1 : 0,
-        ];
-
-        if ($createdAt) {
-            $data['created_at'] = $createdAt;
-        }
-
-        return $data;
-    }
-
-    /**
-     * Lưu mới hoặc cập nhật bài viết đa ngôn ngữ
-     *
-     * @param array $inputData Dữ liệu thô từ Request
-     * @param array $langs Cấu hình ngôn ngữ hệ thống
-     * @param int $userId ID của user thực hiện
-     * @param int|null $idCode (Chỉ update) ID Code của bài viết
-     * @return int|bool Trả về id_code nếu thành công, false nếu thất bại
-     */
-    public function savePost(array $inputData, array $langs, int $userId, ?int $idCode = null) {
+    public function savePost(array $inputData, int $userId) {
         $categoryId = (int)($inputData['category_id'] ?? 0);
         $sortOrder = (int)($inputData['sort_order'] ?? 0);
         
-        // Lấy status từ form (checkbox / radio trả về 1 hoặc 0, mặc định 0)
         $statusVal = (isset($inputData['status']) && ($inputData['status'] == '1' || $inputData['status'] === 'publish')) ? 1 : 0;
+        
+        $lang = $inputData['lang'] ?? 'vi';
+        $idCode = $inputData['id_code'] ?? null;
+        $id = $inputData['id'] ?? null;
 
-        $createdAtInput = $inputData['created_at'] ?? null;
-        $createdAt = $createdAtInput ? date('Y-m-d H:i:s', strtotime($createdAtInput)) : null;
-        $now = date('Y-m-d H:i:s');
+        $title = $inputData['title'] ?? '';
+        $slug = empty($inputData['alias']) ? str_slug($title) : $inputData['alias'];
 
-        // Mảng chứa các logic update/insert
-        $firstLang = $langs[0]['code'];
-
-        if (!$idCode) { // INSERT MỚI
-            if (!$createdAt) $createdAt = $now;
-
-            $firstLangData = $this->extractLangData($inputData, $firstLang, $categoryId, $statusVal, $sortOrder, $createdAt);
-            $firstLangData['id_code'] = 0;
-            $firstLangData['created_by'] = $userId;
-            $firstLangData['updated_at'] = $now;
-
-            $insertedId = PostModel::insertGetId($firstLangData);
-            if (!$insertedId) return false;
-
-            // Update id_code cho bản ghi gốc
-            PostModel::adminQuery()->where('id', $insertedId)->update(['id_code' => $insertedId]);
-
-            // Thêm các ngôn ngữ còn lại
-            foreach ($langs as $index => $l) {
-                if ($index === 0) continue;
-                $langData = $this->extractLangData($inputData, $l['code'], $categoryId, $statusVal, $sortOrder, $createdAt);
-                $langData['id_code'] = $insertedId;
-                $langData['created_by'] = $userId;
-                $langData['updated_at'] = $now;
-                PostModel::insert($langData);
+        $needsIdCodeUpdate = false;
+        
+        if ($id) {
+            $model = PostModel::adminQuery()->qbFind($id);
+            if (!$model) return false;
+            $idCode = $model->id_code;
+        } else {
+            $model = new PostModel();
+            $model->created_by = $userId;
+            $model->lang = $lang;
+            if (!$idCode) {
+                $needsIdCodeUpdate = true;
+            } else {
+                $model->id_code = $idCode;
             }
-
-            return $insertedId;
-
-        } else { // CẬP NHẬT
-            foreach ($langs as $l) {
-                $c = $l['code'];
-                $exists = PostModel::adminQuery()->where('id_code', $idCode)->where('lang', $c)->first();
-                
-                $data = $this->extractLangData($inputData, $c, $categoryId, $statusVal, $sortOrder, $createdAt);
-                $data['updated_by'] = $userId;
-                $data['updated_at'] = $now;
-
-                if ($exists) {
-                    PostModel::adminQuery()->where('id', $exists->id)->update($data);
-                } else {
-                    $data['id_code'] = $idCode;
-                    $data['created_by'] = $userId;
-                    if (!$createdAt) $data['created_at'] = $now;
-                    PostModel::insert($data);
-                }
-            }
-            return $idCode;
         }
+
+        $model->category_id = $categoryId;
+        $model->title = $title;
+        $model->alias = $slug;
+        $model->description = $inputData['description'] ?? '';
+        $model->content = $inputData['content'] ?? '';
+        $model->image = $inputData['image'] ?? '';
+        $model->seo_title = $inputData['seo_title'] ?? '';
+        $model->seo_description = $inputData['seo_description'] ?? '';
+        $model->keyword = $inputData['keyword'] ?? '';
+        $model->tags = $inputData['tags'] ?? '';
+        $model->noindex = isset($inputData['noindex']) ? 1 : 0;
+        $model->nofollow = isset($inputData['nofollow']) ? 1 : 0;
+        $model->seo_head = $inputData['seo_head'] ?? '';
+        $model->seo_body = $inputData['seo_body'] ?? '';
+        $model->seo_schema = $inputData['seo_schema'] ?? '';
+        $model->seo_canonical = $inputData['seo_canonical'] ?? '';
+        $model->sort_order = $sortOrder;
+        $model->status = $statusVal;
+        $model->is_featured = isset($inputData['is_featured']) ? 1 : 0;
+        
+        if (isset($inputData['created_at']) && !empty($inputData['created_at'])) {
+            $model->created_at = date('Y-m-d H:i:s', strtotime($inputData['created_at']));
+        }
+        
+        $model->updated_by = $userId;
+        $model->updated_at = date('Y-m-d H:i:s');
+
+        $savedId = $model->save();
+        
+        if ($savedId && $needsIdCodeUpdate) {
+            $model->id_code = $savedId;
+            $model->save();
+            return $savedId;
+        }
+
+        return $idCode ?: $savedId;
     }
 
     /**
@@ -121,47 +84,5 @@ class PostService {
             return PostModel::adminQuery()->where('id_code', $idCode)->delete();
         }
         return false;
-    }
-
-    /**
-     * Lấy và chuyển hóa dữ liệu bài viết (gom đa ngôn ngữ) để hiển thị lên Form Edit
-     */
-    public function getPostForEdit(int $idCode): ?array {
-        $translations = PostModel::adminQuery()->where('id_code', $idCode)->get();
-        if (count($translations) == 0) return null;
-
-        $firstPost = $translations[0];
-        
-        $item = [
-            'id'          => $idCode, 
-            'category_id' => $firstPost->category_id, 
-            'sort_order'  => $firstPost->sort_order, 
-            'status'      => $firstPost->status,
-            'created_at'  => $firstPost->created_at,
-            'is_featured' => $firstPost->is_featured,
-            'image'       => $firstPost->image,
-            'created_by'  => $firstPost->created_by
-        ];
-        
-        foreach ($translations as $t) {
-            $lang = $t->lang;
-            $item["title"][$lang] = $t->title;
-            $item["alias"][$lang] = $t->alias;
-            $item["description"][$lang] = $t->description;
-            $item["content"][$lang] = $t->content;
-            $item["seo_title"][$lang] = $t->seo_title;
-            $item["seo_description"][$lang] = $t->seo_description;
-            $item["keyword"][$lang] = $t->keyword;
-            $item["tags"][$lang] = $t->tags;
-            $item["noindex"][$lang] = $t->noindex;
-            $item["nofollow"][$lang] = $t->nofollow;
-            $item["seo_head"][$lang] = $t->seo_head;
-            $item["seo_body"][$lang] = $t->seo_body;
-            if (empty($item["image"]) && !empty($t->image)) {
-                $item["image"] = $t->image;
-            }
-        }
-        
-        return $item;
     }
 }

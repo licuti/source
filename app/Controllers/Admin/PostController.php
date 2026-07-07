@@ -30,9 +30,11 @@ class PostController extends BaseAdminController {
         $status     = $request->input('status', '');
         $categoryId = (int)$request->input('category_id', 0);
         $page       = max(1, (int)$request->input('page', 1));
+        
+        $currentLang = $request->input('lang', $this->primaryLang);
 
         $postQuery = PostModel::adminQuery()
-            ->where('lang', $this->primaryLang)
+            ->where('lang', $currentLang)
             ->ownedByUser(user());
 
         if ($status !== '')      $postQuery->where('status', $status);
@@ -44,18 +46,46 @@ class PostController extends BaseAdminController {
                            ->paginate(10);
 
         $categories = $this->getCategories();
+        $langs = $this->langs;
 
-        return $this->render('admin.post.index', compact('posts', 'keyword', 'status', 'categoryId', 'categories'));
+        return $this->render('admin.post.index', compact('posts', 'keyword', 'status', 'categoryId', 'categories', 'langs', 'currentLang'));
     }
 
     /**
      * Mở form thêm mới
      */
     public function create(Request $request) {
-        $langs      = $this->langs;
+        $langCode = $request->input('lang', $this->primaryLang);
+        $sourceId = (int)$request->input('source_id', 0);
+        
+        $item = [];
+        if ($sourceId > 0) {
+            $sourceItem = PostModel::adminQuery()->where('id_code', $sourceId)->first();
+            if ($sourceItem) {
+                $item['id_code'] = $sourceItem->id_code;
+                $item['category_id'] = $sourceItem->category_id;
+                $item['image'] = $sourceItem->image;
+                $item['status'] = $sourceItem->status;
+                $item['sort_order'] = $sourceItem->sort_order;
+                $item['is_featured'] = $sourceItem->is_featured;
+            }
+        }
+        
+        $langs = $this->langs;
         $categories = $this->getCategories();
         
-        return $this->render('admin.post.form', compact('langs', 'categories'));
+        $currentLangItem = collect($langs)->firstWhere('code', $langCode);
+        $currentLangName = $currentLangItem ? $currentLangItem['name'] : 'Unknown';
+        
+        $translations = [];
+        if (!empty($item['id_code'])) {
+            $allTrans = PostModel::adminQuery()->where('id_code', $item['id_code'])->get('id, lang');
+            foreach ($allTrans as $t) {
+                $translations[$t->lang] = $t->id;
+            }
+        }
+        
+        return $this->render('admin.post.form', compact('langs', 'categories', 'item', 'langCode', 'currentLangName', 'translations'));
     }
 
     /**
@@ -64,7 +94,7 @@ class PostController extends BaseAdminController {
     public function edit(Request $request, $id) {
         $id = $this->parseId($id);
         
-        $item = $this->postService->getPostForEdit($id);
+        $item = PostModel::adminQuery()->qbFind($id);
         
         if (!$item) {
             return $this->redirect(route('admin.post.index'));
@@ -75,10 +105,25 @@ class PostController extends BaseAdminController {
             return $this->redirect(route('admin.post.index'));
         }
         
-        $langs      = $this->langs;
+        // Convert array/object for the view compatibility
+        $item = (array)$item;
+        
+        $langs = $this->langs;
         $categories = $this->getCategories();
         
-        return $this->render('admin.post.form', compact('langs', 'item', 'categories'));
+        $langCode = $item['lang'];
+        $currentLangItem = collect($langs)->firstWhere('code', $langCode);
+        $currentLangName = $currentLangItem ? $currentLangItem['name'] : 'Unknown';
+        
+        $translations = [];
+        if (!empty($item['id_code'])) {
+            $allTrans = PostModel::adminQuery()->where('id_code', $item['id_code'])->get('id, lang');
+            foreach ($allTrans as $t) {
+                $translations[$t->lang] = $t->id;
+            }
+        }
+        
+        return $this->render('admin.post.form', compact('langs', 'categories', 'item', 'langCode', 'currentLangName', 'translations'));
     }
 
     /**
@@ -89,7 +134,7 @@ class PostController extends BaseAdminController {
             return $this->redirect(route('admin.post.create'));
         }
 
-        $insertedId = $this->postService->savePost($request->all(), $this->langs, user()->id);
+        $insertedId = $this->postService->savePost($request->all(), user()->id);
 
         if ($insertedId) {
             session('success', 'Thêm bài viết thành công!');
@@ -110,14 +155,14 @@ class PostController extends BaseAdminController {
             return $this->redirect(route('admin.post.edit', ['id' => $id]));
         }
 
-        $firstPost = PostModel::adminQuery()->where('id_code', $id)->first();
+        $firstPost = PostModel::adminQuery()->qbFind($id);
         
         if (!$this->canModify($firstPost)) {
             session('error', 'Bạn không có quyền chỉnh sửa bài viết này!');
             return $this->redirect(route('admin.post.index'));
         }
 
-        $this->postService->savePost($request->all(), $this->langs, user()->id, $id);
+        $this->postService->savePost($request->all(), user()->id);
         
         session('success', 'Cập nhật bài viết thành công!');
         return $this->handleSaveRedirect($request, $id);
@@ -220,10 +265,10 @@ class PostController extends BaseAdminController {
      */
     private function validatePost(Request $request): bool {
         $validator = new Validator($request->all(), [
-            "title.{$this->primaryLang}" => 'required|max:255'
+            "title" => 'required|max:255'
         ], [
-            "title.{$this->primaryLang}.required" => 'Vui lòng nhập Tiêu đề bài viết (Ngôn ngữ mặc định).',
-            "title.{$this->primaryLang}.max"      => 'Tiêu đề bài viết không được vượt quá 255 ký tự.'
+            "title.required" => 'Vui lòng nhập Tiêu đề bài viết.',
+            "title.max"      => 'Tiêu đề bài viết không được vượt quá 255 ký tự.'
         ]);
 
         if ($validator->fails()) {

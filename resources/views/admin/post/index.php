@@ -47,6 +47,12 @@ if ($canAdd) {
                     <!-- Right: Search, Filter & Add New -->
                     <form action="<?= route('admin.post.index') ?>" method="GET" class="d-flex align-items-center flex-wrap gap-2 m-0">
                         
+                        <select name="lang" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+                            <?php foreach ($langs as $l): ?>
+                                <option value="<?= $l['code'] ?>" <?= ($currentLang ?? 'vi') == $l['code'] ? 'selected' : '' ?>><?= $l['name'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+
                         <select name="category_id" class="form-select form-select-sm w-auto">
                             <option value="0">Tất cả danh mục</option>
                             <?php renderCategoryFilter($categories ?? [], $category_id ?? 0); ?>

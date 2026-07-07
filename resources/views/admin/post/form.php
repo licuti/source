@@ -1,5 +1,5 @@
 <?php
-$isEdit = isset($item);
+$isEdit = isset($item['id']) && $item['id'] > 0;
 $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('admin.post.store');
 ?>
 
@@ -15,79 +15,76 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
 <div class="app-content">
     <div class="container-fluid">
         <form action="<?= $action ?>" method="POST">
+            <input type="hidden" name="lang" value="<?= htmlspecialchars($langCode) ?>">
+            <?php if (isset($item['id_code'])): ?>
+                <input type="hidden" name="id_code" value="<?= $item['id_code'] ?>">
+            <?php endif; ?>
+
             <div class="row">
-                <!-- Cột Trái: Đa Ngôn Ngữ -->
+                <!-- Cột Trái: Nội dung -->
                 <div class="col-md-9">
                     <div class="card card-outline card-primary mb-4">
-                        <div class="card-header p-0 pt-1 border-bottom-0 bg-white">
-                            <ul class="nav nav-tabs" id="langTabs" role="tablist">
-                                <?php $i = 0; foreach($langs as $index => $lang): ?>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link <?= $i === 0 ? 'active fw-bold' : '' ?>" id="tab-<?= $lang['code'] ?>" data-bs-toggle="tab" data-bs-target="#content-<?= $lang['code'] ?>" type="button" role="tab" aria-controls="content-<?= $lang['code'] ?>" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>">
-                                        <i class="fa-solid fa-language text-primary"></i> <?= htmlspecialchars($lang['name']) ?>
-                                    </button>
-                                </li>
-                                <?php $i++; endforeach; ?>
-                            </ul>
+                        <div class="card-header bg-white">
+                            <h5 class="card-title mb-0 fw-bold">Nội dung bài viết (<?= htmlspecialchars($currentLangName) ?>)</h5>
                         </div>
                         <div class="card-body">
-                            <div class="tab-content" id="langTabsContent">
-                                <?php $i = 0; foreach($langs as $index => $lang): ?>
-                                <?php $c = $lang['code']; ?>
-                                <div class="tab-pane fade <?= $i === 0 ? 'show active' : '' ?>" id="content-<?= $c ?>" role="tabpanel" aria-labelledby="tab-<?= $c ?>">
-                                    
-                                    <?= view('admin.components.input', [
-                                        'name' => "title[$c]",
-                                        'value' => $item['title'][$c] ?? '',
-                                        'label' => 'Tiêu đề bài viết',
-                                        'attrs' => [
-                                            'placeholder' => 'Nhập tên...',
-                                            'required' => true,
-                                            'data-slug-source' => $c
-                                        ]
-                                    ]) ?>
-                                    
-                                    <?php $isAutoSlug = empty($item['alias'][$c]) ? 'auto-slug' : ''; ?>
-                                    <?= view('admin.components.input', [
-                                        'name' => "alias[$c]",
-                                        'value' => $item['alias'][$c] ?? '',
-                                        'label' => 'Đường dẫn thân thiện (Alias / Slug)',
-                                        'attrs' => [
-                                            'placeholder' => 'tu-dong-tao-neu-de-trong',
-                                            'class' => "text-muted $isAutoSlug",
-                                            'data-slug-target' => $c
-                                        ]
-                                    ]) ?>
+                            <?= view('admin.components.input', [
+                                'name' => "title",
+                                'value' => $item['title'] ?? '',
+                                'label' => 'Tiêu đề bài viết',
+                                'attrs' => [
+                                    'placeholder' => 'Nhập tên...',
+                                    'required' => true,
+                                    'data-slug-source' => 'vi'
+                                ]
+                            ]) ?>
+                            
+                            <?php $isAutoSlug = empty($item['alias']) ? 'auto-slug' : ''; ?>
+                            <?= view('admin.components.input', [
+                                'name' => "alias",
+                                'value' => $item['alias'] ?? '',
+                                'label' => 'Đường dẫn thân thiện (Alias / Slug)',
+                                'attrs' => [
+                                    'placeholder' => 'tu-dong-tao-neu-de-trong',
+                                    'class' => "text-muted $isAutoSlug",
+                                    'data-slug-target' => 'vi'
+                                ]
+                            ]) ?>
 
-                                    <!-- Thay thế textarea bằng Component CKEditor cho phần Mô tả -->
-                                    <?= view('admin.components.ckeditor', [
-                                        'name' => "description[$c]",
-                                        'value' => $item['description'][$c] ?? '',
-                                        'label' => "Mô tả ngắn (" . strtoupper($c) . ")"
-                                    ]) ?>
+                            <?= view('admin.components.ckeditor', [
+                                'name' => "description",
+                                'value' => $item['description'] ?? '',
+                                'label' => "Mô tả ngắn"
+                            ]) ?>
 
-                                    <!-- Nhúng Component CKEditor tái sử dụng -->
-                                    <?= view('admin.components.ckeditor', [
-                                        'name' => "content[$c]",
-                                        'value' => $item['content'][$c] ?? '',
-                                        'label' => "Nội dung chi tiết"
-                                    ]) ?>
+                            <?= view('admin.components.ckeditor', [
+                                'name' => "content",
+                                'value' => $item['content'] ?? '',
+                                'label' => "Nội dung chi tiết"
+                            ]) ?>
 
-                                    <!-- Nhúng Component SEO -->
-                                    <?= view('admin.components.seo', [
-                                        'c' => $c,
-                                        'item' => $item ?? []
-                                    ]) ?>
+                            <!-- Nhúng Component SEO -->
+                            <?= view('admin.components.seo', [
+                                'c' => '',
+                                'item' => $item ?? []
+                            ]) ?>
 
-                                </div>
-                                <?php $i++; endforeach; ?>
-                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Cột Phải: Cấu Hình Chung -->
                 <div class="col-md-3">
+                    
+                    <?= view('admin.components.polylang', [
+                        'module_route' => 'admin.post',
+                        'langs' => $langs,
+                        'currentLangCode' => $langCode,
+                        'currentLangName' => $currentLangName,
+                        'item' => $item ?? [],
+                        'translations' => $translations ?? []
+                    ]) ?>
+
                     <div class="card card-outline card-secondary mb-4">
                         <div class="card-header bg-white">
                             <h5 class="card-title mb-0 fw-bold"><i class="fa-solid fa-gears text-secondary"></i> Thiết lập chung</h5>
@@ -101,8 +98,6 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
                                     <?php renderCategoryTree($categories ?? [], $item['category_id'] ?? 0); ?>
                                 </select>
                             </div>
-
-
 
                             <!-- Nhúng Component Tải ảnh tái sử dụng -->
                             <?= view('admin.components.image_upload', [
@@ -119,17 +114,17 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
                             ]) ?>
 
                             <?= view('admin.components.switch', [
-                                        'name' => 'status',
-                                        'checked' => !isset($item) || !empty($item['status']),
-                                        'label' => 'Cho phép hiển thị'
-                                    ]) ?>
+                                'name' => 'status',
+                                'checked' => !isset($item['id']) || !empty($item['status']),
+                                'label' => 'Cho phép hiển thị'
+                            ]) ?>
                             
                             <?= view('admin.components.switch', [
                                 'name' => 'is_featured',
                                 'checked' => !empty($item['is_featured']),
                                 'label' => 'Nổi bật',
                                 'attrs' => [
-                                    'class' => 'text-danger' // Just an example, text-danger won't apply to label directly in the new switch component without tweaking, but let's keep the label simple.
+                                    'class' => 'text-danger'
                                 ]
                             ]) ?>
 
