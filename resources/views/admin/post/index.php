@@ -47,12 +47,6 @@ if ($canAdd) {
                     <!-- Right: Search, Filter & Add New -->
                     <form action="<?= route('admin.post.index') ?>" method="GET" class="d-flex align-items-center flex-wrap gap-2 m-0">
                         
-                        <select name="lang" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
-                            <?php foreach ($langs as $l): ?>
-                                <option value="<?= $l['code'] ?>" <?= ($currentLang ?? 'vi') == $l['code'] ? 'selected' : '' ?>><?= $l['name'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
-
                         <select name="category_id" class="form-select form-select-sm w-auto">
                             <option value="0">Tất cả danh mục</option>
                             <?php renderCategoryFilter($categories ?? [], $category_id ?? 0); ?>
@@ -97,7 +91,6 @@ if ($canAdd) {
                                 <th>Tiêu đề bài viết</th>
                                 <th style="width: 150px;" class="text-center">Ngôn ngữ</th>
                                 <th style="width: 120px;" class="text-center">Người đăng</th>
-                                <th style="width: 120px;" class="text-center">Lượt xem</th>
                                 <th style="width: 100px;" class="text-center">Sắp xếp</th>
                                 <th style="width: 100px;" class="text-center">Nổi bật</th>
                                 <th style="width: 120px;" class="text-center">Hiển thị</th>
@@ -112,13 +105,13 @@ if ($canAdd) {
                                     $rowCanDelete = $canDelete && ($isAdmin || $item->created_by == $user->id);
                                     ?>
                                     <tr class="wp-row">
-                                        <th scope="row" class="text-center align-middle">
+                                        <td scope="row" class="text-center align-middle">
                                             <?php if ($rowCanDelete): ?>
                                             <div class="form-check d-flex justify-content-center mb-0">
                                                 <input class="form-check-input row-check" type="checkbox" value="<?= $item->id_code ?>">
                                             </div>
                                             <?php endif; ?>
-                                        </th>
+                                        </td>
                                         
                                         <!-- Hình ảnh -->
                                         <td class="text-center align-middle">
@@ -142,7 +135,7 @@ if ($canAdd) {
                                             if ($rowCanEdit) {
                                                 $actions['edit'] = [
                                                     'label' => 'Chỉnh sửa', 
-                                                    'url' => route('admin.post.edit', ['id' => $item->id_code]), 
+                                                    'url' => route('admin.post.edit', ['id' => $item->id]), 
                                                     'class' => 'text-primary'
                                                 ];
                                             }
@@ -196,9 +189,6 @@ if ($canAdd) {
                                             <span class="badge bg-secondary"><?= $item->created_by == $user->id ? 'Bạn' : 'ID: '.$item->created_by ?></span>
                                         </td>
                                         
-                                        <!-- Lượt xem -->
-                                        <td class="text-center align-middle"><?= number_format($item->views) ?></td>
-                                        
                                         <!-- Sắp xếp -->
                                         <td class="text-center align-middle"><?= $item->sort_order ?></td>
                                         
@@ -227,7 +217,7 @@ if ($canAdd) {
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="7" class="text-center py-5 text-muted">
+                                    <td colspan="6" class="text-center py-5 text-muted">
                                         <i class="fa-regular fa-file-lines fs-1 mb-2"></i><br>
                                         Chưa có bài viết nào được tìm thấy.
                                     </td>
@@ -239,7 +229,7 @@ if ($canAdd) {
             </div>
 
             <!-- FOOTER: PHÂN TRANG -->
-            <div class="card-footer bg-white clearfix py-3">
+            <div class="card-footer bg-white clearfix">
                 <div class="row align-items-center">
                     <div class="col-md-4 text-muted small">
                         Hiển thị <?= count($posts) ?> / <?= $posts->total() ?> mục
@@ -249,8 +239,72 @@ if ($canAdd) {
                     </div>
                 </div>
             </div>
-            <!-- /FOOTER -->
-
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+    // Xử lý Checkbox Chọn tất cả
+    $('#checkAll').change(function() {
+        $('.row-check').prop('checked', $(this).prop('checked'));
+        toggleBulkApplyBtn();
+    });
+
+    $('.row-check').change(function() {
+        if ($('.row-check:checked').length === $('.row-check').length) {
+            $('#checkAll').prop('checked', true);
+        } else {
+            $('#checkAll').prop('checked', false);
+        }
+        toggleBulkApplyBtn();
+    });
+
+    $('#bulkActionSelect').change(function() {
+        toggleBulkApplyBtn();
+    });
+
+    function toggleBulkApplyBtn() {
+        if ($('.row-check:checked').length > 0 && $('#bulkActionSelect').val() !== '') {
+            $('#btnBulkApply').prop('disabled', false).removeClass('btn-outline-secondary').addClass('btn-primary');
+        } else {
+            $('#btnBulkApply').prop('disabled', true).removeClass('btn-primary').addClass('btn-outline-secondary');
+        }
+    }
+    
+    $('#btnBulkApply').click(function() {
+        let select = $('#bulkActionSelect');
+        if (select.val() === 'delete') {
+            let option = select.find('option:selected');
+            let url = option.data('url');
+            let confirmMsg = option.data('confirm');
+            
+            let checkedIds = [];
+            $('.row-check:checked').each(function() {
+                checkedIds.push($(this).val());
+            });
+            
+            if (checkedIds.length > 0) {
+                AppNotify.confirm(confirmMsg, function() {
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: { ids: JSON.stringify(checkedIds) },
+                        success: function(res) {
+                            if (res.success) {
+                                AppNotify.success(res.message);
+                                setTimeout(() => window.location.reload(), 1000);
+                            } else {
+                                AppNotify.error(res.message);
+                            }
+                        },
+                        error: function() {
+                            AppNotify.error('Có lỗi xảy ra khi thực hiện!');
+                        }
+                    });
+                });
+            }
+        }
+    });
+});
+</script>

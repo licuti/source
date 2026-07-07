@@ -188,7 +188,7 @@ if (!function_exists('paging')) {
         $separator = (strpos($url, '?') !== false) ? ( (substr($url, -1) == '?' || substr($url, -1) == '&') ? '' : '&' ) : '?';
         $baseUrl = $url . $separator;
 
-        $out = '<nav aria-label="Page navigation" class="mt-4"><ul class="pagination justify-content-center">';
+        $out = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
 
         $prev_disabled = ($current_page <= 1) ? 'disabled' : '';
         $prev_url = ($current_page > 1) ? $baseUrl . 'page=' . ($current_page - 1) : '#';

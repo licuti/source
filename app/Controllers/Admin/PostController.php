@@ -117,7 +117,7 @@ class PostController extends BaseAdminController {
         }
         
         // Convert array/object for the view compatibility
-        $item = (array)$item;
+        $item = is_object($item) && method_exists($item, 'toArray') ? $item->toArray() : (array)$item;
         
         $langs = $this->langs;
         $categories = $this->getCategories();
