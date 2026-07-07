@@ -157,14 +157,9 @@ class GalleryController extends BaseAdminController {
      * Xóa hàng loạt qua AJAX
      */
     public function bulkDeleteAjax(Request $request) {
-        $idsStr = $request->input('ids');
-        if (empty($idsStr)) {
-            return response()->json(['success' => false, 'message' => 'Không có mục nào được chọn!']);
-        }
-        
-        $ids = json_decode($idsStr, true);
-        if (!is_array($ids) || count($ids) === 0) {
-            return response()->json(['success' => false, 'message' => 'Dữ liệu không hợp lệ!']);
+        $ids = $request->input('ids', []);
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json(['success' => false, 'message' => 'Không có mục nào được chọn hoặc dữ liệu không hợp lệ!']);
         }
         
         // Find id_codes of selected items

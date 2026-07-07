@@ -182,63 +182,6 @@ $breadcrumbActions = [
 
 <script>
 $(document).ready(function() {
-    $('.check-all').change(function() {
-        $('.row-check').prop('checked', $(this).prop('checked'));
-        toggleBulkApplyButton();
-    });
-
-    $('.row-check').change(function() {
-        toggleBulkApplyButton();
-        if ($('.row-check:checked').length === $('.row-check').length) {
-            $('.check-all').prop('checked', true);
-        } else {
-            $('.check-all').prop('checked', false);
-        }
-    });
-
-    function toggleBulkApplyButton() {
-        if ($('.row-check:checked').length > 0) {
-            $('#btnBulkApply').prop('disabled', false).removeClass('btn-outline-secondary').addClass('btn-primary');
-        } else {
-            $('#btnBulkApply').prop('disabled', true).removeClass('btn-primary').addClass('btn-outline-secondary');
-        }
-    }
-    
-    $('#btnBulkApply').click(function() {
-        let select = $('#bulkActionSelect');
-        if (select.val() === 'delete') {
-            let option = select.find('option:selected');
-            let url = option.data('url');
-            let confirmMsg = option.data('confirm');
-            
-            let checkedIds = [];
-            $('.row-check:checked').each(function() {
-                checkedIds.push($(this).val());
-            });
-            
-            if (checkedIds.length > 0) {
-                AppNotify.confirm(confirmMsg, function() {
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: { ids: JSON.stringify(checkedIds) },
-                        success: function(res) {
-                            if (res.success) {
-                                AppNotify.success(res.message);
-                                setTimeout(() => window.location.reload(), 1000);
-                            } else {
-                                AppNotify.error(res.message);
-                            }
-                        },
-                        error: function() {
-                            AppNotify.error('Có lỗi xảy ra khi thực hiện!');
-                        }
-                    });
-                });
-            }
-        }
-    });
-    
     $('.btn-delete').click(function() {
         let id = $(this).data('id');
         let row = $('#row-' + id);
