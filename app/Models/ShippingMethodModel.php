@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class ShippingMethodModel extends \Model
+class ShippingMethodModel extends \App\Core\Model
 {
     public $table = 'db_shipping_methods';
     public bool $use_lang = false;

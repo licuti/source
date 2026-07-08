@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class PostModel extends \Model {
+class PostModel extends \App\Core\Model {
     public $table = '#_posts';
 
     // db_posts dùng chuẩn tên tiếng Anh
@@ -10,7 +10,7 @@ class PostModel extends \Model {
 
     // Khai báo các field được phép mass assign
     protected array $fillable = [
-        'id_code', 'category_id', 'lang', 'title', 'alias', 'description', 
+        'id_code', 'category_id', 'lang', 'title', 'slug', 'description', 
         'content', 'image', 'seo_title', 'seo_description', 'keyword', 'tags', 
         'noindex', 'nofollow', 'seo_head', 'seo_body', 'sort_order', 'status', 
         'is_featured', 'view', 'created_by', 'updated_by', 'created_at', 'updated_at'
@@ -41,11 +41,11 @@ class PostModel extends \Model {
      * Tự động cập nhật đường dẫn (URL) trong Menu nếu Bài viết thay đổi alias
      */
     public function saved() {
-        if (!empty($this->attributes['alias']) && !empty($this->id)) {
+        if (!empty($this->attributes['slug']) && !empty($this->id)) {
             $menuItemModel = new \App\Models\MenuItemModel();
             $menuItemModel->where('object_type', 'post')
                           ->where('object_id', $this->id)
-                          ->update(['url' => $this->attributes['alias']]);
+                          ->update(['url' => $this->attributes['slug']]);
         }
     }
 }

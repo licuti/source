@@ -8,19 +8,19 @@ use App\Models\PageModel;
 /**
  * PageController
  *
- * Đóng vai trò Smart Dispatcher cho toàn bộ trang CMS.
+ * ÄÃ³ng vai trÃ² Smart Dispatcher cho toÃ n bá»™ trang CMS.
  *
- * - Các trang thông thường (về chúng tôi, dịch vụ...) → render view từ DB.
- * - Các trang đặc biệt (giỏ hàng, thanh toán, tra cứu...) → dispatch sang
- *   đúng Controller bằng bảng VIEW_DISPATCH.
+ * - CÃ¡c trang thÃ´ng thÆ°á»ng (vá» chÃºng tÃ´i, dá»‹ch vá»¥...) â†’ render view tá»« DB.
+ * - CÃ¡c trang Ä‘áº·c biá»‡t (giá» hÃ ng, thanh toÃ¡n, tra cá»©u...) â†’ dispatch sang
+ *   Ä‘Ãºng Controller báº±ng báº£ng VIEW_DISPATCH.
  *
- * Chỉ cần thêm 1 dòng vào VIEW_DISPATCH để đăng ký trang đặc biệt mới.
+ * Chá»‰ cáº§n thÃªm 1 dÃ²ng vÃ o VIEW_DISPATCH Ä‘á»ƒ Ä‘Äƒng kÃ½ trang Ä‘áº·c biá»‡t má»›i.
  */
 class PageController extends Controller {
 
     /**
-     * Mapping: cột `view` trong db_page → [Controller, method]
-     * Thêm trang mới: chỉ cần thêm 1 dòng vào đây.
+     * Mapping: cá»™t `view` trong db_page â†’ [Controller, method]
+     * ThÃªm trang má»›i: chá»‰ cáº§n thÃªm 1 dÃ²ng vÃ o Ä‘Ã¢y.
      */
     private const VIEW_DISPATCH = [
         'pages/cart/index'    => [CartController::class,     'index'],
@@ -29,14 +29,14 @@ class PageController extends Controller {
     ];
 
     /**
-     * POST dispatch map — cho các trang có xử lý form POST riêng
+     * POST dispatch map â€” cho cÃ¡c trang cÃ³ xá»­ lÃ½ form POST riÃªng
      */
     private const POST_DISPATCH = [
         'pages/cart/checkout' => [CheckoutController::class, 'store'],
     ];
 
     /**
-     * Smart dispatch: xử lý mọi /{slug} request
+     * Smart dispatch: xá»­ lÃ½ má»i /{slug} request
      */
     public function dispatch($request, array $params = []) {
         $slug = $params['slug'] ?? $request->param('slug') ?? '';
@@ -45,47 +45,47 @@ class PageController extends Controller {
             return new Response(view('pages/404', ['com' => '']), 404);
         }
 
-        // 1. Cứu cánh cho danh mục (VD: /ao-khoac)
+        // 1. Cá»©u cÃ¡nh cho danh má»¥c (VD: /ao-khoac)
         $category = \CategoryModel::where('alias', $slug)->first();
         if ($category) {
             $GLOBALS['row'] = $category;
             $this->registerLanguageLinks($category, $slug, \CategoryModel::class);
             
-            // Dispatch tới đúng Controller dựa vào module
+            // Dispatch tá»›i Ä‘Ãºng Controller dá»±a vÃ o module
             if ($category->module == config('modules.product')) {
                 return $this->forwardTo(ProductController::class, 'index', $request, $params);
             } elseif ($category->module == config('modules.post')) {
                 return $this->forwardTo(NewsController::class, 'index', $request, $params);
             }
-            // Fallback render template mặc định
+            // Fallback render template máº·c Ä‘á»‹nh
             return new Response(view($category->view ?: 'pages/products/index', ['row' => $category, 'com' => $slug]));
         }
 
-        // 2. Tra cứu db_page
+        // 2. Tra cá»©u db_page
         $page = PageModel::where('alias', $slug)->first();
 
         if (!$page) {
             return new Response(view('pages/404', ['com' => $slug]), 404);
         }
 
-        // Đăng ký URL dịch cho trang này
+        // ÄÄƒng kÃ½ URL dá»‹ch cho trang nÃ y
         $this->registerLanguageLinks($page, $slug, PageModel::class);
 
         $viewKey = $page->view ?? '';
 
-        // Xử lý POST (form submit)
+        // Xá»­ lÃ½ POST (form submit)
         if ($request->method === 'POST' && isset(self::POST_DISPATCH[$viewKey])) {
             [$class, $method] = self::POST_DISPATCH[$viewKey];
             return $this->forwardTo($class, $method, $request, $params);
         }
 
-        // Dispatch sang Controller đặc biệt nếu có
+        // Dispatch sang Controller Ä‘áº·c biá»‡t náº¿u cÃ³
         if (isset(self::VIEW_DISPATCH[$viewKey])) {
             [$class, $method] = self::VIEW_DISPATCH[$viewKey];
             return $this->forwardTo($class, $method, $request, $params);
         }
 
-        // Render trang CMS thông thường
+        // Render trang CMS thÃ´ng thÆ°á»ng
         return new Response(view($viewKey ?: 'pages/page', [
             'row' => $page,
             'com' => $slug,
@@ -93,7 +93,7 @@ class PageController extends Controller {
     }
 
     /**
-     * Forward request sang Controller khác
+     * Forward request sang Controller khÃ¡c
      */
     private function forwardTo(string $class, string $method, $request, array $params) {
         $controller = new $class();
@@ -102,16 +102,16 @@ class PageController extends Controller {
     }
 
     /**
-     * Đăng ký language links dựa trên id_code của trang/danh mục
+     * ÄÄƒng kÃ½ language links dá»±a trÃªn id_code cá»§a trang/danh má»¥c
      */
     public function registerLanguageLinks($page, string $fallbackSlug, string $modelClass) {
         if (empty($page->id_code)) return;
 
-        // Lấy tất cả ngôn ngữ của trang này — tắt lang constraint tạm thời
-        $prevConstraint = \Model::getGlobalConstraint();
-        \Model::setGlobalConstraint('');
+        // Láº¥y táº¥t cáº£ ngÃ´n ngá»¯ cá»§a trang nÃ y â€” táº¯t lang constraint táº¡m thá»i
+        $prevConstraint = \App\Core\Model::getGlobalConstraint();
+        \App\Core\Model::setGlobalConstraint('');
         $allTranslations = $modelClass::where('id_code', $page->id_code)->get();
-        \Model::setGlobalConstraint($prevConstraint);
+        \App\Core\Model::setGlobalConstraint($prevConstraint);
 
         if (empty($allTranslations)) return;
 
@@ -120,7 +120,7 @@ class PageController extends Controller {
         foreach ($allTranslations as $t) {
             $langCode = $t->lang ?? $defaultLang;
             $slug     = $t->alias ?? $fallbackSlug;
-            // Trang CMS dùng catch-all route, cần thêm prefix nếu không phải ngôn ngữ mặc định
+            // Trang CMS dÃ¹ng catch-all route, cáº§n thÃªm prefix náº¿u khÃ´ng pháº£i ngÃ´n ngá»¯ máº·c Ä‘á»‹nh
             $path = ($langCode !== $defaultLang) ? "{$langCode}/{$slug}" : $slug;
             $links[$langCode] = url($path);
         }

@@ -48,12 +48,7 @@ class App {
         ob_start();
 
         // 3. Database & Model Booting
-        \Model::boot(config('database'));
-
-        // 3.5. Legacy $d Booting cho frontend views
-        require_once dirname(__DIR__, 2) . '/admin/lib/class.php';
-        $GLOBALS['d'] = new \func_index(config('database'));
-
+        \App\Core\Model::boot(config('database'));
 
         // 4. Boot SiteInfoService — define các hằng số legacy (_logo, _favicon, v.v.)
         $this->bootSiteConstants();

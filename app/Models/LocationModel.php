@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class LocationModel extends \Model
+class LocationModel extends \App\Core\Model
 {
     public $table = 'db_locations';
     public bool $use_lang = false;

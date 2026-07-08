@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class PromoCodeModel extends \Model
+class PromoCodeModel extends \App\Core\Model
 {
     public $table = 'db_promo_codes';
     public $primaryKey = 'id';

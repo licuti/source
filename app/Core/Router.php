@@ -7,6 +7,7 @@ class Router {
     protected $middleware = [];
     protected $request;
     protected $currentGroupPrefix = '';
+    protected $currentGroupMiddleware = [];
 
     public function __construct(Request $request) {
         $this->request = $request;
@@ -29,16 +30,35 @@ class Router {
         }
     }
 
-    public function group($prefix, $callback) {
+    public function group($attributes, $callback) {
+        if (is_string($attributes)) {
+            $attributes = ['prefix' => $attributes];
+        }
+
         $previousPrefix = $this->currentGroupPrefix;
-        $this->currentGroupPrefix .= $prefix;
+        $previousMiddleware = $this->currentGroupMiddleware;
+
+        if (isset($attributes['prefix'])) {
+            $this->currentGroupPrefix .= $attributes['prefix'];
+        }
+        
+        if (isset($attributes['middleware'])) {
+            $newMiddleware = is_array($attributes['middleware']) ? $attributes['middleware'] : [$attributes['middleware']];
+            $this->currentGroupMiddleware = array_merge($this->currentGroupMiddleware, $newMiddleware);
+        }
+
         $callback($this);
+
         $this->currentGroupPrefix = $previousPrefix;
+        $this->currentGroupMiddleware = $previousMiddleware;
     }
 
     protected function addRoute($method, $path, $callback) {
         $fullPath = $this->currentGroupPrefix . $path;
-        $this->routes[$method][$fullPath] = $callback;
+        $this->routes[$method][$fullPath] = [
+            'callback' => $callback,
+            'middleware' => $this->currentGroupMiddleware
+        ];
         
         // Trả về anonymous class hỗ trợ chain ->name()
         return new class($this, $fullPath) {
@@ -66,9 +86,13 @@ class Router {
      * Điều hướng request qua middleware pipeline → route matching → execute.
      */
     public function dispatch() {
-        return $this->runMiddleware($this->request, function($request) {
-            $match = $this->matchRoute($request->method, $request->uri);
+        $match = $this->matchRoute($this->request->method, $this->request->uri);
+        $routeMiddleware = $match ? ($match['middleware'] ?? []) : [];
+        
+        // Merge global + route middleware
+        $allMiddleware = array_merge($this->middleware, $routeMiddleware);
 
+        return $this->runMiddleware($this->request, $allMiddleware, function($request) use ($match) {
             if ($match) {
                 $request->setParams($match['params']);
                 return $this->execute($match['callback'], $match['params']);
@@ -89,47 +113,47 @@ class Router {
 
     /**
      * Khớp URL với route đã đăng ký.
-     * Hỗ trợ:
-     *   - Exact match:   "/gio-hang"
-     *   - Param match:   "/san-pham/{slug}"  →  params = ['slug' => 'ao-thun-nam']
-     *
-     * @return array|null  ['callback' => ..., 'params' => [...]]  hoặc null nếu không khớp
      */
     protected function matchRoute(string $method, string $path): ?array {
         $routes = $this->routes[$method] ?? [];
 
         // 1. Fast path — exact match (không có param)
         if (isset($routes[$path])) {
-            if (php_sapi_name() === 'cli' && defined('DEBUG_ROUTE')) {
-                file_put_contents('scratch/route.log', "Matched EXACT: $path\n", FILE_APPEND);
-            }
-            return ['callback' => $routes[$path], 'params' => []];
+            return [
+                'callback' => $routes[$path]['callback'], 
+                'params' => [], 
+                'middleware' => $routes[$path]['middleware']
+            ];
         }
 
         // 2. Pattern match — route có {param}
-        foreach ($routes as $routePath => $callback) {
+        foreach ($routes as $routePath => $routeData) {
             if (strpos($routePath, '{') === false) continue;
+
+            $callback = $routeData['callback'];
+            $middleware = $routeData['middleware'];
 
             // Chuyển "/san-pham/{slug}" → regex "#^/san-pham/([^/]+)$#"
             $pattern = preg_replace('/\{([^}]+)\}/', '([^/]+)', $routePath);
             $pattern = '#^' . $pattern . '$#';
 
             if (preg_match($pattern, $path, $matches)) {
-                if (php_sapi_name() === 'cli' && defined('DEBUG_ROUTE')) {
-                    file_put_contents('scratch/route.log', "Matched PATTERN: $routePath for $path\n", FILE_APPEND);
-                }
                 // Lấy tên các param từ route definition
                 preg_match_all('/\{([^}]+)\}/', $routePath, $paramNames);
                 $params = array_combine($paramNames[1], array_slice($matches, 1));
-                return ['callback' => $callback, 'params' => $params];
+                return [
+                    'callback' => $callback, 
+                    'params' => $params, 
+                    'middleware' => $middleware
+                ];
             }
         }
 
         return null;
     }
 
-    protected function runMiddleware($request, $next) {
-        $pipeline = array_reverse($this->middleware);
+    protected function runMiddleware($request, $middlewares, $next) {
+        $pipeline = array_reverse($middlewares);
 
         $runner = function($request) use (&$pipeline, &$runner, $next) {
             if (empty($pipeline)) return $next($request);
@@ -147,8 +171,10 @@ class Router {
             if (class_exists($class)) {
                 $controller = new $class();
                 if (method_exists($controller, $method)) {
-                    // Truyền $params như argument thứ 2 để Controller có thể nhận
-                    $result = $controller->$method($this->request, $params);
+                    // Spread params with call_user_func_array
+                    $args = array_values($params);
+                    array_unshift($args, $this->request);
+                    $result = call_user_func_array([$controller, $method], $args);
                     if ($result instanceof Response) return $result;
                     return new Response($result);
                 }
@@ -156,7 +182,9 @@ class Router {
         }
 
         if (is_callable($callback)) {
-            $result = call_user_func($callback, $this->request, $params);
+            $args = array_values($params);
+            array_unshift($args, $this->request);
+            $result = call_user_func_array($callback, $args);
             if ($result instanceof Response) return $result;
             return new Response($result);
         }

@@ -23,41 +23,13 @@ class BaseAdminController extends Controller {
     }
 
     /**
-     * Trả về JSON Response — format thô (dùng khi cần kiểm soát toàn bộ)
+     * Xác thực quyền chỉnh sửa/xóa bài viết hoặc object
+     * Kiểm tra user hiện tại có phải là người tạo hoặc là admin (is_admin = 1)
      */
-    protected function json($data, $statusCode = 200) {
-        return Response::json($data, $statusCode);
-    }
-
-    /**
-     * Trả về JSON thành công chuẩn:
-     * { "success": true, "message": "...", "data": {...} }
-     */
-    protected function jsonSuccess(string $message = '', $data = null) {
-        $body = ['success' => true, 'message' => $message];
-        if ($data !== null) {
-            $body['data'] = $data;
-        }
-        return Response::json($body, 200);
-    }
-
-    /**
-     * Trả về JSON lỗi chuẩn:
-     * { "success": false, "message": "...", "errors": {...} }
-     */
-    protected function jsonError(string $message, $errors = null, int $statusCode = 200) {
-        $body = ['success' => false, 'message' => $message];
-        if ($errors !== null) {
-            $body['errors'] = $errors;
-        }
-        return Response::json($body, $statusCode);
-    }
-
-    /**
-     * Chuyển hướng trang
-     */
-    protected function redirect($url) {
-        $response = new Response('', 302);
-        return $response->header('Location', $url);
+    protected function canModify($item): bool {
+        if (!$item) return false;
+        
+        $createdBy = is_array($item) ? ($item['created_by'] ?? 0) : ($item->created_by ?? 0);
+        return ($createdBy == user()->id || user()->is_admin == 1);
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class TextModel extends \Model {
+class TextModel extends \App\Core\Model {
     public $table = '#_text';
     public bool $timestamps = false;
     public bool $use_lang = false;

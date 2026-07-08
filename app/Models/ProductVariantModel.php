@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class ProductVariantModel extends \Model {
+class ProductVariantModel extends \App\Core\Model {
     public $table = '#_product_variants';
     public bool $use_lang = false;
     public bool $timestamps = false;

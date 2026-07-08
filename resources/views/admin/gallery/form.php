@@ -1,6 +1,6 @@
 <?php
 $isEdit = isset($item) && isset($item['id']);
-$action = route('admin.gallery.store');
+$action = $isEdit ? route('admin.gallery.update', ['id' => $item['id']]) : route('admin.gallery.store');
 $currentLangCode = $langCode ?? 'vi';
 
 // Get current lang info

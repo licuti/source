@@ -1,4 +1,9 @@
 <?php
+namespace App\Core;
+
+use PDO;
+use Exception;
+
 /**
  * ============================================================
  *  CLASS Model — Version 3.2 (Eloquent-Compatible)
@@ -114,10 +119,6 @@ class Model implements \JsonSerializable {
     }
 
     public function __construct($attributes = []) {
-        if (self::$pdo === null && class_exists('func_index') && func_index::$shared_db !== null) {
-            self::$pdo    = func_index::$shared_db;
-            self::$prefix = func_index::$shared_config['refix'] ?? 'db_';
-        }
         // Dùng forceFill để bỷ qua $fillable khi khởi tạo từ DB
         $this->forceFill($attributes);
     }
@@ -638,13 +639,20 @@ class Model implements \JsonSerializable {
         $statement = "SELECT $selectCols FROM $tableName";
         if (!empty($this->qb_joins))    $statement .= ' ' . implode(' ', $this->qb_joins);
         if ($whereSql)                  $statement .= " WHERE $whereSql";
+        
+        file_put_contents('scratch/queries.log', $statement . "\n", FILE_APPEND);
         if (!empty($this->qb_group_by)) $statement .= ' GROUP BY ' . implode(', ', $this->qb_group_by);
         if ($this->qb_having !== '')    $statement .= ' HAVING ' . $this->qb_having;
         if (!empty($this->qb_order))    $statement .= ' ORDER BY ' . implode(', ', $this->qb_order);
         if ($this->qb_limit !== '')     $statement .= ' LIMIT ' . $this->qb_limit;
 
         $stmt = self::$pdo->prepare($statement);
-        $stmt->execute($params);
+        try {
+            $stmt->execute($params);
+        } catch (PDOException $e) {
+            file_put_contents('scratch/query_error.log', $statement . "\n" . print_r($params, true));
+            throw $e;
+        }
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $models = array_map(fn($row) => new static($row), $rows);

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class CustomerModel extends \Model
+class CustomerModel extends \App\Core\Model
 {
     public $table = 'db_customers';
     public $primaryKey = 'id';

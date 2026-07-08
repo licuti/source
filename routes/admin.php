@@ -198,6 +198,7 @@ $router->group('/admin', function($r) {
     $r->get('/gallery/create', [\App\Controllers\Admin\GalleryController::class, 'create'])->name('admin.gallery.create');
     $r->get('/gallery/edit/{id}', [\App\Controllers\Admin\GalleryController::class, 'edit'])->name('admin.gallery.edit');
     $r->post('/gallery/store', [\App\Controllers\Admin\GalleryController::class, 'store'])->name('admin.gallery.store');
+    $r->post('/gallery/update/{id}', [\App\Controllers\Admin\GalleryController::class, 'update'])->name('admin.gallery.update');
     $r->post('/gallery/delete-ajax', [\App\Controllers\Admin\GalleryController::class, 'destroyAjax'])->name('admin.gallery.destroy_ajax');
     $r->post('/gallery/bulk-delete-ajax', [\App\Controllers\Admin\GalleryController::class, 'bulkDeleteAjax'])->name('admin.gallery.bulkDeleteAjax');
     $r->post('/gallery/update-status-ajax', [\App\Controllers\Admin\GalleryController::class, 'updateStatusAjax'])->name('admin.gallery.updateStatusAjax');

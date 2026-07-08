@@ -1,8 +1,9 @@
 <?php
 namespace App\Models;
 
-class RedirectModel extends \Model {
+class RedirectModel extends \App\Core\Model {
     public $table = '#_redirects';
+    public bool $use_lang = false;
     public bool $use_lang = false;
 
     protected string $createdAt = 'created_at';

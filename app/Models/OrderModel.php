@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class OrderModel extends \Model
+class OrderModel extends \App\Core\Model
 {
     public $table = 'db_orders';
     public $primaryKey = 'id';

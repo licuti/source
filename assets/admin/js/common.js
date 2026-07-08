@@ -76,13 +76,20 @@ document.addEventListener("DOMContentLoaded", function() {
     const bulkActionSelect = document.getElementById('bulkActionSelect');
 
     function updateBulkPanel() {
-        if (!bulkActionPanel) return;
         const checked = document.querySelectorAll('.row-check:checked');
         if (selectedCount) selectedCount.textContent = checked.length;
         
         // Cập nhật trạng thái nút Áp dụng
         if (btnBulkApply) {
-            btnBulkApply.disabled = checked.length === 0;
+            const isDisabled = (checked.length === 0 || (bulkActionSelect && bulkActionSelect.value === ''));
+            btnBulkApply.disabled = isDisabled;
+            if (isDisabled) {
+                btnBulkApply.classList.remove('btn-primary');
+                btnBulkApply.classList.add('btn-outline-secondary');
+            } else {
+                btnBulkApply.classList.remove('btn-outline-secondary');
+                btnBulkApply.classList.add('btn-primary');
+            }
         }
         
         if (checkAll) {
@@ -102,6 +109,10 @@ document.addEventListener("DOMContentLoaded", function() {
     rowChecks.forEach(cb => {
         cb.addEventListener('change', updateBulkPanel);
     });
+
+    if (bulkActionSelect) {
+        bulkActionSelect.addEventListener('change', updateBulkPanel);
+    }
 
     if (btnBulkApply && bulkActionSelect) {
         btnBulkApply.addEventListener('click', function() {

@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class CategoryModel extends \Model {
+class CategoryModel extends \App\Core\Model {
     public $table = '#_categories';
     public bool $timestamps = true;
     protected string $createdAt = 'created_at';

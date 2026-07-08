@@ -6,6 +6,7 @@ use Model;
 class RolePermissionModel extends Model {
     public $table = '#_role_permissions';
     public bool $use_lang = false;
+    public bool $use_lang = false;
     public bool $timestamps = false;
 
     public function role() {

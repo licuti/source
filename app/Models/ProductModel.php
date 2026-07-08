@@ -3,7 +3,7 @@ namespace App\Models;
 
 use App\Models\CategoryModel;
 
-class ProductModel extends \Model {
+class ProductModel extends \App\Core\Model {
     public $table = '#_products';
     public bool $timestamps = false;
 

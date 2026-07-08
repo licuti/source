@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class AttributeValueModel extends \Model {
+class AttributeValueModel extends \App\Core\Model {
     public $table = '#_attribute_values';
 
     public function attribute() {

@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class CfCodeModel extends \Model {
+class CfCodeModel extends \App\Core\Model {
     public $table = 'cf_code';
     // Bỏ qua kiểm tra Mass Assignment (tương thích hệ thống cũ)
     protected array $guarded = [];

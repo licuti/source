@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class GalleryModel extends \Model {
+class GalleryModel extends \App\Core\Model {
     public $table = '#_galleries';
     public $primaryKey = 'id';
     public bool $timestamps = true;

@@ -6,6 +6,7 @@ use Model;
 class RoleModel extends Model {
     public $table = '#_roles';
     public bool $use_lang = false;
+    public bool $use_lang = false;
     public bool $timestamps = true;
     protected string $createdAt = 'created_at';
     protected string $updatedAt = 'updated_at';

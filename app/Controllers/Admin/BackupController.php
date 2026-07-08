@@ -25,7 +25,7 @@ class BackupController extends BaseAdminController
     {
         $backups = [];
         if (is_dir($this->backupDir)) {
-            // Lấy cả .sql và .zip
+            // Láº¥y cáº£ .sql vÃ  .zip
             $files = glob($this->backupDir . '*.{sql,zip}', GLOB_BRACE);
             foreach ($files as $file) {
                 $backups[] = [
@@ -57,7 +57,7 @@ class BackupController extends BaseAdminController
     public function createBackup(Request $request)
     {
         set_time_limit(300); // Allow 5 minutes
-        $pdo = \Model::getConnection();
+        $pdo = \App\Core\Model::getConnection();
         
         $tables = [];
         $stmt = $pdo->query('SHOW TABLES');
@@ -102,12 +102,12 @@ class BackupController extends BaseAdminController
         $filename = 'backup_db_' . date('Ymd_His') . '.sql';
         file_put_contents($this->backupDir . $filename, $sql);
 
-        return $this->redirect(route('admin.backup.index'))->with('success', 'Đã tạo bản sao lưu CSDL thành công!');
+        return $this->redirect(route('admin.backup.index'))->with('success', 'ÄÃ£ táº¡o báº£n sao lÆ°u CSDL thÃ nh cÃ´ng!');
     }
 
     public function createSourceBackup(Request $request)
     {
-        set_time_limit(600); // Cho phép tối đa 10 phút để nén
+        set_time_limit(600); // Cho phÃ©p tá»‘i Ä‘a 10 phÃºt Ä‘á»ƒ nÃ©n
         
         $sourceDir = dirname(dirname(dirname(__DIR__))); // c:\laragon\www\source
         $filename = 'backup_source_' . date('Ymd_His') . '.zip';
@@ -115,7 +115,7 @@ class BackupController extends BaseAdminController
 
         $zip = new \ZipArchive();
         if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== TRUE) {
-            return $this->redirect(route('admin.backup.index'))->with('error', 'Không thể tạo file Zip!');
+            return $this->redirect(route('admin.backup.index'))->with('error', 'KhÃ´ng thá»ƒ táº¡o file Zip!');
         }
 
         $iterator = new \RecursiveIteratorIterator(
@@ -124,7 +124,7 @@ class BackupController extends BaseAdminController
         );
 
         foreach ($iterator as $item) {
-            // Bỏ qua các thư mục không cần thiết để file zip nhẹ hơn
+            // Bá» qua cÃ¡c thÆ° má»¥c khÃ´ng cáº§n thiáº¿t Ä‘á»ƒ file zip nháº¹ hÆ¡n
             $path = $item->getRealPath();
             $normalizedPath = str_replace('\\', '/', $path);
             
@@ -147,7 +147,7 @@ class BackupController extends BaseAdminController
             if ($item->isDir()) {
                 $zip->addEmptyDir($relativePath);
             } elseif ($item->isFile()) {
-                if (filesize($path) < 5 * 1024 * 1024) { // Nhỏ hơn 5MB
+                if (filesize($path) < 5 * 1024 * 1024) { // Nhá» hÆ¡n 5MB
                     $content = @file_get_contents($path);
                     if ($content !== false) {
                         $zip->addFromString($relativePath, $content);
@@ -160,7 +160,7 @@ class BackupController extends BaseAdminController
 
         $zip->close();
 
-        return $this->redirect(route('admin.backup.index'))->with('success', 'Đã nén mã nguồn thành công!');
+        return $this->redirect(route('admin.backup.index'))->with('success', 'ÄÃ£ nÃ©n mÃ£ nguá»“n thÃ nh cÃ´ng!');
     }
 
     public function downloadBackup(Request $request, $filename)
@@ -178,7 +178,7 @@ class BackupController extends BaseAdminController
             readfile($file);
             exit;
         }
-        return $this->redirect(route('admin.backup.index'))->with('error', 'Không tìm thấy tệp sao lưu!');
+        return $this->redirect(route('admin.backup.index'))->with('error', 'KhÃ´ng tÃ¬m tháº¥y tá»‡p sao lÆ°u!');
     }
 
     public function restoreBackup(Request $request, $filename)
@@ -188,17 +188,17 @@ class BackupController extends BaseAdminController
         $file = $this->backupDir . basename($filename);
         
         if (!file_exists($file) || pathinfo($file, PATHINFO_EXTENSION) !== 'sql') {
-            return $this->redirect(route('admin.backup.index'))->with('error', 'Tệp không tồn tại hoặc không phải là định dạng SQL!');
+            return $this->redirect(route('admin.backup.index'))->with('error', 'Tá»‡p khÃ´ng tá»“n táº¡i hoáº·c khÃ´ng pháº£i lÃ  Ä‘á»‹nh dáº¡ng SQL!');
         }
 
         try {
-            $pdo = \Model::getConnection();
+            $pdo = \App\Core\Model::getConnection();
             $sql = file_get_contents($file);
             
-            // Tạm thời tắt check khóa ngoại khi import
+            // Táº¡m thá»i táº¯t check khÃ³a ngoáº¡i khi import
             $pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
             
-            // Chia nhỏ query nếu file quá lớn (phân tách bởi dấu chấm phẩy và dòng mới)
+            // Chia nhá» query náº¿u file quÃ¡ lá»›n (phÃ¢n tÃ¡ch bá»Ÿi dáº¥u cháº¥m pháº©y vÃ  dÃ²ng má»›i)
             $queries = explode(";\n", $sql);
             foreach ($queries as $query) {
                 $query = trim($query);
@@ -209,9 +209,9 @@ class BackupController extends BaseAdminController
             
             $pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
             
-            return $this->redirect(route('admin.backup.index'))->with('success', 'Đã khôi phục cơ sở dữ liệu thành công từ bản sao lưu!');
+            return $this->redirect(route('admin.backup.index'))->with('success', 'ÄÃ£ khÃ´i phá»¥c cÆ¡ sá»Ÿ dá»¯ liá»‡u thÃ nh cÃ´ng tá»« báº£n sao lÆ°u!');
         } catch (\Exception $e) {
-            return $this->redirect(route('admin.backup.index'))->with('error', 'Lỗi khôi phục: ' . $e->getMessage());
+            return $this->redirect(route('admin.backup.index'))->with('error', 'Lá»—i khÃ´i phá»¥c: ' . $e->getMessage());
         }
     }
 
@@ -221,9 +221,9 @@ class BackupController extends BaseAdminController
         $file = $this->backupDir . basename($filename);
         if (file_exists($file)) {
             unlink($file);
-            return $this->redirect(route('admin.backup.index'))->with('success', 'Đã xóa bản sao lưu thành công!');
+            return $this->redirect(route('admin.backup.index'))->with('success', 'ÄÃ£ xÃ³a báº£n sao lÆ°u thÃ nh cÃ´ng!');
         }
-        return $this->redirect(route('admin.backup.index'))->with('error', 'Không tìm thấy tệp sao lưu!');
+        return $this->redirect(route('admin.backup.index'))->with('error', 'KhÃ´ng tÃ¬m tháº¥y tá»‡p sao lÆ°u!');
     }
 
     public function clearCache(Request $request)
@@ -243,16 +243,16 @@ class BackupController extends BaseAdminController
                     }
                 }
             }
-            $message .= "Đã xóa $deleted tệp log. ";
+            $message .= "ÄÃ£ xÃ³a $deleted tá»‡p log. ";
         }
 
         if ($type === 'opcache' || $type === 'all') {
             // Reset OPcache if available
             if (function_exists('opcache_reset')) {
                 opcache_reset();
-                $message .= "Đã tải lại bộ nhớ OPcache.";
+                $message .= "ÄÃ£ táº£i láº¡i bá»™ nhá»› OPcache.";
             } else {
-                $message .= "Máy chủ không hỗ trợ OPcache.";
+                $message .= "MÃ¡y chá»§ khÃ´ng há»— trá»£ OPcache.";
             }
         }
 
@@ -270,6 +270,6 @@ class BackupController extends BaseAdminController
         $file = dirname(dirname(dirname(__DIR__))) . '/storage/cron_settings.json';
         file_put_contents($file, json_encode($settings, JSON_PRETTY_PRINT));
 
-        return $this->redirect(route('admin.backup.index'))->with('success', 'Đã lưu cấu hình Cronjob tự động!');
+        return $this->redirect(route('admin.backup.index'))->with('success', 'ÄÃ£ lÆ°u cáº¥u hÃ¬nh Cronjob tá»± Ä‘á»™ng!');
     }
 }

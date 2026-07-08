@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class BinhLuanModel extends \Model {
+class BinhLuanModel extends \App\Core\Model {
     public $table = '#_binhluan';
     public bool $use_lang = false;
 

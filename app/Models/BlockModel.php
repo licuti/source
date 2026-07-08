@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class BlockModel extends \Model {
+class BlockModel extends \App\Core\Model {
     public $table = '#_blocks';
     public bool $timestamps = true;
     protected string $createdAt = 'created_at';

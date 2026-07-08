@@ -27,11 +27,6 @@ class View
         if (!isset($data['com'])) {
             $data['com'] = $GLOBALS['com'] ?? '';
         }
-        
-        // Inject global '$d' (Database) cho legacy views
-        if (!isset($data['d']) && isset($GLOBALS['d'])) {
-            $data['d'] = $GLOBALS['d'];
-        }
 
         // Inject global '$row' for SEO and category metadata
         if (!isset($data['row']) && isset($GLOBALS['row'])) {

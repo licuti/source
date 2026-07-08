@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class ShippingRateModel extends \Model
+class ShippingRateModel extends \App\Core\Model
 {
     public $table = 'db_shipping_rates';
     public bool $use_lang = false;

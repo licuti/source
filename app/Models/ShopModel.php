@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class ShopModel extends \Model {
+class ShopModel extends \App\Core\Model {
     public $table = '#_shops';
     public bool $timestamps = true;
     protected string $createdAt = 'created_at';

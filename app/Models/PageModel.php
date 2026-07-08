@@ -6,7 +6,7 @@ namespace App\Models;
  * PageModel
  * Quản lý các trang tĩnh (Giới thiệu, Liên hệ, Chính sách...)
  */
-class PageModel extends \Model {
+class PageModel extends \App\Core\Model {
     public $table = '#_page'; // Tự động thay thế #_ thành db_
     
     // Các thuộc tính mặc định nếu cần

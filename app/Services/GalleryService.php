@@ -48,7 +48,6 @@ class GalleryService {
             $model->created_by = $userId;
             $model->lang = $lang;
             if (!$idCode) {
-                $model->id_code = 0; // Tạm thời để 0, sẽ update sau khi save
                 $needsIdCodeUpdate = true;
             } else {
                 $model->id_code = $idCode;

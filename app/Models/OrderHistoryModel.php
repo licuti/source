@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class OrderHistoryModel extends \Model
+class OrderHistoryModel extends \App\Core\Model
 {
     public $table = 'db_order_history';
     public $primaryKey = 'id';

@@ -66,68 +66,52 @@ class PostController extends BaseAdminController {
      * Mở form thêm mới
      */
     public function create(Request $request) {
-        $langCode = $request->input('lang', $this->primaryLang);
-        $sourceId = (int)$request->input('source_id', 0);
-        
-        $item = [];
-        if ($sourceId > 0) {
-            $sourceItem = PostModel::adminQuery()->where('id_code', $sourceId)->first();
-            if ($sourceItem) {
-                $item['id_code'] = $sourceItem->id_code;
-                $item['category_id'] = $sourceItem->category_id;
-                $item['image'] = $sourceItem->image;
-                $item['status'] = $sourceItem->status;
-                $item['sort_order'] = $sourceItem->sort_order;
-                $item['is_featured'] = $sourceItem->is_featured;
-            }
-        }
-        
-        $langs = $this->langs;
-        $categories = $this->getCategories();
-        
-        $currentLangName = 'Unknown';
-        foreach ($langs as $l) {
-            if ($l['code'] === $langCode) {
-                $currentLangName = $l['name'];
-                break;
-            }
-        }
-        
-        $translations = [];
-        if (!empty($item['id_code'])) {
-            $allTrans = PostModel::adminQuery()->where('id_code', $item['id_code'])->get('id, lang');
-            foreach ($allTrans as $t) {
-                $translations[$t->lang] = $t->id;
-            }
-        }
-        
-        return $this->render('admin.post.form', compact('langs', 'categories', 'item', 'langCode', 'currentLangName', 'translations'));
+        return $this->getFormData($request);
     }
 
     /**
      * Mở form chỉnh sửa
      */
     public function edit(Request $request, $id) {
-        $id = $this->parseId($id);
+        return $this->getFormData($request, (int)$id);
+    }
+
+    /**
+     * Lấy dữ liệu form dùng chung cho Create & Edit
+     */
+    private function getFormData(Request $request, $id = null) {
+        $langCode = $request->input('lang', $this->primaryLang);
+        $item = [];
         
-        $item = PostModel::adminQuery()->qbFind($id);
-        
-        if (!$item) {
-            return $this->redirect(route('admin.post.index'));
+        if ($id) {
+            $itemObj = PostModel::adminQuery()->qbFind($id);
+            if (!$itemObj) {
+                return $this->redirect(route('admin.post.index'));
+            }
+            if (!$this->canModify($itemObj)) {
+                session('error', 'Bạn không có quyền chỉnh sửa bài viết này!');
+                return $this->redirect(route('admin.post.index'));
+            }
+            $item = is_object($itemObj) && method_exists($itemObj, 'toArray') ? $itemObj->toArray() : (array)$itemObj;
+            $langCode = $item['lang'];
+        } else {
+            $sourceId = (int)$request->input('source_id', 0);
+            if ($sourceId > 0) {
+                $sourceItem = PostModel::adminQuery()->where('id_code', $sourceId)->first();
+                if ($sourceItem) {
+                    $item['id_code'] = $sourceItem->id_code;
+                    $item['category_id'] = $sourceItem->category_id;
+                    $item['image'] = $sourceItem->image;
+                    $item['status'] = $sourceItem->status;
+                    $item['sort_order'] = $sourceItem->sort_order;
+                    $item['is_featured'] = $sourceItem->is_featured;
+                }
+            }
         }
-        
-        if (!$this->canModify($item)) {
-            session('error', 'Bạn không có quyền chỉnh sửa bài viết này!');
-            return $this->redirect(route('admin.post.index'));
-        }
-        
-        // Convert array/object for the view compatibility
-        $item = is_object($item) && method_exists($item, 'toArray') ? $item->toArray() : (array)$item;
         
         $langs = $this->langs;
         $categories = $this->getCategories();
         
-        $langCode = $item['lang'];
         $currentLangName = 'Unknown';
         foreach ($langs as $l) {
             if ($l['code'] === $langCode) {
@@ -170,7 +154,7 @@ class PostController extends BaseAdminController {
      * Lưu dữ liệu cập nhật
      */
     public function update(Request $request, $id) {
-        $id = $this->parseId($id);
+        $id = (int)$id;
         
         if (!$this->validatePost($request)) {
             return $this->redirect(route('admin.post.edit', ['id' => $id]));
@@ -183,7 +167,10 @@ class PostController extends BaseAdminController {
             return $this->redirect(route('admin.post.index'));
         }
 
-        $this->postService->savePost($request->all(), user()->id);
+        $inputData = $request->all();
+        $inputData['id'] = $id;
+        
+        $this->postService->savePost($inputData, user()->id);
         
         session('success', 'Cập nhật bài viết thành công!');
         return $this->handleSaveRedirect($request, $id);
@@ -224,7 +211,7 @@ class PostController extends BaseAdminController {
      * Xóa 1 dòng
      */
     public function destroy(Request $request, $id) {
-        $id = $this->parseId($id);
+        $id = (int)$id;
         
         $post = PostModel::adminQuery()->where('id_code', $id)->first();
         
@@ -247,17 +234,23 @@ class PostController extends BaseAdminController {
         $ids = $request->input('ids', []);
         
         if (!empty($ids) && is_array($ids)) {
-            $deletedCount = 0;
-            foreach ($ids as $id) {
-                $post = PostModel::adminQuery()->where('id_code', $id)->first();
+            $posts = PostModel::adminQuery()->whereIn('id_code', $ids)->get();
+            $allowedIdCodes = [];
+            
+            foreach ($posts as $post) {
                 if ($this->canModify($post)) {
-                    $this->postService->deletePost($id);
-                    $deletedCount++;
+                    $allowedIdCodes[$post->id_code] = $post->id_code; // Đảm bảo unique
                 }
             }
-            return $this->json(['success' => true, 'message' => "Đã xóa thành công {$deletedCount} bài viết."]);
+            
+            if (!empty($allowedIdCodes)) {
+                $allowedIdCodes = array_values($allowedIdCodes);
+                PostModel::adminQuery()->whereIn('id_code', $allowedIdCodes)->delete();
+                $deletedCount = count($allowedIdCodes);
+                return $this->json(['success' => true, 'message' => "Đã xóa thành công {$deletedCount} bài viết."]);
+            }
         }
-        return $this->json(['success' => false, 'message' => 'Chưa chọn bản ghi nào']);
+        return $this->json(['success' => false, 'message' => 'Chưa chọn bản ghi nào hoặc bạn không có quyền xóa']);
     }
 
     // ============================================================
@@ -269,16 +262,6 @@ class PostController extends BaseAdminController {
      */
     private function getCategories() {
         return CategoryModel::getTreeForAdminByModule($this->moduleId);
-    }
-
-    /**
-     * Xác thực quyền chỉnh sửa/xóa bài viết
-     */
-    private function canModify($post): bool {
-        if (!$post) return false;
-        
-        $createdBy = is_array($post) ? ($post['created_by'] ?? 0) : $post->created_by;
-        return ($createdBy == user()->id || user()->is_admin == 1);
     }
 
     /**
@@ -297,13 +280,6 @@ class PostController extends BaseAdminController {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Xử lý ID từ Router (Có thể là chuỗi, mảng do catch-all)
-     */
-    private function parseId($id): int {
-        return (int)(is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id);
     }
 
     /**

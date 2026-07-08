@@ -40,7 +40,7 @@ class PostService {
 
         $model->category_id = $categoryId;
         $model->title = $title;
-        $model->alias = $slug;
+        $model->slug = $slug;
         $model->description = $inputData['description'] ?? '';
         $model->content = $inputData['content'] ?? '';
         $model->image = $inputData['image'] ?? '';

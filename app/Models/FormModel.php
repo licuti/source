@@ -1,7 +1,7 @@
 <?php
 namespace App\Models;
 
-class FormModel extends \Model {
+class FormModel extends \App\Core\Model {
     public $table = 'db_forms';
     public bool $use_lang = false;
     public bool $timestamps = true;

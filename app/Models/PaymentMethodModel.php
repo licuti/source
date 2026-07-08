@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class PaymentMethodModel extends \Model
+class PaymentMethodModel extends \App\Core\Model
 {
     public $table = 'db_payment_methods';
     public bool $use_lang = true;
