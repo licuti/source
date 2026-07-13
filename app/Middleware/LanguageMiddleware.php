@@ -2,7 +2,7 @@
 
 namespace App\Middleware;
 
-use LanguageModel;
+use App\Models\LanguageModel;
 
 /**
  * LanguageMiddleware
@@ -30,7 +30,7 @@ class LanguageMiddleware implements Middleware {
             // 2. Náº¡p dá»¯ liá»‡u ngÃ´n ngá»¯ tá»« Database thÃ´ng qua Model
             // Chuyá»ƒn khá»‘i nÃ y lÃªn trÃªn Ä‘á»ƒ láº¥y danh sÃ¡ch ngÃ´n ngá»¯ há»— trá»£
             if (config('lang') === null || empty(config('lang'))) {
-                $dbLangs = \LanguageModel::where('is_active', 1)->get();
+                $dbLangs = LanguageModel::where('is_active', 1)->get();
                 if (!empty($dbLangs)) {
                     $langs = [];
                     foreach ($dbLangs as $item) {
@@ -90,10 +90,6 @@ class LanguageMiddleware implements Middleware {
         }
         // 3. Thiáº¿t láº­p ngÃ´n ngá»¯ thá»±c táº¿ cho Request hiá»‡n táº¡i
         config(['app.locale' => $lang]);
-        
-        // 4. Äá»“ng bá»™ hÃ³a vá»›i Layer dá»¯ liá»‡u (Model)
-        // Äiá»u nÃ y giÃºp táº¥t cáº£ cÃ¡c cÃ¢u Query tá»± Ä‘á»™ng thÃªm "AND lang='$lang'"
-        \App\Core\Model::setGlobalConstraint("AND lang='$lang'");
         
         // Define legacy constant for old class.php functions
         if (!defined('_where_lang')) {

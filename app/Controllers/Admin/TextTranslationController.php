@@ -42,7 +42,7 @@ class TextTranslationController extends BaseAdminController
         $totalPages = ceil($totalRows / $limit);
 
         // Lấy danh sách ngôn ngữ đang active từ config
-        $languages = config('lang') ?? [];
+        $languages = $this->langs;
 
         // Lấy danh sách các nhóm hiện có
         $groups = [];
@@ -211,9 +211,10 @@ class TextTranslationController extends BaseAdminController
             return $this->redirect(route('admin.translation.index'));
         }
 
-        $languages = config('lang') ?? [];
+        $languages = $this->langs;
         $texts = [];
-        foreach ($languages as $code => $langInfo) {
+        foreach ($languages as $l) {
+            $code = $l['code'];
             $texts[$code] = $data['text_' . $code] ?? '';
         }
 

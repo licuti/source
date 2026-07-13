@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
-class SettingModel extends \App\Core\Model {
+class SettingModel extends \App\Core\Database\Model {
     public $table = '#_settings';
-    public bool $use_lang = false;
+    
     public bool $timestamps = false; // Let DB handle created_at / updated_at
     private static $settings_cache = null;
 

@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-class CustomerModel extends \App\Core\Model
+class CustomerModel extends \App\Core\Database\Model
 {
     public $table = 'db_customers';
     public $primaryKey = 'id';
-    public bool $use_lang = false;
+    
     
     protected array $fillable = [
         'code',

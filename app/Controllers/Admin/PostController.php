@@ -10,15 +10,11 @@ use App\Services\PostService;
 class PostController extends BaseAdminController {
     
     private PostService $postService;
-    private array $langs;
-    private string $primaryLang;
     private int $moduleId;
 
     public function __construct() {
         parent::__construct();
         $this->postService = new PostService();
-        $this->langs       = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
-        $this->primaryLang = config('locale', 'vi');
         $this->moduleId    = config('modules.post');
     }
 
@@ -210,47 +206,65 @@ class PostController extends BaseAdminController {
     /**
      * Xóa 1 dòng
      */
-    public function destroy(Request $request, $id) {
-        $id = (int)$id;
+    public function destroyAjax(Request $request) {
+        $id = $request->input('id');
         
         $post = PostModel::adminQuery()->where('id_code', $id)->first();
         
+        if (!$post) {
+            return $this->jsonError('Không tìm thấy bài viết!');
+        }
+        
         if (!$this->canModify($post)) {
-            session('error', 'Bạn không có quyền xóa bài viết này!');
-            return $this->redirect(route('admin.post.index'));
+            return $this->jsonError('Bạn không có quyền xóa bài viết này!');
         }
 
         if ($this->postService->deletePost($id)) {
-            session('success', 'Đã xóa bài viết thành công!');
+            return $this->jsonSuccess('Đã xóa bài viết thành công!');
         }
         
-        return $this->redirect(route('admin.post.index'));
+        return $this->jsonError('Không thể xóa bài viết!');
     }
 
     /**
      * Xóa hàng loạt
      */
-    public function destroyMultiple(Request $request) {
+    public function bulkDeleteAjax(Request $request) {
         $ids = $request->input('ids', []);
         
-        if (!empty($ids) && is_array($ids)) {
-            $posts = PostModel::adminQuery()->whereIn('id_code', $ids)->get();
-            $allowedIdCodes = [];
-            
-            foreach ($posts as $post) {
-                if ($this->canModify($post)) {
-                    $allowedIdCodes[$post->id_code] = $post->id_code; // Đảm bảo unique
-                }
-            }
-            
-            if (!empty($allowedIdCodes)) {
-                $allowedIdCodes = array_values($allowedIdCodes);
-                PostModel::adminQuery()->whereIn('id_code', $allowedIdCodes)->delete();
-                $deletedCount = count($allowedIdCodes);
-                return $this->json(['success' => true, 'message' => "Đã xóa thành công {$deletedCount} bài viết."]);
+        if (empty($ids) || !is_array($ids)) {
+            return $this->jsonError('Không có mục nào được chọn!');
+        }
+        
+        $posts = PostModel::adminQuery()->whereIn('id_code', $ids)->get();
+        if (count($posts) === 0) {
+            return $this->jsonError('Không tìm thấy mục nào để xóa!');
+        }
+        
+        $allowedIdCodes = [];
+        $unauthorizedCount = 0;
+        
+        foreach ($posts as $post) {
+            if ($this->canModify($post)) {
+                $allowedIdCodes[$post->id_code] = $post->id_code; // Đảm bảo unique
+            } else {
+                $unauthorizedCount++;
             }
         }
-        return $this->json(['success' => false, 'message' => 'Chưa chọn bản ghi nào hoặc bạn không có quyền xóa']);
+        
+        if (empty($allowedIdCodes)) {
+            return $this->jsonError('Bạn không có quyền xóa các mục đã chọn!');
+        }
+        
+        $allowedIdCodes = array_values($allowedIdCodes);
+        $this->postService->deletePost($allowedIdCodes);
+        
+        $msg = 'Đã xóa ' . count($allowedIdCodes) . ' bài viết thành công!';
+        if ($unauthorizedCount > 0) {
+            $msg .= " Đã bỏ qua $unauthorizedCount mục do không có quyền.";
+        }
+        
+        return $this->jsonSuccess($msg);
     }
 
     // ============================================================

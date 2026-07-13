@@ -1,6 +1,6 @@
-# ARCHITECTURE.md — Tài Liệu Kiến Trúc Hệ Thống CMS (Technical Reference)
+# ARCHITECTURE.md — Tài Liệu Kiến Trúc Hệ Thống CMS (Bản Đầy Đủ & Chính Xác Nhất)
 
-> **DÀNH CHO AI AGENT:** Đây là tài liệu phân tích chi tiết 100% các file trong thư mục `app/`. Hãy đọc để hiểu logic thực thi của hệ thống.
+> **DÀNH CHO LẬP TRÌNH VIÊN & AI AGENT:** Tài liệu này mô tả chi tiết toàn bộ kiến trúc hạ tầng (Core), các quy ước ứng dụng (Application), giao diện (Views), cơ sở dữ liệu (Database Schema), và quy tắc bảo mật của hệ thống CMS sau khi được nâng cấp lên mô hình OOP / Modern MVC. Hãy đọc kỹ trước khi viết code.
 
 ---
 
@@ -8,321 +8,203 @@
 
 | Thông số | Chi tiết |
 |---|---|
-| **Ngôn ngữ lập trình** | PHP 7.4+ (Yêu cầu hỗ trợ typed properties, arrow functions). |
+| **Ngôn ngữ lập trình** | PHP 8.2+ (Typed properties, Reflection, Union Types). |
 | **Cơ sở dữ liệu** | MySQL 5.7+. Table Prefix: `db_` (Dùng `#_` trong code). |
-| **Kiến trúc** | Custom MVC (Inspired by Laravel). |
+| **Kiến trúc** | Custom MVC (Inspired by Laravel Architecture). |
 | **Đa ngôn ngữ** | Hỗ trợ mặc định: `vi` (Tiếng Việt), `en` (Tiếng Anh). |
 | **Quy ước URL** | SEO Friendly: `URLPATH/lang/slug.html`. |
-| **Layout chính** | `resources/views/layouts/main.php`. |
+| **Quản lý Layout** | Layout động (Theme-ready) ở mức Controller qua `getLayout()`. |
 | **Thư mục Assets** | `/assets/` (CSS, JS, Fonts, Images tĩnh). |
 | **Thư mục Data** | `/img_data/` (Ảnh dữ liệu người dùng tải lên). |
-| **Môi trường** | Laragon / XAMPP (Localhost:81). |
+| **Môi trường chạy** | Laragon / XAMPP (Localhost). |
 
 ---
 
-## 1. Tổng Quan Nhân Hệ Thống (app/Core)
-Đây là "bộ não" điều khiển mọi hoạt động của CMS.
+## 1. Bản Đồ Phân Phối Trách Nhiệm (Core vs App)
 
-| File | Chức năng chi tiết | Các hàm/thuộc tính quan trọng |
+Hệ thống được chia làm hai khu vực rạch ròi:
+1. **Phần Lõi Framework (`app/Core/`):** Không chứa bất kỳ logic nghiệp vụ nào (Không giỏ hàng, không sản phẩm). Đảm nhận các tác vụ hạ tầng: DI Container, Routing, Base ORM, Request/Response, Exception, Logging, Auth, Mail.
+2. **Phần Ứng Dụng (`app/Controllers/`, `app/Models/`, `routes/`, `resources/views/`):** Chứa toàn bộ nghiệp vụ thực tế của CMS (Tin tức, sản phẩm, giỏ hàng, giao diện).
+
+---
+
+## 2. Tổng Quan Tầng Lõi Framework (`app/Core/`)
+
+| File / Thư mục | Chức năng chi tiết | Các hàm/thuộc tính quan trọng |
 |---|---|---|
-| `App.php` | **Kernel hệ thống**. Khởi tạo toàn bộ ứng dụng. | `boot()`: Khởi động DB, nạp Middleware, chạy Router. |
-| `Router.php` | **Bộ điều hướng**. Ánh xạ URL tới Controller. | `dispatch()`: Xử lý route tĩnh và route có tham số (Laravel-style). Hỗ trợ đặt tên (Named Routes). |
-| `Model.php` | **Base ORM**. Xử lý truy vấn Database (Query Builder). | `query()`, `with()`, `where()`, `get()`, `first()`. Hỗ trợ Lazy Discovery cho cột `lang`. |
-| `View.php` | **Bộ dựng giao diện (Renderer)**. | `render()`: Nạp layout và template; `share()`: Chia sẻ biến toàn cục cho view. |
-| `Request.php` | **Quản lý Yêu cầu**. Bao bọc các biến toàn cục của PHP. | `all()`, `input()`, `isMethod()`, `getUri()`. |
-| `Response.php` | **Quản lý Phản hồi**. Thiết lập Header và HTTP Status. | `json()`, `header()`, `status()`. |
-| `Config.php` | **Quản lý Cấu hình**. | `get($key)`: Lấy dữ liệu từ thư mục `config/`. |
-| `ExceptionHandler.php` | **Xử lý lỗi**. Hiển thị thông báo lỗi thân thiện hoặc log lỗi. | `handleException()`, `handleError()`. |
-| `Logger.php` | **Ghi log**. Lưu vết hoạt động và lỗi hệ thống. | `info()`, `error()`, `warning()`. |
+| `App.php` | **Kernel hệ thống**. Khởi tạo toàn bộ ứng dụng. | `boot()`: Khởi động DB, nạp Middleware, chạy Router; `run()`: Thực thi. |
+| `Router.php` | **Bộ điều hướng**. Ánh xạ URL tới Controller. | `dispatch()`: Xử lý định tuyến; `execute()`: Thực thi callback qua `Container::call()`. |
+| `Container.php` | **Dependency Injection Container**. | `make()`: Khởi tạo dependency; `singleton()`: Đăng ký singleton; `call()`: Gọi method và tự động tiêm tham số (Method Injection). |
+| `FormRequest.php` | **Base Request tự động Validate**. | `validateResolved()`: Chạy kiểm tra dữ liệu đầu vào tự động khi Container resolve request cụ thể. |
+| `Model.php` | **Base ORM**. Xử lý truy vấn Database. | `query()`, `with()`, `where()`, `get()`, `first()`. Hỗ trợ Global Scopes (`withoutGlobalScope`). |
+| `View.php` | **Bộ dựng giao diện (Renderer)**. | `render()`: Dựng view; `setLayout()`: Gán layout. |
+| `Request.php` | **Quản lý Yêu cầu**. Bao bọc các biến toàn cục. | `all()`, `input()`, `expectsJson()`, `isAjax()`, `file()`. |
+| `Response.php` | **Quản lý Phản hồi**. Thiết lập Header và HTTP Status. | `json()`, `download()`, `stream()`, `redirect()`. |
+| `ExceptionHandler.php` | **Bộ xử lý Ngoại lệ trung tâm**. | `handle()`: Catch lỗi toàn cục. Xử lý lỗi 404 (301 Redirect), ValidationException (JSON 422 hoặc Redirect Back), và TokenMismatchException (Lỗi 419). |
+| `Logger.php` | **Ghi log chuyên sâu (PSR-like)**. | Hỗ trợ log levels và cơ chế **Log Rotation** tự động dọn dẹp log cũ hơn 30 ngày. |
+| `Config/Repository.php`| **Quản lý Cấu hình**. | Hỗ trợ truy cập mảng cấu hình bằng Dot Notation (`config('mail.host')`). |
+| `Auth/AuthManager.php` | **Quản lý Xác thực & Phân quyền**. | `user()`: Lấy thông tin user đăng nhập; `can($permission)`: Kiểm tra quyền phân cấp hệ thống. |
+| `Auth/Auth.php` | **Lớp truy xuất thông tin xác thực**. | `check()`, `id()`, `isSuperAdmin()`, `roleId()`, `permissionsCache()`. Độc lập với session storage. |
+| `Auth/Gate.php` | **Trung tâm kiểm tra phân quyền RBAC**. | `check($modulePrefix, $action)`: Kiểm tra quyền duy nhất cho cả Middleware và View. |
+| `Mail/Mailer.php` | **Gửi email thông qua PHPMailer**. | `send($to, $subject, $body)`: Tự động dùng cấu hình từ `config/` để gửi email. |
 
 ---
 
-## 2. Các Lớp Lọc Request (app/Middleware)
-Các lớp này được thực thi trước khi request chạm tới Controller.
+## 3. Các Lớp Lọc Request (app/Middleware)
 
-| File | Chức năng |
+Middleware can thiệp vào vòng đời Request trước khi nó chạm tới Controller.
+
+| Middleware | Chức năng |
 |---|---|
-| `StartSession.php` | Đảm bảo `session_start()` được gọi đúng cách và an toàn. |
-| `LanguageMiddleware.php` | Phân tích URL (vd: `/vi/`, `/en/`) để thiết lập hằng số `_lang` và `_where_lang`. |
-| `SitePasswordMiddleware.php` | Chặn toàn bộ website bằng mật khẩu nếu cấu hình `protection => true`. |
-| `Middleware.php` | Lớp cơ sở (Abstract) định nghĩa cấu trúc cho mọi Middleware. |
+| `StartSession.php` | Khởi tạo Session PHP một cách an toàn và đúng thời điểm. |
+| `CsrfMiddleware.php` | Chặn các request POST, PUT, DELETE để kiểm tra token. Chống tấn công giả mạo (CSRF). |
+| `LanguageMiddleware.php`| Phân tích URL (vd: `/vi/`, `/en/`) để thiết lập ngôn ngữ hiển thị và các biến hằng liên quan. |
+| `SitePasswordMiddleware.php`| Chặn truy cập toàn trang bằng mật khẩu bảo vệ khi cấu hình `protection => true`. |
+| `AdminAuthMiddleware.php`| Bảo vệ khu vực Admin, thực hiện xác thực và phân quyền RBAC (Role-Based Access Control) cho từng module. |
 
 ---
 
-## 3. Các Lớp Dịch Vụ (app/Services)
-Chứa logic nghiệp vụ phức tạp, tách biệt khỏi Controller.
+## 4. Danh Sách Controllers & Models của CMS
 
-| File | Chức năng |
-|---|---|
-| `SiteInfoService.php` | Tập hợp mọi thông tin cấu hình website (Logo, Hotline, SEO) để dùng chung toàn trang. |
-| `Service.php` | Lớp cơ sở cho các Service sau này. |
+### 4.1. Controllers (`app/Controllers/`)
+Kiến trúc Layout được quy định theo Base Controller:
+- **`FrontendController`**: Base cho mảng Frontend (Mặc định bọc giao diện bằng layout: `layouts.main`).
+- **`Admin\BaseAdminController`**: Base cho mảng Admin (Mặc định bọc giao diện bằng layout: `admin.layouts.main`).
 
----
+**Các Controller Nghiệp Vụ:**
+- `HomeController`: Xử lý trang chủ (Slide, Sản phẩm theo tab, Tin tức).
+- `ProductController`: Hiển thị danh sách và chi tiết sản phẩm.
+- `CategoryController`: Hiển thị sản phẩm hoặc tin tức theo danh mục.
+- `NewsController`: Quản lý hiển thị tin tức / bài viết.
+- `PageController`: Xử lý các trang thông tin tĩnh qua Catch-all route `/{slug}`.
+- `CartController`: Xử lý giỏ hàng (thêm/sửa/xóa, coupon).
+- `CheckoutController`: Xử lý quy trình đặt hàng và gửi email xác nhận.
+- `LocationController`: AJAX phục vụ lấy Tỉnh -> Huyện -> Xã.
+- `ContactController`: Xử lý form liên hệ.
+- `ReviewController`: Đánh giá sao, bình luận sản phẩm.
+- `SearchController`: Tìm kiếm Full-text đa bảng.
+- `AuthController`: Đăng ký, đăng nhập, quên mật khẩu.
 
-## 4. Các Lớp Điều Khiển (app/Controllers)
-Xử lý logic từng trang cụ thể.
-
-| File | Chức năng |
-|---|---|
-| `Controller.php` | Lớp cơ sở chứa các hàm dùng chung cho mọi Controller (vd: `validate`). |
-| `HomeController.php` | Xử lý dữ liệu phức tạp cho trang chủ (Slide, Sản phẩm theo tab, Tin tức). |
-| `ProductController.php` | Xử lý danh sách (index) và chi tiết (show) sản phẩm. Hỗ trợ Eager Loading quan hệ. |
-| `CategoryController.php`| Xử lý danh sách sản phẩm hoặc bài viết theo chuyên mục. |
-| `NewsController.php` | Xử lý danh sách và chi tiết bài viết/tin tức. |
-| `PageController.php` | Xử lý các trang thông tin tĩnh lưu trong DB. Xử lý qua catch-all route `/{slug}`. |
-| `CartController.php` | Xử lý giỏ hàng (thêm/sửa/xóa, coupon) và tính toán tổng tiền. |
-| `CheckoutController.php` | Xử lý quy trình đặt hàng và gửi email thông báo. |
-| `LocationController.php`| Quản lý AJAX truy xuất dữ liệu địa lý (Tỉnh/Huyện/Xã). |
-| `ContactController.php` | Tiếp nhận và xử lý dữ liệu từ Form liên hệ. |
-| `ReviewController.php` | Quản lý đánh giá sao, bình luận và tải lên hình ảnh AJAX. |
-| `SearchController.php` | Thực hiện tìm kiếm Full-text trên nhiều bảng dữ liệu. |
-| `AuthController.php` | Quản lý Đăng nhập, Đăng ký, Quên mật khẩu. |
-
----
-
-## 5. Các Lớp Dữ Liệu (app/Models)
-Tương tác trực tiếp với từng bảng Database cụ thể (23+ Models).
-
-- **Nhóm Sản phẩm**: `ProductModel`, `ProductVariantModel`, `ProductAlbumModel`.
-- **Nhóm Nội dung**: `CategoryModel`, `NewsModel`, `PageModel`, `BinhLuanModel`.
-- **Nhóm Hệ thống**: `SettingModel`, `TextModel` (Dịch), `LanguageModel`, `MenuModel`, `ModuleModel`.
-- **Nhóm Marketplace / Bán hàng**: `ShopModel`, `OrderModel`, `OrderItemModel`, `CheckoutSessionModel`, `CouponModel`.
-- **Nhóm Khác**: `ContactModel`, `VideoModel`, `AlbumModel`, `ButtonContactModel`.
+### 4.2. Models (`app/Models/`)
+Hệ thống quản lý dữ liệu thông qua hơn 48 Model thuần OOP kế thừa từ `App\Core\Database\Model`.
+- **Nhóm Sản phẩm**: `ProductModel`, `ProductVariantModel`, `ProductVariantAttributeModel`, `ProductAlbumModel`, `AttributeModel`, `AttributeValueModel`.
+- **Nhóm Nội dung & Tương tác**: `CategoryModel`, `PostModel`, `PageModel`, `BinhLuanModel`, `GalleryModel`.
+- **Nhóm Marketplace & Bán hàng**: `ShopModel`, `OrderModel`, `OrderItemModel`, `OrderHistoryModel`, `CouponModel`, `PaymentMethodModel`, `ShippingMethodModel`, `ShippingRateModel`.
+- **Nhóm Cấu hình & Hệ thống**: `SettingModel`, `TextModel` (Dịch thuật), `LanguageModel`, `MenuModel`, `MenuItemModel`, `MenuLocationModel`, `ModuleModel`, `ModuleAdminModel`, `RoleModel`, `RolePermissionModel`, `UserModel`, `RedirectModel`.
 
 ---
 
-## 6. Các Hàm Tiện Ích (app/Helpers)
+## 5. Thư Viện Hàm Trợ Giúp (Helpers)
 
-| File | Các hàm "Vàng" |
-|---|---|
-| `core.php` | `__($key)`, `view()`, `config()`, `asset()`, `session()`. |
-| `ui.php` | `Img()`, `renderPrice()`, `createAlias()`, `get_json()`. |
-| `url.php` | `route($name)`, `redirect()`, `back()`, `url()`, `getCurrentUrl()`. |
-| `string.php` | `str_slug()`, `str_random()`, `limit_text()`. |
+Dự án chia nhỏ các hàm trợ giúp để dễ quản lý:
 
----
+### 5.1. `app/Helpers/core.php` (Lõi Framework)
+Chỉ chứa các hàm nền tảng, không chứa nghiệp vụ:
+- `config($key)`: Lấy cấu hình bằng dot notation.
+- `request()`, `response()`: Truy xuất nhanh Request/Response.
+- `view($template, $data)`: Render giao diện.
+- `session($key)`: Đọc/ghi flash session.
+- `old($key)`, `errors($key)`: Lấy old input và lỗi validation.
+- `csrf_token()`, `csrf_field()`: Sinh token bảo vệ form.
+- `hasPermission($module, $action)`: Kiểm tra nhanh quyền truy cập trong View qua `Gate::check()`.
+- `__($key)`: Dịch nhanh chuỗi tĩnh thông qua `TextModel::translate()`.
+- `dd($data)`: Dump và die (Debug nhanh).
 
-## 7. Quy Tắc "Thiết Giáp" Cho AI (AI Hard Rules)
+### 5.2. `app/Helpers/url.php` (Đường Dẫn & Link)
+- `url($path)`: Sinh URL tuyệt đối.
+- `asset($path)`: Đường dẫn trỏ tới assets tĩnh.
+- `admin_url($path)`: Đường dẫn vào trang quản trị Admin.
+- `getImageUrl($filename)`, `Img($img)`: Trả về link ảnh chuẩn từ `img_data/`.
+- `route($name, $params)`: Sinh URL từ tên Route (Tự động dịch slug theo ngôn ngữ và chèn locale prefix `/en/`).
+- `url_lang($langCode)`: Tạo URL chuyển đổi ngôn ngữ cho trang hiện hành.
 
-1.  **Cấm Hard-code**: Tuyệt đối không viết trực tiếp URL hay Text tiếng Việt. Dùng `asset()` và `__()`.
-2.  **Object Only**: Dữ liệu từ Model LUÔN là Object. Cấm dùng `$row['key']`.
-3.  **Controller Logic**: Không bao giờ viết logic SQL trong View. View chỉ dùng để hiển thị.
-4.  **Middleware**: Mọi kiểm tra quyền truy cập phải nằm ở Middleware, không viết trong Controller.
+### 5.3. `app/Helpers/ui.php` (Hiển Thị Giao Diện)
+- Chứa các hàm hiển thị giá tiền (`renderPrice`), sao đánh giá, và sinh alias slug (`createAlias`).
 
----
-
-## 8. Cấu Trúc Dữ Liệu Quan Trọng (Database Schema)
-
-AI Agent phải đặc biệt lưu ý cơ chế khóa ngoại trong hệ thống này:
-
-| Bảng chính | Bảng liên quan | Khóa nối (Join Key) | Ghi chú |
-|---|---|---|---|
-| `db_sanpham` | `db_category` | `id_loai` -> `id_code` | Nối sản phẩm với danh mục. |
-| `db_sanpham` | `db_sanpham_bienthe` | `id_code` -> `id_sanpham` | Lấy các biến thể (màu, size). |
-| `db_sanpham` | `db_sanpham_hinhanh` | `id_code` -> `id_sanpham` | Lấy album ảnh sản phẩm. |
-| `db_tintuc` | `db_category` | `id_loai` -> `id_code` | Nối bài viết với danh mục. |
-| `db_menu` | (Chính nó) | `id_loai` -> `id_code` | Cấu trúc menu đa cấp. |
-| **`db_shops`** | `db_users` | `user_id` -> `id` | Định danh tài khoản chủ sở hữu gian hàng. |
-| **`db_sanpham`** | `db_shops` | `shop_id` -> `id` | Phân loại sản phẩm theo gian hàng (Marketplace). |
-| **`db_orders`** | `db_shops` | `shop_id` -> `id` | Phân rã đơn hàng (Order Splitting) cho từng Shop. |
-| **`db_orders`** | `db_checkout_sessions` | `session_id` -> `id` | Nhóm các đơn hàng con vào chung một phiên thanh toán. |
-
-> **⚠️ CẢNH BÁO QUAN TRỌNG VỀ ĐƠN HÀNG:** Hệ thống sử dụng cơ chế **Tách đơn hàng (Order Splitting)**. Khi khách đặt mua nhiều món từ nhiều Shop, hệ thống sinh ra MỘT `db_checkout_sessions` (để thanh toán tổng) nhưng tách ra thành NHIỀU `db_orders` (mỗi shop 1 order để tự vận hành). KHÔNG lưu đơn hàng vào các bảng cũ (`db_dathang`).
-
-> **⚠️ CẢNH BÁO VỀ ĐA NGÔN NGỮ:** Luôn sử dụng **`id_code`** để định danh thực thể đối với các bảng hỗ trợ đa ngôn ngữ (Shop, Bài viết, Sản phẩm). Cột `id` thuần túy chỉ dùng cho mục đích kỹ thuật của từng dòng ngôn ngữ.
+### 5.4. `app/Helpers/string.php` (Xử Lý Chuỗi)
+- `str_slug($str)`: Chuyển đổi chuỗi thành slug không dấu.
+- `str_random($length)`: Sinh chuỗi ngẫu nhiên.
+- `limit_text($text, $limit)`: Cắt ngắn đoạn văn bản.
 
 ---
 
-## 9. Quy Trình Phát Triển Tính Năng Mới (Workflow)
+## 6. Quy Tắc Bảo Mật & Xác Thực Dữ Liệu
 
-Khi AI Agent nhận yêu cầu tạo thêm một trang hoặc module mới, hãy tuân thủ 4 bước:
+### 6.1. Bảo Mật Form (CSRF Protection)
+- Mọi Form POST trên giao diện đều **bắt buộc** phải chèn thẻ token bảo vệ:
+  ```html
+  <form action="<?= route('contact.store') ?>" method="POST">
+      <?= csrf_field() ?>
+      ...
+  </form>
+  ```
+- Nếu thiếu hoặc sai token, hệ thống sẽ chặn đứng và trả về lỗi `419` (hoặc JSON `419` với AJAX).
 
-1.  **Model**: Kiểm tra xem đã có Model cho bảng tương ứng chưa (tại `app/Models/`). Nếu chưa, hãy tạo mới kế thừa từ `Model`.
-2.  **Controller**: Tạo Controller mới tại `app/Controllers/`. Xử lý dữ liệu và trả về `view()`.
-3.  **Route**: Đăng ký đường dẫn URL trong `routes/web.php`.
-4.  **View**: Tạo file giao diện tại `resources/views/`. Sử dụng `layout('main')` để giữ đồng nhất.
+### 6.2. Xác Thực FormRequest tự động
+Thay vì viết if/else kiểm tra dữ liệu trong Controller, hãy kế thừa `App\Core\FormRequest`:
+```php
+namespace App\Requests;
 
----
+use App\Core\FormRequest;
 
-## 10. Hệ Thống AJAX & API
-
-Hệ thống đang hỗ trợ song song hai cách tiếp cận:
-
-*   **Legacy AJAX**: Nằm tại `sources/ajax/ajax.php`. Dùng cho các tính năng cũ.
-*   **Modern AJAX**: 
-    *   Đăng ký route trong `routes/web.php` với method `POST`.
-    *   Controller trả về `Response::json($data)`.
-    *   **Ưu tiên**: Luôn sử dụng cách này cho các tính năng mới để đảm bảo tính đóng gói.
-
----
-
-## 11. Các Trạng Thái Lỗi & Debug
-*   **Logs**: Kiểm tra tại `storage/logs/` (nếu có) hoặc log lỗi của PHP.
-*   **Maintenance**: Bật/Tắt chế độ bảo trì qua `config('app.protection')`.
-
----
-
-## 12. Quy Ước View & Giao Diện (Frontend Guidelines)
-
-Hệ thống sử dụng cấu trúc thư mục phân lớp để quản lý giao diện chuyên nghiệp:
-
-### 12.1 Cấu trúc thư mục `resources/views/`
-*   **`layouts/`**: Chứa các file khung chính (vd: `main.php`).
-*   **`pages/`**: Chứa giao diện của từng trang, phân nhóm theo tính năng:
-    *   `home/`: Trang chủ.
-    *   `products/`: Danh sách (`index`) và chi tiết (`detail`) sản phẩm.
-    *   `news/`: Danh sách (`index`) và chi tiết (`detail`) tin tức.
-    *   `auth/`: Đăng nhập, đăng ký, thông tin tài khoản.
-    *   `cart/`: Giỏ hàng, thanh toán, thông báo thành công.
-*   **`partials/`**: Chứa các thành phần nhỏ (Components):
-    *   `header/`, `footer/`: Đầu và cuối trang.
-    *   `components/`: Các khối nhỏ như `card-product`, `card-post`, `slider`.
-    *   `home/`: Các khối riêng cho trang chủ.
-
-### 12.2 Cách sử dụng hàm `view()`
-*   Trong **Controller**: Trả về view theo dấu chấm hoặc gạch chéo:
-    ```php
-    return view('pages.products.index', $data);
-    ```
-*   Trong **View (Include)**: Sử dụng helper `view()` để nạp các mảnh ghép:
-    ```php
-    <?php include view('partials.header'); ?>
-    <?php include view('partials.components.card-product'); ?>
-    ```
-
-### 12.3 Assets Mapping
-*   CSS: `/assets/css/` | JS: `/assets/script/` | Fonts: `/assets/fonts/`
-*   Luôn gọi qua helper `asset('path/to/file')`.
-
----
-
-## 13. Hệ Thống SEO & Sitemap
-
-Hệ thống được thiết kế để tối ưu cho công cụ tìm kiếm:
-
-*   **Sitemap chính**: `sitemap.xml` tại thư mục gốc.
-*   **Sitemap phân mảnh**: Nằm trong thư mục `sitemap/` (vd: `product-sitemap.xml`, `post-sitemap.xml`) giúp quản lý hàng nghìn URL dễ dàng hơn.
-*   **Robots.txt**: Cấu hình các quy tắc chặn/cho phép bot tìm kiếm tại file `robots.txt` ở gốc.
-*   **SEO Metadata**: Được quản lý tập trung trong bảng `db_thongtin` và Model `SettingModel`.
-
----
-
-## 14. Hệ Thống Gửi Email (SMTP)
-
-Dự án tích hợp sẵn thư viện **PHPMailer** để xử lý các tác vụ gửi mail:
-
-*   **Vị trí**: Thư mục `smtp/` chứa các class lõi của PHPMailer.
-*   **Cấu hình**: Thông tin tài khoản SMTP (Host, Port, User, Password) thường được cấu hình trong Admin hoặc file `config/mail.php` (nếu có).
-*   **Cách dùng**: Sử dụng các lớp trong `smtp/` để gửi mail xác nhận đơn hàng hoặc thông báo liên hệ mới.
-
----
-
-## 15. Các Mẫu Thiết Kế Mới Đã Áp Dụng (Modernization Patterns)
-
-Hệ thống vừa trải qua quá trình tái cấu trúc để loại bỏ hoàn toàn việc gọi Database từ View (Legacy `$d->o_fet`). Yêu cầu sử dụng các mẫu thiết kế này cho mọi module tiếp theo:
-
-### 15.1 Kiến Trúc View - Controller Hiện Đại
-*   **Controller Chuẩn Bị Dữ Liệu**: Mọi logic truy vấn phức tạp (tính toán giá, gom nhóm thuộc tính biến thể, eager loading) BẮT BUỘC phải thực hiện ở Controller. (Xem mẫu tại `ProductController@show`).
-*   **View Tĩnh (Dumb View)**: View (như `detail.php`) CHỈ làm nhiệm vụ render HTML. Tuyệt đối KHÔNG chứa câu lệnh truy vấn SQL.
-*   **Đa Ngôn Ngữ & Helper**: Chuỗi tĩnh (hardcode) trên giao diện phải bọc trong hàm `__()`. Sử dụng các Helper chuyên dụng (`renderPrice()`, `renderStars()`, `getImageUrl()`) thay vì tự code định dạng thủ công.
-
-### 15.2 Bảo Mật Form & Token (CSRF)
-*   **Cấm gọi Session**: Tuyệt đối không dùng trực tiếp `$_SESSION['token']` trong các thẻ form HTML.
-*   **Sử dụng Helper**: Luôn dùng hàm `<?= csrf_field() ?>` để tự động sinh thẻ input chứa mã CSRF bảo vệ cho mọi form (như form giỏ hàng, bình luận). Mã token thô được lấy qua `csrf_token()`.
-
-### 15.3 Router Hiện Đại & Named Routes
-*   **Named Routes**: Mọi route đều nên được đặt tên (ví dụ: `->name('product.show')`). Ở View bắt buộc dùng helper `route('product.show', $slug)` để in URL thay vì nối chuỗi tĩnh, giúp việc đổi cấu trúc URL hàng loạt (từ `/san-pham/` thành `/sp/`) chỉ tốn 1 giây tại file config.
-*   **Typed URLs**: Phân chia URL minh bạch có tiền tố (ví dụ `/san-pham/{slug}`, `/tin-tuc/{slug}`) thay vì dựa dẫm vào cơ chế Catch-all (Tìm trong DB xem nó là loại gì). Catch-all route `/{slug}` hiện chỉ dùng chuyên biệt cho `PageController` (trang tĩnh).
-*   **Response Wrapping**: Khi nâng cấp, nhiều Controller cũ trả về `String`. Để không làm lỗi hàm `send()`, hàm `run()` trong `App.php` sẽ tự bọc chuỗi trả về vào lớp `Response` (tương thích ngược 100%).
-
-### 15.4 Nâng Cấp Model & Eager Loading
-*   **Eager Loading Mảng Thành Object**: Khi nạp quan hệ qua `withMedia()` hoặc `withReplies()`, dữ liệu thô (raw arrays) tự động được ép kiểu thành Model Objects bằng `array_map()`, ngăn lỗi truy cập thuộc tính (property of non-object) trong View.
-*   **Hỗ trợ Magic Properties**: Bổ sung `__isset()` trong lõi Base `Model` để hàm `empty($model->relation)` của PHP làm việc chuẩn xác với Eager Loading Relation.
-
----
-
-## 16. Quy Chuẩn Viết Code & Định Dạng (Coding Style & Formatting)
-
-AI Agent phải tuân thủ bộ quy tắc này để đảm bảo code sạch, đẹp và dễ đọc:
-
-### 16.1 Đặt tên (Naming Convention)
-*   **Classes**: Luôn dùng `PascalCase` (vd: `ProductController`, `TextModel`).
-*   **Methods**: Luôn dùng `camelCase` (vd: `getFeaturedProducts()`, `translate()`).
-*   **Variables & Table Columns**: Luôn dùng `snake_case` (vd: `product_id`, `is_active`).
-*   **Constants**: Luôn dùng `UPPER_CASE` (vd: `URLPATH`, `LANG`).
-
-### 16.2 Cấu trúc & Định dạng
-*   **Indentation**: Sử dụng **4 khoảng trắng** (spaces), không dùng Tab.
-*   **Braces**:
-    *   Mở ngoặc `{` của Class và Method ở **dòng mới**.
-    *   Mở ngoặc `{` của các cấu trúc điều khiển (`if`, `foreach`) ở **cùng dòng**.
-*   **Spacing**: Luôn có 1 khoảng trắng sau các từ khóa `if`, `for`, `foreach`.
-
-### 16.3 Tư duy viết code (Best Practices)
-*   **Early Return**: Ưu tiên xử lý lỗi và thoát hàm sớm để tránh lồng `if` quá sâu.
-    ```php
-    // TỐT
-    if (!$product) return null;
-    return $product->name;
-
-    // XẤU
-    if ($product) {
-        return $product->name;
-    } else {
-        return null;
+class StoreContactRequest extends FormRequest {
+    public function rules(): array {
+        return [
+            'name'  => 'required|max:100',
+            'email' => 'required|email',
+            'notes' => 'required'
+        ];
     }
-    ```
-*   **Type Hinting**: Khai báo kiểu dữ liệu cho tham số và giá trị trả về của hàm.
-    ```php
-    public function getById(int $id): ?ProductModel { ... }
-    ```
-*   **PHPDoc**: Luôn viết comment mô tả cho các hàm phức tạp.
-*   **No Magic Numbers**: Không dùng các con số khó hiểu trực tiếp. Hãy đặt biến hoặc hằng số.
-
-### 16.4 Format View (HTML/PHP)
-*   Code PHP trong View phải ngắn gọn. Ưu tiên dùng cú pháp rút gọn:
-    *   `<?= $var ?>` thay cho `<?php echo $var; ?>`.
-    *   `<?php if (...): ?> ... <?php endif; ?>` thay cho dùng ngoặc nhọn `{}`.
+}
+```
+Và tiêm vào Controller:
+```php
+public function store(StoreContactRequest $request) {
+    // Dữ liệu tại đây bảo đảm đã đi qua cổng kiểm duyệt thành công!
+    $data = $request->all();
+}
+```
 
 ---
 
-## 17. Kết Luận & Duy Trì
+## 7. Cấu Trúc Dữ Liệu Đặc Thù Của CMS (Database Schema & Logic)
 
-Tài liệu này là "Kim chỉ nam" cho mọi hoạt động phát triển. AI Agent khi thực hiện nhiệm vụ phải:
-1.  Đọc mục tương ứng với nhiệm vụ.
-2.  Kiểm tra xem tính năng định viết có vi phạm các "Gold Rules" không.
-3.  Tuân thủ tuyệt đối quy chuẩn định dạng tại Mục 16.
+### 7.1. Cơ Chế Đa Ngôn Ngữ Qua Khóa `id_code`
+Hệ thống không lưu ngôn ngữ dưới dạng cột trong một bảng duy nhất mà nhân bản dòng dữ liệu theo ngôn ngữ.
+- Cột **`id`** là khóa chính kỹ thuật, tăng tự động và khác nhau giữa các dòng ngôn ngữ.
+- Cột **`id_code`** là khóa định danh thực thể thực tế (Dùng chung cho tất cả các bản dịch của cùng một sản phẩm/danh mục).
+- **Quy tắc Join:** Khi nối bảng (Ví dụ: Sản phẩm với Danh mục), **bắt buộc** phải nối thông qua `id_code` thay vì `id`:
+  ```sql
+  SELECT * FROM db_products p 
+  JOIN db_categories c ON p.category_id_code = c.id_code 
+  WHERE p.lang = 'vi' AND c.lang = 'vi'
+  ```
+
+### 7.2. Cơ Chế Tách Đơn Hàng (Order Splitting)
+CMS hỗ trợ mô hình Marketplace (Nhiều cửa hàng):
+- Khi khách hàng mua nhiều món từ nhiều Shop khác nhau, hệ thống sinh ra **1 `db_checkout_sessions`** để thanh toán tổng tiền.
+- Đồng thời tự động tách ra thành **nhiều `db_orders`** (Mỗi shop sở hữu 1 order riêng biệt để tự giao vận và quản lý trạng thái).
+- **Chú ý:** Tuyệt đối không được chèn toàn bộ sản phẩm của nhiều shop vào cùng một dòng order duy nhất.
 
 ---
 
-> **Lời nhắn cuối cho AI:** CMS này là sự kết hợp giữa sự ổn định của quá khứ và sự linh hoạt của hiện tại. Hãy luôn ưu tiên viết code **"Modern"** nhưng đừng phá vỡ các quy tắc **"Legacy"** về dữ liệu (`id_code`).
+## 8. Quy Chuẩn Thư Mục Giao Diện (`resources/views/`)
+
+*   **`layouts/`**: Chứa các layout khung chính (`main.php`, `admin/layouts/main.php`).
+*   **`pages/`**: Chứa giao diện cụ thể của từng trang được phân nhóm rõ ràng (vd: `pages/home/index.php`, `pages/products/detail.php`).
+*   **`partials/`**: Các mảnh ghép giao diện nhỏ (`partials/header.php`, `partials/footer.php`).
+*   **`components/`**: Các thành phần giao diện dùng chung (vd: `components/card-product.php`, các components render form admin).
 
 ---
 
-## 18. Ranh Giới Giữa "Lõi Framework" và "Ứng Dụng" (Core vs App)
+## 9. Bảng Quy Tắc Sống Còn Cho Lập Trình Viên (The Hard Rules)
 
-Một phần quan trọng của việc duy trì và phát triển hệ thống này là phân biệt rõ ràng giữa **Phần Lõi (Core Framework)** - không nên thay đổi tùy tiện, và **Phần Ứng Dụng (User App Space)** - nơi bạn tự do phát triển các tính năng.
+1.  **Cấm viết logic Database trong View:** View chỉ dùng để render dữ liệu đã được Controller chuẩn bị sẵn.
+2.  **Cấm truy cập Session trực tiếp cho Old/Errors:** Sử dụng helper `old('field')` và `errors('field')` để hiển thị lỗi validation.
+3.  **Tận dụng Dependency Injection:** Hạn chế dùng `new Request()`. Hãy khai báo `Request $request` hoặc `MyFormRequest $request` làm tham số của method trong Controller để Container tự động xử lý.
+4.  **Sử dụng Named Routes:** Luôn gọi `route('name')` thay vị viết cứng URL tĩnh `/vi/san-pham/...`.
+5.  **Dùng Tiện Ích Core:** Nếu cần lấy Auth user, dùng `App\Core\Auth\AuthManager::user()` hoặc `App\Core\Auth\Auth`. Nếu cần kiểm tra quyền, dùng `hasPermission()` hoặc `Gate::check()`. Nếu cần cấu hình, dùng `config()`. Đừng tự viết câu SQL select bảng config hay users!
 
-### 18.1. Vùng Lõi Framework (Do NOT Touch Unless Necessary)
-Đây là các thành phần cốt lõi của "Engine", tạo nền tảng cho CMS. Chỉ nên chỉnh sửa khi thực sự muốn thay đổi cách Framework hoạt động.
-- **`app/Core/`**: Chứa toàn bộ các class cấu thành framework (`App.php`, `Router.php`, `Model.php`, `Request.php`, `Response.php`, `View.php`...).
-- **`app/Helpers/`**: Các hàm trợ giúp chung (`core.php`, `url.php`, `string.php`).
-- **`app/Middleware/`**: Các lớp trung gian kiểm soát request toàn cục (Session, Language).
-- **`index.php`**: File khởi tạo duy nhất (Entry point) để kích hoạt `App::getInstance()->boot()`.
-- **`bootstrap/`**: Thư mục chuẩn bị môi trường và tự động nạp (autoload).
+---
 
-### 18.2. Vùng Ứng Dụng (App Implementation)
-Đây là không gian làm việc của lập trình viên, nơi chứa logic nghiệp vụ và giao diện.
-- **`app/Controllers/`**: Nơi viết logic cho từng module (vd: `ProductController`, `CartController`).
-- **`app/Models/`**: Nơi ánh xạ tới các bảng CSDL cụ thể (vd: `ProductModel`, `CategoryModel`).
-- **`app/Services/`**: Nơi đặt các logic phức tạp, gọi API bên ngoài (nếu có).
-- **`routes/web.php`**: Khai báo các đường dẫn URL và ánh xạ tới Controller.
-- **`resources/views/`**: Nơi chứa toàn bộ mã HTML/PHP giao diện hiển thị cho người dùng.
-- **`config/`**: Các file cấu hình hệ thống (như Database, App parameters).
-
-### 18.3. Vùng Legacy & Quản Trị (Admin & Sources)
-Hệ thống này được nâng cấp từ một CMS thuần Procedural cũ, nên vẫn giữ lại một số vùng cho Admin Panel.
-- **`admin/`**: Giao diện và mã nguồn quản lý Dashboard CMS (Thường ít can thiệp bằng OOP).
-- **`sources/`**: Một số module cũ hoặc file ajax thuần tuý (đang được gỡ bỏ và chuyển dần sang App/Controllers).
-
-**Nhiệm vụ của Developer:** Tập trung phát triển ở khu vực `18.2` (Controllers, Models, Views, Routes). Hạn chế chạm vào `18.1` trừ khi phải vá lỗi nghiêm trọng ở mức Framework.
+> **TỔNG KẾT:** Hãy tuân thủ cấu trúc này để giữ cho CMS luôn sạch sẽ, bảo mật và dễ mở rộng. Chúc bạn code vui vẻ!

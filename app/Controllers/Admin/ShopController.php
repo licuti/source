@@ -6,11 +6,8 @@ use App\Models\ShopModel;
 
 class ShopController extends BaseAdminController {
     
-    private array $langs;
-
     public function __construct() {
         parent::__construct();
-        $this->langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
     }
     
     public function index(Request $request) {
@@ -20,7 +17,7 @@ class ShopController extends BaseAdminController {
         if ($page < 1) $page = 1;
         $limit = 20;
 
-        $query = ShopModel::where('lang', config('app.locale', 'vi'));
+        $query = ShopModel::where('lang', $this->primaryLang);
         
         if ($keyword !== '') {
             $query->where(function($q) use ($keyword) {

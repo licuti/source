@@ -10,6 +10,28 @@ use App\Core\Response;
  */
 abstract class Controller {
 
+    protected $layout = 'layouts.main';
+
+    /**
+     * Lấy đường dẫn tới file layout.
+     * Cho phép hỗ trợ Multi-theme trong tương lai bằng cách Override hàm này.
+     */
+    protected function getLayout() {
+        return $this->layout;
+    }
+
+    /**
+     * Render view kết hợp layout
+     */
+    protected function render($view, $data = []) {
+        $viewInstance = new \App\Core\View();
+        $layout = $this->getLayout();
+        if ($layout) {
+            $viewInstance->setLayout($layout);
+        }
+        return $viewInstance->render($view, $data);
+    }
+
     /**
      * Trả về JSON Response — format thô (dùng khi cần kiểm soát toàn bộ)
      */

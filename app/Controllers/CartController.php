@@ -2,6 +2,22 @@
 
 namespace App\Controllers;
 
+use App\Models\SettingModel;
+
+use App\Models\ProductVariantModel;
+
+use App\Models\ProductVariantAttributeModel;
+
+use App\Models\ProductModel;
+
+use App\Models\CouponModel;
+
+use App\Models\AttributeValueModel;
+
+use App\Models\AttributeModel;
+
+use App\Core\Request;
+
 use App\Core\Response;
 
 /**
@@ -14,7 +30,7 @@ class CartController extends Controller {
     /**
      * Hiển thị trang giỏ hàng
      */
-    public function index($request) {
+    public function index(Request $request) {
         // Đăng ký URL dịch
         $translations = \App\Models\PageModel::where('view', 'pages/cart/index')->get();
         $urls = [];
@@ -28,7 +44,7 @@ class CartController extends Controller {
         $so_giam  = $_SESSION['phi_sale'] ?? 0;
 
         // Fetch Tax Settings
-        $setting_vat = (new \SettingModel())->getAll();
+        $setting_vat = (new SettingModel())->getAll();
         $vat_rate = (double)($setting_vat['vat_rate'] ?? 0);
         $vat_type = (int)($setting_vat['vat_type'] ?? 0);
 
@@ -53,14 +69,14 @@ class CartController extends Controller {
             foreach ($_SESSION['cart'] as $key => $value) {
                 if ((int)$value['id_sp'] <= 0) continue;
                 
-                $row_sp = \ProductModel::where('id_code', $value['id_sp'])->first();
+                $row_sp = ProductModel::where('id_code', $value['id_sp'])->first();
                 if (!$row_sp) continue;
 
                 $gia_sp = $value['gia'];
                 $so_luong = (int) $value['so_luong'];
                 $tong += ($gia_sp * $so_luong);
 
-                $url_sp = route('product.show', $row_sp->alias ?? '');
+                $url_sp = route('product.show', $row_sp->slug ?? '');
                 
                 if (!empty($value['thuoctinh']) && (int)$value['thuoctinh'] > 0) {
                     $id_bienthe = (int)$value['thuoctinh'];
@@ -114,7 +130,7 @@ class CartController extends Controller {
      * Thêm sản phẩm vào giỏ hàng (AJAX)
      * POST /ajax/cart/add
      */
-    public function legacy($request) {
+    public function legacy(Request $request) {
         $action = $request->input('action') ?: $request->input('cmd');
         switch ($action) {
             case 'add-to-cart':
@@ -140,7 +156,7 @@ class CartController extends Controller {
      * Thêm sản phẩm vào giỏ hàng (AJAX)
      * POST /ajax/cart/add
      */
-    public function add($request) {
+    public function add(Request $request) {
         $id_sp      = (int) $request->input('id_sp', 0);
         $id_bienthe = (int) $request->input('id_bienthe', $request->input('thuoctinh', 0));
         $so_luong   = max(1, (int) $request->input('so_luong', 1));
@@ -149,7 +165,7 @@ class CartController extends Controller {
             return Response::json(['success' => false, 'message' => 'Thiếu ID sản phẩm'], 400);
         }
 
-        $row_sp = \ProductModel::where('id_code', $id_sp)->first();
+        $row_sp = ProductModel::where('id_code', $id_sp)->first();
         if (!$row_sp) {
             return Response::json(['success' => false, 'message' => 'Sản phẩm không tồn tại'], 404);
         }
@@ -159,17 +175,17 @@ class CartController extends Controller {
         $hinh_anh       = $row_sp->hinh_anh;
 
         if ($id_bienthe) {
-            $row_bienthe = \ProductVariantModel::where('id', $id_bienthe)->first();
+            $row_bienthe = ProductVariantModel::where('id', $id_bienthe)->first();
             if ($row_bienthe) {
                 $gia = $row_bienthe->khuyen_mai > 0 ? $row_bienthe->khuyen_mai : $row_bienthe->gia;
                 if ($row_bienthe->hinh_anh) $hinh_anh = $row_bienthe->hinh_anh;
 
                 // Lấy tên thuộc tính ghép lại (vd: Màu sắc: Đỏ - Size: M)
-                $attrs = \ProductVariantAttributeModel::where('id_bienthe', $id_bienthe)->get();
+                $attrs = ProductVariantAttributeModel::where('id_bienthe', $id_bienthe)->get();
                 $attr_texts = [];
                 foreach ($attrs as $attr) {
-                    $attrName = \AttributeModel::where('id_code', $attr->id_thuoctinh)->first();
-                    $valName  = \AttributeValueModel::where('id_code', $attr->id_thuoctinh_giatri)->first();
+                    $attrName = AttributeModel::where('id_code', $attr->id_thuoctinh)->first();
+                    $valName  = AttributeValueModel::where('id_code', $attr->id_thuoctinh_giatri)->first();
                     if ($attrName && $valName) {
                         $attr_texts[] = ($attrName->ten ?: '') . ': ' . ($valName->ten ?: $valName->gia_tri ?: '');
                     }
@@ -207,7 +223,7 @@ class CartController extends Controller {
      * Cập nhật số lượng sản phẩm (AJAX)
      * POST /ajax/cart/update
      */
-    public function update($request) {
+    public function update(Request $request) {
         $key_cart  = $request->input('key_cart', '');
         $so_luong  = max(1, (int) $request->input('so_luong', 1));
 
@@ -222,7 +238,7 @@ class CartController extends Controller {
      * Xóa sản phẩm khỏi giỏ (AJAX)
      * POST /ajax/cart/remove
      */
-    public function remove($request) {
+    public function remove(Request $request) {
         $key_cart = $request->input('key_cart', '');
 
         if ($key_cart && isset($_SESSION['cart'][$key_cart])) {
@@ -237,7 +253,7 @@ class CartController extends Controller {
      * Áp dụng mã giảm giá (AJAX)
      * POST /ajax/cart/coupon
      */
-    public function applyCoupon($request) {
+    public function applyCoupon(Request $request) {
         $ma_sale  = trim($request->input('ma_sale', ''));
         $tongdong = (float) $request->input('tong_dong', 0);
         $phiship  = (float) $request->input('phi_ship', 0);
@@ -246,7 +262,7 @@ class CartController extends Controller {
             return Response::json(['success' => false, 'message' => 'Vui lòng nhập mã giảm giá']);
         }
 
-        $row_sale = \CouponModel::where('ma', $ma_sale)->first();
+        $row_sale = CouponModel::where('ma', $ma_sale)->first();
         $res      = ['success' => false, 'message' => ''];
 
         if (!$row_sale) {
@@ -266,7 +282,7 @@ class CartController extends Controller {
             // Nếu mã giảm phí ship mà chưa chọn địa chỉ (phiship=0), dùng giá trị mặc định tạm thời
             $is_estimated = false;
             if ($row_sale->loai == 1 && $phiship <= 0) {
-                $setting = \SettingModel::first();
+                $setting = SettingModel::first();
                 $phiship      = (float) ($setting->default_ship_phi ?? 30000);
                 $is_estimated = true;
             }
@@ -306,7 +322,7 @@ class CartController extends Controller {
      * Xóa mã giảm giá đang áp dụng (AJAX)
      * POST /ajax/cart/coupon/remove
      */
-    public function removeCoupon($request) {
+    public function removeCoupon(Request $request) {
         unset($_SESSION['ma_sale'], $_SESSION['giatri_sale'], $_SESSION['phi_sale']);
         return Response::json(['success' => true]);
     }
@@ -315,11 +331,11 @@ class CartController extends Controller {
      * Lấy danh sách mã giảm giá hợp lệ (AJAX)
      * POST /ajax/cart/coupons
      */
-    public function getCoupons($request) {
+    public function getCoupons(Request $request) {
         $now      = date('Y-m-d');
         $tong_don = (float) $request->input('tong_don', 0);
 
-        $coupons = \CouponModel::where('hien_thi', 1)->get();
+        $coupons = CouponModel::where('hien_thi', 1)->get();
 
         // Lọc theo ngày và điều kiện đơn hàng
         $valid = array_filter((array) $coupons, function($c) use ($now, $tong_don) {
@@ -335,7 +351,7 @@ class CartController extends Controller {
      * Tính phí vận chuyển (AJAX)
      * POST /ajax/cart/shipping-fee (hoặc qua legacy)
      */
-    public function shippingFee($request) {
+    public function shippingFee(Request $request) {
         $code_tinh = trim($request->input('code_tinh', ''));
         $tong_don  = (float) $request->input('tong_don', 0);
 
@@ -344,7 +360,7 @@ class CartController extends Controller {
         }
 
         // Logic tính phí ship mẫu
-        $setting = \SettingModel::first();
+        $setting = SettingModel::first();
         $phi_ship = (float) ($setting->default_ship_phi ?? 30000);
         
         // Có thể áp dụng các bảng phí ship cụ thể theo tỉnh nếu có \ShippingFeeModel
@@ -357,7 +373,7 @@ class CartController extends Controller {
         // Nếu đang có mã giảm giá áp dụng, cập nhật lại số tiền giảm vì phí ship đã thay đổi
         if (!empty($_SESSION['ma_sale'])) {
             $ma_sale = $_SESSION['ma_sale'];
-            $row_sale = \CouponModel::where('ma', $ma_sale)->first();
+            $row_sale = CouponModel::where('ma', $ma_sale)->first();
             if ($row_sale) {
                 if ($row_sale->don_vi == 1) { // %
                     $price_sale = ($row_sale->loai == 0)

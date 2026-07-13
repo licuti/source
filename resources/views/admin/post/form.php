@@ -39,10 +39,10 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
                                 ]
                             ]) ?>
                             
-                            <?php $isAutoSlug = empty($item['alias']) ? 'auto-slug' : ''; ?>
+                            <?php $isAutoSlug = empty($item['slug']) ? 'auto-slug' : ''; ?>
                             <?= view('admin.components.input', [
-                                'name' => "alias",
-                                'value' => $item['alias'] ?? '',
+                                'name' => "slug",
+                                'value' => $item['slug'] ?? '',
                                 'label' => 'Đường dẫn thân thiện (Alias / Slug)',
                                 'attrs' => [
                                     'placeholder' => 'tu-dong-tao-neu-de-trong',

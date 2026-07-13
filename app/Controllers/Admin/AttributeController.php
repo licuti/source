@@ -37,7 +37,7 @@ class AttributeController extends BaseAdminController {
      * Mở form thêm mới
      */
     public function create(Request $request) {
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $langs = $this->langs;
         
         $data_type_variation = [
             'select' => 'Lựa chọn (Select)',
@@ -59,13 +59,13 @@ class AttributeController extends BaseAdminController {
      */
     public function edit(Request $request, $id) {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $langs = $this->langs;
         
         $cfCode = CfCodeModel::query()->where('id', $id)->first();
         if (!$cfCode) return $this->redirect(route('admin.attribute.index'));
         
         $attrQuery = AttributeModel::query();
-        $attrQuery->use_lang = false; // Fetch all translations
+        $attrQuery->withoutGlobalScope('lang'); // Fetch all translations
         $translations = $attrQuery->where('id_code', $id)->get();
         
         // Chuyển hóa dữ liệu để render lên form
@@ -90,7 +90,7 @@ class AttributeController extends BaseAdminController {
         
         // Lấy danh sách Giá trị thuộc tính (Values)
         $valQuery = AttributeValueModel::query();
-        $valQuery->use_lang = false;
+        $valQuery->withoutGlobalScope('lang');
         $allValues = $valQuery->where('attribute_id', $id)->orderBy('id', 'ASC')->get();
         
         // Nhóm value theo id_code để đưa vào Repeater
@@ -141,7 +141,7 @@ class AttributeController extends BaseAdminController {
         ]);
 
         if ($id_code) {
-            $langs = config('lang', [['code' => 'vi']]);
+            $langs = $this->langs;
             
             // 2. Lưu Attribute bản dịch
             foreach ($langs as $l) {
@@ -187,11 +187,11 @@ class AttributeController extends BaseAdminController {
         ]);
 
         // 2. Cập nhật hoặc tạo mới bản dịch Thuộc tính
-        $langs = config('lang', [['code' => 'vi']]);
+        $langs = $this->langs;
         foreach ($langs as $l) {
             $c = $l['code'];
             $attrQuery = AttributeModel::query();
-            $attrQuery->use_lang = false;
+            $attrQuery->withoutGlobalScope('lang');
             $exists = $attrQuery->where('id_code', $id)->where('lang', $c)->first();
             
             $data = [
@@ -204,7 +204,7 @@ class AttributeController extends BaseAdminController {
             
             if ($exists) {
                 $uQ = AttributeModel::query();
-                $uQ->use_lang = false;
+                $uQ->withoutGlobalScope('lang');
                 $uQ->where('id', $exists->id)->update($data);
             } else {
                 $data['id_code'] = $id;
@@ -223,7 +223,7 @@ class AttributeController extends BaseAdminController {
     /**
      * Hàm dùng chung xử lý lưu Giá trị thuộc tính (Repeater)
      */
-    private function saveValues($request, $attribute_id, $langs, $isUpdate = false) {
+    private function saveValues(Request $request, $attribute_id, $langs, $isUpdate = false) {
         $val_id_codes = $request->input('val_id_code', []);
         $val_gia_tri = $request->input('val_gia_tri', []);
         $val_title = $request->input('val_title', []); // Mảng đa chiều: val_title[lang][index]
@@ -249,11 +249,11 @@ class AttributeController extends BaseAdminController {
                     $t = $val_title[$c][$index] ?? '';
                     
                     $vq = AttributeValueModel::query();
-                    $vq->use_lang = false;
+                    $vq->withoutGlobalScope('lang');
                     $exists = $vq->where('id_code', $v_id_code)->where('lang', $c)->first();
                     if ($exists) {
                         $u = AttributeValueModel::query();
-                        $u->use_lang = false;
+                        $u->withoutGlobalScope('lang');
                         $u->where('id', $exists->id)->update([
                             'title' => $t,
                             'gia_tri' => $gia_tri
@@ -297,7 +297,7 @@ class AttributeController extends BaseAdminController {
         // 4. Nếu là Update, xóa những giá trị cũ bị xóa khỏi DOM
         if ($isUpdate) {
             $valQuery = AttributeValueModel::query();
-            $valQuery->use_lang = false;
+            $valQuery->withoutGlobalScope('lang');
             $allOldValues = $valQuery->where('attribute_id', $attribute_id)->get();
             $old_id_codes = array_unique(array_column($allOldValues, 'id_code'));
             
@@ -306,11 +306,11 @@ class AttributeController extends BaseAdminController {
                 $inQuery = implode(',', $deleted_id_codes);
                 // Xóa trong bảng dịch
                 $delQ = AttributeValueModel::query();
-                $delQ->use_lang = false;
+                $delQ->withoutGlobalScope('lang');
                 $delQ->whereIn('id_code', $deleted_id_codes)->delete(); // Chú ý: Cần verify method whereIn có chạy tốt trong Model ko, nếu ko thì dùng PDO RAW
                 
                 // Vì Model base có thể không hỗ trợ whereIn hoàn chỉnh, an toàn nhất là lặp qua để xóa
-                $pdo = \App\Core\Model::$pdo;
+                $pdo = \App\Core\Database\Model::$pdo;
                 $pdo->exec("DELETE FROM #_thuoctinh_giatri WHERE id_code IN ($inQuery)");
                 $pdo->exec("DELETE FROM cf_code WHERE id IN ($inQuery)");
             }
@@ -329,13 +329,13 @@ class AttributeController extends BaseAdminController {
         
         // Lấy danh sách Values để xóa
         $valQuery = AttributeValueModel::query();
-        $valQuery->use_lang = false;
+        $valQuery->withoutGlobalScope('lang');
         $values = $valQuery->where('attribute_id', $id)->get();
         
         $val_id_codes = array_unique(array_column($values, 'id_code'));
         if (!empty($val_id_codes)) {
             $inQuery = implode(',', $val_id_codes);
-            $pdo = \App\Core\Model::$pdo;
+            $pdo = \App\Core\Database\Model::$pdo;
             $pdo->exec("DELETE FROM #_thuoctinh_giatri WHERE attribute_id = $id");
             $pdo->exec("DELETE FROM cf_code WHERE id IN ($inQuery)");
         }

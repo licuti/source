@@ -4,8 +4,8 @@ namespace App\Models;
 /**
  * Model: MenuLocation
  */
-class MenuLocationModel extends \App\Core\Model {
+class MenuLocationModel extends \App\Core\Database\Model {
     public $table = '#_menu_locations';
-    public bool $use_lang = false;
+    
     public bool $timestamps = false;
 }

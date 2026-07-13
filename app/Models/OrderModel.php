@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-class OrderModel extends \App\Core\Model
+class OrderModel extends \App\Core\Database\Model
 {
     public $table = 'db_orders';
     public $primaryKey = 'id';
-    public bool $use_lang = false;
+    
     
     protected array $fillable = [
         'order_code',

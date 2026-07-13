@@ -234,7 +234,7 @@ class RevenueController extends BaseAdminController
             return $this->exportCsv($startDate, $endDate, $totalRevenue, $totalProfit, $totalOrdersCompleted, $topProducts);
         }
 
-        return view('admin.revenue.index', [
+        return $this->render('admin.revenue.index', [
             'date_range' => $date_range,
             'totalRevenue' => $totalRevenue,
             'totalProfit' => $totalProfit,

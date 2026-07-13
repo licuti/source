@@ -15,6 +15,7 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
 <div class="app-content">
     <div class="container-fluid">
         <form action="<?= $action ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="row">
                 <!-- Cột Trái: Đa Ngôn Ngữ -->
                 <div class="col-md-9">
@@ -38,7 +39,10 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
                                     
                                     <div class="mb-3">
                                         <label class="form-label fw-bold">Tên danh mục <span class="text-danger">*</span></label>
-                                        <input type="text" name="title[<?= $c ?>]" class="form-control form-control-sm" placeholder="Nhập tên..." value="<?= htmlspecialchars($item['title'][$c] ?? '') ?>" data-slug-source="<?= $c ?>" required>
+                                        <input type="text" name="title[<?= $c ?>]" class="form-control form-control-sm <?= errors('title.'.$c) ? 'is-invalid' : '' ?>" placeholder="Nhập tên..." value="<?= htmlspecialchars(old('title.'.$c, $item['title'][$c] ?? '')) ?>" data-slug-source="<?= $c ?>">
+                                        <?php if(errors('title.'.$c)): ?>
+                                            <div class="invalid-feedback"><?= errors('title.'.$c) ?></div>
+                                        <?php endif; ?>
                                     </div>
                                     
                                     <div class="mb-3">
@@ -106,10 +110,13 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
                             
                             <div class="mb-3">
                                 <label class="form-label">Danh mục cha</label>
-                                <select name="parent_id" class="form-select form-select-sm">
+                                <select name="parent_id" class="form-select form-select-sm <?= errors('parent_id') ? 'is-invalid' : '' ?>">
                                     <option value="0">--- Trở thành Danh mục gốc ---</option>
-                                    <?php renderCategoryTree($parentCategories ?? [], $item['parent_id'] ?? 0, $item['id'] ?? 0); ?>
+                                    <?php renderCategoryTree($parentCategories ?? [], old('parent_id', $item['parent_id'] ?? 0), $item['id'] ?? 0); ?>
                                 </select>
+                                <?php if(errors('parent_id')): ?>
+                                    <div class="invalid-feedback"><?= errors('parent_id') ?></div>
+                                <?php endif; ?>
                             </div>
 
                             <div class="mb-3">

@@ -32,7 +32,7 @@ if ($canAdd) {
                     <div class="d-flex align-items-center flex-wrap gap-2">
                         <select id="bulkActionSelect" class="form-select form-select-sm w-auto">
                             <option value="">Hành động hàng loạt</option>
-                            <option value="delete" data-url="<?= route('admin.post.destroy_multiple') ?>" data-confirm="Bạn có chắc chắn muốn xóa các bài viết đã chọn?">
+                            <option value="delete" data-url="<?= route('admin.post.bulkDeleteAjax') ?>" data-confirm="Bạn có chắc chắn muốn xóa các bài viết đã chọn?">
                                 Xóa
                             </option>
                         </select>
@@ -103,7 +103,7 @@ if ($canAdd) {
                                     $rowCanEdit = $canEdit && ($isAdmin || $item->created_by == $user->id);
                                     $rowCanDelete = $canDelete && ($isAdmin || $item->created_by == $user->id);
                                     ?>
-                                    <tr class="wp-row">
+                                    <tr id="row-<?= $item->id_code ?>" class="wp-row">
                                         <td scope="row" class="text-center align-middle">
                                             <?php if ($rowCanDelete): ?>
                                             <div class="form-check d-flex justify-content-center mb-0">
@@ -141,9 +141,9 @@ if ($canAdd) {
                                             if ($rowCanDelete) {
                                                 $actions['delete'] = [
                                                     'label' => 'Xóa', 
-                                                    'url' => route('admin.post.destroy', ['id' => $item->id_code]), 
-                                                    'class' => 'text-danger', 
-                                                    'attributes' => 'onclick="return confirm(\'Bạn có chắc chắn muốn xóa bài viết này?\')"'
+                                                    'url' => 'javascript:void(0)', 
+                                                    'class' => 'text-danger btn-delete', 
+                                                    'attributes' => 'data-id="' . $item->id_code . '"'
                                                 ];
                                             }
                                             if (!empty($actions)) {
@@ -237,3 +237,32 @@ if ($canAdd) {
         </div>
     </div>
 </div>
+
+<script>
+$(document).ready(function() {
+    $('.btn-delete').click(function(e) {
+        e.preventDefault();
+        let id = $(this).data('id');
+        let row = $('#row-' + id);
+        
+        AppNotify.confirm('Bạn có chắc chắn muốn xóa bài viết này và toàn bộ các bản dịch liên quan?', function() {
+            $.ajax({
+                url: '<?= route('admin.post.destroy_ajax') ?>',
+                type: 'POST',
+                data: { id: id },
+                success: function(res) {
+                    if (res.success) {
+                        row.fadeOut(300, function() { $(this).remove(); });
+                        AppNotify.success(res.message);
+                    } else {
+                        AppNotify.error(res.message);
+                    }
+                },
+                error: function() {
+                    AppNotify.error('Có lỗi xảy ra khi xóa!');
+                }
+            });
+        });
+    });
+});
+</script>

@@ -27,7 +27,7 @@ class FlashSaleController extends BaseAdminController {
             $camp->product_count = ProductModel::where('flash_sale', $camp->id)->count();
         }
         
-        return view('admin.flash_sale.campaign_list', compact('campaigns', 'keyword'));
+        return $this->render('admin.flash_sale.campaign_list', compact('campaigns', 'keyword'));
     }
     
     public function storeCampaign(Request $request) {
@@ -100,7 +100,7 @@ class FlashSaleController extends BaseAdminController {
         }
         
         $products = $query->qbPaginate(20);
-        return view('admin.flash_sale.index', compact('products', 'keyword', 'campaign'));
+        return $this->render('admin.flash_sale.index', compact('products', 'keyword', 'campaign'));
     }
     
     public function searchProductAjax(Request $request) {

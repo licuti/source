@@ -5,7 +5,7 @@
     $post_sidebar = \App\Models\PostModel::query()
         ->where('view', '>', 0)
         ->where('id', '!=', $current_id)
-        ->where('status', \App\Models\PostModel::STATUS_PUBLISH)
+        ->where('status', 1)
         ->where('lang', $_SESSION['lang'] ?? 'vi')
         ->orderBy('view', 'DESC')
         ->limit(12)
@@ -17,7 +17,7 @@
     <div class="widdget-content">
         <div class="list-post-sidebar d-flex flex-column gap-3">
             <?php foreach ($post_sidebar as $value): ?> 
-                <a href="<?= route('news.show', $value->alias) ?>" class="post-item-sidebar d-flex gap-3 text-decoration-none text-dark hover-opacity transition-300">
+                <a href="<?= route('news.show', $value->slug) ?>" class="post-item-sidebar d-flex gap-3 text-decoration-none text-dark hover-opacity transition-300">
                     <div class="thumbnail ratio ratio-4x3 rounded overflow-hidden shadow-sm" style="flex: 0 0 80px;">
                         <img src="<?= getImageUrl($value->hinh_anh) ?>" alt="<?= $value->ten ?>" class="image-cover">  
                     </div>

@@ -119,7 +119,7 @@ class ProductService {
             foreach ($langs as $l) {
                 $c = $l['code'];
                 $query = ProductModel::query();
-                $query->use_lang = false;
+                $query->withoutGlobalScope('lang');
                 $exists = $query->where('id_code', $idCode)->where('lang', $c)->first();
                 
                 $data = $this->extractLangData($inputData, $c, $categoryId, $statusVal, $createdAt, true);
@@ -127,7 +127,7 @@ class ProductService {
 
                 if ($exists) {
                     $updQuery = ProductModel::query();
-                    $updQuery->use_lang = false;
+                    $updQuery->withoutGlobalScope('lang');
                     $updQuery->where('id', $exists->id)->update($data);
                 } else {
                     $data['id_code'] = $idCode;
@@ -236,7 +236,7 @@ class ProductService {
         if ($idCode > 0) {
             $this->deleteVariants($idCode);
             $query = ProductModel::query();
-            $query->use_lang = false;
+            $query->withoutGlobalScope('lang');
             return $query->where('id_code', $idCode)->delete();
         }
         return false;
@@ -247,7 +247,7 @@ class ProductService {
      */
     public function getProductForEdit(int $idCode): ?array {
         $query = ProductModel::query();
-        $query->use_lang = false;
+        $query->withoutGlobalScope('lang');
         $translations = $query->where('id_code', $idCode)->get();
         if (count($translations) == 0) return null;
 

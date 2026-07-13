@@ -19,7 +19,7 @@ class TaxRateController extends BaseAdminController
         $taxClasses = TaxClassModel::where('lang', config('app.locale', 'vi'))->get();
         $classMap = array_column($taxClasses, 'name', 'id_code');
 
-        return view('admin.tax_rate.index', [
+        return $this->render('admin.tax_rate.index', [
             'items' => $items,
             'classMap' => $classMap,
             'title' => 'Biểu Phí Thuế'
@@ -32,7 +32,7 @@ class TaxRateController extends BaseAdminController
         $countries = LocationModel::where('type', 'country')->orderBy('name', 'ASC')->get();
         $provinces = [];
         
-        return view('admin.tax_rate.form', [
+        return $this->render('admin.tax_rate.form', [
             'title' => 'Thêm Biểu Phí Thuế',
             'taxClasses' => $taxClasses,
             'countries' => $countries,
@@ -92,7 +92,7 @@ class TaxRateController extends BaseAdminController
             $wards = LocationModel::where('type', 'ward')->where('parent_id', $item->district_id)->orderBy('name', 'ASC')->get();
         }
 
-        return view('admin.tax_rate.form', [
+        return $this->render('admin.tax_rate.form', [
             'title' => 'Sửa Biểu Phí Thuế',
             'item' => $item->toArray(),
             'taxClasses' => $taxClasses,

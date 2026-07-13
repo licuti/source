@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Core\Request;
 
 use App\Models\ProductModel;
 
@@ -13,7 +14,7 @@ class SearchController extends Controller {
     /**
      * Hiển thị kết quả tìm kiếm
      */
-    public function index($request) {
+    public function index(Request $request) {
         $keyword = trim($request->get('keyword', ''));
         $page    = max(1, (int) $request->get('page', 1));
         $limit   = 12;

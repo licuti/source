@@ -2,26 +2,28 @@
 
 namespace App\Controllers;
 
+use App\Models\ProductVariantModel;
+
+use App\Core\Request;
 use App\Models\ProductModel;
 use App\Models\CategoryModel;
 use App\Core\Response;
-
 
 class ProductController extends Controller {
     /**
      * Danh sách sản phẩm
      */
-    public function index($request) {
+    public function index(Request $request) {
         $row = $GLOBALS['row'] ?? null;
         
         // Cứu cánh: Nếu gọi qua route tĩnh (VD: /san-pham) mà chưa có $row, thử tự tìm category
         if (!$row) {
             $slug = explode('/', ltrim($request->uri, '/'))[0];
-            $row = \CategoryModel::where('alias', $slug)->first();
+            $row = CategoryModel::where('slug', $slug)->first();
             if ($row) {
                 $GLOBALS['row'] = $row;
                 // Gọi một instance của PageController để dùng lại hàm registerLanguageLinks
-                (new \App\Controllers\PageController())->registerLanguageLinks($row, $slug, \CategoryModel::class);
+                (new \App\Controllers\PageController())->registerLanguageLinks($row, $slug, CategoryModel::class);
             }
         }
 
@@ -64,7 +66,7 @@ class ProductController extends Controller {
             [$pMin, $pMax] = array_pad(explode('-', $price_range, 2), 2, 0);
             $pMin = (float)$pMin; $pMax = (float)$pMax;
             $effectivePriceSP = "IF(khuyen_mai > 0, khuyen_mai, gia)";
-            $tableVariant = \ProductVariantModel::tableName();
+            $tableVariant = ProductVariantModel::tableName();
             $variantSub = "SELECT 1 FROM $tableVariant v WHERE v.id_sanpham = id_code AND IF(v.khuyen_mai > 0, v.khuyen_mai, v.gia)";
             $noVariantCondition = "NOT EXISTS (SELECT 1 FROM $tableVariant WHERE id_sanpham = id_code)";
             
@@ -109,12 +111,12 @@ class ProductController extends Controller {
      *   1. Route tham số:  GET /san-pham/{slug}  → $request->param('slug')
      *   2. Dynamic route:  GET /ten-sp.html       → $GLOBALS['row'] (DynamicRouteController)
      */
-    public function show($request, array $params = []) {
+    public function show(Request $request, array $params = []) {
         // Ưu tiên slug từ route param (cách mới: /san-pham/{slug})
         $slug = $params['slug'] ?? $request->param('slug');
 
         if ($slug) {
-            $row = ProductModel::where('alias', $slug)->first();
+            $row = ProductModel::where('slug', $slug)->first();
         } else {
             // Fallback: slug được inject bởi DynamicRouteController (cách cũ)
             $row = $GLOBALS['row'] ?? null;
@@ -136,14 +138,14 @@ class ProductController extends Controller {
         $translations = ProductModel::where('id_code', $row->id_code)->get();
         $urls = [];
         foreach ($translations as $t) {
-            $urls[$t->lang] = route('product.show.' . $t->lang, $t->alias);
+            $urls[$t->lang] = route('product.show.' . $t->lang, $t->slug);
         }
         \App\Core\App::getInstance()->setLanguageLinks($urls);
 
         // 3. Eager Load lồng nhau (Nested Relations) cho thuộc tính của biến thể
         if (!empty($row->variants)) {
             $variants = $row->variants;
-            \ProductVariantModel::loadNestedAttributes($variants);
+            ProductVariantModel::loadNestedAttributes($variants);
             $row->variants = $variants;
         }
 
@@ -223,7 +225,7 @@ class ProductController extends Controller {
      * Xem nhanh sản phẩm qua modal (AJAX)
      * POST /ajax/product/quick-view
      */
-    public function quickView($request) {
+    public function quickView(Request $request) {
         $id = (int) $request->input('id', 0);
         if (!$id) return Response::json([]);
 
@@ -231,8 +233,8 @@ class ProductController extends Controller {
         if (!$sp) return Response::json([]);
 
         // Lấy tất cả biến thể và nạp quan hệ đệ quy (Thay cho vòng lặp N+1 cũ)
-        $variants = \ProductVariantModel::where('id_sanpham', $id)->get();
-        \ProductVariantModel::loadNestedAttributes($variants);
+        $variants = ProductVariantModel::where('id_sanpham', $id)->get();
+        ProductVariantModel::loadNestedAttributes($variants);
         $variantsArr = (array) $variants;
 
         // Gom nhóm thuộc tính + giá trị
@@ -246,7 +248,7 @@ class ProductController extends Controller {
         return Response::json([
             'id'         => $sp->id_code,
             'ten'        => $sp->ten,
-            'alias'      => $sp->alias,
+            'slug' => $sp->slug,
             'hinh_anh'   => $sp->hinh_anh,
             'mo_ta'      => $sp->mo_ta,
             'gia'        => $sp->gia,
@@ -265,7 +267,7 @@ class ProductController extends Controller {
      * Legacy endpoint cho Frontend cũ
      * POST /ajax/product/legacy
      */
-    public function legacy($request) {
+    public function legacy(Request $request) {
         $do = $request->input('do');
         switch ($do) {
             case 'live_search':
@@ -283,7 +285,7 @@ class ProductController extends Controller {
      * Tìm kiếm sản phẩm theo từ khoá (Live Search AJAX)
      * POST /ajax/product/live-search
      */
-    public function liveSearch($request) {
+    public function liveSearch(Request $request) {
         $keyword = trim($request->input('keyword', ''));
         $id_code = (int) $request->input('id_code', 0);
 
@@ -310,7 +312,7 @@ class ProductController extends Controller {
                     $old_price = '<span class="ls-old-price">' . renderPrice($p->gia) . '</span>';
                 }
 
-                $html .= '<a href="' . url($p->alias . '.html') . '" class="ls-item">'
+                $html .= '<a href="' . url($p->slug . '.html') . '" class="ls-item">'
                     . '<div class="ls-img"><img src="' . getImageUrl($p->hinh_anh) . '" alt="' . e($p->ten) . '"></div>'
                     . '<div class="ls-info">'
                     .   '<div class="ls-name">' . e($p->ten) . '</div>'
@@ -331,7 +333,7 @@ class ProductController extends Controller {
      * Lấy danh sách sản phẩm đã xem gần đây (AJAX)
      * POST /ajax/product/recently-viewed
      */
-    public function recentlyViewed($request) {
+    public function recentlyViewed(Request $request) {
         $ids = array_filter(array_map('intval', (array) $request->input('ids', [])));
         if (empty($ids)) return Response::json([]);
 

@@ -20,7 +20,7 @@ class MenuService {
         switch ($type) {
             case 'category':
                 $query = CategoryModel::query();
-                $query->use_lang = false;
+                $query->withoutGlobalScope('lang');
                 if ($lang !== 'all') $query->where('lang', $lang);
                 if ($keyword) $query->whereLike('title', $keyword);
                 
@@ -39,7 +39,7 @@ class MenuService {
 
             case 'product':
                 $query = ProductModel::query();
-                $query->use_lang = false;
+                $query->withoutGlobalScope('lang');
                 if ($lang !== 'all') $query->where('lang', $lang);
                 if ($keyword) $query->whereLike('title', $keyword);
                 
@@ -58,7 +58,7 @@ class MenuService {
 
             case 'post':
                 $query = PostModel::query();
-                $query->use_lang = false;
+                $query->withoutGlobalScope('lang');
                 if ($lang !== 'all') $query->where('lang', $lang);
                 if ($keyword) $query->whereLike('title', $keyword);
                 

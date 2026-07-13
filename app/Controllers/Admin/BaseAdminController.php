@@ -4,22 +4,47 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\Controller;
 use App\Core\Response;
+use App\Models\LanguageModel;
 
 class BaseAdminController extends Controller {
+    protected $layout = 'admin.layouts.main';
+    protected array $langs = [];
+    protected string $primaryLang = 'vi';
+
     public function __construct() {
-        // Không gọi parent::__construct() vì class cha không có
+        // Lấy danh sách ngôn ngữ kích hoạt
+        $activeLangs = LanguageModel::getActive();
+        foreach ($activeLangs as $l) {
+            $this->langs[] = ['code' => $l->code, 'name' => $l->name, 'image' => $l->image];
+        }
+        
+        // Lấy ngôn ngữ mặc định
+        $defaultLang = LanguageModel::getDefault();
+        if ($defaultLang) {
+            $this->primaryLang = $defaultLang->code;
+        } elseif (!empty($this->langs)) {
+            $this->primaryLang = $this->langs[0]['code'];
+        }
     }
 
     /**
      * Render giao diện kèm dữ liệu chung cho Admin
      */
     protected function render($view, $data = []) {
+        // Tự động inject ngôn ngữ vào View
+        if (!isset($data['langs'])) {
+            $data['langs'] = $this->langs;
+        }
+        if (!isset($data['primaryLang'])) {
+            $data['primaryLang'] = $this->primaryLang;
+        }
+
         // Có thể load các dữ liệu dùng chung cho view ở đây
         if (!isset($data['admin_user'])) {
             $data['admin_user'] = $_SESSION['name'] ?? 'Administrator';
         }
         
-        return view($view, $data);
+        return parent::render($view, $data);
     }
 
     /**

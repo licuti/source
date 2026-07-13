@@ -10,15 +10,11 @@ use App\Services\ProductService;
 class ProductController extends BaseAdminController {
     
     private ProductService $productService;
-    private array $langs;
-    private string $primaryLang;
     private int $moduleId;
 
     public function __construct() {
         parent::__construct();
         $this->productService = new ProductService();
-        $this->langs       = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
-        $this->primaryLang = config('locale', 'vi');
         $this->moduleId    = config('modules.product', 4);
     }
 
@@ -148,7 +144,7 @@ class ProductController extends BaseAdminController {
         }
 
         $query = ProductModel::query();
-        $query->use_lang = false;
+        $query->withoutGlobalScope('lang');
         $product = clone $query;
         $product = $product->where('id_code', $id)->first();
         if (!$product) {

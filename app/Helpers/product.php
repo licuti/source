@@ -88,6 +88,13 @@ if (!function_exists('renderProductPrice')) {
     }
 }
 
+if (!function_exists('getProductRating')) {
+    function getProductRating($product_id) {
+        // TODO: Implement actual rating logic
+        return ['avg' => 0, 'total' => 0];
+    }
+}
+
 if (!function_exists('renderProductStars')) {
     /**
      * Hiển thị icon sao đánh giá
@@ -151,7 +158,7 @@ if (!function_exists('renderProductCategory')) {
         if (!empty($product->category)) {
             $cat = is_array($product->category) ? (object)$product->category : $product->category;
             return '<div class="box-category mb-1">' . 
-                        '<a href="' . url($cat->alias) . '" class="text-muted text-decoration-none" style="font-size: 12px; text-transform: uppercase; font-weight: 600;">' . 
+                        '<a href="' . url($cat->slug) . '" class="text-muted text-decoration-none" style="font-size: 12px; text-transform: uppercase; font-weight: 600;">' . 
                             e($cat->ten) . 
                         '</a>' . 
                    '</div>';

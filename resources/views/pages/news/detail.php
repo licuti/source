@@ -12,7 +12,7 @@
     $related = \App\Models\PostModel::query()
         ->where('id_loai', $category->id_code)
         ->where('id_code', $row->id_code, '<>')
-        ->where('status', \App\Models\PostModel::STATUS_PUBLISH)
+        ->where('status', 1)
         ->limit(12)
         ->orderBy('so_thu_tu')
         ->orderBy('id', 'DESC')

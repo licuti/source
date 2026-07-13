@@ -1,22 +1,21 @@
 <?php
 namespace App\Controllers\Admin;
 
-use App\Models\GalleryModel;
-use App\Models\CategoryModel;
-use App\Services\GalleryService;
 use App\Core\Request;
+use App\Core\Validator;
+use App\Models\CategoryModel;
+use App\Models\GalleryModel;
+use App\Services\GalleryService;
 
 class GalleryController extends BaseAdminController {
     
     private GalleryService $galleryService;
-    private array $langs;
-    private string $primaryLang;
+    private int $moduleId;
     
     public function __construct() {
         parent::__construct();
         $this->galleryService = new GalleryService();
-        $this->langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
-        $this->primaryLang = config('locale', 'vi');
+        $this->moduleId = config('modules.album', 15);
     }
     
     public function index(Request $request) {
@@ -63,7 +62,7 @@ class GalleryController extends BaseAdminController {
         
         $langs = $this->langs;
         $categories = $this->getCategories();
-        return view('admin.gallery.index', compact('albums', 'keyword', 'currentLang', 'langs', 'translations', 'categories', 'categoryId'));
+        return $this->render('admin.gallery.index', compact('albums', 'keyword', 'currentLang', 'langs', 'translations', 'categories', 'categoryId'));
     }
     
     public function create(Request $request) {
@@ -71,10 +70,7 @@ class GalleryController extends BaseAdminController {
     }
     
     private function getCategories() {
-        return CategoryModel::where('status', 1)
-            ->where('module', config('modules.album', 15))
-            ->orderBy('sort_order', 'asc')
-            ->get();
+        return CategoryModel::getTreeForAdminByModule($this->moduleId);
     }
     
     public function edit(Request $request, $id) {
@@ -141,10 +137,14 @@ class GalleryController extends BaseAdminController {
             }
         }
         
-        return view('admin.gallery.form', compact('langs', 'categories', 'langCode', 'item', 'translations', 'currentLangName'));
+        return $this->render('admin.gallery.form', compact('langs', 'categories', 'langCode', 'item', 'translations', 'currentLangName'));
     }
     
     public function store(Request $request) {
+        if (!$this->validateGallery($request)) {
+            return $this->redirectBack();
+        }
+
         $modelId = $this->galleryService->saveGallery($request->all(), user()->id);
         
         session('success', 'Đã lưu Album thành công!');
@@ -159,6 +159,10 @@ class GalleryController extends BaseAdminController {
         if (!$this->canModify($firstGallery)) {
             session('error', 'Bạn không có quyền chỉnh sửa Album này!');
             return $this->redirect(route('admin.gallery.index'));
+        }
+
+        if (!$this->validateGallery($request)) {
+            return $this->redirectBack();
         }
 
         $inputData = $request->all();
@@ -177,31 +181,49 @@ class GalleryController extends BaseAdminController {
         return $this->redirect(route('admin.gallery.index'));
     }
 
+    /**
+     * Validation dùng chung cho Store và Update
+     */
+    private function validateGallery(Request $request): bool {
+        $validator = new Validator($request->all(), [
+            "title" => 'required|max:255'
+        ], [
+            "title.required" => 'Vui lòng nhập Tên Album.',
+            "title.max"      => 'Tên Album không được vượt quá 255 ký tự.'
+        ]);
+
+        if ($validator->fails()) {
+            session('error', $validator->firstError());
+            return false;
+        }
+        return true;
+    }
+
     public function destroyAjax(Request $request) {
         $id = $request->input('id');
         $album = GalleryModel::adminQuery()->qbFind($id);
         
         if (!$album) {
-            return response()->json(['success' => false, 'message' => 'Không tìm thấy Album!']);
+            return $this->jsonError('Không tìm thấy Album!');
         }
         
         if (!$this->canModify($album)) {
-            return response()->json(['success' => false, 'message' => 'Bạn không có quyền xóa Album này!']);
+            return $this->jsonError('Bạn không có quyền xóa Album này!');
         }
 
-        GalleryModel::adminQuery()->where('id_code', $album->id_code)->delete();
-        return response()->json(['success' => true, 'message' => 'Đã xóa Album thành công!']);
+        $this->galleryService->deleteGallery($album->id_code);
+        return $this->jsonSuccess('Đã xóa Album thành công!');
     }
 
     public function bulkDeleteAjax(Request $request) {
         $ids = $request->input('ids', []);
         if (empty($ids) || !is_array($ids)) {
-            return response()->json(['success' => false, 'message' => 'Không có mục nào được chọn!']);
+            return $this->jsonError('Không có mục nào được chọn!');
         }
         
         $albums = GalleryModel::adminQuery()->whereIn('id', $ids)->get();
         if (count($albums) === 0) {
-            return response()->json(['success' => false, 'message' => 'Không tìm thấy mục nào để xóa!']);
+            return $this->jsonError('Không tìm thấy mục nào để xóa!');
         }
         
         $idCodes = [];
@@ -218,17 +240,17 @@ class GalleryController extends BaseAdminController {
         $idCodes = array_unique($idCodes);
         
         if (empty($idCodes)) {
-            return response()->json(['success' => false, 'message' => 'Bạn không có quyền xóa các mục đã chọn!']);
+            return $this->jsonError('Bạn không có quyền xóa các mục đã chọn!');
         }
         
-        GalleryModel::adminQuery()->whereIn('id_code', $idCodes)->delete();
+        $this->galleryService->deleteGallery($idCodes); // Works because whereIn accepts array
         
         $msg = 'Đã xóa ' . count($idCodes) . ' Album và các bản dịch thành công!';
         if ($unauthorizedCount > 0) {
             $msg .= " Đã bỏ qua $unauthorizedCount mục do không có quyền.";
         }
         
-        return response()->json(['success' => true, 'message' => $msg]);
+        return $this->jsonSuccess($msg);
     }
 
     public function updateStatusAjax(Request $request) {
@@ -251,9 +273,6 @@ class GalleryController extends BaseAdminController {
             ->where('id_code', $album->id_code)
             ->update([$field => $value]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Cập nhật trạng thái thành công!'
-        ]);
+        return $this->jsonSuccess('Cập nhật trạng thái thành công!');
     }
 }

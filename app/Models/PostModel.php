@@ -1,7 +1,8 @@
 <?php
 namespace App\Models;
 
-class PostModel extends \App\Core\Model {
+class PostModel extends \App\Core\Database\Model {
+    use \App\Traits\HasLanguage;
     public $table = '#_posts';
 
     // db_posts dùng chuẩn tên tiếng Anh
@@ -21,7 +22,7 @@ class PostModel extends \App\Core\Model {
      */
     public static function adminQuery() {
         $query = static::query();
-        $query->use_lang = false;
+        $query->withoutGlobalScope('lang');
         return $query;
     }
 

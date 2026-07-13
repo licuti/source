@@ -41,7 +41,7 @@ class SitemapController extends BaseAdminController {
         $robotsPath = public_path('robots.txt');
         $robotsContent = file_exists($robotsPath) ? file_get_contents($robotsPath) : '';
         
-        return view('admin.sitemap.index', compact('settings', 'sitemapUrl', 'robotsContent'));
+        return $this->render('admin.sitemap.index', compact('settings', 'sitemapUrl', 'robotsContent'));
     }
     
     public function save(Request $request) {

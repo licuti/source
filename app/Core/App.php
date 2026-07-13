@@ -8,15 +8,22 @@ namespace App\Core;
  */
 class App {
     protected static $instance;
+    public $container;
     public $request;
     public $router;
     public $view;
     protected $languageLinks = [];
 
     protected function __construct() {
+        $this->container = new Container();
         $this->request = new Request();
-        $this->router  = new Router($this->request);
+        $this->router  = new Router($this->request, $this->container);
         $this->view    = new View();
+        
+        // Bind core instances
+        $this->container->singleton(Container::class, clone $this->container);
+        $this->container->singleton(Request::class, clone $this->request);
+        $this->container->singleton(Router::class, clone $this->router);
     }
 
     public static function getInstance() {
@@ -47,13 +54,33 @@ class App {
         // 2. Output Buffering (Nên giữ lại ở đây để bảo vệ Header toàn cục)
         ob_start();
 
+        // 2.5 Config Loader
+        $basePath = dirname(dirname(dirname(__FILE__)));
+        $configItems = array_merge(
+            [
+                'database'           => include $basePath . '/config/database.php',
+                'lang'               => include $basePath . '/config/languages.php',
+                'route_translations' => include $basePath . '/config/route_translations.php',
+                'modules'            => include $basePath . '/config/modules.php',
+            ],
+            include $basePath . '/config/app.php'
+        );
+        $this->container->singleton('config', function() use ($configItems) {
+            return new \App\Core\Config\Repository($configItems);
+        });
+
         // 3. Database & Model Booting
-        \App\Core\Model::boot(config('database'));
+        $dbConfig = config('database');
+        $this->container->singleton(\App\Core\Database\Connection::class, function($c) use ($dbConfig) {
+            return new \App\Core\Database\Connection($dbConfig);
+        });
+        
+        \App\Core\Database\Model::boot($dbConfig);
+        \App\Core\Database\Model::setContainer($this->container);
 
-        // 4. Boot SiteInfoService — define các hằng số legacy (_logo, _favicon, v.v.)
-        $this->bootSiteConstants();
+        // 4. (Đã gỡ bỏ: bootSiteConstants không còn nằm trong Core để đảm bảo chuẩn Laravel)
 
-        // 4b. Tự động xác định com từ Request URI và đặt vào $GLOBALS['com'] làm fallback
+        // 5. Tự động xác định com từ Request URI và đặt vào $GLOBALS['com'] làm fallback
         if (empty($GLOBALS['com'])) {
             $uri = trim($this->request->uri, '/');
             $segments = explode('/', $uri);
@@ -65,6 +92,7 @@ class App {
         // 5. Đăng ký các Middleware toàn cục (Global Middlewares)
         // Lưu ý: StartSession nên chạy đầu tiên để các middleware sau có Session dùng
         $this->router->pushMiddleware(\App\Middleware\StartSession::class);
+        $this->router->pushMiddleware(\App\Middleware\CsrfMiddleware::class);
         $this->router->pushMiddleware(\App\Middleware\LanguageMiddleware::class);
         $this->router->pushMiddleware(\App\Middleware\MaintenanceMiddleware::class);
         // Middleware bảo vệ mật khẩu toàn trang (nếu được bật trong config)
@@ -78,64 +106,7 @@ class App {
         // 6. Load Routing System
         $this->loadRoutes();
 
-        Logger::info("App kernel booted in modern mode.");
-    }
-
-    /**
-     * Define các hằng số legacy (_logo, _favicon ...) từ SiteInfoService.
-     * Đảm bảo các file template cũ (seo.php, header, footer...) hoạt động đúng.
-     */
-    protected function bootSiteConstants() {
-        try {
-            $info = \App\Services\SiteInfoService::getInstance();
-            $baseUrl = rtrim(config('urls.base', '/'), '/') . '/';
-
-            // Xây dựng URL hiện tại (đặt chỗ cho $d->fullAddress())
-            $currentUrl = $baseUrl . ltrim($this->request->uri, '/');
-
-            $constants = [
-                '_logo'         => $info->get('logo'),
-                '_favicon'      => $info->get('favicon'),
-                '_coppy_right'  => $info->get('coppy_right'),
-                '_website'      => $info->get('website'),
-                '_ten_cong_ty'  => $info->get('company'),
-                '_dia_chi'      => $info->get('address'),
-                '_email'        => $info->get('email'),
-                '_dien_thoai'   => $info->get('dien_thoai'),
-                '_hotline'      => $info->get('hotline'),
-                '_thoi_gian'    => $info->get('thoi_gian'),
-                '_bando'        => $info->get('map'),
-                '_link_map'     => $info->get('link_map'),
-                '_zalo'         => $info->get('zalo'),
-                '_messenger'    => $info->get('messenger'),
-                '_skype'        => $info->get('skype'),
-                '_facebook'     => $info->get('facebook'),
-                '_twitter'      => $info->get('twitter'),
-                '_linkedin'     => $info->get('linkedin'),
-                '_youtube'      => $info->get('youtube'),
-                '_pinterest'    => $info->get('pinterest'),
-                '_instagram'    => $info->get('instagram'),
-                '_telegram'     => $info->get('telegram'),
-                '_whatsapp'     => $info->get('whatsapp'),
-                '_tiktok'       => $info->get('tiktok'),
-                '_shoppe'       => $info->get('shoppe'),
-                '_sitekey'      => $info->get('site_key'),
-                '_secretkey'    => $info->get('secret_key'),
-                '_web_page'     => $baseUrl,
-                '_url_page'     => $currentUrl,
-                'URLPATH'       => $baseUrl,
-                '_URLLANG'      => $baseUrl,
-                'LANG'          => 'vi',
-            ];
-
-            foreach ($constants as $name => $value) {
-                if (!defined($name)) {
-                    define($name, (string)$value);
-                }
-            }
-        } catch (\Exception $e) {
-            Logger::error('bootSiteConstants failed: ' . $e->getMessage());
-        }
+        (new Logger())->info("App kernel booted in modern mode.");
     }
 
     /**

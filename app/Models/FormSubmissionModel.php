@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
-class FormSubmissionModel extends \App\Core\Model {
+class FormSubmissionModel extends \App\Core\Database\Model {
     public $table = 'db_form_submissions';
-    public bool $use_lang = false;
+    
     public bool $timestamps = true;
     
     // 0: Mới, 1: Đã đọc, 2: Đã phản hồi

@@ -1,11 +1,11 @@
 <?php
 namespace App\Models;
 
-use Model;
+use App\Core\Database\Model;
 
 class UserModel extends Model {
     public $table = '#_users';
-    public bool $use_lang = false;
+    
     public bool $timestamps = false;
     protected array $hidden = ['password', 'token'];
 

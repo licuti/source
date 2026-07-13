@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Core\Request;
 
 use App\Models\PostModel;
 use App\Models\CategoryModel;
@@ -14,17 +15,17 @@ class NewsController extends Controller {
     /**
      * Danh sách tin tức (trang chuyên mục)
      */
-    public function index($request) {
+    public function index(Request $request) {
         $row   = $GLOBALS['row'] ?? null;
         
         // Cứu cánh: Nếu gọi qua route tĩnh (VD: /tin-tuc) mà chưa có $row, thử tự tìm category
         if (!$row) {
             $slug = explode('/', ltrim($request->uri, '/'))[0];
-            $row = \CategoryModel::where('alias', $slug)->first();
+            $row = CategoryModel::where('slug', $slug)->first();
             if ($row) {
                 $GLOBALS['row'] = $row;
                 // Gọi một instance của PageController để dùng lại hàm registerLanguageLinks
-                (new \App\Controllers\PageController())->registerLanguageLinks($row, $slug, \CategoryModel::class);
+                (new \App\Controllers\PageController())->registerLanguageLinks($row, $slug, CategoryModel::class);
             }
         }
 
@@ -37,7 +38,7 @@ class NewsController extends Controller {
             $categoryIds = getCategoryTreeIds($row->id_code);
         }
 
-        $query = PostModel::where('status', \App\Models\PostModel::STATUS_PUBLISH);
+        $query = PostModel::where('status', 1);
         
         if (!empty($categoryIds)) {
             $query->where('id_loai', $categoryIds, 'IN');
@@ -49,10 +50,10 @@ class NewsController extends Controller {
             ->get();
 
         if ($row) {
-            $translations = \CategoryModel::where('id_code', $row->id_code)->get();
+            $translations = CategoryModel::where('id_code', $row->id_code)->get();
             $urls = [];
             foreach ($translations as $t) {
-                $urls[$t->lang] = route('news.show.' . $t->lang, $t->alias);
+                $urls[$t->lang] = route('news.show.' . $t->lang, $t->slug);
             }
             \App\Core\App::getInstance()->setLanguageLinks($urls);
         } else {
@@ -77,7 +78,7 @@ class NewsController extends Controller {
     /**
      * Chi tiết bài viết
      */
-    public function show($request) {
+    public function show(Request $request) {
         $row = $GLOBALS['row'] ?? null;
         if (!$row) return '404';
 
@@ -90,13 +91,13 @@ class NewsController extends Controller {
         $translations = PostModel::where('id_code', $row->id_code)->get();
         $urls = [];
         foreach ($translations as $t) {
-            $urls[$t->lang] = route('news.show.' . $t->lang, $t->alias);
+            $urls[$t->lang] = route('news.show.' . $t->lang, $t->slug);
         }
         \App\Core\App::getInstance()->setLanguageLinks($urls);
 
         // Lấy bài viết liên quan
         $category = CategoryModel::where('id_code', $row->id_loai)->first();
-        $related  = PostModel::where('status', \App\Models\PostModel::STATUS_PUBLISH)
+        $related  = PostModel::where('status', 1)
             ->where('id_loai', $row->id_loai)
             ->whereRaw("tt.id != {$row->id}")
             ->orderBy('id', 'DESC')

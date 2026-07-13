@@ -20,5 +20,15 @@ register_shutdown_function(function () {
 
 // Initialize and Run the Application
 $app = App::getInstance();
+
+// Bind Translator Interface
+$app->container->singleton(\App\Core\Contracts\TranslatorInterface::class, function() {
+    return new class implements \App\Core\Contracts\TranslatorInterface {
+        public function translate(string $key): string {
+            return \App\Models\TextModel::translate($key);
+        }
+    };
+});
+
 $app->boot();
 $app->run();

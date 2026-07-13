@@ -2,6 +2,10 @@
 
 namespace App\Controllers;
 
+use App\Models\SettingModel;
+
+use App\Core\Request;
+
 /**
  * CheckoutController
  * Xử lý trang thanh toán.
@@ -10,7 +14,7 @@ class CheckoutController extends Controller {
     /**
      * Hiển thị trang thanh toán
      */
-    public function index($request) {
+    public function index(Request $request) {
         // Đăng ký URL dịch
         $translations = \App\Models\PageModel::where('view', 'pages/cart/checkout')->get();
         $urls = [];
@@ -33,7 +37,7 @@ class CheckoutController extends Controller {
         }
 
         // Fetch Tax Settings
-        $setting_vat = (new \SettingModel())->getAll();
+        $setting_vat = (new SettingModel())->getAll();
         $vat_rate = (double)($setting_vat['vat_rate'] ?? 0);
         $vat_type = (int)($setting_vat['vat_type'] ?? 0);
 
@@ -50,7 +54,7 @@ class CheckoutController extends Controller {
             $so_luong = (int)$value['so_luong'];
             $tong_tam_tinh += $gia_sp * $so_luong;
 
-            $url_sp = route('product.show', $r_sp['alias']);
+            $url_sp = route('product.show', $r_sp['slug']);
             
             if (!empty($value['thuoctinh']) && (int)$value['thuoctinh'] > 0) {
                 $id_bienthe = (int)$value['thuoctinh'];
@@ -95,7 +99,7 @@ class CheckoutController extends Controller {
                 $temp_phiship = $phi_ship;
                 // Nếu giảm phí ship mà chưa có phí ship (đang = 0), lấy phí mặc định làm tạm tính
                 if ($row_sale['loai'] == 1 && $phi_ship <= 0) {
-                    $setting_ship = (new \SettingModel())->getAll();
+                    $setting_ship = (new SettingModel())->getAll();
                     $temp_phiship = (float)($setting_ship['default_ship_phi'] ?? 30000);
                 }
                 
@@ -145,7 +149,7 @@ class CheckoutController extends Controller {
         ]);
     }
 
-    public function store($request) {
+    public function store(Request $request) {
         global $d;
 
         // Nếu giỏ hàng rỗng -> redirect về trang giỏ hàng
@@ -162,7 +166,7 @@ class CheckoutController extends Controller {
         }
 
         // Fetch Tax Settings
-        $setting_vat = (new \SettingModel())->getAll();
+        $setting_vat = (new SettingModel())->getAll();
         $vat_rate = (double)($setting_vat['vat_rate'] ?? 0);
         $vat_type = (int)($setting_vat['vat_type'] ?? 0);
 

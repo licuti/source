@@ -2,6 +2,9 @@
 
 namespace App\Controllers;
 
+use App\Models\UserModel;
+
+use App\Core\Request;
 
 use App\Core\Response;
 
@@ -13,7 +16,7 @@ class AuthController extends Controller {
     /**
      * Hiển thị trang đăng nhập
      */
-    public function login($request) {
+    public function login(Request $request) {
         // Nếu đã đăng nhập → chuyển về trang thành viên
         if (!empty($_SESSION['user_id'])) {
             header('Location: ' . url('thanh-vien.html'));
@@ -28,7 +31,7 @@ class AuthController extends Controller {
     /**
      * Xử lý form đăng nhập (POST)
      */
-    public function loginPost($request) {
+    public function loginPost(Request $request) {
         $email    = trim($request->input('email', ''));
         $password = $request->input('password', '');
 
@@ -40,7 +43,7 @@ class AuthController extends Controller {
             ]);
         }
 
-        $user = \UserModel::where('email', $email)->first();
+        $user = UserModel::where('email', $email)->first();
 
         if (!$user || !password_verify($password, $user->password ?? '')) {
             return view('pages/auth/login', [
@@ -62,7 +65,7 @@ class AuthController extends Controller {
     /**
      * Hiển thị trang đăng ký
      */
-    public function register($request) {
+    public function register(Request $request) {
         if (!empty($_SESSION['user_id'])) {
             header('Location: ' . url('thanh-vien.html'));
             exit;
@@ -76,7 +79,7 @@ class AuthController extends Controller {
     /**
      * Đăng xuất
      */
-    public function logout($request) {
+    public function logout(Request $request) {
         // Xóa toàn bộ session data liên quan đến user
         unset(
             $_SESSION['user_id'],
@@ -91,7 +94,7 @@ class AuthController extends Controller {
     /**
      * Hiển thị trang quên mật khẩu
      */
-    public function forgotPassword($request) {
+    public function forgotPassword(Request $request) {
         return view('pages/auth/forgot-password', [
             'title' => 'Quên mật khẩu'
         ]);

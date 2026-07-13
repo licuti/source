@@ -2,6 +2,10 @@
 
 namespace App\Controllers;
 
+use App\Models\CategoryModel;
+
+use App\Core\Request;
+
 use App\Core\Response;
 use App\Models\PageModel;
 
@@ -38,7 +42,7 @@ class PageController extends Controller {
     /**
      * Smart dispatch: xá»­ lÃ½ má»i /{slug} request
      */
-    public function dispatch($request, array $params = []) {
+    public function dispatch(Request $request, array $params = []) {
         $slug = $params['slug'] ?? $request->param('slug') ?? '';
 
         if (!$slug) {
@@ -46,10 +50,10 @@ class PageController extends Controller {
         }
 
         // 1. Cá»©u cÃ¡nh cho danh má»¥c (VD: /ao-khoac)
-        $category = \CategoryModel::where('alias', $slug)->first();
+        $category = CategoryModel::where('slug', $slug)->first();
         if ($category) {
             $GLOBALS['row'] = $category;
-            $this->registerLanguageLinks($category, $slug, \CategoryModel::class);
+            $this->registerLanguageLinks($category, $slug, CategoryModel::class);
             
             // Dispatch tá»›i Ä‘Ãºng Controller dá»±a vÃ o module
             if ($category->module == config('modules.product')) {
@@ -62,7 +66,7 @@ class PageController extends Controller {
         }
 
         // 2. Tra cá»©u db_page
-        $page = PageModel::where('alias', $slug)->first();
+        $page = PageModel::where('slug', $slug)->first();
 
         if (!$page) {
             return new Response(view('pages/404', ['com' => $slug]), 404);
@@ -95,23 +99,20 @@ class PageController extends Controller {
     /**
      * Forward request sang Controller khÃ¡c
      */
-    private function forwardTo(string $class, string $method, $request, array $params) {
+    private function forwardTo(string $class, string $method, Request $request, array $params) {
         $controller = new $class();
         $result = $controller->$method($request, $params);
         return ($result instanceof Response) ? $result : new Response($result);
     }
 
     /**
-     * ÄÄƒng kÃ½ language links dá»±a trÃªn id_code cá»§a trang/danh má»¥c
+     * Ä Äƒng kÃ½ language links dá»±a trÃªn id_code cá»§a trang/danh má»¥c
      */
     public function registerLanguageLinks($page, string $fallbackSlug, string $modelClass) {
         if (empty($page->id_code)) return;
 
-        // Láº¥y táº¥t cáº£ ngÃ´n ngá»¯ cá»§a trang nÃ y â€” táº¯t lang constraint táº¡m thá»i
-        $prevConstraint = \App\Core\Model::getGlobalConstraint();
-        \App\Core\Model::setGlobalConstraint('');
+        // Láº¥y táº¥t cáº£ ngÃ´n ngá»¯ cá»§a trang nÃ y
         $allTranslations = $modelClass::where('id_code', $page->id_code)->get();
-        \App\Core\Model::setGlobalConstraint($prevConstraint);
 
         if (empty($allTranslations)) return;
 
@@ -119,7 +120,7 @@ class PageController extends Controller {
         $defaultLang = 'vi';
         foreach ($allTranslations as $t) {
             $langCode = $t->lang ?? $defaultLang;
-            $slug     = $t->alias ?? $fallbackSlug;
+            $slug     = $t->slug ?? $fallbackSlug;
             // Trang CMS dÃ¹ng catch-all route, cáº§n thÃªm prefix náº¿u khÃ´ng pháº£i ngÃ´n ngá»¯ máº·c Ä‘á»‹nh
             $path = ($langCode !== $defaultLang) ? "{$langCode}/{$slug}" : $slug;
             $links[$langCode] = url($path);

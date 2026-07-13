@@ -7,11 +7,8 @@ use App\Models\BlockItemModel;
 
 class BlockItemController extends BaseAdminController {
     
-    private array $langs;
-
     public function __construct() {
         parent::__construct();
-        $this->langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
     }
     
     public function index(Request $request, $params) {
@@ -29,7 +26,7 @@ class BlockItemController extends BaseAdminController {
         $limit = 10;
 
         $query = BlockItemModel::where('block_id', $block_id)
-            ->where('lang', config('app.locale', 'vi'));
+            ->where('lang', $this->primaryLang);
         
         if ($status !== '') {
             $query->where('is_active', $status);

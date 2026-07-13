@@ -57,7 +57,7 @@ class BackupController extends BaseAdminController
     public function createBackup(Request $request)
     {
         set_time_limit(300); // Allow 5 minutes
-        $pdo = \App\Core\Model::getConnection();
+        $pdo = \App\Core\Database\Model::getConnection();
         
         $tables = [];
         $stmt = $pdo->query('SHOW TABLES');
@@ -192,7 +192,7 @@ class BackupController extends BaseAdminController
         }
 
         try {
-            $pdo = \App\Core\Model::getConnection();
+            $pdo = \App\Core\Database\Model::getConnection();
             $sql = file_get_contents($file);
             
             // Táº¡m thá»i táº¯t check khÃ³a ngoáº¡i khi import

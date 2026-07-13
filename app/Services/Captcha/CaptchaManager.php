@@ -1,6 +1,8 @@
 <?php
 namespace App\Services\Captcha;
 
+use App\Models\SettingModel;
+
 class CaptchaManager {
     
     /**

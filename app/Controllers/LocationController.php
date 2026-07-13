@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Core\Request;
 use App\Core\Response;
 use App\Models\LocationModel;
 
@@ -16,7 +17,7 @@ class LocationController extends Controller {
      * Lấy danh sách Quận/Huyện theo mã Tỉnh (AJAX)
      * POST /ajax/location/district
      */
-    public function district($request) {
+    public function district(Request $request) {
         $code_tinh = trim($request->input('code_tinh', ''));
 
         if (empty($code_tinh)) {
@@ -44,7 +45,7 @@ class LocationController extends Controller {
      * Lấy danh sách Phường/Xã theo mã Quận/Huyện (AJAX)
      * POST /ajax/location/ward
      */
-    public function ward($request) {
+    public function ward(Request $request) {
         $code_huyen = trim($request->input('code_huyen', ''));
 
         if (empty($code_huyen)) {

@@ -1,10 +1,10 @@
 <?php
 namespace App\Models;
 
-class RedirectModel extends \App\Core\Model {
+class RedirectModel extends \App\Core\Database\Model {
     public $table = '#_redirects';
-    public bool $use_lang = false;
-    public bool $use_lang = false;
+    
+    
 
     protected string $createdAt = 'created_at';
     protected string $updatedAt = 'updated_at';

@@ -10,7 +10,7 @@
         // 1. Tìm kiếm sản phẩm
         $p_query = ProductModel::query()
             ->where('ten', "%$key_search%", 'LIKE')
-            ->where('status', \App\Models\PostModel::STATUS_PUBLISH);
+            ->where('status', 1);
             
         if ($category_id > 0) {
             $list_ids = getCategoryTreeIds($category_id);
@@ -25,7 +25,7 @@
         // 2. Tìm kiếm tin tức/bài viết
         $post_results = \App\Models\PostModel::query()
             ->where('ten', "%$key_search%", 'LIKE')
-            ->where('status', \App\Models\PostModel::STATUS_PUBLISH)
+            ->where('status', 1)
             ->orderBy('so_thu_tu')
             ->orderBy('id', 'DESC')
             ->get();

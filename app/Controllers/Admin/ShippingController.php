@@ -17,12 +17,12 @@ class ShippingController extends BaseAdminController
     public function index()
     {
         $methods = ShippingMethodModel::where('shop_id', 0)->orderBy('sort_order', 'ASC')->get();
-        return view('admin.shipping.index', ['methods' => $methods]);
+        return $this->render('admin.shipping.index', ['methods' => $methods]);
     }
 
     public function createMethod()
     {
-        return view('admin.shipping.form_method');
+        return $this->render('admin.shipping.form_method');
     }
 
     public function storeMethod(Request $request)
@@ -59,7 +59,7 @@ class ShippingController extends BaseAdminController
         $method = ShippingMethodModel::find($id);
         if (!$method || $method->shop_id != 0) return $this->redirect(route('admin.shipping.index'));
         
-        return view('admin.shipping.form_method', ['item' => $method]);
+        return $this->render('admin.shipping.form_method', ['item' => $method]);
     }
 
     public function updateMethod(Request $request, $params = [])
@@ -137,7 +137,7 @@ class ShippingController extends BaseAdminController
 
         $countries = ['VN' => 'Việt Nam', 'US' => 'Hoa Kỳ', 'JP' => 'Nhật Bản', '*' => 'Toàn cầu (Khác)'];
 
-        return view('admin.shipping.rates', [
+        return $this->render('admin.shipping.rates', [
             'method' => $method,
             'rates' => $rates,
             'countries' => $countries
@@ -154,7 +154,7 @@ class ShippingController extends BaseAdminController
         
         $provinces = [];
 
-        return view('admin.shipping.form_rate', [
+        return $this->render('admin.shipping.form_rate', [
             'method' => $method,
             'countries' => $countries,
             'provinces' => $provinces
@@ -222,7 +222,7 @@ class ShippingController extends BaseAdminController
                                               ->get('id, name');
         }
 
-        return view('admin.shipping.form_rate', [
+        return $this->render('admin.shipping.form_rate', [
             'method' => $method,
             'item' => $rate,
             'countries' => $countries,

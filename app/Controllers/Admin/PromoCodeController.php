@@ -27,7 +27,7 @@ class PromoCodeController extends BaseAdminController
 
         $items = $query->orderBy('id', 'DESC')->paginate(20);
 
-        return view('admin.promo_code.index', [
+        return $this->render('admin.promo_code.index', [
             'items' => $items,
             'title' => 'Quản lý Mã Giảm Giá',
             'keyword' => $keyword,
@@ -37,7 +37,7 @@ class PromoCodeController extends BaseAdminController
 
     public function create()
     {
-        return view('admin.promo_code.form', [
+        return $this->render('admin.promo_code.form', [
             'title' => 'Thêm Mã Giảm Giá',
             'item' => []
         ]);
@@ -52,7 +52,7 @@ class PromoCodeController extends BaseAdminController
             return $this->redirect(route('admin.promo_code.index'))->with('error', 'Không tìm thấy mã giảm giá!');
         }
 
-        return view('admin.promo_code.form', [
+        return $this->render('admin.promo_code.form', [
             'title' => 'Sửa Mã Giảm Giá: ' . $item->code,
             'item' => $item
         ]);

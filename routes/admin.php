@@ -9,6 +9,10 @@ use App\Controllers\Admin\AuthController;
 use App\Controllers\Admin\DashboardController;
 
 $router->group('/admin', function($r) {
+    // Redirect /admin to dashboard
+    $r->get('/', function() {
+        return (new \App\Core\Response())->redirect(route('admin.dashboard'));
+    });
     // Auth Routes
     $r->get('/login', [AuthController::class, 'login'])->name('admin.login');
     $r->post('/login', [AuthController::class, 'loginPost']);
@@ -105,8 +109,8 @@ $router->group('/admin', function($r) {
     $r->post('/post/store', [\App\Controllers\Admin\PostController::class, 'store'])->name('admin.post.store');
     $r->get('/post/edit/{id}', [\App\Controllers\Admin\PostController::class, 'edit'])->name('admin.post.edit');
     $r->post('/post/update/{id}', [\App\Controllers\Admin\PostController::class, 'update'])->name('admin.post.update');
-    $r->get('/post/delete/{id}', [\App\Controllers\Admin\PostController::class, 'destroy'])->name('admin.post.destroy');
-    $r->post('/post/delete-multiple', [\App\Controllers\Admin\PostController::class, 'destroyMultiple'])->name('admin.post.destroy_multiple');
+    $r->post('/post/delete-ajax', [\App\Controllers\Admin\PostController::class, 'destroyAjax'])->name('admin.post.destroy_ajax');
+    $r->post('/post/bulk-delete-ajax', [\App\Controllers\Admin\PostController::class, 'bulkDeleteAjax'])->name('admin.post.bulkDeleteAjax');
     $r->post('/post/update-status-ajax', [\App\Controllers\Admin\PostController::class, 'updateStatusAjax'])->name('admin.post.updateStatusAjax');
 
     // Product Routes

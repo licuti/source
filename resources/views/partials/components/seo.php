@@ -95,7 +95,7 @@ endif; ?>
 <?php 
 $langs = config('lang', []);
 if (count($langs) > 1): 
-    $link_lang = (($com ?? '') != '') ? ($row->alias ?? '') . '.html' : '';
+    $link_lang = (($com ?? '') != '') ? ($row->slug ?? '') . '.html' : '';
     foreach ($langs as $value): ?>
 <link rel="alternate" hreflang="<?= $value['code'] ?>" href="<?= url($value['code'] . '/' . $link_lang) ?>" />
 <?php endforeach; ?>

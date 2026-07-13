@@ -14,7 +14,7 @@
         $value = (object)$value;
     }
 ?>
-<a href="<?= route('news.show', $value->alias) ?>" class="text-decoration-none">
+<a href="<?= route('news.show', $value->slug) ?>" class="text-decoration-none">
     <div class="box-blog box-hover-zoom">
         <div class="box-thumbnail">
             <div class="inner-thumbnail ratio ratio-4x3">

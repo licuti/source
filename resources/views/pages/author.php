@@ -8,7 +8,7 @@ $row = $row_raw ? (object)$row_raw : null;
 
 // Lấy bài viết liên quan của tác giả này
 $tinlienquan_raw = \App\Models\PostModel::query()
-    ->where('status', \App\Models\PostModel::STATUS_PUBLISH)
+    ->where('status', 1)
     ->where('id_user', $id_tacgia)
     ->orderBy('so_thu_tu')
     ->orderBy('id', 'DESC')
@@ -64,19 +64,19 @@ $tinlienquan = $tinlienquan_raw;
                     <div class="single-smblog">
                         <div class="smblog-thum">
                             <div class="blog-image border rounded overflow-hidden">
-                                <a href="<?= route('news.show', $value->alias) ?>">
+                                <a href="<?= route('news.show', $value->slug) ?>">
                                     <img src="<?= getImageUrl($value->hinh_anh) ?>" alt="<?= $value->ten ?>" class="image-cover ratio ratio-4x3">
                                 </a>
                             </div>
                         </div>
                         <div class="smblog-content mt-3">
                             <h3 class="tintuc_home_item_title fs-6">
-                                <a href="<?= route('news.show', $value->alias) ?>"><?= $value->ten ?></a>
+                                <a href="<?= route('news.show', $value->slug) ?>"><?= $value->ten ?></a>
                             </h3>
                             <div class="text-muted small mb-2"><?= $d->getTxt(118) ?>: <?= date('d/m/Y', $value->ngay_dang) ?></div>
                             <p class="text-secondary small mb-3"><?= catchuoi($value->mo_ta, 100) ?></p>
                             <div class="smblog-foot">
-                                <a href="<?= route('news.show', $value->alias) ?>" class="btn btn-link p-0 text-decoration-none small"><?= $d->getTxt(114) ?> →</a>
+                                <a href="<?= route('news.show', $value->slug) ?>" class="btn btn-link p-0 text-decoration-none small"><?= $d->getTxt(114) ?> →</a>
                             </div>
                         </div>
                     </div>

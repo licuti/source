@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
-class LangModel extends \App\Core\Model {
+class LangModel extends \App\Core\Database\Model {
     public $table = 'db_lang';
-    public bool $use_lang = false;
+    
     public bool $timestamps = false;
 
     /**

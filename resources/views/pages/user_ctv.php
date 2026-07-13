@@ -27,7 +27,7 @@ $row_sp_ctv = $d -> o_fet("select * from #_sanpham_ctv where id_thanhvien = '".(
                     <getImageUrl style="height: 100px;border: 1px solid #eee;border-radius: 10px;" src="getImageUrl_data/images/<?=$row_sanpham['hinh_anh']?>" alt="<?=$row_sanpham['ten']?>">
                 </td>
                 <td>
-                    <a style="text-decoration: revert;color: #eb9701;" target="_blank" href="<?=URLPATH.$row_sanpham['alias']?>.html"><?=$row_sanpham['ten']?></a>
+                    <a style="text-decoration: revert;color: #eb9701;" target="_blank" href="<?=URLPATH.$row_sanpham['slug']?>.html"><?=$row_sanpham['ten']?></a>
                     <div style="font-size: 13px;color: #3e3d3d;">Số lượng:
                     <?php $sl=0; foreach ($thuoctinh_chitiet as $key => $value2) {
                     $sl = $sl+$value2['so_luong'];

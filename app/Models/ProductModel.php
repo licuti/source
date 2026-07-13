@@ -3,7 +3,8 @@ namespace App\Models;
 
 use App\Models\CategoryModel;
 
-class ProductModel extends \App\Core\Model {
+class ProductModel extends \App\Core\Database\Model {
+    use \App\Traits\HasLanguage;
     public $table = '#_products';
     public bool $timestamps = false;
 

@@ -18,7 +18,7 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="<?= url() ?>"><?= $home_ten ?></a></li>
                         <?php if (!empty($category)): ?>
-                            <li class="breadcrumb-item"><a href="<?= route('category.show', $category->alias) ?>"><?= $category->ten ?? '' ?></a></li>
+                            <li class="breadcrumb-item"><a href="<?= route('category.show', $category->slug) ?>"><?= $category->ten ?? '' ?></a></li>
                         <?php else: ?>
                             <li class="breadcrumb-item active" aria-current="page"><?= $row_ten ?></li>
                         <?php endif ?>
@@ -45,7 +45,7 @@
                     <ol class="breadcrumb mb-0">
                         <li class="breadcrumb-item"><a href="<?= url() ?>"><?= $home_ten ?></a></li>
                         <?php if (!empty($category)): ?>
-                            <li class="breadcrumb-item"><a href="<?= route('category.show', $category->alias) ?>"><?= $category->ten ?? '' ?></a></li>
+                            <li class="breadcrumb-item"><a href="<?= route('category.show', $category->slug) ?>"><?= $category->ten ?? '' ?></a></li>
                         <?php endif ?>
                         <li class="breadcrumb-item active" aria-current="page"><?= $row_ten ?></li>
                     </ol>

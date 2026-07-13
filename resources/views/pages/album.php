@@ -15,7 +15,7 @@
         <div class="row g-3">
             <?php foreach ($album as $value): ?>
                 <div class="col-md-4 col-lg-3">
-                    <a href="<?= url($value->alias) ?>">
+                    <a href="<?= url($value->slug) ?>">
                         <div class="box-gallery box-hover-zoom">
                             <div class="box-thumbnail">
                                 <div class="inner-thumbnail ratio ratio-1x1">

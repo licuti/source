@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-class PromoCodeUsageModel extends \App\Core\Model
+class PromoCodeUsageModel extends \App\Core\Database\Model
 {
     public $table = 'db_promo_code_usage';
     public $primaryKey = 'id';
-    public bool $use_lang = false;
+    
     
     protected array $fillable = [
         'promo_code_id',

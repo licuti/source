@@ -19,7 +19,7 @@ class PostService {
         $id = $inputData['id'] ?? null;
 
         $title = $inputData['title'] ?? '';
-        $slug = empty($inputData['alias']) ? str_slug($title) : $inputData['alias'];
+        $slug = empty($inputData['slug']) ? str_slug($title) : $inputData['slug'];
 
         $needsIdCodeUpdate = false;
         
@@ -79,10 +79,10 @@ class PostService {
     /**
      * Xóa bài viết và toàn bộ bản dịch
      */
-    public function deletePost(int $idCode) {
-        if ($idCode > 0) {
-            return PostModel::adminQuery()->where('id_code', $idCode)->delete();
+    public function deletePost($idCode) {
+        if (is_array($idCode)) {
+            return PostModel::adminQuery()->whereIn('id_code', $idCode)->delete();
         }
-        return false;
+        return PostModel::adminQuery()->where('id_code', $idCode)->delete();
     }
 }

@@ -14,15 +14,15 @@ class PaymentController extends BaseAdminController
                                      ->orderBy('id', 'DESC')
                                      ->get();
 
-        return view('admin.payment.index', [
+        return $this->render('admin.payment.index', [
             'methods' => $methods
         ]);
     }
 
     public function create(Request $request)
     {
-        $langs = config('lang', [['code' => 'vi']]);
-        return view('admin.payment.form', compact('langs'));
+        $langs = $this->langs;
+        return $this->render('admin.payment.form', compact('langs'));
     }
 
     private function buildMethodData(Request $request, string $langCode): array
@@ -44,7 +44,7 @@ class PaymentController extends BaseAdminController
 
     public function store(Request $request)
     {
-        $langs = config('lang', ['vi' => ['code' => 'vi']]);
+        $langs = $this->langs;
         $firstLang = current($langs)['code'];
         
         $firstLangData = $this->buildMethodData($request, $firstLang);
@@ -61,7 +61,7 @@ class PaymentController extends BaseAdminController
         if ($insertedId) {
             $id_code = $insertedId;
             $pmQuery = PaymentMethodModel::query();
-            $pmQuery->use_lang = false;
+            $pmQuery->withoutGlobalScope('lang');
             $pmQuery->where('id', $insertedId)->update(['id_code' => $id_code]);
             
             foreach ($langs as $l) {
@@ -84,7 +84,7 @@ class PaymentController extends BaseAdminController
     public function edit(Request $request, $params = [])
     {
         $id = is_array($params) ? ($params['id'] ?? 0) : $params;
-        $langs = config('lang', [['code' => 'vi']]);
+        $langs = $this->langs;
         
         // Tìm bản ghi gốc
         $baseItem = PaymentMethodModel::find($id);
@@ -92,7 +92,7 @@ class PaymentController extends BaseAdminController
 
         // Load tất cả ngôn ngữ của bản ghi này
         $query = PaymentMethodModel::query();
-        $query->use_lang = false;
+        $query->withoutGlobalScope('lang');
         $translations = $query->where('id_code', $baseItem->id_code)->get();
 
         $itemData = [
@@ -115,7 +115,7 @@ class PaymentController extends BaseAdminController
             $itemData['description'][$c] = $t->description;
         }
 
-        return view('admin.payment.form', [
+        return $this->render('admin.payment.form', [
             'item' => $itemData,
             'langs' => $langs
         ]);
@@ -127,7 +127,7 @@ class PaymentController extends BaseAdminController
         $baseItem = PaymentMethodModel::find($id);
         if (!$baseItem) return $this->redirect(route('admin.payment.index'));
 
-        $langs = config('lang', ['vi' => ['code' => 'vi']]);
+        $langs = $this->langs;
         $code = $request->input('code');
 
         // Ensure unique code
@@ -137,7 +137,7 @@ class PaymentController extends BaseAdminController
         }
 
         $query = PaymentMethodModel::query();
-        $query->use_lang = false;
+        $query->withoutGlobalScope('lang');
         $translations = $query->where('id_code', $baseItem->id_code)->get();
         $existingLangs = array_column($translations, 'id', 'lang');
 
@@ -147,7 +147,7 @@ class PaymentController extends BaseAdminController
 
             if (isset($existingLangs[$c])) {
                 $updateQuery = PaymentMethodModel::query();
-                $updateQuery->use_lang = false;
+                $updateQuery->withoutGlobalScope('lang');
                 $updateQuery->where('id', $existingLangs[$c])->update($data);
             } else {
                 $data['id_code'] = $baseItem->id_code;
@@ -169,7 +169,7 @@ class PaymentController extends BaseAdminController
         $method = PaymentMethodModel::find($id);
         if ($method) {
             $query = PaymentMethodModel::query();
-            $query->use_lang = false;
+            $query->withoutGlobalScope('lang');
             $query->where('id_code', $method->id_code)->delete();
             return Response::json(['success' => true, 'message' => 'Đã xóa phương thức thanh toán']);
         }
@@ -186,7 +186,7 @@ class PaymentController extends BaseAdminController
             $method = PaymentMethodModel::find($id);
             if ($method) {
                 $query = PaymentMethodModel::query();
-                $query->use_lang = false;
+                $query->withoutGlobalScope('lang');
                 $query->where('id_code', $method->id_code)->update([$field => $value]);
                 return $this->json(['success' => true, 'message' => 'Cập nhật trạng thái thành công!']);
             }
@@ -199,14 +199,14 @@ class PaymentController extends BaseAdminController
         $ids = $request->input('ids');
         if (is_array($ids) && !empty($ids)) {
             $query = PaymentMethodModel::query();
-            $query->use_lang = false;
+            $query->withoutGlobalScope('lang');
             foreach ($ids as $index => $id) {
                 // Sắp xếp cập nhật trên bản gốc (id_code), hoặc cập nhật tất cả (ở đây do index hiển thị list vi, id là của vi)
                 // Cẩn thận: if $id in JS is the ID of the 'vi' record, we should find its id_code first to update all languages
                 $method = PaymentMethodModel::find($id);
                 if ($method) {
                     $upQuery = PaymentMethodModel::query();
-                    $upQuery->use_lang = false;
+                    $upQuery->withoutGlobalScope('lang');
                     $upQuery->where('id_code', $method->id_code)->update(['sort_order' => $index]);
                 }
             }

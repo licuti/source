@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Core\Request;
 /**
  * OrderController
  * Quản lý đơn hàng ở phía người dùng.
@@ -12,7 +13,7 @@ class OrderController extends Controller {
      * Trang tra cứu vận đơn
      * GET /tra-cuu
      */
-    public function tracking($request) {
+    public function tracking(Request $request) {
         $order_id = $request->input('id', '');
         $phone = $request->input('p', '');
 

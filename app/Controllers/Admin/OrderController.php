@@ -41,7 +41,7 @@ class OrderController extends BaseAdminController
 
         $items = $query->paginate(20);
 
-        return view('admin.order.index', [
+        return $this->render('admin.order.index', [
             'title' => 'Quản lý Đơn hàng',
             'items' => $items,
             'keyword' => $keyword,
@@ -64,7 +64,7 @@ class OrderController extends BaseAdminController
         $items = \App\Models\OrderItemModel::where('order_id', $order->id)->get();
         $history = \App\Models\OrderHistoryModel::where('order_id', $order->id)->orderBy('created_at', 'DESC')->get();
 
-        return view('admin.order.show', [
+        return $this->render('admin.order.show', [
             'title' => 'Chi tiết Đơn hàng: ' . $order->order_code,
             'order' => $order,
             'items' => $items,

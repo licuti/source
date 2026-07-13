@@ -21,7 +21,7 @@ $seoSchema = $isMultiLang ? ($item['seo_schema'][$c] ?? '') : ($item['seo_schema
 $seoCanonical = $isMultiLang ? ($item['seo_canonical'][$c] ?? '') : ($item['seo_canonical'] ?? '');
 
 $fallbackTitle = $isMultiLang ? ($item['ten'][$c] ?? $item['title'][$c] ?? '') : ($item['ten'] ?? $item['title'] ?? '');
-$fallbackSlug = $isMultiLang ? ($item['alias'][$c] ?? $item['slug'][$c] ?? 'bai-viet') : ($item['alias'] ?? $item['slug'] ?? 'bai-viet');
+$fallbackSlug = $isMultiLang ? ($item['slug'][$c] ?? $item['slug'][$c] ?? 'bai-viet') : ($item['slug'] ?? $item['slug'] ?? 'bai-viet');
 ?>
 
 <div class="seo-wrapper mt-2">

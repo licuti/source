@@ -18,7 +18,7 @@ class FormBuilderController extends BaseAdminController {
                                 ->where('status', FormSubmissionModel::STATUS_NEW)
                                 ->count();
         }
-        return view('admin.form_builder.index', ['forms' => $forms]);
+        return $this->render('admin.form_builder.index', ['forms' => $forms]);
     }
     
     public function ajax(Request $request) {
@@ -168,7 +168,7 @@ class FormBuilderController extends BaseAdminController {
         }
         
         $fields = FormFieldModel::where('form_id', $id)->orderBy('sort_order', 'ASC')->get();
-        return view('admin.form_builder.builder', [
+        return $this->render('admin.form_builder.builder', [
             'form' => $form,
             'fields' => $fields
         ]);
@@ -182,7 +182,7 @@ class FormBuilderController extends BaseAdminController {
         }
         
         $fields = FormFieldModel::where('form_id', $id)->orderBy('sort_order', 'ASC')->get();
-        return view('admin.form_builder.preview', [
+        return $this->render('admin.form_builder.preview', [
             'form' => $form,
             'fields' => $fields
         ]);
@@ -204,7 +204,7 @@ class FormBuilderController extends BaseAdminController {
         
         $submissions = $query->orderBy('created_at', 'DESC')->paginate(20);
         
-        return view('admin.form_builder.submissions', [
+        return $this->render('admin.form_builder.submissions', [
             'form' => $form,
             'submissions' => $submissions
         ]);

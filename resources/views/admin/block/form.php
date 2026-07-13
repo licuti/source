@@ -1,7 +1,7 @@
 <?php
 $title = isset($firstItem) ? "Sửa Khối giao diện" : "Thêm Khối giao diện mới";
 
-$alias = $_POST['alias'] ?? ($firstItem->alias ?? '');
+$slug = $_POST['slug'] ?? ($firstItem->slug ?? '');
 $sort_order = $_POST['sort_order'] ?? ($firstItem->sort_order ?? 0);
 $is_active = isset($firstItem) ? $firstItem->is_active : 1;
 

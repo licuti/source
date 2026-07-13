@@ -10,7 +10,7 @@
         <!-- Tiêu đề & điều hướng -->
         <div class="row align-items-center mb-4 g-3">
             <div class="col-lg">
-                <?= renderBreadcrumbs($row ? [$row] : [['ten' => 'Sản phẩm', 'alias' => 'san-pham']]) ?>
+                <?= renderBreadcrumbs($row ? [$row] : [['ten' => 'Sản phẩm', 'slug' => 'san-pham']]) ?>
                 <h1 class="main-title h2 mb-0">
                     <?= $row ? htmlspecialchars($row->ten) : 'Sản phẩm' ?>
                     <small class="text-muted fs-6 fw-normal ms-2">(<?= number_format($total_records) ?> sản phẩm)</small>

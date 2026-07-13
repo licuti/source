@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Core\Request;
 use App\Models\CategoryModel;
 use App\Models\ProductModel;
 use App\Models\PostModel;
@@ -11,24 +12,23 @@ class HomeController extends Controller {
     /**
      * Xử lý hiển thị trang chủ
      */
-    public function index($request) {
-        $latestNews = PostModel::where('status', \App\Models\PostModel::STATUS_PUBLISH)
+    public function index(Request $request) {
+        $latestNews = PostModel::where('status', 1)
             ->orderBy('id', 'DESC')
             ->limit(4)
             ->get();
         $pageProduct = CategoryModel::query()
             ->where('id_code', 100)
-            ->where('hien_thi', 1)
-            ->first('ten, id_code');
+            ->where('status', 1)
+            ->first('title, id_code');
 
         $list_id_product = CategoryModel::getChildrenIds(100);
 
-        $featuredProducts = ProductModel::where('id_loai', $list_id_product, 'IN')
-            ->where('tieu_bieu', 1)
-            ->where('hien_thi', 1)
-            ->withCategory()
+        $featuredProducts = ProductModel::where('category_id', $list_id_product, 'IN')
+            ->where('is_featured', 1)
+            ->where('status', 1)
+            ->with('category')
             ->with('variants')
-            ->orderBy('so_thu_tu')
             ->orderBy('id', 'DESC')
             ->limit(24)
             ->get();

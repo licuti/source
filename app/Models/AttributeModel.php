@@ -1,7 +1,8 @@
 <?php
 namespace App\Models;
 
-class AttributeModel extends \App\Core\Model {
+class AttributeModel extends \App\Core\Database\Model {
+    use \App\Traits\HasLanguage;
     public $table = '#_attributes';
 
     public function values() {

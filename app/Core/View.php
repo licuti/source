@@ -2,8 +2,11 @@
 
 namespace App\Core;
 
-class View
+use App\Core\Contracts\ViewInterface;
+
+class View implements ViewInterface
 {
+    protected static $sharedData = [];
     protected $layout = null;
     protected $data = [];
 
@@ -21,24 +24,23 @@ class View
         return $this;
     }
 
-    public function render($template, $data = [])
+    public function share(string $key, $value)
     {
-        // Inject global 'com' into $data if not already present, to prevent undefined variable errors
+        self::$sharedData[$key] = $value;
+        return $this;
+    }
+
+    public function render(string $template, array $data = []): string
+    {
+        // Legacy: export global variables to data to ensure backward compatibility for old views
         if (!isset($data['com'])) {
             $data['com'] = $GLOBALS['com'] ?? '';
         }
-
-        // Inject global '$row' for SEO and category metadata
         if (!isset($data['row']) && isset($GLOBALS['row'])) {
             $data['row'] = $GLOBALS['row'];
         }
 
-        // Inject global '$setting' (Cấu hình website) for all views
-        if (!isset($data['setting']) && function_exists('setting')) {
-            $data['setting'] = setting();
-        }
-
-        $data = array_merge($this->data, $data);
+        $data = array_merge(self::$sharedData, $this->data, $data);
 
         // Export to global scope for legacy including as well
         foreach ($data as $key => $value) {

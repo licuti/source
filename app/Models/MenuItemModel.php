@@ -4,9 +4,9 @@ namespace App\Models;
 /**
  * Model: MenuItem
  */
-class MenuItemModel extends \App\Core\Model {
+class MenuItemModel extends \App\Core\Database\Model {
     public $table = '#_menu_items';
-    public bool $use_lang = false;
+    
     public bool $timestamps = false;
 
     /**

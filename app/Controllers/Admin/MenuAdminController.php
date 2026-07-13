@@ -45,7 +45,7 @@ class MenuAdminController extends BaseAdminController {
     public function store(Request $request) {
         $data = [
             'name'             => $request->input('name', ''),
-            'alias'            => $request->input('alias', ''),
+            'slug' => $request->input('slug', ''),
             'route_name'       => $request->input('route_name', ''),
             'icon'             => $request->input('icon', 'fa-circle'),
             'parent'           => (int)$request->input('parent', 0),
@@ -80,7 +80,7 @@ class MenuAdminController extends BaseAdminController {
         
         $data = [
             'name'             => $request->input('name', ''),
-            'alias'            => $request->input('alias', ''),
+            'slug' => $request->input('slug', ''),
             'route_name'       => $request->input('route_name', ''),
             'icon'             => $request->input('icon', 'fa-circle'),
             'parent'           => (int)$request->input('parent', 0),

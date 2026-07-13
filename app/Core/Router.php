@@ -6,11 +6,13 @@ class Router {
     protected $routes = [];
     protected $middleware = [];
     protected $request;
+    protected $container;
     protected $currentGroupPrefix = '';
     protected $currentGroupMiddleware = [];
 
-    public function __construct(Request $request) {
+    public function __construct(Request $request, Container $container = null) {
         $this->request = $request;
+        $this->container = $container ?: new Container();
     }
 
     public function pushMiddleware($middleware) {
@@ -89,6 +91,10 @@ class Router {
         $match = $this->matchRoute($this->request->method, $this->request->uri);
         $routeMiddleware = $match ? ($match['middleware'] ?? []) : [];
         
+        if ($match && isset($match['name'])) {
+            $this->request->setRouteName($match['name']);
+        }
+        
         // Merge global + route middleware
         $allMiddleware = array_merge($this->middleware, $routeMiddleware);
 
@@ -98,16 +104,8 @@ class Router {
                 return $this->execute($match['callback'], $match['params']);
             }
 
-            // Không khớp bất kỳ route nào → Kiểm tra Redirect 301
-            $checkUrl = '/' . ltrim($request->uri, '/');
-            $redirect = \App\Models\RedirectModel::where('old_url', $checkUrl)->where('status', 1)->first();
-            if ($redirect) {
-                header("Location: " . $redirect->new_url, true, 301);
-                exit;
-            }
-
-            // Không có redirect → 404
-            return new Response(view('pages/404', ['com' => trim($request->uri, '/')]), 404);
+            // Không khớp bất kỳ route nào → Quăng ngoại lệ 404
+            throw new \App\Exceptions\HttpException('Not Found', 404);
         });
     }
 
@@ -122,7 +120,8 @@ class Router {
             return [
                 'callback' => $routes[$path]['callback'], 
                 'params' => [], 
-                'middleware' => $routes[$path]['middleware']
+                'middleware' => $routes[$path]['middleware'],
+                'name' => array_search($path, $this->namedRoutes) ?: null
             ];
         }
 
@@ -144,7 +143,8 @@ class Router {
                 return [
                     'callback' => $callback, 
                     'params' => $params, 
-                    'middleware' => $middleware
+                    'middleware' => $middleware,
+                    'name' => array_search($routePath, $this->namedRoutes) ?: null
                 ];
             }
         }
@@ -158,7 +158,7 @@ class Router {
         $runner = function($request) use (&$pipeline, &$runner, $next) {
             if (empty($pipeline)) return $next($request);
             $middlewareClass = array_pop($pipeline);
-            $middleware = new $middlewareClass();
+            $middleware = $this->container->make($middlewareClass);
             return $middleware->handle($request, $runner);
         };
 
@@ -166,15 +166,16 @@ class Router {
     }
 
     protected function execute($callback, array $params = []) {
+        // Đảm bảo Request được bind vào Container để có thể auto-inject
+        $this->container->instance(Request::class, $this->request);
+
         if (is_array($callback)) {
             [$class, $method] = $callback;
             if (class_exists($class)) {
-                $controller = new $class();
+                $controller = $this->container->make($class);
                 if (method_exists($controller, $method)) {
-                    // Spread params with call_user_func_array
-                    $args = array_values($params);
-                    array_unshift($args, $this->request);
-                    $result = call_user_func_array([$controller, $method], $args);
+                    // Để Container tự động inject dependencies thay vì gán cứng $this->request
+                    $result = $this->container->call([$controller, $method], $params);
                     if ($result instanceof Response) return $result;
                     return new Response($result);
                 }
@@ -182,9 +183,7 @@ class Router {
         }
 
         if (is_callable($callback)) {
-            $args = array_values($params);
-            array_unshift($args, $this->request);
-            $result = call_user_func_array($callback, $args);
+            $result = $this->container->call($callback, $params);
             if ($result instanceof Response) return $result;
             return new Response($result);
         }

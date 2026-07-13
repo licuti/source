@@ -77,15 +77,15 @@
                     
                     if ($hasSub) {
                         foreach ($subModules as $sub) {
-                            $routeName = $sub->route_name ?: 'admin.' . $sub->alias . '.index';
+                            $routeName = $sub->route_name ?: 'admin.' . $sub->slug . '.index';
                             $subUrl = $router->getNamedRoute($routeName);
-                            if (!$subUrl) $subUrl = url('admin/index.php?com=' . $sub->alias . '&act=man');
+                            if (!$subUrl) $subUrl = url('admin/index.php?com=' . $sub->slug . '&act=man');
                             
                             $subPath = parse_url($subUrl, PHP_URL_PATH);
                             if ($subPath) {
                                 // Fallback cho URL cũ dạng ?com=...
                                 if (substr($subPath, -9) === 'index.php' && isset($_GET['com'])) {
-                                    if ($_GET['com'] === $sub->alias) {
+                                    if ($_GET['com'] === $sub->slug) {
                                         $isActive = true;
                                         break;
                                     }
@@ -99,14 +99,14 @@
                             }
                         }
                     } else {
-                        $routeName = $main->route_name ?: 'admin.' . $main->alias . '.index';
+                        $routeName = $main->route_name ?: 'admin.' . $main->slug . '.index';
                         $mainUrl = $router->getNamedRoute($routeName);
-                        if (!$mainUrl) $mainUrl = url('admin/index.php?com=' . $main->alias . '&act=man');
+                        if (!$mainUrl) $mainUrl = url('admin/index.php?com=' . $main->slug . '&act=man');
                         
                         $mainPath = parse_url($mainUrl, PHP_URL_PATH);
                         if ($mainPath) {
                             if (substr($mainPath, -9) === 'index.php' && isset($_GET['com'])) {
-                                if ($_GET['com'] === $main->alias) {
+                                if ($_GET['com'] === $main->slug) {
                                     $isActive = true;
                                 }
                             } else {
@@ -124,7 +124,7 @@
                                 <i class="nav-icon fa-solid <?= htmlspecialchars($main->icon ?: 'fa-box') ?>"></i>
                                 <p>
                                     <?= htmlspecialchars($main->name) ?>
-                                    <?php if ($main->alias === 'form'): ?><span class="badge text-bg-warning ms-1" style="font-size: 0.6rem;">BETA</span><?php endif; ?>
+                                    <?php if ($main->slug === 'form'): ?><span class="badge text-bg-warning ms-1" style="font-size: 0.6rem;">BETA</span><?php endif; ?>
                                     <i class="nav-arrow fa-solid fa-angle-right"></i>
                                 </p>
                             </a>
@@ -134,10 +134,10 @@
                                         // Try to resolve route, fallback to legacy URL if route doesn't exist
                                         try {
                                             $router = \App\Core\App::getInstance()->router;
-                                            $routeName = $sub->route_name ?: 'admin.' . $sub->alias . '.index';
+                                            $routeName = $sub->route_name ?: 'admin.' . $sub->slug . '.index';
                                             $subUrl = $router->getNamedRoute($routeName);
                                             if (!$subUrl) {
-                                                $subUrl = url('admin/index.php?com=' . $sub->alias . '&act=man');
+                                                $subUrl = url('admin/index.php?com=' . $sub->slug . '&act=man');
                                             } else {
                                                 $subUrl = route($routeName);
                                             }
@@ -150,7 +150,7 @@
                                             $subPath = parse_url($subUrl, PHP_URL_PATH);
                                             if ($subPath) {
                                                 if (substr($subPath, -9) === 'index.php' && isset($_GET['com'])) {
-                                                    if ($_GET['com'] === $sub->alias) {
+                                                    if ($_GET['com'] === $sub->slug) {
                                                         $subActive = true;
                                                     }
                                                 } else {
@@ -166,7 +166,7 @@
                                             <i class="nav-icon fa-regular <?= htmlspecialchars($sub->icon ?: 'fa-circle') ?>"></i>
                                             <p>
                                                 <?= htmlspecialchars($sub->name) ?>
-                                                <?php if ($sub->alias === 'form'): ?><span class="badge text-bg-warning ms-1" style="font-size: 0.6rem;">BETA</span><?php endif; ?>
+                                                <?php if ($sub->slug === 'form'): ?><span class="badge text-bg-warning ms-1" style="font-size: 0.6rem;">BETA</span><?php endif; ?>
                                             </p>
                                         </a>
                                     </li>
@@ -177,10 +177,10 @@
                         <?php 
                             try {
                                 $router = \App\Core\App::getInstance()->router;
-                                $routeName = $main->route_name ?: 'admin.' . $main->alias . '.index';
+                                $routeName = $main->route_name ?: 'admin.' . $main->slug . '.index';
                                 $mainUrl = $router->getNamedRoute($routeName);
                                 if (!$mainUrl) {
-                                    $mainUrl = url('admin/index.php?com=' . $main->alias . '&act=man');
+                                    $mainUrl = url('admin/index.php?com=' . $main->slug . '&act=man');
                                 } else {
                                     $mainUrl = route($routeName);
                                 }
@@ -193,7 +193,7 @@
                                 <i class="nav-icon fa-solid <?= htmlspecialchars($main->icon ?: 'fa-box') ?>"></i>
                                     <p>
                                         <?= htmlspecialchars($main->name) ?>
-                                        <?php if ($main->alias === 'form'): ?><span class="badge text-bg-warning ms-1" style="font-size: 0.6rem;">BETA</span><?php endif; ?>
+                                        <?php if ($main->slug === 'form'): ?><span class="badge text-bg-warning ms-1" style="font-size: 0.6rem;">BETA</span><?php endif; ?>
                                     </p>
                             </a>
                         </li>

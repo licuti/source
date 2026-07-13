@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
-class BinhLuanModel extends \App\Core\Model {
+class BinhLuanModel extends \App\Core\Database\Model {
     public $table = '#_binhluan';
-    public bool $use_lang = false;
+    
 
     /**
      * Eager load media for reviews

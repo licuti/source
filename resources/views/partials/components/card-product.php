@@ -44,7 +44,7 @@
     <div class="box-product box-hover-zoom" data-id="<?= (int)$value->id_code ?>">
         <div class="box-thumbnail">
             <div class="inner-thumbnail ratio ratio-1x1">
-                <a href="<?= route('product.show', $value->alias) ?>">
+                <a href="<?= route('product.show', $value->slug) ?>">
                     <img src="<?= Img($value->hinh_anh) ?>" alt="<?= $value->ten ?>" class="image-cover">
                 </a>
             </div>
@@ -66,7 +66,7 @@
             <?= renderProductCategory($value) ?>
             <div class="box-title">
                 <h3 class="title">
-                    <a href="<?= route('product.show', $value->alias) ?>" class="text-decoration-none text-dark"><?= $value->ten ?></a>
+                    <a href="<?= route('product.show', $value->slug) ?>" class="text-decoration-none text-dark"><?= $value->ten ?></a>
                 </h3>
             </div>
             <?= renderProductStars($value->id_code) ?>

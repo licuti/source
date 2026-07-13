@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
-class OptionModel extends \App\Core\Model {
+class OptionModel extends \App\Core\Database\Model {
     public $table = '#_options';
-    public bool $use_lang = false;
+    
     public bool $timestamps = true;
     
     private static $optionsCache = null;

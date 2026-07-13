@@ -114,7 +114,7 @@ $title = "Quản lý khối nội dung (Blocks)";
                                         ?>
                                     </td>
                                     <td class="align-middle">
-                                        <span class="badge bg-secondary"><?= htmlspecialchars($item->alias) ?></span>
+                                        <span class="badge bg-secondary"><?= htmlspecialchars($item->slug) ?></span>
                                     </td>
                                     <td class="text-center align-middle">
                                         <div class="form-check form-switch d-flex justify-content-center">

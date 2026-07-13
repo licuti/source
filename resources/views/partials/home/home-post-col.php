@@ -24,7 +24,7 @@
             <div class="col-lg-5 mt-3 mt-lg-0">
                 <div class="list-post-vertical">                                
                     <?php foreach ($news_second as $key => $value): ?>
-                        <a href="<?= route('news.show', $value['alias']) ?>">
+                        <a href="<?= route('news.show', $value['slug']) ?>">
                             <div class="card-blog card-blog-vertical">
                                 <div class="thumbnail">
                                     <getImageUrl src="<?= getImageUrl($value['hinh_anh']) ?>" alt="<?= $value['ten'] ?>" class="image-cover">

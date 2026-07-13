@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
-class FormModel extends \App\Core\Model {
+class FormModel extends \App\Core\Database\Model {
     public $table = 'db_forms';
-    public bool $use_lang = false;
+    
     public bool $timestamps = true;
     
     public function getFields() {

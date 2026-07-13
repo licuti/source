@@ -1,4 +1,6 @@
 <?php
+use App\Models\CategoryModel;
+
 if (!function_exists('render_form')) {
     /**
      * Render HTML của một Dynamic Form bằng mã Code
@@ -93,7 +95,7 @@ if (!function_exists('render_form')) {
 if (!function_exists('renderBreadcrumbs')) {
     /**
      * Render Breadcrumbs sử dụng cấu trúc Bootstrap 5.
-     * @param array $items Mảng các item ['ten' => '...', 'alias' => '...']
+     * @param array $items Mảng các item ['ten' => '...', 'slug' => '...']
      */
     function renderBreadcrumbs($items) {
         if (empty($items)) return '';
@@ -324,7 +326,7 @@ if (!function_exists('getCategoryTreeIds')) {
     function getCategoryTreeIds($parentId) {
         if (!$parentId) return [];
 
-        $childIdsStr = \CategoryModel::query()->getChildrenIds($parentId);
+        $childIdsStr = CategoryModel::query()->getChildrenIds($parentId);
         $ids = [$parentId];
 
         if ($childIdsStr) {

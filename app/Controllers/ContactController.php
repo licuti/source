@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Core\Request;
 
 use App\Core\Response;
 use App\Models\ContactModel;
@@ -14,7 +15,7 @@ class ContactController extends Controller {
     /**
      * Hiển thị trang liên hệ
      */
-    public function index($request) {
+    public function index(Request $request) {
         // Đăng ký URL dịch
         $urls = [];
         foreach (config('lang', []) as $l) {
@@ -31,7 +32,7 @@ class ContactController extends Controller {
     /**
      * Xử lý gửi form liên hệ (POST)
      */
-    public function store($request) {
+    public function store(Request $request) {
         $name    = trim($request->input('name', ''));
         $email   = trim($request->input('email', ''));
         $phone   = trim($request->input('phone', ''));

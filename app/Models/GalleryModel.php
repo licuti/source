@@ -1,7 +1,8 @@
 <?php
 namespace App\Models;
 
-class GalleryModel extends \App\Core\Model {
+class GalleryModel extends \App\Core\Database\Model {
+    use \App\Traits\HasLanguage;
     public $table = '#_galleries';
     public $primaryKey = 'id';
     public bool $timestamps = true;
@@ -13,7 +14,7 @@ class GalleryModel extends \App\Core\Model {
      */
     public static function adminQuery() {
         $query = static::query();
-        $query->use_lang = false;
+        $query->withoutGlobalScope('lang');
         return $query;
     }
 }

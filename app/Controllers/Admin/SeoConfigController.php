@@ -1,19 +1,20 @@
 <?php
 namespace App\Controllers\Admin;
 
+use App\Core\Request;
+
 use App\Models\OptionModel;
 
 
 class SeoConfigController extends BaseAdminController {
     
     public function index() {
-        return view('admin.seo_config.index');
+        return $this->render('admin.seo_config.index');
     }
 
     public function save(\App\Core\Request $request) {
         $postData = $request->all();
-        
-        $langs = config('lang', [['code' => 'vi']]);
+        $langs = $this->langs;
         
         // Save multi-language fields
         foreach ($langs as $lang) {

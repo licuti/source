@@ -2,12 +2,15 @@
 
 namespace App\Core;
 
-class Request {
+use App\Core\Contracts\RequestInterface;
+
+class Request implements RequestInterface {
     public $uri;
     public $method;
     public $params = [];       // Query string: $_GET
     public $inputs = [];       // POST body: $_POST
     public $routeParams = [];  // Route params từ URL: /san-pham/{slug}
+    protected ?string $routeName = null;   // Tên route hiện tại (vd: 'admin.category.index')
 
     public function __construct() {
         $this->uri    = $this->parseUri();
@@ -29,8 +32,12 @@ class Request {
         return '/' . trim($path, '/');
     }
 
-    public function get($key, $default = null) {
+    public function get(string $key, $default = null) {
         return $this->params[$key] ?? $default;
+    }
+
+    public function post(string $key, $default = null) {
+        return $this->inputs[$key] ?? $default;
     }
 
     public function input($key, $default = null) {
@@ -52,7 +59,7 @@ class Request {
         $this->routeParams = $params;
     }
 
-    public function all() {
+    public function all(): array {
         return array_merge($this->params, $this->inputs);
     }
 
@@ -70,6 +77,30 @@ class Request {
     /** Lấy file upload từ $_FILES */
     public function file(string $key) {
         return $_FILES[$key] ?? null;
+    }
+
+    public function hasFile(string $key): bool {
+        return isset($_FILES[$key]) && $_FILES[$key]['error'] !== UPLOAD_ERR_NO_FILE;
+    }
+
+    public function bearerToken(): ?string {
+        $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        if (strpos($header, 'Bearer ') === 0) {
+            return substr($header, 7);
+        }
+        return null;
+    }
+
+    public function expectsJson(): bool {
+        return $this->isAjax() || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
+    }
+
+    public function method(): string {
+        return $this->method;
+    }
+
+    public function uri(): string {
+        return $this->uri;
     }
 
     /** Chỉ lấy các field cụ thể từ request (chống Mass Assignment) */
@@ -98,5 +129,20 @@ class Request {
             }
         }
         return $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+    }
+
+    public function setRouteName(?string $name): void {
+        $this->routeName = $name;
+    }
+
+    public function getRouteName(): ?string {
+        return $this->routeName;
+    }
+
+    /**
+     * @deprecated Dùng getRouteName() thay thế
+     */
+    public function route() {
+        return $this->routeName;
     }
 }

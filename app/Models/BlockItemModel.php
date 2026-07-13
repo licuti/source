@@ -1,7 +1,8 @@
 <?php
 namespace App\Models;
 
-class BlockItemModel extends \App\Core\Model {
+class BlockItemModel extends \App\Core\Database\Model {
+    use \App\Traits\HasLanguage;
     public $table = '#_block_items';
     public bool $timestamps = true;
     protected string $createdAt = 'created_at';

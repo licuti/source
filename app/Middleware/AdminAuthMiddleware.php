@@ -26,67 +26,19 @@ class AdminAuthMiddleware implements Middleware {
             }
 
             // --- RBAC CHECK ---
-            $user_id = $_SESSION['id_user'];
-            $is_admin = $_SESSION['is_admin'] ?? 0;
+            $routeName = $request->getRouteName() ?? '';
             
-            if ($is_admin != 1) { // Super Admin bypasses all checks
-                $routeName = $request->route->name ?? '';
-                
-                // Exempt Dashboard and logout
-                $publicRoutes = ['admin.dashboard', 'admin.logout'];
-                if (!in_array($routeName, $publicRoutes) && !empty($routeName)) {
-                    // Extract module prefix (e.g., admin.category.edit -> admin.category)
-                    $parts = explode('.', $routeName);
-                    if (count($parts) >= 3) {
-                        $prefix = $parts[0] . '.' . $parts[1]; // admin.category
-                        $action = end($parts); // edit, index, store, destroy, updateStatusAjax
-                        
-                        // Find module by route_name containing prefix
-                        $module = \ModuleAdminModel::where('route_name', 'LIKE', $prefix . '.%')->first();
-                        
-                        if ($module) {
-                            $role_id = $_SESSION['role_id'] ?? 0;
-                            if (empty($role_id)) {
-                                $user = \App\Models\UserModel::find($user_id);
-                                $role_id = $user ? $user->role_id : 0;
-                                $_SESSION['role_id'] = $role_id;
-                            }
-
-                            // Sử dụng Cache từ Session thay vì chọc Database
-                            $permsCache = $_SESSION['role_permissions'] ?? [];
-                            $perm = null;
-                            if (isset($permsCache[$module->id])) {
-                                // Mock thành object để dùng tiếp code cũ
-                                $perm = (object) $permsCache[$module->id];
-                            } else {
-                                // Fallback query db nếu session chưa có
-                                $perm = \App\Models\RolePermissionModel::where('role_id', $role_id)
-                                                           ->where('module_id', $module->id)
-                                                           ->first();
-                            }
-                                                       
-                            if (!$perm) {
-                                return $this->denyAccess();
-                            }
-                            
-                            $isAllowed = false;
-                            
-                            if (in_array($action, ['index', 'show'])) {
-                                $isAllowed = $perm->can_view == 1;
-                            } elseif (in_array($action, ['create', 'store'])) {
-                                $isAllowed = $perm->can_add == 1;
-                            } elseif (in_array($action, ['edit', 'update', 'updateStatusAjax', 'toggle_status'])) {
-                                $isAllowed = $perm->can_edit == 1;
-                            } elseif (in_array($action, ['destroy', 'destroy_multiple'])) {
-                                $isAllowed = $perm->can_delete == 1;
-                            } else {
-                                $isAllowed = $perm->can_view == 1;
-                            }
-                            
-                            if (!$isAllowed) {
-                                return $this->denyAccess();
-                            }
-                        }
+            // Exempt Dashboard and logout
+            $publicRoutes = ['admin.dashboard', 'admin.logout'];
+            if (!in_array($routeName, $publicRoutes) && !empty($routeName)) {
+                // Extract module prefix (e.g., admin.category.edit -> admin.category)
+                $parts = explode('.', $routeName);
+                if (count($parts) >= 3) {
+                    $prefix = $parts[0] . '.' . $parts[1]; // admin.category
+                    $action = end($parts); // edit, index, store, destroy, updateStatusAjax
+                    
+                    if (!\App\Core\Auth\Gate::check($prefix, $action)) {
+                        return $this->denyAccess();
                     }
                 }
             }

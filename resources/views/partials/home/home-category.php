@@ -16,7 +16,7 @@
                     <div class="swiper-wrapper">
                         <?php foreach ($home_category as $key => $value): ?>
                             <div class="swiper-slide">
-                                <a href="<?= route('category.show', $value['alias']) ?>">
+                                <a href="<?= route('category.show', $value['slug']) ?>">
                                     <div class="card-category card-hover-zoom">
                                         <div class="thumbnail">
                                             <div class="ratio ratio-16x9">

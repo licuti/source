@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
-class ProductVariantAttributeModel extends \App\Core\Model {
+class ProductVariantAttributeModel extends \App\Core\Database\Model {
     public $table = '#_product_variant_attributes';
-    public bool $use_lang = false;
+    
     public bool $timestamps = false;
 
     /**

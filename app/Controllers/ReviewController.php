@@ -2,6 +2,9 @@
 
 namespace App\Controllers;
 
+use App\Models\BinhLuanModel;
+
+use App\Core\Request;
 use App\Core\Response;
 
 /**
@@ -25,7 +28,7 @@ class ReviewController extends Controller {
      * Load thêm đánh giá (phân trang AJAX)
      * POST /ajax/reviews/load
      */
-    public function load($request) {
+    public function load(Request $request) {
         $id_sp        = (int) $request->input('id_sanpham', 0);
         $offset       = (int) $request->input('offset', 0);
         $limit        = (int) $request->input('limit', 5);
@@ -43,7 +46,7 @@ class ReviewController extends Controller {
             'bl_media' => $filter_media,
         ];
 
-        $BinhLuan = new \BinhLuanModel();
+        $BinhLuan = new BinhLuanModel();
         $total    = $BinhLuan->countForProduct($id_sp, $filters);
         $items    = $BinhLuan->getForProduct($id_sp, $filters, $limit, $offset);
 
@@ -67,7 +70,7 @@ class ReviewController extends Controller {
      * Upload ảnh / video cho đánh giá
      * POST /ajax/reviews/media
      */
-    public function uploadMedia($request) {
+    public function uploadMedia(Request $request) {
         $saveDir = realpath(__DIR__ . '/../../img_data') . '/review/';
 
         if (!is_dir($saveDir)) {

@@ -4,6 +4,7 @@ namespace App\Controllers\Admin;
 use App\Core\Request;
 use App\Models\ModuleModel;
 use App\Models\CategoryModel;
+use App\Requests\Admin\CategoryRequest;
 
 class CategoryController extends BaseAdminController {
     
@@ -50,7 +51,7 @@ class CategoryController extends BaseAdminController {
      * Mở form thêm mới
      */
     public function create(Request $request) {
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $langs = $this->langs;
         $parentCategories = CategoryModel::getTreeForAdmin();
         $modules = ModuleModel::query()->where('hide', 1)->orderBy('stt', 'ASC')->get();
         return $this->render('admin.category.form', compact('langs', 'parentCategories', 'modules'));
@@ -61,10 +62,10 @@ class CategoryController extends BaseAdminController {
      */
     public function edit(Request $request, $id) {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
-        $langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
+        $langs = $this->langs;
         
         $catQuery = CategoryModel::query();
-        $catQuery->use_lang = false; // Fetch all translations
+        $catQuery->withoutGlobalScope('lang'); // Fetch all translations
         $translations = $catQuery->where('id_code', $id)->get();
         if (empty($translations)) return $this->redirect(route('admin.category.index'));
         
@@ -133,8 +134,8 @@ class CategoryController extends BaseAdminController {
     /**
      * Lưu dữ liệu thêm mới
      */
-    public function store(Request $request) {
-        $langs = config('lang', [['code' => 'vi']]);
+    public function store(CategoryRequest $request) {
+        $langs = $this->langs;
         $firstLang = $langs[0]['code'];
         
         $firstLangData = $this->buildCategoryData($request, $firstLang);
@@ -146,7 +147,7 @@ class CategoryController extends BaseAdminController {
         if ($insertedId) {
             $id_code = $insertedId;
             $catQuery = CategoryModel::query();
-            $catQuery->use_lang = false;
+            $catQuery->withoutGlobalScope('lang');
             $catQuery->where('id', $insertedId)->update(['id_code' => $id_code]);
             
             foreach ($langs as $index => $l) {
@@ -169,22 +170,15 @@ class CategoryController extends BaseAdminController {
     /**
      * Lưu dữ liệu cập nhật
      */
-    public function update(Request $request, $id) {
+    public function update(CategoryRequest $request, $id) {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
         $parent_id = (int)$request->input('parent_id', 0);
-        
-        // Kiểm tra chống loop (cha không thể nhận chính nó làm con)
-        if ($id == $parent_id) {
-            // we won't set it to self, the builder will use the updated value. However, we should just let builder use request->input.
-            // to fix we override $_POST basically
-            $_POST['parent_id'] = 0; 
-        }
 
-        $langs = config('lang', [['code' => 'vi']]);
+        $langs = $this->langs;
         foreach ($langs as $l) {
             $c = $l['code'];
             $catQuery = CategoryModel::query();
-            $catQuery->use_lang = false; 
+            $catQuery->withoutGlobalScope('lang'); 
             $exists = $catQuery->where('id_code', $id)->where('lang', $c)->first();
             
             $data = $this->buildCategoryData($request, $c);
@@ -195,7 +189,7 @@ class CategoryController extends BaseAdminController {
             
             if ($exists) {
                 $updateQuery = CategoryModel::query();
-                $updateQuery->use_lang = false;
+                $updateQuery->withoutGlobalScope('lang');
                 $updateQuery->where('id', $exists->id)->update($data);
             } else {
                 $data['id_code'] = $id;
@@ -227,7 +221,7 @@ class CategoryController extends BaseAdminController {
         if ($id > 0) {
             // Update in db_categories
             $catQuery = CategoryModel::query();
-            $catQuery->use_lang = false;
+            $catQuery->withoutGlobalScope('lang');
             $catQuery->where('id_code', $id)->update([$field => $value]);
 
             return $this->json(['success' => true]);
@@ -248,7 +242,7 @@ class CategoryController extends BaseAdminController {
         if (!empty($ids)) {
             foreach ($ids as $delId) {
                 $catQuery = CategoryModel::query();
-                $catQuery->use_lang = false;
+                $catQuery->withoutGlobalScope('lang');
                 $catQuery->where('id_code', $delId)->delete();
             }
         }
@@ -273,7 +267,7 @@ class CategoryController extends BaseAdminController {
 
             foreach ($allIdsToDelete as $delId) {
                 $catQuery = CategoryModel::query();
-                $catQuery->use_lang = false;
+                $catQuery->withoutGlobalScope('lang');
                 $catQuery->where('id_code', $delId)->delete();
             }
             return $this->json(['success' => true]);

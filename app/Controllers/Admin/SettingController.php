@@ -19,11 +19,11 @@ class SettingController extends BaseAdminController {
             }
         }
         
-        return view('admin.setting.index', compact('settings', 'firstItem'));
+        return $this->render('admin.setting.index', compact('settings', 'firstItem'));
     }
 
     public function update() {
-        $langs = config('lang', [['code' => 'vi']]);
+        $langs = $this->langs;
         
         // Cấu trúc Schema dùng chung cho mọi ngôn ngữ, lấy từ form submit (tab đầu tiên hoặc input hidden)
         $schemaStr = $_POST['schema_config'] ?? '[]';

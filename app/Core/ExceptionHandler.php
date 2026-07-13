@@ -10,8 +10,61 @@ class ExceptionHandler
 {
     public static function handle(\Throwable $e)
     {
-        // Ghi log
-        Logger::error($e->getMessage() . "\n" . $e->getTraceAsString());
+        // Xử lý riêng cho lỗi HTTP 404 (Not Found)
+        if ($e instanceof \App\Exceptions\HttpException && $e->getCode() == 404) {
+            self::handle404();
+            exit;
+        }
+
+        // Xử lý riêng cho lỗi Validation
+        if ($e instanceof \App\Exceptions\ValidationException) {
+            $request = \App\Core\App::getInstance()->request;
+            
+            // Xả output buffer nếu đang có
+            while (ob_get_level()) { ob_end_clean(); }
+
+            if ($request->expectsJson()) {
+                http_response_code(422);
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Dữ liệu không hợp lệ.',
+                    'errors' => $e->errors()
+                ], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+
+            // Fallback: Redirect back
+            $referer = $_SERVER['HTTP_REFERER'] ?? '/';
+            header("Location: $referer");
+            exit;
+        }
+
+        // Xử lý riêng cho lỗi CSRF
+        if ($e instanceof \App\Exceptions\TokenMismatchException) {
+            $request = \App\Core\App::getInstance()->request;
+            while (ob_get_level()) { ob_end_clean(); }
+
+            if ($request->expectsJson() || $request->isAjax()) {
+                http_response_code(419);
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode([
+                    'success' => false,
+                    'message' => $e->getMessage()
+                ], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+
+            self::renderErrorPage(
+                419,
+                'Trang đã hết hạn',
+                'Phiên làm việc của bạn đã kết thúc vì lý do bảo mật. Vui lòng tải lại trang và thử lại.'
+            );
+            exit;
+        }
+
+        // Ghi log lỗi hệ thống
+        (new Logger())->error($e->getMessage() . "\n" . $e->getTraceAsString());
 
         // Xả output buffer nếu đang có
         while (ob_get_level()) {
@@ -30,10 +83,27 @@ class ExceptionHandler
         if ($isDebug) {
             echo self::renderDebugPage($e);
         } else {
-            echo self::renderErrorPage();
+            self::renderErrorPage();
         }
 
         exit;
+    }
+
+    // ─────────────────────────────────────────────
+    // Xử lý lỗi 404 & Redirect 301
+    // ─────────────────────────────────────────────
+    private static function handle404()
+    {
+        $requestUri = $_SERVER['REQUEST_URI'] ?? '/';
+        $path = parse_url($requestUri, PHP_URL_PATH);
+        $checkUrl = '/' . ltrim($path, '/');
+
+        http_response_code(404);
+        try {
+            echo view('pages/404', ['com' => trim($path, '/')]);
+        } catch (\Throwable $e) {
+            echo "<h1>404 - Không tìm thấy trang</h1>";
+        }
     }
 
     // ─────────────────────────────────────────────
@@ -174,25 +244,29 @@ HTML;
     // ─────────────────────────────────────────────
     // Trang lỗi thân thiện (Production)
     // ─────────────────────────────────────────────
-    private static function renderErrorPage(): string
+    private static function renderErrorPage($code = 500, $title = 'Lỗi hệ thống', $desc = 'Đã có lỗi xảy ra. Vui lòng thử lại sau.'): void
     {
-        return <<<HTML
+        echo <<<HTML
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>500 - Lỗi hệ thống</title>
+<title>{$code} - {$title}</title>
 <style>
   body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; display:flex; align-items:center; justify-content:center; min-height:100vh; }
   .box { text-align:center; padding: 48px; }
   h1 { font-size: 72px; font-weight: 800; color: #dc2626; }
+  h2 { font-size: 24px; color: #333; margin-top: 10px; }
   p { color: #64748b; font-size: 18px; margin-top: 12px; }
+  a.btn { display: inline-block; margin-top: 20px; padding: 10px 20px; background: #0ea5e9; color: #fff; text-decoration: none; border-radius: 5px; }
 </style>
 </head>
 <body>
   <div class="box">
-    <h1>500</h1>
-    <p>Đã có lỗi xảy ra. Vui lòng thử lại sau.</p>
+    <h1>{$code}</h1>
+    <h2>{$title}</h2>
+    <p>{$desc}</p>
+    <a href="javascript:history.back()" class="btn">Quay lại</a>
   </div>
 </body>
 </html>

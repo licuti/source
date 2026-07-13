@@ -3,7 +3,8 @@ namespace App\Controllers\Admin;
 
 use App\Core\Request;
 
-class AuthController extends BaseAdminController {
+class AuthController extends \App\Controllers\Controller {
+    protected $layout = null;
     public function login(Request $request) {
         if (session_status() === PHP_SESSION_NONE) session_start();
         

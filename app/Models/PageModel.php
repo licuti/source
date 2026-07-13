@@ -6,7 +6,8 @@ namespace App\Models;
  * PageModel
  * Quản lý các trang tĩnh (Giới thiệu, Liên hệ, Chính sách...)
  */
-class PageModel extends \App\Core\Model {
+class PageModel extends \App\Core\Database\Model {
+    use \App\Traits\HasLanguage;
     public $table = '#_page'; // Tự động thay thế #_ thành db_
     
     // Các thuộc tính mặc định nếu cần
@@ -18,7 +19,7 @@ class PageModel extends \App\Core\Model {
     /**
      * Lấy trang theo alias
      */
-    public static function findByAlias(string $alias) {
-        return self::where('alias', $alias)->where('hien_thi', 1)->first();
+    public static function findByAlias(string $slug) {
+        return self::where('slug', $slug)->where('hien_thi', 1)->first();
     }
 }

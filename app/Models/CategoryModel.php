@@ -1,7 +1,8 @@
 <?php
 namespace App\Models;
 
-class CategoryModel extends \App\Core\Model {
+class CategoryModel extends \App\Core\Database\Model {
+    use \App\Traits\HasLanguage;
     public $table = '#_categories';
     public bool $timestamps = true;
     protected string $createdAt = 'created_at';

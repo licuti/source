@@ -35,7 +35,7 @@ class GalleryService {
         $id = $inputData['id'] ?? null;
 
         $title = $inputData['title'] ?? '';
-        $slug = empty($inputData['alias']) ? str_slug($title) : $inputData['alias'];
+        $slug = empty($inputData['slug']) ? str_slug($title) : $inputData['slug'];
 
         // Kiểm tra update hay create
         $needsIdCodeUpdate = false;
@@ -111,5 +111,15 @@ class GalleryService {
         }
 
         return $model->id;
+    }
+
+    /**
+     * Xóa Gallery và tất cả các bản dịch liên quan
+     */
+    public function deleteGallery($idCode) {
+        if (is_array($idCode)) {
+            return GalleryModel::adminQuery()->whereIn('id_code', $idCode)->delete();
+        }
+        return GalleryModel::adminQuery()->where('id_code', $idCode)->delete();
     }
 }

@@ -6,11 +6,8 @@ use App\Models\BlockModel;
 
 class BlockController extends BaseAdminController {
     
-    private array $langs;
-
     public function __construct() {
         parent::__construct();
-        $this->langs = config('lang', [['code' => 'vi', 'name' => 'Tiếng Việt']]);
     }
     
     public function index(Request $request) {
@@ -20,12 +17,12 @@ class BlockController extends BaseAdminController {
         if ($page < 1) $page = 1;
         $limit = 10;
 
-        $query = BlockModel::where('lang', config('app.locale', 'vi'));
+        $query = BlockModel::where('lang', $this->primaryLang);
         
         if ($keyword !== '') {
             $query->where(function($q) use ($keyword) {
                 $q->where('name', 'LIKE', "%{$keyword}%")
-                  ->orWhere('alias', 'LIKE', "%{$keyword}%");
+                  ->orWhere('slug', 'LIKE', "%{$keyword}%");
             });
         }
         if ($status !== '') {
@@ -47,7 +44,7 @@ class BlockController extends BaseAdminController {
         $langs = $this->langs;
         
         $nameArr = $request->input('name', []);
-        $alias = $request->input('alias', '');
+        $slug = $request->input('slug', '');
         $schema_config = $request->input('schema_config', '[]');
         $sort_order = (int)$request->input('sort_order', 0);
         $is_active = $request->input('is_active') ? 1 : 0;
@@ -64,7 +61,7 @@ class BlockController extends BaseAdminController {
                 'id_code' => $newIdCode,
                 'lang' => $c,
                 'name' => $nameArr[$c] ?? '',
-                'alias' => $alias,
+                'slug' => $slug,
                 'description' => $descriptionArr[$c] ?? '',
                 'image' => $imageArr[$c] ?? '',
                 'schema_config' => $schema_config,
@@ -109,7 +106,7 @@ class BlockController extends BaseAdminController {
         $langs = $this->langs;
         
         $nameArr = $request->input('name', []);
-        $alias = $request->input('alias', '');
+        $slug = $request->input('slug', '');
         $schema_config = $request->input('schema_config', '[]');
         $sort_order = (int)$request->input('sort_order', 0);
         $is_active = $request->input('is_active') ? 1 : 0;
@@ -121,7 +118,7 @@ class BlockController extends BaseAdminController {
             
             $data = [
                 'name' => $nameArr[$c] ?? '',
-                'alias' => $alias,
+                'slug' => $slug,
                 'description' => $descriptionArr[$c] ?? '',
                 'image' => $imageArr[$c] ?? '',
                 'schema_config' => $schema_config,

@@ -1,10 +1,10 @@
 <?php
 namespace App\Models;
 
-class TextModel extends \App\Core\Model {
+class TextModel extends \App\Core\Database\Model {
     public $table = '#_text';
     public bool $timestamps = false;
-    public bool $use_lang = false;
+    
     protected static $cache = null;
 
     /**

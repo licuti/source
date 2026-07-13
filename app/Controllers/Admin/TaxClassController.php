@@ -10,10 +10,10 @@ class TaxClassController extends BaseAdminController
     public function index(Request $request)
     {
         $query = TaxClassModel::query();
-        $query->where('lang', config('app.locale', 'vi'));
+        $query->where('lang', $this->primaryLang);
         $items = $query->orderBy('id', 'DESC')->get();
 
-        return view('admin.tax_class.index', [
+        return $this->render('admin.tax_class.index', [
             'items' => $items,
             'title' => 'Quản lý Nhóm Thuế'
         ]);
@@ -21,8 +21,8 @@ class TaxClassController extends BaseAdminController
 
     public function create()
     {
-        $langs = config('lang', ['vi' => ['code' => 'vi']]);
-        return view('admin.tax_class.form', [
+        $langs = $this->langs;
+        return $this->render('admin.tax_class.form', [
             'title' => 'Thêm Nhóm Thuế',
             'langs' => $langs,
             'item' => []
@@ -33,7 +33,7 @@ class TaxClassController extends BaseAdminController
     {
         if ($isDefault) {
             $updateQuery = TaxClassModel::query();
-            $updateQuery->use_lang = false;
+            $updateQuery->withoutGlobalScope('lang');
             if ($idCodeToIgnore) {
                 $updateQuery->where('id_code', '!=', $idCodeToIgnore);
             }
@@ -43,7 +43,7 @@ class TaxClassController extends BaseAdminController
 
     public function store(Request $request)
     {
-        $langs = config('lang', ['vi' => ['code' => 'vi']]);
+        $langs = $this->langs;
         $firstLang = current($langs)['code'];
         
         $isDefault = $request->input('is_default') !== null ? 1 : 0;
@@ -60,7 +60,7 @@ class TaxClassController extends BaseAdminController
         if ($insertedId) {
             $id_code = $insertedId;
             $pmQuery = TaxClassModel::query();
-            $pmQuery->use_lang = false;
+            $pmQuery->withoutGlobalScope('lang');
             $pmQuery->where('id', $insertedId)->update(['id_code' => $id_code]);
             
             $this->handleDefaultStatus($isDefault, $id_code);
@@ -90,13 +90,13 @@ class TaxClassController extends BaseAdminController
     public function edit(Request $request, $params = [])
     {
         $id = is_array($params) ? ($params['id'] ?? 0) : $params;
-        $langs = config('lang', ['vi' => ['code' => 'vi']]);
+        $langs = $this->langs;
         
         $baseItem = TaxClassModel::find($id);
         if (!$baseItem) return $this->redirect(route('admin.tax_class.index'));
 
         $query = TaxClassModel::query();
-        $query->use_lang = false;
+        $query->withoutGlobalScope('lang');
         $translations = $query->where('id_code', $baseItem->id_code)->get();
 
         $itemData = [
@@ -111,7 +111,7 @@ class TaxClassController extends BaseAdminController
             $itemData['name'][$t->lang] = $t->name;
         }
 
-        return view('admin.tax_class.form', [
+        return $this->render('admin.tax_class.form', [
             'title' => 'Sửa Nhóm Thuế',
             'item' => $itemData,
             'langs' => $langs
@@ -124,7 +124,7 @@ class TaxClassController extends BaseAdminController
         $baseItem = TaxClassModel::find($id);
         if (!$baseItem) return $this->redirect(route('admin.tax_class.index'));
 
-        $langs = config('lang', ['vi' => ['code' => 'vi']]);
+        $langs = $this->langs;
         
         $isDefault = $request->input('is_default') !== null ? 1 : 0;
         $isActive = $request->input('is_active') !== null ? 1 : 0;
@@ -132,7 +132,7 @@ class TaxClassController extends BaseAdminController
         $this->handleDefaultStatus($isDefault, $baseItem->id_code);
 
         $query = TaxClassModel::query();
-        $query->use_lang = false;
+        $query->withoutGlobalScope('lang');
         $translations = $query->where('id_code', $baseItem->id_code)->get();
         $existingLangs = array_column($translations, 'id', 'lang');
 
@@ -146,7 +146,7 @@ class TaxClassController extends BaseAdminController
 
             if (isset($existingLangs[$c])) {
                 $updateQuery = TaxClassModel::query();
-                $updateQuery->use_lang = false;
+                $updateQuery->withoutGlobalScope('lang');
                 $updateQuery->where('id', $existingLangs[$c])->update($data);
             } else {
                 $data['id_code'] = $baseItem->id_code;
@@ -169,7 +169,7 @@ class TaxClassController extends BaseAdminController
         
         if ($baseItem) {
             $query = TaxClassModel::query();
-            $query->use_lang = false;
+            $query->withoutGlobalScope('lang');
             $query->where('id_code', $baseItem->id_code)->delete();
             return $this->json(['success' => true, 'message' => 'Đã xóa nhóm thuế']);
         }
@@ -191,7 +191,7 @@ class TaxClassController extends BaseAdminController
         $baseItem = TaxClassModel::find($id);
         if ($baseItem) {
             $query = TaxClassModel::query();
-            $query->use_lang = false;
+            $query->withoutGlobalScope('lang');
             $query->where('id_code', $baseItem->id_code)->update([$field => $value]);
             return $this->json(['success' => true, 'message' => 'Cập nhật trạng thái thành công!']);
         }

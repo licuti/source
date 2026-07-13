@@ -25,7 +25,7 @@ class CustomerController extends BaseAdminController
 
         $items = $query->orderBy('id', 'DESC')->paginate(20);
 
-        return view('admin.customer.index', [
+        return $this->render('admin.customer.index', [
             'items' => $items,
             'title' => 'Quản lý Thành viên',
             'keyword' => $keyword,
@@ -36,7 +36,7 @@ class CustomerController extends BaseAdminController
     public function create()
     {
         $countries = LocationModel::where('type', 'country')->orderBy('name', 'ASC')->get();
-        return view('admin.customer.form', [
+        return $this->render('admin.customer.form', [
             'title' => 'Thêm Khách hàng mới',
             'item' => [],
             'countries' => $countries,
@@ -60,7 +60,7 @@ class CustomerController extends BaseAdminController
         $districts = $item->province_id ? LocationModel::where('type', 'district')->where('parent_id', $item->province_id)->orderBy('name', 'ASC')->get() : [];
         $wards = $item->district_id ? LocationModel::where('type', 'ward')->where('parent_id', $item->district_id)->orderBy('name', 'ASC')->get() : [];
 
-        return view('admin.customer.form', [
+        return $this->render('admin.customer.form', [
             'title' => 'Sửa thông tin Khách hàng: ' . $item->fullname,
             'item' => $item,
             'countries' => $countries,

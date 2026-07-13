@@ -21,7 +21,7 @@
                         <div class="wrapper-category">
                             <div class="row mb-2">
                                 <div class="col-auto flex-fill">
-                                    <ul class="nav nav-tabs" id="Tab-<?= $cate_product['alias'] ?>" role="tablist">
+                                    <ul class="nav nav-tabs" id="Tab-<?= $cate_product['slug'] ?>" role="tablist">
                                         <?php foreach ($getChildCateProduct as $key => $value): ?>
                                             <li class="nav-item" role="presentation">
                                                 <button class="nav-link <?= $key == 0 ? 'active' : '' ?>" id="tab-<?= $value['id'] ?>" data-bs-toggle="tab" data-bs-target="#tab-pane-<?= $value['id'] ?>" type="button" role="tab" aria-controls="tab-pane-<?= $value['id'] ?>" aria-selected="true"><?= $value['ten'] ?></button>
@@ -30,10 +30,10 @@
                                     </ul>
                                 </div>
                                 <div class="col-auto">
-                                    <a href="<?= route('category.show', $cate_product['alias']) ?>" class="btn-custom btn-x">Xem thêm</a>
+                                    <a href="<?= route('category.show', $cate_product['slug']) ?>" class="btn-custom btn-x">Xem thêm</a>
                                 </div>
                             </div>
-                            <div class="tab-content" id="TabContent-<?= $cate_product['alias'] ?>">
+                            <div class="tab-content" id="TabContent-<?= $cate_product['slug'] ?>">
                                 <?php foreach ($getChildCateProduct as $key => $cate_child_product): ?>
                                     <?php
                                         $getChildProduct = $d->o_fet("select * from #_sanpham where id_loai=".$cate_child_product['id_code']."  and tieu_bieu=1 and hien_thi=1 "._where_lang." order by so_thu_tu,id desc limit 12"); 
@@ -66,7 +66,7 @@
                             <div class="row mb-2">
                                 <div class="col-auto flex-fill"></div>
                                 <div class="col-auto">
-                                    <a href="<?= route('category.show', $cate_product['alias']) ?>" class="btn-custom btn-x">Xem thêm <i class="fa-solid fa-chevron-right fa-xs"></i></a>
+                                    <a href="<?= route('category.show', $cate_product['slug']) ?>" class="btn-custom btn-x">Xem thêm <i class="fa-solid fa-chevron-right fa-xs"></i></a>
                                 </div>
                             </div>
 
