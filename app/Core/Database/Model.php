@@ -413,7 +413,7 @@ class Model implements \JsonSerializable {
     }
 
     public static function find($id, string $columns = '*') {
-        return static::find($id, $columns);
+        return (new static())->newQuery()->find($id, $columns);
     }
 
     public static function __callStatic($method, $parameters) {
