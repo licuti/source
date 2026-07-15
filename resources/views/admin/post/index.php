@@ -103,11 +103,11 @@ if ($canAdd) {
                                     $rowCanEdit = $canEdit && ($isAdmin || $item->created_by == $user->id);
                                     $rowCanDelete = $canDelete && ($isAdmin || $item->created_by == $user->id);
                                     ?>
-                                    <tr id="row-<?= $item->id_code ?>" class="wp-row">
+                                    <tr id="row-<?= $item->id ?>" class="wp-row">
                                         <td scope="row" class="text-center align-middle">
                                             <?php if ($rowCanDelete): ?>
                                             <div class="form-check d-flex justify-content-center mb-0">
-                                                <input class="form-check-input row-check" type="checkbox" value="<?= $item->id_code ?>">
+                                                <input class="form-check-input row-check" type="checkbox" value="<?= $item->id ?>">
                                             </div>
                                             <?php endif; ?>
                                         </td>
@@ -124,7 +124,7 @@ if ($canAdd) {
                                         <!-- Tiêu đề -->
                                         <td class="align-middle">
                                             <?php if ($rowCanEdit): ?>
-                                                <strong><a href="<?= route('admin.post.edit', ['id' => $item->id_code]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->title) ?></a></strong>
+                                                <strong><a href="<?= route('admin.post.edit', ['id' => $item->id]) ?>" class="text-dark text-decoration-none"><?= htmlspecialchars($item->title) ?></a></strong>
                                             <?php else: ?>
                                                 <strong><span class="text-dark"><?= htmlspecialchars($item->title) ?></span></strong>
                                             <?php endif; ?>
@@ -143,7 +143,7 @@ if ($canAdd) {
                                                     'label' => 'Xóa', 
                                                     'url' => 'javascript:void(0)', 
                                                     'class' => 'text-danger btn-delete', 
-                                                    'attributes' => 'data-id="' . $item->id_code . '"'
+                                                    'attributes' => 'data-id="' . $item->id . '"'
                                                 ];
                                             }
                                             if (!empty($actions)) {
@@ -157,8 +157,8 @@ if ($canAdd) {
                                             <?php foreach ($langs as $l): ?>
                                                 <?php
                                                 $lCode = $l['code'];
-                                                $hasTranslation = isset($translations[$item->id_code][$lCode]);
-                                                $transId = $hasTranslation ? $translations[$item->id_code][$lCode] : null;
+                                                $hasTranslation = isset($translations[$item->id][$lCode]);
+                                                $transId = $hasTranslation ? $translations[$item->id][$lCode] : null;
                                                 $flagSrc = !empty($l['image']) ? getImageUrl($l['image']) : '';
                                                 ?>
                                                 <?php if ($hasTranslation): ?>
@@ -171,7 +171,7 @@ if ($canAdd) {
                                                         <i class="fa-solid fa-pencil text-primary" style="font-size: 11px;"></i>
                                                     </a>
                                                 <?php else: ?>
-                                                    <a href="<?= route('admin.post.create', ['lang' => $lCode, 'source_id' => $item->id_code]) ?>" class="text-decoration-none d-inline-flex align-items-center me-2 mb-1 opacity-50" title="Thêm bản <?= htmlspecialchars($l['name']) ?>">
+                                                    <a href="<?= route('admin.post.create', ['lang' => $lCode, 'source_id' => $item->id]) ?>" class="text-decoration-none d-inline-flex align-items-center me-2 mb-1 opacity-50" title="Thêm bản <?= htmlspecialchars($l['name']) ?>">
                                                         <?php if($flagSrc): ?>
                                                             <img src="<?= $flagSrc ?>" alt="<?= $lCode ?>" style="width: 20px; height: 14px; object-fit: cover; border-radius: 2px;" class="border shadow-sm me-1 grayscale">
                                                         <?php else: ?>
@@ -191,7 +191,7 @@ if ($canAdd) {
                                         <td class="text-center align-middle">
                                             <div class="form-check form-switch d-flex justify-content-center">
                                                 <?php if ($rowCanEdit): ?>
-                                                    <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="<?= $item->id_code ?>" data-field="is_featured" data-url="<?= route('admin.post.updateStatusAjax') ?>" <?= $item->is_featured ? 'checked' : '' ?>>
+                                                    <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="<?= $item->id ?>" data-field="is_featured" data-url="<?= route('admin.post.updateStatusAjax') ?>" <?= $item->is_featured ? 'checked' : '' ?>>
                                                 <?php else: ?>
                                                     <input class="form-check-input" type="checkbox" <?= $item->is_featured ? 'checked' : '' ?> disabled>
                                                 <?php endif; ?>
@@ -202,7 +202,7 @@ if ($canAdd) {
                                         <td class="text-center align-middle">
                                             <div class="form-check form-switch d-flex justify-content-center">
                                                 <?php if ($rowCanEdit): ?>
-                                                    <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="<?= $item->id_code ?>" data-field="status" data-url="<?= route('admin.post.updateStatusAjax') ?>" <?= $item->status ? 'checked' : '' ?>>
+                                                    <input class="form-check-input ajax-toggle-status" type="checkbox" data-id="<?= $item->id ?>" data-field="status" data-url="<?= route('admin.post.updateStatusAjax') ?>" <?= $item->status ? 'checked' : '' ?>>
                                                 <?php else: ?>
                                                     <input class="form-check-input" type="checkbox" <?= $item->status ? 'checked' : '' ?> disabled>
                                                 <?php endif; ?>

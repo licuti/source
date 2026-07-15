@@ -16,8 +16,8 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
     <div class="container-fluid">
         <form action="<?= $action ?>" method="POST">
             <input type="hidden" name="lang" value="<?= htmlspecialchars($langCode) ?>">
-            <?php if (isset($item['id_code'])): ?>
-                <input type="hidden" name="id_code" value="<?= $item['id_code'] ?>">
+            <?php if (isset($item['id'])): ?>
+                <input type="hidden" name="source_id" value="<?= $item['id'] ?>">
             <?php endif; ?>
 
             <div class="row">
@@ -92,11 +92,12 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
                         <div class="card-body bg-light">
                             
                             <div class="mb-3">
-                                <label class="form-label">Danh mục cha</label>
-                                <select name="category_id" class="form-select form-select-sm">
-                                    <option value="0">--- Chọn danh mục ---</option>
-                                    <?php renderCategoryTree($categories ?? [], $item['category_id'] ?? 0); ?>
-                                </select>
+                                <label class="form-label">Danh mục</label>
+                                <?= view('admin.components.category_tree_checkbox', [
+                                    'categories' => $categories ?? [],
+                                    'name' => 'category_ids[]',
+                                    'selectedIds' => $item['category_ids'] ?? []
+                                ]) ?>
                             </div>
 
                             <!-- Nhúng Component Tải ảnh tái sử dụng -->

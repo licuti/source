@@ -5,6 +5,7 @@ use App\Core\Request;
 use App\Core\Validator;
 use App\Models\CategoryModel;
 use App\Models\PostModel;
+use App\Models\PostTranslationModel;
 use App\Services\PostService;
 
 class PostController extends BaseAdminController {
@@ -29,29 +30,36 @@ class PostController extends BaseAdminController {
         
         $currentLang = $request->input('lang', $this->primaryLang);
 
-        $postQuery = PostModel::adminQuery()
-            ->where('lang', $currentLang)
+        $postQuery = PostModel::query()
+            ->select('db_posts.*', 't.title', 't.slug')
+            ->join('post_translations as t', 't.post_id', '=', 'db_posts.id')
+            ->where('t.lang', $currentLang)
             ->ownedByUser(user());
 
-        if ($status !== '')      $postQuery->where('status', $status);
-        if ($categoryId > 0)     $postQuery->where('category_id', $categoryId);
-        if ($keyword !== '')     $postQuery->whereLike('title', $keyword);
+        if ($status !== '') {
+            $postQuery->where('db_posts.status', $status);
+        }
+        if ($categoryId > 0) {
+            $postQuery->join('post_category as pc', 'pc.post_id', '=', 'db_posts.id');
+            $postQuery->where('pc.category_id', $categoryId);
+        }
+        if ($keyword !== '') {
+            $postQuery->whereLike('t.title', $keyword);
+        }
 
-        $posts = $postQuery->orderBy('sort_order', 'ASC')
-                           ->orderBy('id', 'DESC')
+        $posts = $postQuery->orderBy('db_posts.sort_order', 'ASC')
+                           ->orderBy('db_posts.id', 'DESC')
                            ->paginate(10);
 
         $categories = $this->getCategories();
         $langs = $this->langs;
 
-        $idCodes = array_map(function($a) { return is_array($a) ? ($a['id_code'] ?? 0) : $a->id_code; }, $posts->items());
+        $ids = array_map(function($a) { return is_array($a) ? ($a['id'] ?? 0) : $a->id; }, $posts->items());
         $translations = [];
-        if (!empty($idCodes)) {
-            $allTrans = PostModel::adminQuery()
-                ->whereIn('id_code', $idCodes)
-                ->get();
+        if (!empty($ids)) {
+            $allTrans = PostTranslationModel::whereIn('post_id', $ids)->get();
             foreach ($allTrans as $t) {
-                $translations[$t->id_code][$t->lang] = $t->id;
+                $translations[$t->post_id][$t->lang] = $t->id;
             }
         }
 
@@ -59,54 +67,12 @@ class PostController extends BaseAdminController {
     }
 
     /**
-     * Mở form thêm mới
+     * Helper lấy dữ liệu form dùng chung
      */
-    public function create(Request $request) {
-        return $this->getFormData($request);
-    }
-
-    /**
-     * Mở form chỉnh sửa
-     */
-    public function edit(Request $request, $id) {
-        return $this->getFormData($request, (int)$id);
-    }
-
-    /**
-     * Lấy dữ liệu form dùng chung cho Create & Edit
-     */
-    private function getFormData(Request $request, $id = null) {
-        $langCode = $request->input('lang', $this->primaryLang);
-        $item = [];
-        
-        if ($id) {
-            $itemObj = PostModel::adminQuery()->qbFind($id);
-            if (!$itemObj) {
-                return $this->redirect(route('admin.post.index'));
-            }
-            if (!$this->canModify($itemObj)) {
-                session('error', 'Bạn không có quyền chỉnh sửa bài viết này!');
-                return $this->redirect(route('admin.post.index'));
-            }
-            $item = is_object($itemObj) && method_exists($itemObj, 'toArray') ? $itemObj->toArray() : (array)$itemObj;
-            $langCode = $item['lang'];
-        } else {
-            $sourceId = (int)$request->input('source_id', 0);
-            if ($sourceId > 0) {
-                $sourceItem = PostModel::adminQuery()->where('id_code', $sourceId)->first();
-                if ($sourceItem) {
-                    $item['id_code'] = $sourceItem->id_code;
-                    $item['category_id'] = $sourceItem->category_id;
-                    $item['image'] = $sourceItem->image;
-                    $item['status'] = $sourceItem->status;
-                    $item['sort_order'] = $sourceItem->sort_order;
-                    $item['is_featured'] = $sourceItem->is_featured;
-                }
-            }
-        }
-        
+    private function getFormData(Request $request, $item = []) {
         $langs = $this->langs;
         $categories = $this->getCategories();
+        $langCode = $request->input('lang', $this->primaryLang);
         
         $currentLangName = 'Unknown';
         foreach ($langs as $l) {
@@ -117,14 +83,69 @@ class PostController extends BaseAdminController {
         }
         
         $translations = [];
-        if (!empty($item['id_code'])) {
-            $allTrans = PostModel::adminQuery()->where('id_code', $item['id_code'])->get('id, lang');
+        if (!empty($item['id'])) {
+            $allTrans = PostTranslationModel::where('post_id', $item['id'])->get();
             foreach ($allTrans as $t) {
                 $translations[$t->lang] = $t->id;
             }
         }
         
-        return $this->render('admin.post.form', compact('langs', 'categories', 'item', 'langCode', 'currentLangName', 'translations'));
+        return compact('langs', 'categories', 'item', 'langCode', 'currentLangName', 'translations');
+    }
+
+    /**
+     * Mở form thêm mới
+     */
+    public function create(Request $request) {
+        $item = [];
+        $sourceId = (int)$request->input('source_id', 0);
+        
+        if ($sourceId > 0) {
+            $sourceItem = PostModel::find($sourceId);
+            if ($sourceItem) {
+                $item = $sourceItem->toArray();
+                $item['source_id'] = $sourceItem->id;
+                // Fetch existing categories
+                $catIds = \App\Core\Database\DB::table('post_category')
+                    ->where('post_id', $sourceItem->id)
+                    ->get();
+                $item['category_ids'] = array_column($catIds, 'category_id');
+            }
+        }
+
+        return $this->render('admin.post.form', $this->getFormData($request, $item));
+    }
+
+    /**
+     * Mở form chỉnh sửa
+     */
+    public function edit(Request $request, $id) {
+        $itemObj = PostModel::find((int)$id);
+        if (!$itemObj) return $this->redirect(route('admin.post.index'));
+        if (!$this->canModify($itemObj)) {
+            session('error', 'Bạn không có quyền chỉnh sửa bài viết này!');
+            return $this->redirect(route('admin.post.index'));
+        }
+        
+        $item = is_object($itemObj) && method_exists($itemObj, 'toArray') ? $itemObj->toArray() : (array)$itemObj;
+        
+        $langCode = $request->input('lang', $this->primaryLang);
+        $translation = $itemObj->getTranslation($langCode);
+        if ($translation) {
+            $item = array_merge($item, $translation->toArray());
+        } else {
+            foreach ($itemObj->getTranslatedAttributesArray() as $k => $v) {
+                $item[$k] = '';
+            }
+        }
+
+        // Lấy danh sách danh mục đã chọn
+        $catIds = \App\Core\Database\DB::table('post_category')
+                    ->where('post_id', $itemObj->id)
+                    ->get();
+        $item['category_ids'] = array_column($catIds, 'category_id');
+        
+        return $this->render('admin.post.form', $this->getFormData($request, $item));
     }
 
     /**
@@ -156,7 +177,7 @@ class PostController extends BaseAdminController {
             return $this->redirect(route('admin.post.edit', ['id' => $id]));
         }
 
-        $firstPost = PostModel::adminQuery()->qbFind($id);
+        $firstPost = PostModel::find($id);
         
         if (!$this->canModify($firstPost)) {
             session('error', 'Bạn không có quyền chỉnh sửa bài viết này!');
@@ -188,7 +209,7 @@ class PostController extends BaseAdminController {
             return $this->jsonError('Trường dữ liệu không hợp lệ');
         }
 
-        $post = PostModel::adminQuery()->where('id_code', $id)->first();
+        $post = PostModel::find($id);
         if (!$post) return $this->jsonError('ID không hợp lệ');
 
         if (!$this->canModify($post)) {
@@ -197,7 +218,7 @@ class PostController extends BaseAdminController {
 
         $updateVal = $value == 1 ? 1 : 0;
         
-        PostModel::adminQuery()->where('id_code', $id)->update([$field => $updateVal]);
+        PostModel::where('id', $id)->update([$field => $updateVal]);
         
         $label = $field === 'is_featured' ? 'Nổi bật' : 'Trạng thái hiển thị';
         return $this->jsonSuccess($label . ' đã được cập nhật!');
@@ -207,9 +228,9 @@ class PostController extends BaseAdminController {
      * Xóa 1 dòng
      */
     public function destroyAjax(Request $request) {
-        $id = $request->input('id');
+        $id = (int)$request->input('id');
         
-        $post = PostModel::adminQuery()->where('id_code', $id)->first();
+        $post = PostModel::find($id);
         
         if (!$post) {
             return $this->jsonError('Không tìm thấy bài viết!');
@@ -236,30 +257,30 @@ class PostController extends BaseAdminController {
             return $this->jsonError('Không có mục nào được chọn!');
         }
         
-        $posts = PostModel::adminQuery()->whereIn('id_code', $ids)->get();
+        $posts = PostModel::whereIn('id', $ids)->get();
         if (count($posts) === 0) {
             return $this->jsonError('Không tìm thấy mục nào để xóa!');
         }
         
-        $allowedIdCodes = [];
+        $allowedIds = [];
         $unauthorizedCount = 0;
         
         foreach ($posts as $post) {
             if ($this->canModify($post)) {
-                $allowedIdCodes[$post->id_code] = $post->id_code; // Đảm bảo unique
+                $allowedIds[$post->id] = $post->id;
             } else {
                 $unauthorizedCount++;
             }
         }
         
-        if (empty($allowedIdCodes)) {
+        if (empty($allowedIds)) {
             return $this->jsonError('Bạn không có quyền xóa các mục đã chọn!');
         }
         
-        $allowedIdCodes = array_values($allowedIdCodes);
-        $this->postService->deletePost($allowedIdCodes);
+        $allowedIds = array_values($allowedIds);
+        $this->postService->deletePost($allowedIds);
         
-        $msg = 'Đã xóa ' . count($allowedIdCodes) . ' bài viết thành công!';
+        $msg = 'Đã xóa ' . count($allowedIds) . ' bài viết thành công!';
         if ($unauthorizedCount > 0) {
             $msg .= " Đã bỏ qua $unauthorizedCount mục do không có quyền.";
         }
