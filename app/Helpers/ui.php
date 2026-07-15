@@ -353,6 +353,36 @@ if (!function_exists('renderCategoryFilter')) {
     }
 }
 
+if (!function_exists('renderCategoryTree')) {
+    /**
+     * In ra các thẻ <option> cho danh mục đệ quy
+     * Dùng trong form Thêm/Sửa danh mục, cho phép loại trừ danh mục hiện tại (để tránh chọn cha là chính nó)
+     */
+    function renderCategoryTree($categories, $selectedId = 0, $excludedId = 0, $prefix = '') {
+        foreach ($categories as $cat) {
+            // Bỏ qua danh mục đang sửa và các danh mục con của nó để tránh vòng lặp cha-con
+            if ($excludedId > 0 && $cat->id == $excludedId) {
+                continue;
+            }
+            
+            // Xử lý selected (nếu selectedId là mảng cho phép chọn nhiều, hoặc id đơn lẻ)
+            $selected = '';
+            if (is_array($selectedId)) {
+                if (in_array($cat->id, $selectedId)) $selected = 'selected';
+            } else {
+                if ($cat->id == $selectedId) $selected = 'selected';
+            }
+            
+            $catName = $cat->title ?? ($cat->ten ?? ($cat->name ?? ''));
+            echo '<option value="' . $cat->id . '" ' . $selected . '>' . $prefix . htmlspecialchars($catName) . '</option>';
+            
+            if (!empty($cat->children)) {
+                renderCategoryTree($cat->children, $selectedId, $excludedId, $prefix . '--- ');
+            }
+        }
+    }
+}
+
 if (!function_exists('render_attrs')) {
     /**
      * Chuyển đổi mảng attributes thành chuỗi HTML attributes
