@@ -41,34 +41,39 @@ $translations = $translations ?? [];
             </span>
         </div>
         
-        <?php if (isset($item['id_code']) && $item['id_code']): ?>
-            <h6 class="fs-6 fw-bold mb-3"><i class="fa-solid fa-language text-secondary me-1"></i> Các bản dịch khác:</h6>
-            <div class="d-flex flex-column gap-2">
-                <?php foreach ($langs as $l): ?>
-                    <?php if ($l['code'] == $currentLangCode) continue; ?>
-                    
-                    <div class="d-flex align-items-center justify-content-between p-2 border rounded hover-bg-light transition-all">
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="rounded-circle overflow-hidden border d-flex align-items-center justify-content-center bg-white shadow-sm" style="width: 28px; height: 28px;">
-                                <?php if (!empty($l['image'])): ?>
-                                    <img src="<?= getImageUrl($l['image']) ?>" alt="<?= $l['code'] ?>" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                                <?php endif; ?>
-                                <span class="text-uppercase fw-bold text-secondary" style="font-size: 10px; <?= !empty($l['image']) ? 'display: none;' : '' ?>"><?= $l['code'] ?></span>
-                            </div>
-                            <span class="fw-medium text-dark" style="font-size: 0.95rem;"><?= htmlspecialchars($l['name']) ?></span>
-                        </div>
+        <?php if (!empty($item['id'])): ?>
+            <div class="mt-4 border-top pt-3">
+                <h6 class="fw-bold mb-3 fs-6">Các bản dịch khác</h6>
+                <ul class="list-group list-group-flush mb-0">
+                    <?php foreach ($langs as $l): ?>
+                        <?php 
+                        if ($l['code'] === $currentLangCode) continue; 
                         
-                        <?php if (isset($translations[$l['code']])): ?>
-                            <a href="<?= route($module_route . '.edit', ['id' => $translations[$l['code']]]) ?>" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm" title="Sửa bản dịch này">
-                                <i class="fa-solid fa-pencil me-1"></i> Sửa
-                            </a>
-                        <?php else: ?>
-                            <a href="<?= route($module_route . '.create') . '?lang=' . $l['code'] . '&source_id=' . $item['id_code'] ?>" class="btn btn-sm btn-outline-success rounded-pill px-3" title="Thêm bản dịch mới">
-                                <i class="fa-solid fa-plus me-1"></i> Thêm
-                            </a>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
+                        $hasTrans = isset($translations[$l['code']]);
+                        $flagSrc = !empty($l['image']) ? getImageUrl($l['image']) : '';
+                        ?>
+                        <li class="list-group-item px-0 py-2 d-flex justify-content-between align-items-center bg-transparent border-bottom border-light">
+                            <div class="d-flex align-items-center">
+                                <?php if($flagSrc): ?>
+                                    <img src="<?= $flagSrc ?>" alt="<?= $l['code'] ?>" style="width: 20px; height: 14px; object-fit: cover; border-radius: 2px;" class="border shadow-sm me-2">
+                                <?php else: ?>
+                                    <span class="badge bg-light text-dark border me-2"><?= strtoupper($l['code']) ?></span>
+                                <?php endif; ?>
+                                <span class="<?= $hasTrans ? 'text-dark' : 'text-muted' ?>"><?= htmlspecialchars($l['name']) ?></span>
+                            </div>
+                            
+                            <?php if ($hasTrans): ?>
+                                <a href="<?= route($module_route . '.edit', ['id' => $item['id']]) ?>?lang=<?= $l['code'] ?>" class="btn btn-sm btn-light border" title="Chỉnh sửa bản dịch">
+                                    <i class="fa-solid fa-pen text-primary" style="font-size: 0.75rem;"></i>
+                                </a>
+                            <?php else: ?>
+                                <a href="<?= route($module_route . '.create') . '?lang=' . $l['code'] . '&source_id=' . $item['id'] ?>" class="btn btn-sm btn-outline-success rounded-pill px-3" title="Thêm bản dịch mới">
+                                    <i class="fa-solid fa-plus me-1"></i> Thêm
+                                </a>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
         <?php else: ?>
             <div class="alert alert-light border text-center mb-0 p-3 rounded-3 shadow-sm text-muted">

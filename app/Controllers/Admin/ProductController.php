@@ -28,7 +28,7 @@ class ProductController extends BaseAdminController {
         $stockFilter = $request->input('stock_filter', 'all');
         $page       = max(1, (int)$request->input('page', 1));
 
-        $query = ProductModel::query()->where('lang', $this->primaryLang);
+        $query = ProductModel::where('lang', $this->primaryLang);
 
         if ($status !== '')      $query->where('status', $status);
         if ($categoryId > 0)     $query->where('category_id', $categoryId);

@@ -103,7 +103,7 @@ class ProductService {
             if (!$insertedId) return false;
 
             // Update id_code cho bản ghi gốc
-            ProductModel::query()->where('id', $insertedId)->update(['id_code' => $insertedId]);
+            ProductModel::where('id', $insertedId)->update(['id_code' => $insertedId]);
             $idCode = $insertedId;
 
             // Thêm các ngôn ngữ còn lại
@@ -153,7 +153,7 @@ class ProductService {
      * Lưu biến thể sản phẩm
      */
     private function saveVariants(int $productId, array $variants) {
-        $old_variants = ProductVariantModel::query()->where('product_id', $productId)->get();
+        $old_variants = ProductVariantModel::where('product_id', $productId)->get();
         $old_ids = array_column((array)$old_variants, 'id');
         
         $submitted_ids = [];
@@ -177,7 +177,7 @@ class ProductService {
             ];
 
             if ($variant_id > 0 && in_array($variant_id, $old_ids)) {
-                ProductVariantModel::query()->where('id', $variant_id)->update($data_bienthe);
+                ProductVariantModel::where('id', $variant_id)->update($data_bienthe);
                 $id_bienthe = $variant_id;
                 $submitted_ids[] = $variant_id;
                 $updated_ids[] = $variant_id;
@@ -204,7 +204,7 @@ class ProductService {
 
         // Delete old pivot entries for updated variants
         if (!empty($updated_ids)) {
-            ProductVariantAttributeModel::query()->whereIn('variant_id', $updated_ids)->delete();
+            ProductVariantAttributeModel::whereIn('variant_id', $updated_ids)->delete();
         }
 
         // Insert new pivot entries
@@ -215,17 +215,17 @@ class ProductService {
         // Delete removed variants
         $ids_to_delete = array_diff($old_ids, $submitted_ids);
         if (!empty($ids_to_delete)) {
-            ProductVariantAttributeModel::query()->whereIn('variant_id', $ids_to_delete)->delete();
-            ProductVariantModel::query()->whereIn('id', $ids_to_delete)->delete();
+            ProductVariantAttributeModel::whereIn('variant_id', $ids_to_delete)->delete();
+            ProductVariantModel::whereIn('id', $ids_to_delete)->delete();
         }
     }
 
     private function deleteVariants(int $productId) {
-        $variants = ProductVariantModel::query()->where('product_id', $productId)->get();
+        $variants = ProductVariantModel::where('product_id', $productId)->get();
         if (!empty($variants)) {
             $variantIds = array_column((array)$variants, 'id');
-            ProductVariantAttributeModel::query()->whereIn('variant_id', $variantIds)->delete();
-            ProductVariantModel::query()->where('product_id', $productId)->delete();
+            ProductVariantAttributeModel::whereIn('variant_id', $variantIds)->delete();
+            ProductVariantModel::where('product_id', $productId)->delete();
         }
     }
 
@@ -307,7 +307,7 @@ class ProductService {
         }
 
         // Load Variants
-        $variants = ProductVariantModel::query()->where('product_id', $idCode)->get();
+        $variants = ProductVariantModel::where('product_id', $idCode)->get();
         ProductVariantModel::loadNestedAttributes($variants);
         
         $item['variants'] = [];

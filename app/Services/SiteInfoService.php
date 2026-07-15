@@ -28,7 +28,7 @@ class SiteInfoService extends Service {
     protected function loadData() {
         if ($this->data !== null) return;
 
-        $setting = \App\Models\SettingModel::query()->first();
+        $setting = \App\Models\SettingModel::first();
         
         if ($setting) {
             $baseUrl = config('urls.base', '/');

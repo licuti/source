@@ -14,7 +14,7 @@ class InventoryService {
      * @return void
      */
     public static function syncProductStock(int $productId) {
-        $product = ProductModel::query()->where('id_code', $productId)->first();
+        $product = ProductModel::where('id_code', $productId)->first();
         
         if (!$product) {
             return;

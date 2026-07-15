@@ -107,6 +107,10 @@ class Model implements \JsonSerializable {
     // ── Magic Properties (Accessors / Mutators / Casts) ──────
 
     public function __get($key) {
+        if (method_exists($this, 'isTranslatedAttribute') && $this->isTranslatedAttribute($key)) {
+            return $this->getTranslatedAttribute($key);
+        }
+
         if (array_key_exists($key, $this->relations)) {
             return $this->relations[$key];
         }
@@ -122,6 +126,11 @@ class Model implements \JsonSerializable {
     }
 
     public function __set($key, $value) {
+        if (method_exists($this, 'isTranslatedAttribute') && $this->isTranslatedAttribute($key)) {
+            $this->setTranslatedAttribute($key, $value);
+            return;
+        }
+
         $mutator = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $key))) . 'Attribute';
         if (method_exists($this, $mutator)) {
             $this->$mutator($value);
@@ -131,6 +140,9 @@ class Model implements \JsonSerializable {
     }
 
     public function __isset($key) {
+        if (method_exists($this, 'isTranslatedAttribute') && $this->isTranslatedAttribute($key)) {
+            return $this->getTranslatedAttribute($key) !== null;
+        }
         return array_key_exists($key, $this->relations) || isset($this->attributes[$key]);
     }
 
@@ -154,29 +166,31 @@ class Model implements \JsonSerializable {
     public function hasOne($related, $foreignKey = null, $localKey = null) {
         $instance = new $related;
         $foreignKey = $foreignKey ?: $this->getForeignKey();
-        $localKey = $localKey ?: 'id_code';
+        $localKey = $localKey ?: 'id';
         return new Relations\HasOne($instance->newQuery(), $this, $foreignKey, $localKey);
     }
 
     public function hasMany($related, $foreignKey = null, $localKey = null) {
         $instance = new $related;
         $foreignKey = $foreignKey ?: $this->getForeignKey();
-        $localKey = $localKey ?: 'id_code';
+        $localKey = $localKey ?: 'id';
         return new Relations\HasMany($instance->newQuery(), $this, $foreignKey, $localKey);
     }
 
     public function belongsTo($related, $foreignKey = null, $ownerKey = null, $relation = null) {
         if (is_null($relation)) {
-            $relation = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[1]['function'];
+            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+            $relation = $trace[1]['function'];
         }
         $instance = new $related;
         $foreignKey = $foreignKey ?: $instance->getForeignKey();
-        $ownerKey = $ownerKey ?: 'id_code';
+        $ownerKey = $ownerKey ?: 'id';
         return new Relations\BelongsTo($instance->newQuery(), $this, $foreignKey, $ownerKey, $relation);
     }
 
     public function getForeignKey() {
-        $class = class_basename($this);
+        $classParts = explode('\\', static::class);
+        $class = end($classParts);
         $name = str_replace('Model', '', $class);
         return strtolower($name) . '_id';
     }
@@ -215,6 +229,9 @@ class Model implements \JsonSerializable {
 
     public function toArray(): array {
         $data = $this->attributes;
+        if (method_exists($this, 'getTranslatedAttributesArray')) {
+            $data = array_merge($data, $this->getTranslatedAttributesArray());
+        }
         foreach ($this->relations as $key => $val) {
             if (is_array($val)) {
                 $data[$key] = array_map(fn($v) => ($v instanceof self) ? $v->toArray() : $v, $val);
@@ -392,11 +409,11 @@ class Model implements \JsonSerializable {
     }
 
     public static function all($columns = '*') {
-        return static::query()->get($columns);
+        return static::get($columns);
     }
 
     public static function find($id, string $columns = '*') {
-        return static::query()->find($id, $columns);
+        return static::find($id, $columns);
     }
 
     public static function __callStatic($method, $parameters) {

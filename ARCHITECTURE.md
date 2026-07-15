@@ -140,7 +140,7 @@ Chỉ chứa các hàm nền tảng, không chứa nghiệp vụ:
   ```
 - Nếu thiếu hoặc sai token, hệ thống sẽ chặn đứng và trả về lỗi `419` (hoặc JSON `419` với AJAX).
 
-### 6.2. Xác Thực FormRequest tự động
+### 6.2. Xác Thực FormRequest tự động & Bảo Vệ Mass Assignment
 Thay vì viết if/else kiểm tra dữ liệu trong Controller, hãy kế thừa `App\Core\FormRequest`:
 ```php
 namespace App\Requests;
@@ -160,8 +160,11 @@ class StoreContactRequest extends FormRequest {
 Và tiêm vào Controller:
 ```php
 public function store(StoreContactRequest $request) {
-    // Dữ liệu tại đây bảo đảm đã đi qua cổng kiểm duyệt thành công!
-    $data = $request->all();
+    // CHỈ lấy những trường đã được định nghĩa trong rules() và đã pass qua validation
+    $validatedData = $request->validated();
+    
+    // An toàn lưu vào DB, không sợ bị bơm các trường lạ (Mass Assignment)
+    ContactModel::insert($validatedData);
 }
 ```
 
@@ -169,16 +172,12 @@ public function store(StoreContactRequest $request) {
 
 ## 7. Cấu Trúc Dữ Liệu Đặc Thù Của CMS (Database Schema & Logic)
 
-### 7.1. Cơ Chế Đa Ngôn Ngữ Qua Khóa `id_code`
-Hệ thống không lưu ngôn ngữ dưới dạng cột trong một bảng duy nhất mà nhân bản dòng dữ liệu theo ngôn ngữ.
-- Cột **`id`** là khóa chính kỹ thuật, tăng tự động và khác nhau giữa các dòng ngôn ngữ.
-- Cột **`id_code`** là khóa định danh thực thể thực tế (Dùng chung cho tất cả các bản dịch của cùng một sản phẩm/danh mục).
-- **Quy tắc Join:** Khi nối bảng (Ví dụ: Sản phẩm với Danh mục), **bắt buộc** phải nối thông qua `id_code` thay vì `id`:
-  ```sql
-  SELECT * FROM db_products p 
-  JOIN db_categories c ON p.category_id_code = c.id_code 
-  WHERE p.lang = 'vi' AND c.lang = 'vi'
-  ```
+### 7.1. Cơ Chế Đa Ngôn Ngữ (Two-Table Translatable Architecture)
+Hệ thống sử dụng kiến trúc hai bảng (Two-Table) để lưu trữ đa ngôn ngữ, hoàn toàn thay thế cho cơ chế `id_code` lỗi thời.
+- **Bảng gốc (Ví dụ: `db_categories`):** Chỉ lưu trữ các trường dữ liệu dùng chung (Không phụ thuộc ngôn ngữ) như: `id`, `parent_id`, `status`, `image`, `created_at`.
+- **Bảng dịch (Ví dụ: `db_category_translations`):** Lưu trữ các trường phụ thuộc ngôn ngữ như: `id`, `category_id` (Khóa ngoại), `lang` (Mã ngôn ngữ: `vi`, `en`), `title`, `slug`, `content`.
+- **Tích hợp Model:** Lớp Model (Ví dụ: `CategoryModel`) chỉ cần `use \App\Traits\Translatable` và khai báo biến mảng `$translatedAttributes`. 
+- **Truy xuất thông minh:** Hệ thống tự động load bản dịch thông qua hook Magic Method `__get()`. Truy xuất `$category->title` sẽ tự động lấy `title` từ bảng translation theo ngôn ngữ hiện tại của Request. Model giải quyết vấn đề Eager Loading `->with('translations')` để tránh N+1 Query.
 
 ### 7.2. Cơ Chế Tách Đơn Hàng (Order Splitting)
 CMS hỗ trợ mô hình Marketplace (Nhiều cửa hàng):

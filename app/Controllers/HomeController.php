@@ -17,10 +17,10 @@ class HomeController extends Controller {
             ->orderBy('id', 'DESC')
             ->limit(4)
             ->get();
-        $pageProduct = CategoryModel::query()
-            ->where('id_code', 100)
+        $pageProduct = CategoryModel::where('id', 100)
             ->where('status', 1)
-            ->first('title, id_code');
+            ->with('translations')
+            ->first('id, parent_id');
 
         $list_id_product = CategoryModel::getChildrenIds(100);
 

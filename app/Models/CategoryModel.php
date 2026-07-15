@@ -2,11 +2,19 @@
 namespace App\Models;
 
 class CategoryModel extends \App\Core\Database\Model {
-    use \App\Traits\HasLanguage;
+    use \App\Traits\Translatable;
+    
     public $table = '#_categories';
     public bool $timestamps = true;
     protected string $createdAt = 'created_at';
     protected string $updatedAt = 'updated_at';
+    
+    // Các thuộc tính sẽ tự động được lấy từ bảng dịch
+    protected array $translatedAttributes = [
+        'title', 'slug', 'description', 'content', 
+        'seo_title', 'seo_description', 'keyword', 
+        'seo_head', 'seo_body', 'seo_schema', 'seo_canonical'
+    ];
     
     // Lưu trữ mảng Category trên RAM trong 1 vòng đời request để dùng nhiều lần mà không cần Query
     protected static $cachedCategories = null;
@@ -19,7 +27,7 @@ class CategoryModel extends \App\Core\Database\Model {
             // Chỉ lấy các cột cần thiết để tối ưu bộ nhớ
             self::$cachedCategories = self::query()
                 ->where('status', 1)
-                ->get('id_code, parent_id');
+                ->get('id, parent_id');
         }
         return self::$cachedCategories;
     }
@@ -28,13 +36,13 @@ class CategoryModel extends \App\Core\Database\Model {
      * Lấy danh sách ID (chuỗi) gồm Danh mục hiện tại và tất cả các danh mục con.
      * Mặc định là Lấy cả Cha lẫn Con.
      */
-    public static function getChildrenIds($parentIdCode, $includeParent = true) {
+    public static function getChildrenIds($parentId, $includeParent = true) {
         $categories = self::loadAllCategories();
-        $childIds = self::findChildrenRecursive($parentIdCode, $categories); // Sẽ trả về dạng ",101,102"
+        $childIds = self::findChildrenRecursive($parentId, $categories); // Sẽ trả về dạng ",101,102"
         
         if ($includeParent) {
             // Tự động bao gồm luôn thằng cha: "100,101,102"
-            return $parentIdCode . $childIds; 
+            return $parentId . $childIds; 
         }
         
         // Nếu chỉ muốn lấy con ròng (không lấy cha), bỏ dấu phẩy thừa ở đầu
@@ -48,18 +56,19 @@ class CategoryModel extends \App\Core\Database\Model {
         $childIds = '';
         foreach ($categories as $cat) {
             if ($cat->parent_id == $parentId) {
-                $childIds .= ',' . $cat->id_code;
+                $childIds .= ',' . $cat->id;
                 // Gọi đệ quy tiếp tục tìm con của danh mục hiện tại
-                $childIds .= self::findChildrenRecursive($cat->id_code, $categories);
+                $childIds .= self::findChildrenRecursive($cat->id, $categories);
             }
         }
         return $childIds;
     }
+    
     /**
      * Lấy toàn bộ danh mục đang hiển thị
      */
     public static function getAll($parentId = null) {
-        $query = self::query()->where('status', 1);
+        $query = self::where('status', 1)->with('translations');
         if ($parentId !== null) {
             $query->where('parent_id', (int)$parentId);
         }
@@ -78,7 +87,7 @@ class CategoryModel extends \App\Core\Database\Model {
      * Lấy toàn bộ danh mục (dành cho Admin, không lọc hien_thi)
      */
     public static function getAllForAdmin($parentId = null) {
-        $query = self::query();
+        $query = self::with('translations');
         if ($parentId !== null) {
             $query->where('parent_id', (int)$parentId);
         }
@@ -91,6 +100,7 @@ class CategoryModel extends \App\Core\Database\Model {
      */
     public static function getAllForAdminByModule(int $module) {
         return self::query()
+            ->with('translations')
             ->where('module', $module)
             ->orderBy('sort_order')
             ->orderBy('id', 'DESC')
@@ -120,7 +130,7 @@ class CategoryModel extends \App\Core\Database\Model {
         $branch = array();
         foreach ($elements as $element) {
             if ($element->parent_id == $parentId) {
-                $children = self::buildTree($elements, $element->id_code);
+                $children = self::buildTree($elements, $element->id);
                 if ($children) {
                     $element->children = $children;
                 }
@@ -134,12 +144,6 @@ class CategoryModel extends \App\Core\Database\Model {
      * Tự động cập nhật đường dẫn (URL) trong Menu nếu Danh mục thay đổi slug
      */
     public function saved() {
-        if (!empty($this->attributes['slug']) && !empty($this->id)) {
-            $menuItemModel = new \App\Models\MenuItemModel();
-            $menuItemModel->where('object_type', 'category')
-                          ->where('object_id', $this->id)
-                          ->update(['url' => $this->attributes['slug']]);
-        }
+        // Menu item URL update would need to consider translations or just use the primary slug
     }
 }
-?>

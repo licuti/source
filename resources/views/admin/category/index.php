@@ -80,13 +80,20 @@ if (hasPermission('admin.category', 'add')) {
                                 </th>
                                 <th style="width: 100px;" class="text-center">Hình ảnh</th>
                                 <th>Tên danh mục</th>
+                                <th style="width: 150px;" class="text-center">Ngôn ngữ</th>
                                 <th style="width: 100px;" class="text-center">Sắp xếp</th>
                                 <th style="width: 120px;" class="text-center">Trạng thái</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if(!empty($categories)): ?>
-                                <?= view('admin.category.table_tree', ['categories' => $categories, 'level' => 0, 'isSearch' => $isSearch ?? false]) ?>
+                                <?= view('admin.category.table_tree', [
+                                    'categories' => $categories, 
+                                    'level' => 0, 
+                                    'isSearch' => $isSearch ?? false,
+                                    'langs' => $langs,
+                                    'translations' => $translations
+                                ]) ?>
                             <?php else: ?>
                                 <tr>
                                     <td colspan="5" class="text-center py-5 text-muted">
@@ -108,7 +115,7 @@ if (hasPermission('admin.category', 'add')) {
                         Hiển thị <?= count($categories ?? []) ?> / <?= $totalRows ?? 0 ?> mục
                     </div>
                     <div class="col-md-8 text-end pagination-right-sm">
-                        <?= paging($totalRows, 20, $page, getCurrentUrlWithoutPage()) ?>
+                        <?= $categories->links() ?>
                     </div>
                 </div>
             </div>

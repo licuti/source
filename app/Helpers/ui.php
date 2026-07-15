@@ -326,7 +326,7 @@ if (!function_exists('getCategoryTreeIds')) {
     function getCategoryTreeIds($parentId) {
         if (!$parentId) return [];
 
-        $childIdsStr = CategoryModel::query()->getChildrenIds($parentId);
+        $childIdsStr = CategoryModel::getChildrenIds($parentId);
         $ids = [$parentId];
 
         if ($childIdsStr) {

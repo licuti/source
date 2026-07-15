@@ -32,6 +32,24 @@ abstract class FormRequest extends Request {
     }
 
     /**
+     * Lấy các dữ liệu đã được validate (chỉ lấy các key có trong rules)
+     */
+    public function validated(): array {
+        $rules = $this->rules();
+        $keys = array_keys($rules);
+        $allData = $this->all();
+        
+        $validatedData = [];
+        foreach ($keys as $key) {
+            // Hỗ trợ dot notation đơn giản nếu cần, ở đây chỉ xử lý level 1
+            if (array_key_exists($key, $allData)) {
+                $validatedData[$key] = $allData[$key];
+            }
+        }
+        return $validatedData;
+    }
+
+    /**
      * Nơi định nghĩa các rule validate (Lớp con phải tự implement)
      */
     abstract public function rules(): array;

@@ -61,7 +61,7 @@ class AttributeController extends BaseAdminController {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
         $langs = $this->langs;
         
-        $cfCode = CfCodeModel::query()->where('id', $id)->first();
+        $cfCode = CfCodeModel::where('id', $id)->first();
         if (!$cfCode) return $this->redirect(route('admin.attribute.index'));
         
         $attrQuery = AttributeModel::query();
@@ -180,7 +180,7 @@ class AttributeController extends BaseAdminController {
         $title_vi = $titleInput['vi'] ?? '';
 
         // 1. Cập nhật bảng gốc
-        CfCodeModel::query()->where('id', $id)->update([
+        CfCodeModel::where('id', $id)->update([
             'ten' => $title_vi,
             'so_thu_tu' => $so_thu_tu,
             'hien_thi' => $hien_thi
@@ -240,7 +240,7 @@ class AttributeController extends BaseAdminController {
             
             if ($v_id_code > 0) {
                 // Update tồn tại
-                CfCodeModel::query()->where('id', $v_id_code)->update(['ten' => $title_vi]);
+                CfCodeModel::where('id', $v_id_code)->update(['ten' => $title_vi]);
                 $kept_id_codes[] = $v_id_code;
                 
                 // Cập nhật bản dịch cho Value
@@ -324,8 +324,8 @@ class AttributeController extends BaseAdminController {
         $id = is_array($id) ? ($id['id'] ?? $id[1] ?? 0) : $id;
         
         // Xóa Thuộc tính
-        CfCodeModel::query()->where('id', $id)->delete();
-        AttributeModel::query()->where('id_code', $id)->delete();
+        CfCodeModel::where('id', $id)->delete();
+        AttributeModel::where('id_code', $id)->delete();
         
         // Lấy danh sách Values để xóa
         $valQuery = AttributeValueModel::query();

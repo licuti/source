@@ -11,17 +11,30 @@ class CategoryRequest extends FormRequest {
      * Xác định rule kiểm tra dữ liệu
      */
     public function rules(): array {
-        $langs = config('language_presets'); // Hoặc lấy từ $_SESSION['app_locale'] tuỳ cấu trúc hiện tại
-        // Đơn giản hóa: Chúng ta lấy danh sách ngôn ngữ đang được hỗ trợ
-        $appLangs = array_keys(config('lang', ['vi' => 'Tiếng Việt', 'en' => 'English']));
-        
         $rules = [];
         
-        // title của ít nhất một ngôn ngữ (mặc định là vi) phải có
-        $rules['title.vi'] = 'required|max:255';
-        
+        $rules['title'] = 'required|max:255';
         $rules['parent_id'] = 'numeric';
         $rules['sort_order'] = 'numeric';
+        $rules['image'] = '';
+        $rules['banner'] = '';
+        $rules['module'] = '';
+        $rules['status'] = '';
+        $rules['is_featured'] = '';
+        $rules['slug'] = '';
+        $rules['description'] = '';
+        $rules['content'] = '';
+        $rules['seo_title'] = '';
+        $rules['keyword'] = '';
+        $rules['seo_description'] = '';
+        $rules['seo_head'] = '';
+        $rules['seo_body'] = '';
+        $rules['seo_schema'] = '';
+        $rules['seo_canonical'] = '';
+        $rules['lang'] = '';
+        $rules['id'] = '';
+        $rules['created_at'] = '';
+        $rules['save_action'] = '';
         
         return $rules;
     }
@@ -31,8 +44,8 @@ class CategoryRequest extends FormRequest {
      */
     public function messages(): array {
         return [
-            'title.vi.required' => 'Tên danh mục (Tiếng Việt) không được để trống',
-            'title.vi.max'      => 'Tên danh mục không được vượt quá 255 ký tự',
+            'title.required'    => 'Tên danh mục không được để trống',
+            'title.max'         => 'Tên danh mục không được vượt quá 255 ký tự',
             'parent_id.numeric' => 'Danh mục cha không hợp lệ',
             'sort_order.numeric'=> 'Số thứ tự phải là số',
         ];

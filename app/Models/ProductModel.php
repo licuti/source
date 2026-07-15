@@ -16,20 +16,17 @@ class ProductModel extends \App\Core\Database\Model {
      * Mối quan hệ Nhiều-1 với Danh mục
      */
     public function category() {
-        return $this->belongsTo(CategoryModel::class, 'category_id', 'id_code');
+        return $this->belongsTo(CategoryModel::class, 'category_id', 'id');
     }
 
     /**
      * Mối quan hệ 1-Nhiều với các Biến thể sản phẩm
      */
     public function variants() {
-        return $this->hasMany(ProductVariantModel::class, 'product_id', 'id_code');
+        return $this->hasMany(ProductVariantModel::class, 'product_id', 'id_code'); // Variants haven't been migrated yet, they might still use id_code
     }
 
     // ============================================================
-    //  CÁC PHƯƠNG THỨC TRUY XUẤT TIỆN ÍCH
-    // ============================================================
-
     /**
      * Lấy sản phẩm tiêu biểu
      */

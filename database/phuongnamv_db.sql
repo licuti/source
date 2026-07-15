@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 13, 2026 at 06:23 PM
+-- Generation Time: Jul 15, 2026 at 12:01 AM
 -- Server version: 8.0.30
 -- PHP Version: 7.4.9
 
@@ -390,27 +390,14 @@ INSERT INTO `db_button_contact` (`id`, `image`, `name`, `link`, `target`, `color
 CREATE TABLE `db_categories` (
   `id` int NOT NULL,
   `parent_id` int NOT NULL DEFAULT '0',
-  `id_code` int DEFAULT NULL,
-  `slug` varchar(255) DEFAULT NULL,
-  `title` varchar(255) DEFAULT NULL,
-  `description` text,
-  `content` text,
   `image` varchar(255) DEFAULT NULL,
   `banner` varchar(255) DEFAULT NULL,
   `sort_order` int NOT NULL DEFAULT '0',
   `status` tinyint(1) DEFAULT '1',
   `is_featured` tinyint(1) DEFAULT '0',
   `module` int NOT NULL DEFAULT '0',
-  `lang` varchar(5) DEFAULT NULL,
   `nofollow` int NOT NULL DEFAULT '0',
   `noindex` int NOT NULL DEFAULT '0',
-  `seo_title` varchar(255) DEFAULT NULL,
-  `keyword` varchar(255) DEFAULT NULL,
-  `seo_description` text,
-  `seo_head` text,
-  `seo_body` text,
-  `seo_schema` varchar(50) DEFAULT '',
-  `seo_canonical` varchar(255) DEFAULT '',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
@@ -419,39 +406,84 @@ CREATE TABLE `db_categories` (
 -- Dumping data for table `db_categories`
 --
 
-INSERT INTO `db_categories` (`id`, `parent_id`, `id_code`, `slug`, `title`, `description`, `content`, `image`, `banner`, `sort_order`, `status`, `is_featured`, `module`, `lang`, `nofollow`, `noindex`, `seo_title`, `keyword`, `seo_description`, `seo_head`, `seo_body`, `seo_schema`, `seo_canonical`, `created_at`, `updated_at`) VALUES
-(103, 0, 99, 'gioi-thieu', 'Giới thiệu', '<p><br />\r\n&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>Ch&agrave;o mừng qu&yacute; kh&aacute;ch đến với <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>, một trong những đơn vị h&agrave;ng đầu trong lĩnh vực xuất khẩu c&aacute;c sản phẩm gia vị truyền thống của Việt Nam. Ch&uacute;ng t&ocirc;i chuy&ecirc;n cung cấp c&aacute;c sản phẩm quế, ti&ecirc;u, hồi chất lượng cao đến c&aacute;c thị trường quốc tế.</p>\r\n\r\n<p><strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong> được th&agrave;nh lập với sứ mệnh mang đến cho thị trường to&agrave;n cầu những sản phẩm gia vị tinh t&uacute;y nhất của Việt Nam. Với hơn 10 năm kinh nghiệm trong ng&agrave;nh xuất khẩu, ch&uacute;ng t&ocirc;i đ&atilde; x&acirc;y dựng được uy t&iacute;n vững chắc v&agrave; mối quan hệ đối t&aacute;c l&acirc;u d&agrave;i với nhiều kh&aacute;ch h&agrave;ng v&agrave; nh&agrave; ph&acirc;n phối quốc tế.</p>\r\n\r\n<p><strong>Sản Phẩm Ch&iacute;nh</strong></p>\r\n\r\n<ul>\r\n	<li>\r\n	<p><strong>Quế:</strong> Ch&uacute;ng t&ocirc;i cung cấp quế dạng thanh v&agrave; dạng bột, được thu hoạch từ những v&ugrave;ng quế nổi tiếng của Việt Nam. Quế của ch&uacute;ng t&ocirc;i nổi bật với hương thơm đặc trưng v&agrave; chất lượng vượt trội, đảm bảo đ&aacute;p ứng c&aacute;c ti&ecirc;u chuẩn quốc tế khắt khe.</p>\r\n	</li>\r\n	<li>\r\n	<p><strong>Ti&ecirc;u:</strong> Ti&ecirc;u của ch&uacute;ng t&ocirc;i được sản xuất từ những v&ugrave;ng trồng ti&ecirc;u chất lượng cao, với c&aacute;c loại ti&ecirc;u đen, ti&ecirc;u trắng, ti&ecirc;u xanh v&agrave; ti&ecirc;u đỏ. Sản phẩm ti&ecirc;u của ch&uacute;ng t&ocirc;i lu&ocirc;n đạt ti&ecirc;u chuẩn về hương vị v&agrave; độ cay nồng, phục vụ cho nhiều ứng dụng trong chế biến thực phẩm.</p>\r\n	</li>\r\n	<li>\r\n	<p><strong>Hồi:</strong> Hồi của ch&uacute;ng t&ocirc;i được chọn lựa kỹ c&agrave;ng từ c&aacute;c v&ugrave;ng trồng hồi nổi tiếng. Ch&uacute;ng t&ocirc;i cung cấp hồi nguy&ecirc;n hạt v&agrave; hồi xay, với hương vị đặc biệt v&agrave; c&ocirc;ng dụng phong ph&uacute; trong ẩm thực v&agrave; y học.</p>\r\n	</li>\r\n</ul>\r\n\r\n<p><strong>Cam Kết Chất Lượng</strong></p>\r\n\r\n<p>Tại <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>, chất lượng sản phẩm lu&ocirc;n l&agrave; ưu ti&ecirc;n h&agrave;ng đầu. Ch&uacute;ng t&ocirc;i &aacute;p dụng quy tr&igrave;nh kiểm so&aacute;t chất lượng nghi&ecirc;m ngặt từ kh&acirc;u thu hoạch, chế biến đến đ&oacute;ng g&oacute;i. Đội ngũ nh&acirc;n vi&ecirc;n của ch&uacute;ng t&ocirc;i l&agrave; những người d&agrave;y dạn kinh nghiệm, sẵn s&agrave;ng đ&aacute;p ứng nhu cầu v&agrave; y&ecirc;u cầu của kh&aacute;ch h&agrave;ng.</p>\r\n\r\n<p><strong>Dịch Vụ Kh&aacute;ch H&agrave;ng</strong></p>\r\n\r\n<p>Ch&uacute;ng t&ocirc;i kh&ocirc;ng chỉ tập trung v&agrave;o việc cung cấp sản phẩm chất lượng m&agrave; c&ograve;n ch&uacute; trọng đến dịch vụ kh&aacute;ch h&agrave;ng. Đội ngũ chăm s&oacute;c kh&aacute;ch h&agrave;ng của ch&uacute;ng t&ocirc;i lu&ocirc;n sẵn s&agrave;ng lắng nghe v&agrave; hỗ trợ kh&aacute;ch h&agrave;ng trong việc đặt h&agrave;ng, tư vấn sản phẩm v&agrave; giải quyết c&aacute;c vấn đề ph&aacute;t sinh.</p>\r\n\r\n<p><strong>Tầm Nh&igrave;n v&agrave; Sứ Mệnh</strong></p>\r\n\r\n<p>Ch&uacute;ng t&ocirc;i hướng đến việc trở th&agrave;nh đối t&aacute;c tin cậy của kh&aacute;ch h&agrave;ng to&agrave;n cầu trong lĩnh vực gia vị. Sứ mệnh của ch&uacute;ng t&ocirc;i l&agrave; n&acirc;ng cao gi&aacute; trị của c&aacute;c sản phẩm gia vị Việt Nam, g&oacute;p phần v&agrave;o sự ph&aacute;t triển bền vững của ng&agrave;nh n&ocirc;ng nghiệp v&agrave; xuất khẩu quốc gia.</p>\r\n\r\n<hr />\r\n<p>Cảm ơn qu&yacute; kh&aacute;ch đ&atilde; quan t&acirc;m đến <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>. Ch&uacute;ng t&ocirc;i rất mong được hợp t&aacute;c v&agrave; phục vụ qu&yacute; kh&aacute;ch trong thời gian tới. Nếu c&oacute; bất kỳ c&acirc;u hỏi hoặc y&ecirc;u cầu n&agrave;o, xin vui l&ograve;ng li&ecirc;n hệ với ch&uacute;ng t&ocirc;i qua email hoặc điện thoại.</p>\r\n', '', '', 0, 1, 0, 2, 'vi', 0, 0, 'Giới thiệu', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:32'),
-(105, 0, 100, 'san-pham', 'Sản phẩm', '<p style=\"text-align: center;\"><span style=\"font-size:18px;\"><em>Với mỗi sản phẩm hữu cơ được trồng, c&ocirc;ng ty ch&uacute;ng t&ocirc;i lu&ocirc;n mong muốn mang đến cho qu&yacute; kh&aacute;ch<br />\r\nc&oacute; một trải nghiệm dịch vụ v&agrave; sản phẩm chất lượng tốt nhất.</em></span></p>\r\n', '', '', '', 0, 1, 0, 4, 'vi', 0, 0, 'Sản phẩm', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:53:44'),
-(234, 0, 195, 'hinh-anh', 'Hình ảnh', '', '', '', '', 0, 1, 0, 15, 'vi', 0, 0, 'Hình ảnh', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-07-05 23:07:30'),
-(211, 0, 172, 'trang-chu', 'Trang chủ', '', '', '', '', 0, 1, 0, 1, 'vi', 0, 0, 'Trang chủ', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:23'),
-(149, 0, 122, 'gio-hang', 'Giỏ hàng', '', '<h6><span style=\"color:#ed1c24\">THƯƠNG HIỆU VẬN TẢI H&Agrave;NG ĐẦU</span></h6>\r\n\r\n<p>Dịch vụ vận tải Qu&acirc;n Hưng tr&atilde;i d&agrave;i khắp mọi miền Bắc - Nam. Mang đến cho kh&aacute;ch h&agrave;ng niềm tin v&agrave; sự h&agrave;i l&ograve;ng về dịch vụ của ch&uacute;ng t&ocirc;i.</p>\r\n', '', '', 0, 1, 0, 5, 'vi', 0, 0, 'Giỏ hàng', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:27'),
-(163, 0, 129, 'tin-tuc', 'Tin tức', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Tin tức', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:02'),
-(165, 0, 130, 'lien-he', 'Liên hệ', '<p>Mọi thắc mắc vui l&ograve;ng li&ecirc;n hệ theo th&ocirc;ng tin b&ecirc;n dưới:</p>\r\n\r\n<p><span style=\"color:#d35400;\"><span style=\"font-size:18px;\"><strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XNK VNJT</strong></span></span></p>\r\n\r\n<ul>\r\n	<li>&nbsp;Số 4 Nguyễn Đ&igrave;nh Chiểu, Phường Đa Kao, Quận 1, TP. HCM</li>\r\n	<li>&nbsp;385/1 Huỳnh Văn B&aacute;nh, Phường 11, Quận Ph&uacute; Nhuận, TP. HCM</li>\r\n	<li>&nbsp;(+84) 96 1816 887 - (+82) 10 3362 5376</li>\r\n	<li>&nbsp;mymy.vnjt@gmail.com</li>\r\n	<li>&nbsp;vnjt.com</li>\r\n</ul>\r\n', '', '', '', 0, 1, 0, 14, 'vi', 0, 0, 'Liên hệ', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:57:02'),
-(310, 0, 242, 'dich-vu', 'Dịch vụ', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', 0, 1, 0, 2, 'vi', 0, 0, 'Dịch vụ', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-06 14:34:04'),
-(339, 0, 269, 'k6t5gi', 'Chính sách bảo mật', '', '', '', '', 0, 1, 0, 2, 'vi', 0, 0, 'Chính sách bảo mật', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-07 14:35:57'),
-(324, 0, 254, 'thanh-toan', 'Thanh toán', '', '', '', '', 0, 1, 0, 6, 'vi', 0, 0, 'Thanh toán', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:45'),
-(352, 100, 272, 'tieu', 'Tiêu', '', '', '2.png', '', 0, 1, 1, 4, 'vi', 0, 0, 'Tiêu', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:47:29'),
-(353, 100, 273, 'quefrngjc', 'Quế', '', '', '3.png', '', 0, 1, 1, 3, 'vi', 0, 0, 'Quế', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-13 04:48:15'),
-(354, 100, 274, 'hoa-hoi', 'Hoa hồi', '', '', '4.png', 'album/15_thuhoachtieu02.jpg', 0, 1, 1, 4, 'vi', 0, 0, 'Hoa hồi', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:46:29'),
-(355, 0, 99, 'about', 'About', '<p><br />\r\n&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>Welcome to one of the leading units in the export of traditional condiments in Vietnam. We specialize in providing high-quality cinnamon, pepper and recycled products for the international market.<br />\r\n<br />\r\nVNJT was established, and its mission is to provide Vietnam&#39;s most exquisite condiments to the global market. With more than 10 years of experience in the export industry, we have established a solid reputation and long-term cooperative relationship with many international customers and distributors.<br />\r\n<br />\r\nMain products<br />\r\n<br />\r\nCinnamon: We provide cinnamon and flour, harvested from the famous cinnamon area in Vietnam. Our jam stands out with its unique aroma and excellent quality, ensuring that it meets strict international standards.<br />\r\n<br />\r\nPepper: Our peppers come from high-quality pepper growing areas, including black pepper, white pepper, blue pepper and red pepper. Our products always meet the standards of flavor and pungency, and can be used in many applications in food processing.<br />\r\n<br />\r\nTime: Our time is a well-chosen famous plantation. We provide seed recovery and stirring, which has special flavor and rich food and medical uses.<br />\r\n<br />\r\nQuantum binding<br />\r\n<br />\r\nIn VNJT, product quality is always the primary task. We adopt strict quality control procedures, from harvesting, processing to packaging. Our employees are experienced people, ready to meet the needs and requirements of customers.<br />\r\n<br />\r\nCustomer service<br />\r\n<br />\r\nWe not only focus on providing quality products, but also pay attention to customer service. Our customer service team is always ready to listen and assist customers in ordering, consulting products and solving problems.<br />\r\n<br />\r\nVision and mission<br />\r\n<br />\r\nOur goal is to become a reliable partner of global customers in condiment industry. Our mission is to improve the value of Vietnamese condiments and contribute to the sustainable development of national agriculture and exports.<br />\r\n<br />\r\nThank you for your attention to the new round of financing. We look forward to cooperating and serving your guests in the future. If you have any questions or requirements, please contact us by email or telephone.</p>\r\n', '', '', 0, 1, 0, 2, 'en', 0, 0, 'About', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:32'),
-(356, 0, 100, 'product', 'Product', '<p style=\"text-align: center;\"><span style=\"font-size:18px;\">With each organic product grown, our company always wants to<br />\r\nbring you the best service experience and quality products.</span></p>\r\n', '', '', '', 0, 1, 0, 4, 'en', 0, 0, 'Product', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:53:44'),
-(357, 0, 195, 'gallery', 'Gallery', '', '', '', '', 0, 1, 0, 15, 'en', 0, 0, 'Gallery', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-07-05 23:07:30'),
-(358, 0, 172, 'home', 'Home', '', '', '', '', 0, 1, 0, 1, 'en', 0, 0, 'Home', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:23'),
-(359, 0, 122, 'cart', 'Cart', '', '<h6><span style=\"color:#ed1c24\">THƯƠNG HIỆU VẬN TẢI H&Agrave;NG ĐẦU</span></h6>\r\n\r\n<p>Dịch vụ vận tải Qu&acirc;n Hưng tr&atilde;i d&agrave;i khắp mọi miền Bắc - Nam. Mang đến cho kh&aacute;ch h&agrave;ng niềm tin v&agrave; sự h&agrave;i l&ograve;ng về dịch vụ của ch&uacute;ng t&ocirc;i.</p>\r\n', '', '', 0, 1, 0, 5, 'en', 0, 0, 'Cart', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:27'),
-(360, 0, 129, 'news', 'News', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'News', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:56:02'),
-(361, 0, 130, 'contact', 'Contact', '<p>For any questions please contact the information below</p>\r\n', '', '', '', 0, 1, 0, 14, 'en', 0, 0, 'Contact', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:57:02'),
-(362, 0, 242, 'dich-vu', 'Dịch vụ', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', '', 0, 1, 0, 2, 'en', 0, 0, 'Dịch vụ', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-06 14:34:04'),
-(363, 0, 269, 'factory', 'Factory', '', '', '', '', 0, 1, 0, 2, 'en', 0, 0, 'Factory', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-07 14:35:57'),
-(364, 0, 254, 'thong-bao', 'Thông báo', '', '', '', '', 0, 1, 0, 6, 'en', 0, 0, 'Thông báo', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-03-19 17:54:45'),
-(365, 100, 272, 'pepper', 'Pepper', '', '', '2.png', '', 0, 1, 1, 4, 'en', 0, 0, 'Pepper', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:47:29'),
-(366, 100, 273, 'cinnamon', 'Cinnamon', '', '', '3.png', '', 0, 1, 1, 3, 'en', 0, 0, 'Cinnamon', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-13 04:48:15'),
-(367, 100, 274, 'star-anise', 'Star anise', '', '', '4.png', 'album/15_thuhoachtieu02.jpg', 0, 1, 1, 4, 'en', 0, 0, 'Star anise', '', '', '', '', '', '', '2026-06-08 10:10:00', '2026-06-12 10:46:29'),
-(368, 272, 275, 'hat-tieu-den', 'Hạt tiêu đen', '', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Hạt tiêu đen', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-12 10:46:34'),
-(369, 272, 275, 'black-pepper', 'Black Pepper', '', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'Black Pepper', '', '', '', '', '', '', '2026-06-08 10:10:03', '2026-06-12 10:46:34'),
-(370, 272, 276, 'hat-tieu-trang', 'Hạt tiêu trắng', '', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Hạt tiêu trắng', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:17:19'),
-(371, 272, 276, 'white-pepper', 'White Pepper', '', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'White Pepper', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:17:19'),
-(372, 272, 277, 'tieu-den-xay', 'Tiêu đen xay', '', '', '', '', 0, 1, 0, 3, 'vi', 0, 0, 'Tiêu đen xay', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:18:00'),
-(373, 272, 277, 'ground-black-pepper', 'Ground Black Pepper', '', '', '', '', 0, 1, 0, 3, 'en', 0, 0, 'Ground Black Pepper', '', '', '', '', '', '', '2026-06-08 10:10:03', '2024-09-18 03:18:00');
+INSERT INTO `db_categories` (`id`, `parent_id`, `image`, `banner`, `sort_order`, `status`, `is_featured`, `module`, `nofollow`, `noindex`, `created_at`, `updated_at`) VALUES
+(99, 0, '', '', 0, 1, 0, 2, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(100, 0, '', '', 0, 1, 0, 4, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(195, 0, '', '', 0, 1, 0, 15, 0, 0, '2026-06-08 10:10:00', '2026-07-14 15:42:05'),
+(172, 0, '', '', 0, 1, 0, 1, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(122, 0, '', '', 0, 1, 0, 5, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(129, 0, '', '', 0, 1, 0, 3, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(130, 0, '', '', 0, 1, 0, 14, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(242, 0, '', '', 0, 1, 0, 2, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(269, 0, '', '', 0, 1, 0, 2, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(254, 0, '', '', 0, 1, 0, 6, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(272, 100, '2.png', '', 0, 1, 1, 4, 0, 0, '2026-06-08 10:10:00', '2026-07-14 15:42:05'),
+(273, 100, '3.png', '', 0, 1, 1, 3, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(274, 100, '4.png', 'album/15_thuhoachtieu02.jpg', 0, 1, 1, 4, 0, 0, '2026-06-08 10:10:00', '2026-07-14 15:42:05'),
+(275, 272, '', '', 0, 1, 0, 3, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(276, 272, '', '', 0, 1, 0, 3, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05'),
+(277, 272, '', '', 0, 1, 0, 3, 0, 0, '2026-06-08 10:10:03', '2026-07-14 15:42:05');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `db_category_translations`
+--
+
+CREATE TABLE `db_category_translations` (
+  `id` int NOT NULL,
+  `category_id` int NOT NULL,
+  `lang` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `slug` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `content` longtext COLLATE utf8mb4_unicode_ci,
+  `seo_title` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `keyword` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT '',
+  `seo_description` text COLLATE utf8mb4_unicode_ci,
+  `seo_head` text COLLATE utf8mb4_unicode_ci,
+  `seo_body` text COLLATE utf8mb4_unicode_ci,
+  `seo_schema` text COLLATE utf8mb4_unicode_ci,
+  `seo_canonical` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `db_category_translations`
+--
+
+INSERT INTO `db_category_translations` (`id`, `category_id`, `lang`, `title`, `slug`, `description`, `content`, `seo_title`, `keyword`, `seo_description`, `seo_head`, `seo_body`, `seo_schema`, `seo_canonical`) VALUES
+(1, 99, 'vi', 'Giới thiệu', 'gioi-thieu', '<p><br />\r\n&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>Ch&agrave;o mừng qu&yacute; kh&aacute;ch đến với <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>, một trong những đơn vị h&agrave;ng đầu trong lĩnh vực xuất khẩu c&aacute;c sản phẩm gia vị truyền thống của Việt Nam. Ch&uacute;ng t&ocirc;i chuy&ecirc;n cung cấp c&aacute;c sản phẩm quế, ti&ecirc;u, hồi chất lượng cao đến c&aacute;c thị trường quốc tế.</p>\r\n\r\n<p><strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong> được th&agrave;nh lập với sứ mệnh mang đến cho thị trường to&agrave;n cầu những sản phẩm gia vị tinh t&uacute;y nhất của Việt Nam. Với hơn 10 năm kinh nghiệm trong ng&agrave;nh xuất khẩu, ch&uacute;ng t&ocirc;i đ&atilde; x&acirc;y dựng được uy t&iacute;n vững chắc v&agrave; mối quan hệ đối t&aacute;c l&acirc;u d&agrave;i với nhiều kh&aacute;ch h&agrave;ng v&agrave; nh&agrave; ph&acirc;n phối quốc tế.</p>\r\n\r\n<p><strong>Sản Phẩm Ch&iacute;nh</strong></p>\r\n\r\n<ul>\r\n	<li>\r\n	<p><strong>Quế:</strong> Ch&uacute;ng t&ocirc;i cung cấp quế dạng thanh v&agrave; dạng bột, được thu hoạch từ những v&ugrave;ng quế nổi tiếng của Việt Nam. Quế của ch&uacute;ng t&ocirc;i nổi bật với hương thơm đặc trưng v&agrave; chất lượng vượt trội, đảm bảo đ&aacute;p ứng c&aacute;c ti&ecirc;u chuẩn quốc tế khắt khe.</p>\r\n	</li>\r\n	<li>\r\n	<p><strong>Ti&ecirc;u:</strong> Ti&ecirc;u của ch&uacute;ng t&ocirc;i được sản xuất từ những v&ugrave;ng trồng ti&ecirc;u chất lượng cao, với c&aacute;c loại ti&ecirc;u đen, ti&ecirc;u trắng, ti&ecirc;u xanh v&agrave; ti&ecirc;u đỏ. Sản phẩm ti&ecirc;u của ch&uacute;ng t&ocirc;i lu&ocirc;n đạt ti&ecirc;u chuẩn về hương vị v&agrave; độ cay nồng, phục vụ cho nhiều ứng dụng trong chế biến thực phẩm.</p>\r\n	</li>\r\n	<li>\r\n	<p><strong>Hồi:</strong> Hồi của ch&uacute;ng t&ocirc;i được chọn lựa kỹ c&agrave;ng từ c&aacute;c v&ugrave;ng trồng hồi nổi tiếng. Ch&uacute;ng t&ocirc;i cung cấp hồi nguy&ecirc;n hạt v&agrave; hồi xay, với hương vị đặc biệt v&agrave; c&ocirc;ng dụng phong ph&uacute; trong ẩm thực v&agrave; y học.</p>\r\n	</li>\r\n</ul>\r\n\r\n<p><strong>Cam Kết Chất Lượng</strong></p>\r\n\r\n<p>Tại <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>, chất lượng sản phẩm lu&ocirc;n l&agrave; ưu ti&ecirc;n h&agrave;ng đầu. Ch&uacute;ng t&ocirc;i &aacute;p dụng quy tr&igrave;nh kiểm so&aacute;t chất lượng nghi&ecirc;m ngặt từ kh&acirc;u thu hoạch, chế biến đến đ&oacute;ng g&oacute;i. Đội ngũ nh&acirc;n vi&ecirc;n của ch&uacute;ng t&ocirc;i l&agrave; những người d&agrave;y dạn kinh nghiệm, sẵn s&agrave;ng đ&aacute;p ứng nhu cầu v&agrave; y&ecirc;u cầu của kh&aacute;ch h&agrave;ng.</p>\r\n\r\n<p><strong>Dịch Vụ Kh&aacute;ch H&agrave;ng</strong></p>\r\n\r\n<p>Ch&uacute;ng t&ocirc;i kh&ocirc;ng chỉ tập trung v&agrave;o việc cung cấp sản phẩm chất lượng m&agrave; c&ograve;n ch&uacute; trọng đến dịch vụ kh&aacute;ch h&agrave;ng. Đội ngũ chăm s&oacute;c kh&aacute;ch h&agrave;ng của ch&uacute;ng t&ocirc;i lu&ocirc;n sẵn s&agrave;ng lắng nghe v&agrave; hỗ trợ kh&aacute;ch h&agrave;ng trong việc đặt h&agrave;ng, tư vấn sản phẩm v&agrave; giải quyết c&aacute;c vấn đề ph&aacute;t sinh.</p>\r\n\r\n<p><strong>Tầm Nh&igrave;n v&agrave; Sứ Mệnh</strong></p>\r\n\r\n<p>Ch&uacute;ng t&ocirc;i hướng đến việc trở th&agrave;nh đối t&aacute;c tin cậy của kh&aacute;ch h&agrave;ng to&agrave;n cầu trong lĩnh vực gia vị. Sứ mệnh của ch&uacute;ng t&ocirc;i l&agrave; n&acirc;ng cao gi&aacute; trị của c&aacute;c sản phẩm gia vị Việt Nam, g&oacute;p phần v&agrave;o sự ph&aacute;t triển bền vững của ng&agrave;nh n&ocirc;ng nghiệp v&agrave; xuất khẩu quốc gia.</p>\r\n\r\n<hr />\r\n<p>Cảm ơn qu&yacute; kh&aacute;ch đ&atilde; quan t&acirc;m đến <strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XUẤT NHẬP KHẨU VNJT</strong>. Ch&uacute;ng t&ocirc;i rất mong được hợp t&aacute;c v&agrave; phục vụ qu&yacute; kh&aacute;ch trong thời gian tới. Nếu c&oacute; bất kỳ c&acirc;u hỏi hoặc y&ecirc;u cầu n&agrave;o, xin vui l&ograve;ng li&ecirc;n hệ với ch&uacute;ng t&ocirc;i qua email hoặc điện thoại.</p>\r\n', 'Giới thiệu', '', '', '', '', '', ''),
+(2, 100, 'vi', 'Sản phẩm', 'san-pham', '<p style=\"text-align: center;\"><span style=\"font-size:18px;\"><em>Với mỗi sản phẩm hữu cơ được trồng, c&ocirc;ng ty ch&uacute;ng t&ocirc;i lu&ocirc;n mong muốn mang đến cho qu&yacute; kh&aacute;ch<br />\r\nc&oacute; một trải nghiệm dịch vụ v&agrave; sản phẩm chất lượng tốt nhất.</em></span></p>\r\n', '', 'Sản phẩm', '', '', '', '', '', ''),
+(3, 195, 'vi', 'Hình ảnh', 'hinh-anh', '', '', 'Hình ảnh', '', '', '', '', '', ''),
+(4, 172, 'vi', 'Trang chủ', 'trang-chu', '', '', 'Trang chủ', '', '', '', '', '', ''),
+(5, 122, 'vi', 'Giỏ hàng', 'gio-hang', '', '<h6><span style=\"color:#ed1c24\">THƯƠNG HIỆU VẬN TẢI H&Agrave;NG ĐẦU</span></h6>\r\n\r\n<p>Dịch vụ vận tải Qu&acirc;n Hưng tr&atilde;i d&agrave;i khắp mọi miền Bắc - Nam. Mang đến cho kh&aacute;ch h&agrave;ng niềm tin v&agrave; sự h&agrave;i l&ograve;ng về dịch vụ của ch&uacute;ng t&ocirc;i.</p>\r\n', 'Giỏ hàng', '', '', '', '', '', ''),
+(6, 129, 'vi', 'Tin tức', 'tin-tuc', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', 'Tin tức', '', '', '', '', '', ''),
+(7, 130, 'vi', 'Liên hệ', 'lien-he', '<p>Mọi thắc mắc vui l&ograve;ng li&ecirc;n hệ theo th&ocirc;ng tin b&ecirc;n dưới:</p>\r\n\r\n<p><span style=\"color:#d35400;\"><span style=\"font-size:18px;\"><strong>C&Ocirc;NG TY TNHH ĐẦU TƯ XNK VNJT</strong></span></span></p>\r\n\r\n<ul>\r\n	<li>&nbsp;Số 4 Nguyễn Đ&igrave;nh Chiểu, Phường Đa Kao, Quận 1, TP. HCM</li>\r\n	<li>&nbsp;385/1 Huỳnh Văn B&aacute;nh, Phường 11, Quận Ph&uacute; Nhuận, TP. HCM</li>\r\n	<li>&nbsp;(+84) 96 1816 887 - (+82) 10 3362 5376</li>\r\n	<li>&nbsp;mymy.vnjt@gmail.com</li>\r\n	<li>&nbsp;vnjt.com</li>\r\n</ul>\r\n', '', 'Liên hệ', '', '', '', '', '', ''),
+(8, 242, 'vi', 'Dịch vụ', 'dich-vu', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', 'Dịch vụ', '', '', '', '', '', ''),
+(9, 269, 'vi', 'Chính sách bảo mật', 'k6t5gi', '', '', 'Chính sách bảo mật', '', '', '', '', '', ''),
+(10, 254, 'vi', 'Thanh toán', 'thanh-toan', '', '', 'Thanh toán', '', '', '', '', '', ''),
+(11, 272, 'vi', 'Tiêu', 'tieu', '', '', 'Tiêu', '', '', '', '', '', ''),
+(12, 273, 'vi', 'Quế', 'quefrngjc', '', '', 'Quế', '', '', '', '', '', ''),
+(13, 274, 'vi', 'Hoa hồi', 'hoa-hoi', '', '', 'Hoa hồi', '', '', '', '', '', ''),
+(14, 99, 'en', 'About', 'about', '<p><br />\r\n&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>Welcome to one of the leading units in the export of traditional condiments in Vietnam. We specialize in providing high-quality cinnamon, pepper and recycled products for the international market.<br />\r\n<br />\r\nVNJT was established, and its mission is to provide Vietnam&#39;s most exquisite condiments to the global market. With more than 10 years of experience in the export industry, we have established a solid reputation and long-term cooperative relationship with many international customers and distributors.<br />\r\n<br />\r\nMain products<br />\r\n<br />\r\nCinnamon: We provide cinnamon and flour, harvested from the famous cinnamon area in Vietnam. Our jam stands out with its unique aroma and excellent quality, ensuring that it meets strict international standards.<br />\r\n<br />\r\nPepper: Our peppers come from high-quality pepper growing areas, including black pepper, white pepper, blue pepper and red pepper. Our products always meet the standards of flavor and pungency, and can be used in many applications in food processing.<br />\r\n<br />\r\nTime: Our time is a well-chosen famous plantation. We provide seed recovery and stirring, which has special flavor and rich food and medical uses.<br />\r\n<br />\r\nQuantum binding<br />\r\n<br />\r\nIn VNJT, product quality is always the primary task. We adopt strict quality control procedures, from harvesting, processing to packaging. Our employees are experienced people, ready to meet the needs and requirements of customers.<br />\r\n<br />\r\nCustomer service<br />\r\n<br />\r\nWe not only focus on providing quality products, but also pay attention to customer service. Our customer service team is always ready to listen and assist customers in ordering, consulting products and solving problems.<br />\r\n<br />\r\nVision and mission<br />\r\n<br />\r\nOur goal is to become a reliable partner of global customers in condiment industry. Our mission is to improve the value of Vietnamese condiments and contribute to the sustainable development of national agriculture and exports.<br />\r\n<br />\r\nThank you for your attention to the new round of financing. We look forward to cooperating and serving your guests in the future. If you have any questions or requirements, please contact us by email or telephone.</p>\r\n', 'About', '', '', '', '', '', ''),
+(15, 100, 'en', 'Product', 'product', '<p style=\"text-align: center;\"><span style=\"font-size:18px;\">With each organic product grown, our company always wants to<br />\r\nbring you the best service experience and quality products.</span></p>\r\n', '', 'Product', '', '', '', '', '', ''),
+(16, 195, 'en', 'Gallery', 'gallery', '', '', 'Gallery', '', '', '', '', '', ''),
+(17, 172, 'en', 'Home', 'home', '', '', 'Home', '', '', '', '', '', ''),
+(18, 122, 'en', 'Cart', 'cart', '', '<h6><span style=\"color:#ed1c24\">THƯƠNG HIỆU VẬN TẢI H&Agrave;NG ĐẦU</span></h6>\r\n\r\n<p>Dịch vụ vận tải Qu&acirc;n Hưng tr&atilde;i d&agrave;i khắp mọi miền Bắc - Nam. Mang đến cho kh&aacute;ch h&agrave;ng niềm tin v&agrave; sự h&agrave;i l&ograve;ng về dịch vụ của ch&uacute;ng t&ocirc;i.</p>\r\n', 'Cart', '', '', '', '', '', ''),
+(19, 129, 'en', 'News', 'news', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '', 'News', '', '', '', '', '', ''),
+(20, 130, 'en', 'Contact', 'contact', '<p>For any questions please contact the information below</p>\r\n', '', 'Contact', '', '', '', '', '', ''),
+(21, 242, 'en', 'Dịch vụ', 'dich-vu', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', '<p>&nbsp;</p>\r\n\r\n<p>&nbsp;</p>\r\n', 'Dịch vụ', '', '', '', '', '', ''),
+(22, 269, 'en', 'Factory', 'factory', '', '', 'Factory', '', '', '', '', '', ''),
+(23, 254, 'en', 'Thông báo', 'thong-bao', '', '', 'Thông báo', '', '', '', '', '', ''),
+(24, 272, 'en', 'Pepper', 'pepper', '', '', 'Pepper', '', '', '', '', '', ''),
+(25, 273, 'en', 'Cinnamon', 'cinnamon', '', '', 'Cinnamon', '', '', '', '', '', ''),
+(26, 274, 'en', 'Star anise', 'star-anise', '', '', 'Star anise', '', '', '', '', '', ''),
+(27, 275, 'vi', 'Hạt tiêu đen', 'hat-tieu-den', '', '', 'Hạt tiêu đen', '', '', '', '', '', ''),
+(28, 275, 'en', 'Black Pepper', 'black-pepper', '', '', 'Black Pepper', '', '', '', '', '', ''),
+(29, 276, 'vi', 'Hạt tiêu trắng', 'hat-tieu-trang', '', '', 'Hạt tiêu trắng', '', '', '', '', '', ''),
+(30, 276, 'en', 'White Pepper', 'white-pepper', '', '', 'White Pepper', '', '', '', '', '', ''),
+(31, 277, 'vi', 'Tiêu đen xay', 'tieu-den-xay', '', '', 'Tiêu đen xay', '', '', '', '', '', ''),
+(32, 277, 'en', 'Ground Black Pepper', 'ground-black-pepper', '', '', 'Ground Black Pepper', '', '', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -26813,8 +26845,14 @@ ALTER TABLE `db_button_contact`
 -- Indexes for table `db_categories`
 --
 ALTER TABLE `db_categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `db_category_translations`
+--
+ALTER TABLE `db_category_translations`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `alias` (`slug`);
+  ADD UNIQUE KEY `unique_category_lang` (`category_id`,`lang`);
 
 --
 -- Indexes for table `db_coupon`
@@ -27283,7 +27321,13 @@ ALTER TABLE `db_button_contact`
 -- AUTO_INCREMENT for table `db_categories`
 --
 ALTER TABLE `db_categories`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=374;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=375;
+
+--
+-- AUTO_INCREMENT for table `db_category_translations`
+--
+ALTER TABLE `db_category_translations`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `db_coupon`

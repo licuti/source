@@ -12,7 +12,7 @@ class LanguageModel extends \App\Core\Database\Model {
      */
     public static function current() {
         if (self::$current === null && defined('_lang')) {
-            self::$current = static::query()->where('code', _lang)->first();
+            self::$current = static::where('code', _lang)->first();
         }
         return self::$current;
     }
@@ -31,7 +31,7 @@ class LanguageModel extends \App\Core\Database\Model {
      * Lấy ngôn ngữ được thiết lập làm mặc định
      */
     public static function getDefault() {
-        return static::query()->where('is_default', 1)->first();
+        return static::where('is_default', 1)->first();
     }
 
     /**
@@ -39,7 +39,7 @@ class LanguageModel extends \App\Core\Database\Model {
      * Kết quả: [ 'vi' => Object, 'en' => Object ]
      */
     public static function getCodeMap() {
-        $langs = static::query()->orderBy('sort_order', 'ASC')->get();
+        $langs = static::orderBy('sort_order', 'ASC')->get();
         $map = [];
         foreach ($langs as $l) {
             $map[$l->code] = $l;
@@ -52,7 +52,7 @@ class LanguageModel extends \App\Core\Database\Model {
      */
     public static function setAsDefault($id) {
         // 1. Bỏ mặc định tất cả
-        static::query()->whereRaw("1=1")->update(['is_default' => 0]);
+        static::whereRaw("1=1")->update(['is_default' => 0]);
         
         // 2. Thiết lập mặc định cho ID chỉ định
         $lang = static::find($id);
