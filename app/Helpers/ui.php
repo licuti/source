@@ -353,3 +353,19 @@ if (!function_exists('renderCategoryFilter')) {
     }
 }
 
+if (!function_exists('render_attrs')) {
+    /**
+     * Chuyển đổi mảng attributes thành chuỗi HTML attributes
+     */
+    function render_attrs(array $attrs): string {
+        $html = [];
+        foreach ($attrs as $key => $value) {
+            if ($value === true) {
+                $html[] = htmlspecialchars($key);
+            } elseif ($value !== false && $value !== null) {
+                $html[] = htmlspecialchars($key) . '="' . htmlspecialchars((string)$value) . '"';
+            }
+        }
+        return implode(' ', $html);
+    }
+}
