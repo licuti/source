@@ -36,7 +36,7 @@ class ReviewController extends Controller {
         $filter_media = (int) $request->input('filter_media', 0);
 
         if (!$id_sp) {
-            return Response::json(['success' => false, 'message' => 'Invalid product']);
+            return response()->json(['success' => false, 'message' => 'Invalid product']);
         }
 
         $limit = max(1, min($limit, 50));
@@ -57,7 +57,7 @@ class ReviewController extends Controller {
         }
         $html = ob_get_clean();
 
-        return Response::json([
+        return response()->json([
             'success'  => true,
             'html'     => $html,
             'loaded'   => count($items),
@@ -78,7 +78,7 @@ class ReviewController extends Controller {
         }
 
         if (empty($_FILES['media'])) {
-            return Response::json(['success' => false, 'message' => 'Không có file nào được gửi lên']);
+            return response()->json(['success' => false, 'message' => 'Không có file nào được gửi lên']);
         }
 
         $files_raw = $_FILES['media'];
@@ -90,7 +90,7 @@ class ReviewController extends Controller {
 
         $count = count($files_raw['name']);
         if ($count > self::UPLOAD_CONFIG['max_files']) {
-            return Response::json([
+            return response()->json([
                 'success' => false,
                 'message' => 'Tối đa ' . self::UPLOAD_CONFIG['max_files'] . ' file mỗi lần',
             ]);
@@ -143,7 +143,7 @@ class ReviewController extends Controller {
             ];
         }
 
-        return Response::json([
+        return response()->json([
             'success' => count($saved) > 0,
             'files'   => $saved,
             'errors'  => $errors,

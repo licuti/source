@@ -41,3 +41,80 @@ This project is indexed by GitNexus as **source** (6484 symbols, 17245 relations
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
 
 <!-- gitnexus:end -->
+
+---
+
+# 📐 Quy Tắc Lập Trình Dự Án (Project Coding Standards)
+
+> **BẮT BUỘC ĐỌC TRƯỚC KHI CODE BẤT KỲ FILE NÀO.**
+> Dự án này là Custom MVC lấy cảm hứng từ Laravel. Mọi code phải tuân theo tư duy Laravel — không được viết kiểu PHP thuần thủ tục.
+
+## 1. Transaction — Phải dùng DB Facade
+
+**KHÔNG BAO GIỜ** được viết:
+```php
+$pdo = SomeModel::getConnection();
+$pdo->beginTransaction();
+```
+
+**PHẢI** dùng:
+```php
+use App\Core\Database\DB;
+
+// Luôn ưu tiên cách này (ngắn, sạch, tự động rollback)
+DB::transaction(function () use ($data) {
+    SomeModel::create($data);
+    OtherModel::updateOrCreate([...], [...]);
+});
+```
+
+## 2. Module Admin — Tuân theo Blueprint chuẩn
+
+Mỗi khi viết hoặc sửa một Admin Controller, **BẮT BUỘC đọc Skill Blueprint trước:**
+- **Skill file:** `.agents/skills/admin-module-blueprint/SKILL.md`
+- Blueprint này định nghĩa: cấu trúc method, cách dùng Transaction, DRY helpers, eager loading, v.v.
+
+## 3. Helper dùng chung — Đặt vào BaseAdminController
+
+Nếu một đoạn logic được dùng ở **2 Controller trở lên**, **KHÔNG ĐƯỢC** copy-paste. Phải:
+1. Tạo `protected function` trong `BaseAdminController`
+2. Các Controller con gọi `$this->methodName()`
+
+Các helper đã có sẵn trong `BaseAdminController`:
+- `$this->getLangName(string $code)` — lấy tên ngôn ngữ
+- `$this->getActiveModules()` — lấy danh sách module đang bật, đã sort
+
+## 4. Eager Loading — KHÔNG để N+1 Query
+
+**KHÔNG BAO GIỜ** query trong vòng lặp:
+```php
+// SAI — N+1 problem
+foreach ($items as $item) {
+    $item->translations = TranslationModel::where('id', $item->id)->get();
+}
+```
+
+**PHẢI** dùng eager loading:
+```php
+SomeModel::query()->with('translations')->get();
+// hoặc khi paginate:
+SomeModel::query()->with('translations')->paginate($limit, $page);
+```
+
+## 5. Validation — Luôn dùng FormRequest
+
+**KHÔNG** validate trong Controller. **PHẢI** tạo file riêng:
+- Location: `app/Requests/Admin/SomeModelRequest.php`
+- Extend: `App\Core\FormRequest`
+
+## 6. View & Data — Không truyền dữ liệu "raw" phức tạp
+
+- View **KHÔNG** nhận mảng lồng nhau 3 cấp trở lên.
+- View nhận Model object và tự truy cập quan hệ qua `$item->relation`.
+- **KHÔNG** tạo biến `$translations` truyền thủ công — dùng `$item->translations`.
+
+## 7. PHP Compatibility
+
+- Code phải tương thích tối thiểu **PHP 7.4**.
+- Không dùng: `match()`, Nullsafe `?->`, Union Types, Named Arguments, Constructor Promotion.
+- **Được dùng:** Arrow functions `fn()`, Typed Properties, `??=`, `...spread`.

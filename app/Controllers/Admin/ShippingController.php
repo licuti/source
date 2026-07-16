@@ -100,9 +100,9 @@ class ShippingController extends BaseAdminController
             // Xóa cả rates liên quan
             ShippingRateModel::where('shipping_method_id', $id)->delete();
             $method->delete();
-            return Response::json(['success' => true, 'message' => 'Đã xóa phương thức và bảng giá liên quan']);
+            return response()->json(['success' => true, 'message' => 'Đã xóa phương thức và bảng giá liên quan']);
         }
-        return Response::json(['success' => false, 'message' => 'Không tìm thấy phương thức']);
+        return response()->json(['success' => false, 'message' => 'Không tìm thấy phương thức']);
     }
 
     public function updateStatusAjax(Request $request)
@@ -268,9 +268,9 @@ class ShippingController extends BaseAdminController
         $rate = ShippingRateModel::find($id);
         if ($rate) {
             $rate->delete();
-            return Response::json(['success' => true, 'message' => 'Đã xóa biểu phí']);
+            return response()->json(['success' => true, 'message' => 'Đã xóa biểu phí']);
         }
-        return Response::json(['success' => false, 'message' => 'Không tìm thấy bản ghi']);
+        return response()->json(['success' => false, 'message' => 'Không tìm thấy bản ghi']);
     }
 
     public function updateRateStatusAjax(Request $request)

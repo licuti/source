@@ -227,10 +227,10 @@ class ProductController extends Controller {
      */
     public function quickView(Request $request) {
         $id = (int) $request->input('id', 0);
-        if (!$id) return Response::json([]);
+        if (!$id) return response()->json([]);
 
         $sp = ProductModel::where('id_code', $id)->where('hien_thi', 1)->first();
-        if (!$sp) return Response::json([]);
+        if (!$sp) return response()->json([]);
 
         // Lấy tất cả biến thể và nạp quan hệ đệ quy (Thay cho vòng lặp N+1 cũ)
         $variants = ProductVariantModel::where('id_sanpham', $id)->get();
@@ -245,7 +245,7 @@ class ProductController extends Controller {
         $min_price = !empty($prices) ? min($prices) : ($sp->khuyen_mai > 0 ? $sp->khuyen_mai : $sp->gia);
         $max_price = !empty($prices) ? max($prices) : $min_price;
 
-        return Response::json([
+        return response()->json([
             'id'         => $sp->id_code,
             'ten'        => $sp->ten,
             'slug' => $sp->slug,
@@ -277,7 +277,7 @@ class ProductController extends Controller {
             case 'get_xa':
                 return (new \App\Controllers\LocationController())->ward($request);
             default:
-                return Response::json(['success' => false, 'message' => 'Legacy do not found'], 404);
+                return response()->json(['success' => false, 'message' => 'Legacy do not found'], 404);
         }
     }
 
@@ -289,7 +289,7 @@ class ProductController extends Controller {
         $keyword = trim($request->input('keyword', ''));
         $id_code = (int) $request->input('id_code', 0);
 
-        if ($keyword === '') return Response::json(['html' => '']);
+        if ($keyword === '') return response()->json(['html' => '']);
 
         $q = ProductModel::where('ten', '%' . $keyword . '%', 'LIKE')
                           ->where('hien_thi', 1);
@@ -326,7 +326,7 @@ class ProductController extends Controller {
             $html = '<div class="ls-no-result">' . __('Không tìm thấy sản phẩm nào') . '</div>';
         }
 
-        return Response::json(['html' => $html]);
+        return response()->json(['html' => $html]);
     }
 
     /**
@@ -335,7 +335,7 @@ class ProductController extends Controller {
      */
     public function recentlyViewed(Request $request) {
         $ids = array_filter(array_map('intval', (array) $request->input('ids', [])));
-        if (empty($ids)) return Response::json([]);
+        if (empty($ids)) return response()->json([]);
 
         $products = ProductModel::whereIn('id_code', $ids)->where('hien_thi', 1)->get();
 
@@ -347,7 +347,7 @@ class ProductController extends Controller {
             if (isset($map[$id])) $ordered[] = $map[$id];
         }
 
-        return Response::json(['urlpath' => defined('URLPATH') ? URLPATH : '', 'products' => $ordered]);
+        return response()->json(['urlpath' => defined('URLPATH') ? URLPATH : '', 'products' => $ordered]);
     }
 }
 

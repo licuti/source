@@ -148,7 +148,7 @@ class CartController extends Controller {
             case 'get_shipping_fee':
                 return $this->shippingFee($request);
             default:
-                return Response::json(['success' => false, 'message' => 'Legacy action not found'], 404);
+                return response()->json(['success' => false, 'message' => 'Legacy action not found'], 404);
         }
     }
 
@@ -162,12 +162,12 @@ class CartController extends Controller {
         $so_luong   = max(1, (int) $request->input('so_luong', 1));
 
         if (!$id_sp) {
-            return Response::json(['success' => false, 'message' => 'Thiếu ID sản phẩm'], 400);
+            return response()->json(['success' => false, 'message' => 'Thiếu ID sản phẩm'], 400);
         }
 
         $row_sp = ProductModel::where('id_code', $id_sp)->first();
         if (!$row_sp) {
-            return Response::json(['success' => false, 'message' => 'Sản phẩm không tồn tại'], 404);
+            return response()->json(['success' => false, 'message' => 'Sản phẩm không tồn tại'], 404);
         }
 
         // Xác định giá & thông tin biến thể
@@ -212,7 +212,7 @@ class CartController extends Controller {
             ];
         }
 
-        return Response::json([
+        return response()->json([
             'success' => true,
             'count'   => count($_SESSION['cart']),
             'message' => __('Đã thêm sản phẩm vào giỏ hàng'),
@@ -231,7 +231,7 @@ class CartController extends Controller {
             $_SESSION['cart'][$key_cart]['so_luong'] = $so_luong;
         }
 
-        return Response::json(['success' => true]);
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -246,7 +246,7 @@ class CartController extends Controller {
             if (empty($_SESSION['cart'])) unset($_SESSION['cart']);
         }
 
-        return Response::json(['success' => true]);
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -259,7 +259,7 @@ class CartController extends Controller {
         $phiship  = (float) $request->input('phi_ship', 0);
 
         if (empty($ma_sale)) {
-            return Response::json(['success' => false, 'message' => 'Vui lòng nhập mã giảm giá']);
+            return response()->json(['success' => false, 'message' => 'Vui lòng nhập mã giảm giá']);
         }
 
         $row_sale = CouponModel::where('ma', $ma_sale)->first();
@@ -267,7 +267,7 @@ class CartController extends Controller {
 
         if (!$row_sale) {
             $res['message'] = 'Mã giảm giá không tồn tại hoặc đã hết hạn.';
-            return Response::json($res);
+            return response()->json($res);
         }
 
         $now = date('Y-m-d');
@@ -315,7 +315,7 @@ class CartController extends Controller {
             ];
         }
 
-        return Response::json($res);
+        return response()->json($res);
     }
 
     /**
@@ -324,7 +324,7 @@ class CartController extends Controller {
      */
     public function removeCoupon(Request $request) {
         unset($_SESSION['ma_sale'], $_SESSION['giatri_sale'], $_SESSION['phi_sale']);
-        return Response::json(['success' => true]);
+        return response()->json(['success' => true]);
     }
 
     /**
@@ -344,7 +344,7 @@ class CartController extends Controller {
             return true;
         });
 
-        return Response::json(['success' => true, 'coupons' => array_values($valid)]);
+        return response()->json(['success' => true, 'coupons' => array_values($valid)]);
     }
 
     /**
@@ -356,7 +356,7 @@ class CartController extends Controller {
         $tong_don  = (float) $request->input('tong_don', 0);
 
         if (empty($code_tinh)) {
-            return Response::json(['success' => false]);
+            return response()->json(['success' => false]);
         }
 
         // Logic tính phí ship mẫu
@@ -394,6 +394,6 @@ class CartController extends Controller {
             }
         }
 
-        return Response::json($res);
+        return response()->json($res);
     }
 }

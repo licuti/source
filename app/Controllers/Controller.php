@@ -36,7 +36,7 @@ abstract class Controller {
      * Trả về JSON Response — format thô (dùng khi cần kiểm soát toàn bộ)
      */
     protected function json($data, $statusCode = 200) {
-        return Response::json($data, $statusCode);
+        return response()->json($data, $statusCode);
     }
 
     /**
@@ -48,7 +48,7 @@ abstract class Controller {
         if ($data !== null) {
             $body['data'] = $data;
         }
-        return Response::json($body, 200);
+        return response()->json($body, 200);
     }
 
     /**
@@ -60,7 +60,7 @@ abstract class Controller {
         if ($errors !== null) {
             $body['errors'] = $errors;
         }
-        return Response::json($body, $statusCode);
+        return response()->json($body, $statusCode);
     }
 
     /**

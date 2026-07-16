@@ -71,7 +71,15 @@
             <?php foreach ($langs as $l): ?>
                 <?php
                 $lCode = $l['code'];
-                $hasTranslation = isset($translations[$item->id][$lCode]);
+                $hasTranslation = false;
+                if (!empty($item->translations)) {
+                    foreach ($item->translations as $t) {
+                        if ($t->lang === $lCode) {
+                            $hasTranslation = true;
+                            break;
+                        }
+                    }
+                }
                 $flagSrc = !empty($l['image']) ? getImageUrl($l['image']) : '';
                 ?>
                 <?php if ($hasTranslation): ?>
@@ -102,8 +110,7 @@
             'categories' => $item->children, 
             'level' => $level + 1, 
             'isSearch' => $isSearch,
-            'langs' => $langs,
-            'translations' => $translations
+            'langs' => $langs
         ]) ?>
     <?php endif; ?>
 

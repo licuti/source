@@ -171,9 +171,9 @@ class PaymentController extends BaseAdminController
             $query = PaymentMethodModel::query();
             $query->withoutGlobalScope('lang');
             $query->where('id_code', $method->id_code)->delete();
-            return Response::json(['success' => true, 'message' => 'Đã xóa phương thức thanh toán']);
+            return response()->json(['success' => true, 'message' => 'Đã xóa phương thức thanh toán']);
         }
-        return Response::json(['success' => false, 'message' => 'Không tìm thấy phương thức']);
+        return response()->json(['success' => false, 'message' => 'Không tìm thấy phương thức']);
     }
 
     public function updateStatusAjax(Request $request)
@@ -210,8 +210,8 @@ class PaymentController extends BaseAdminController
                     $upQuery->where('id_code', $method->id_code)->update(['sort_order' => $index]);
                 }
             }
-            return Response::json(['success' => true]);
+            return response()->json(['success' => true]);
         }
-        return Response::json(['success' => false]);
+        return response()->json(['success' => false]);
     }
 }

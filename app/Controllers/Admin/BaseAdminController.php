@@ -57,4 +57,36 @@ class BaseAdminController extends Controller {
         $createdBy = is_array($item) ? ($item['created_by'] ?? 0) : ($item->created_by ?? 0);
         return ($createdBy == user()->id || user()->is_admin == 1);
     }
+
+    /**
+     * Lấy tên ngôn ngữ dựa theo mã code (Helper dùng chung cho mọi Controller)
+     */
+    protected function getLangName(string $code): string {
+        foreach ($this->langs as $l) {
+            if ($l['code'] === $code) {
+                return $l['name'];
+            }
+        }
+        return 'Unknown';
+    }
+
+    /**
+     * Lấy danh sách Module đang kích hoạt và đã được sắp xếp (Helper dùng chung)
+     */
+    protected function getActiveModules(): array {
+        $allModules = config('modules.settings', []);
+        $activeModules = [];
+        foreach ($allModules as $m) {
+            if (isset($m['status']) && $m['status'] == 1) {
+                $activeModules[] = (object)$m;
+            }
+        }
+        
+        // Sắp xếp theo thứ tự hiển thị
+        usort($activeModules, function($a, $b) {
+            return ($a->sort_order ?? 0) <=> ($b->sort_order ?? 0);
+        });
+        
+        return $activeModules;
+    }
 }

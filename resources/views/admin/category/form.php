@@ -1,5 +1,5 @@
 <?php
-$isEdit = isset($item);
+$isEdit = !empty($item['id']);
 $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : route('admin.category.store');
 ?>
 

@@ -132,7 +132,9 @@ class PostController extends BaseAdminController {
         $langCode = $request->input('lang', $this->primaryLang);
         $translation = $itemObj->getTranslation($langCode);
         if ($translation) {
-            $item = array_merge($item, $translation->toArray());
+            $translationData = $translation->toArray();
+            unset($translationData['id']); // Ngăn đè ID của post bằng ID của bản dịch
+            $item = array_merge($item, $translationData);
         } else {
             foreach ($itemObj->getTranslatedAttributesArray() as $k => $v) {
                 $item[$k] = '';

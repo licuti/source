@@ -9,6 +9,9 @@ Tài liệu theo dõi tiến độ chuyển đổi toàn bộ chức năng từ 
 
 ---
 
+> **Lưu ý Kiến trúc (Cập nhật 07/2026):** 
+> Bảng `db_module` và model `ModuleModel.php` đã được đánh dấu là **DEPRECATED (Lỗi thời)**. Toàn bộ cấu trúc module đang được chuyển dần sang cấu hình tĩnh tại `config/modules.php` (mảng `settings`). Tương lai sẽ xóa bỏ hoàn toàn bảng này khỏi CSDL. Hiện tại `CategoryController` đã được chuyển đổi thành công.
+
 ## 1. ⚙️ HỆ THỐNG & PHÂN QUYỀN (System & Auth)
 
 | ID | Chức năng (Alias DB) | Controller MVC | Trạng thái |

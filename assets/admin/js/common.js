@@ -7,6 +7,51 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
+    // Tự động đính kèm CSRF Token cho tất cả các yêu cầu AJAX (jQuery & Fetch)
+    (function setupCsrfGlobal() {
+        const getCsrfToken = () => document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        // 1. Cấu hình cho jQuery AJAX
+        if (typeof jQuery !== 'undefined') {
+            jQuery.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': getCsrfToken()
+                }
+            });
+        }
+
+        // 2. Cấu hình cho native Fetch
+        const originalFetch = window.fetch;
+        window.fetch = function(input, init) {
+            init = init || {};
+            const method = (init.method || 'GET').toUpperCase();
+
+            if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
+                init.headers = init.headers || {};
+                const token = getCsrfToken();
+
+                if (token) {
+                    if (init.headers instanceof Headers) {
+                        if (!init.headers.has('X-CSRF-TOKEN')) {
+                            init.headers.set('X-CSRF-TOKEN', token);
+                        }
+                    } else if (Array.isArray(init.headers)) {
+                        const hasCsrf = init.headers.some(h => h[0].toUpperCase() === 'X-CSRF-TOKEN');
+                        if (!hasCsrf) {
+                            init.headers.push(['X-CSRF-TOKEN', token]);
+                        }
+                    } else {
+                        const keys = Object.keys(init.headers).map(k => k.toUpperCase());
+                        if (!keys.includes('X-CSRF-TOKEN')) {
+                            init.headers['X-CSRF-TOKEN'] = token;
+                        }
+                    }
+                }
+            }
+            return originalFetch(input, init);
+        };
+    })();
+
     // Helper wrapper cho hệ thống thông báo (Sử dụng AppNotify nếu có, nếu không fallback alert/confirm)
     const notify = typeof AppNotify !== 'undefined' ? AppNotify : {
         success: function(msg) { alert(msg); },
@@ -42,8 +87,14 @@ document.addEventListener("DOMContentLoaded", function() {
             formData.append('field', field);
             formData.append('value', value);
 
+            const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+            const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+
             fetch(url, {
                 method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                },
                 body: formData
             })
             .then(res => res.json())
@@ -143,8 +194,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
                 this.disabled = true;
 
+                const csrfMeta = document.querySelector('meta[name="csrf-token"]');
+                const csrfToken = csrfMeta ? csrfMeta.getAttribute('content') : '';
+
                 fetch(url, {
                     method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
                     body: formData
                 })
                 .then(res => res.json())
