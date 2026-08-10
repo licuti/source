@@ -72,7 +72,7 @@ class FlashSaleController extends BaseAdminController {
                 $p->flash_sale = 0;
                 $p->flash_sale_start = null;
                 $p->flash_sale_end = null;
-                $p->gia_flash_sale = 0;
+                $p->flash_sale_price = 0;
                 $p->save();
             }
             $campaign->delete();
@@ -135,9 +135,9 @@ class FlashSaleController extends BaseAdminController {
     public function storeProduct(Request $request) {
         $campaign_id = $request->input('campaign_id');
         $product_id = $request->input('product_id');
-        $gia_flash_sale = $request->input('gia_flash_sale');
+        $flashSalePrice = $request->input('flash_sale_price');
         
-        if (empty($campaign_id) || empty($product_id) || empty($gia_flash_sale)) {
+        if (empty($campaign_id) || empty($product_id) || empty($flashSalePrice)) {
             return back()->with('error', 'Vui lòng nhập đầy đủ thông tin!');
         }
         
@@ -148,7 +148,7 @@ class FlashSaleController extends BaseAdminController {
         if (!$product) return back()->with('error', 'Không tìm thấy sản phẩm!');
         
         $product->flash_sale = $campaign_id;
-        $product->gia_flash_sale = str_replace(['.', ','], '', $gia_flash_sale);
+        $product->flash_sale_price = str_replace(['.', ','], '', $flashSalePrice);
         
         // Sync time from campaign
         $product->flash_sale_start = $campaign->start_time;
@@ -165,7 +165,7 @@ class FlashSaleController extends BaseAdminController {
             $product->flash_sale = 0;
             $product->flash_sale_start = null;
             $product->flash_sale_end = null;
-            $product->gia_flash_sale = 0;
+            $product->flash_sale_price = 0;
             $product->save();
             return response()->json(['success' => true, 'message' => 'Đã gỡ sản phẩm khỏi Chiến dịch!']);
         }

@@ -3,8 +3,8 @@ $breadcrumbActions = [];
 $canAdd = hasPermission('admin.post', 'add');
 $canDelete = hasPermission('admin.post', 'delete');
 $canEdit = hasPermission('admin.post', 'edit');
-$user = user();
-$isAdmin = $user->is_admin == 1;
+$user = \App\Core\Auth\AuthManager::user();
+$isAdmin = $user && $user->is_admin == 1;
 
 // Mặc định mọi user đều có thể "Thêm bài viết" (sẽ gán cho chính họ)
 if ($canAdd) {
@@ -157,8 +157,8 @@ if ($canAdd) {
                                             <?php foreach ($langs as $l): ?>
                                                 <?php
                                                 $lCode = $l['code'];
-                                                $hasTranslation = isset($translations[$item->id][$lCode]);
-                                                $transId = $hasTranslation ? $translations[$item->id][$lCode] : null;
+                                                $hasTranslation = isset($translations[$item->id_code][$lCode]);
+                                                $transId = $hasTranslation ? $translations[$item->id_code][$lCode] : null;
                                                 $flagSrc = !empty($l['image']) ? getImageUrl($l['image']) : '';
                                                 ?>
                                                 <?php if ($hasTranslation): ?>
@@ -171,7 +171,7 @@ if ($canAdd) {
                                                         <i class="fa-solid fa-pencil text-primary" style="font-size: 11px;"></i>
                                                     </a>
                                                 <?php else: ?>
-                                                    <a href="<?= route('admin.post.create', ['lang' => $lCode, 'source_id' => $item->id]) ?>" class="text-decoration-none d-inline-flex align-items-center me-2 mb-1 opacity-50" title="Thêm bản <?= htmlspecialchars($l['name']) ?>">
+                                                    <a href="<?= route('admin.post.create', ['lang' => $lCode, 'source_id' => $item->id_code]) ?>" class="text-decoration-none d-inline-flex align-items-center me-2 mb-1 opacity-50" title="Thêm bản <?= htmlspecialchars($l['name']) ?>">
                                                         <?php if($flagSrc): ?>
                                                             <img src="<?= $flagSrc ?>" alt="<?= $lCode ?>" style="width: 20px; height: 14px; object-fit: cover; border-radius: 2px;" class="border shadow-sm me-1 grayscale">
                                                         <?php else: ?>

@@ -2,15 +2,20 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Request;
-use App\Core\Validator;
+use App\Core\Auth\AuthManager;
+use App\Models\AttributeModel;
 use App\Models\CategoryModel;
 use App\Models\ProductModel;
 use App\Services\ProductService;
+use App\Requests\Admin\ProductRequest;
 
 class ProductController extends BaseAdminController {
     
     private ProductService $productService;
     private int $moduleId;
+    protected string $routePrefix = 'admin.product';
+    protected int $perPage = 10;
+    protected array $allowedToggleFields = ['status', 'is_featured', 'is_new', 'is_hot', 'is_sale'];
 
     public function __construct() {
         parent::__construct();
@@ -26,48 +31,36 @@ class ProductController extends BaseAdminController {
         $status     = $request->input('status', '');
         $categoryId = (int)$request->input('category_id', 0);
         $stockFilter = $request->input('stock_filter', 'all');
-        $page       = max(1, (int)$request->input('page', 1));
 
-        $query = ProductModel::where('lang', $this->primaryLang);
-
-        if ($status !== '')      $query->where('status', $status);
-        if ($categoryId > 0)     $query->where('category_id', $categoryId);
-        if ($keyword !== '')     $query->whereLike('title', $keyword);
-
-        if ($stockFilter === 'out_of_stock') {
-            $query->whereRaw('(stock_status = "out_of_stock" OR stock_quantity <= 0)');
-        } elseif ($stockFilter === 'low_stock') {
-            $query->whereRaw('(stock_quantity > 0 AND stock_quantity <= low_stock_amount)');
-        } elseif ($stockFilter === 'in_stock') {
-            $query->whereRaw('(stock_quantity > low_stock_amount)');
-        }
+        $query = ProductModel::where('lang', $this->primaryLang)->filter($request->all());
 
         $items = $query->with('variants')
                        ->orderBy('updated_at', 'DESC')
                        ->orderBy('id', 'DESC')
-                       ->paginate(10);
+                       ->paginate($this->perPage);
 
         $categories = $this->getCategories();
 
         return $this->render('admin.product.index', compact('items', 'keyword', 'status', 'categoryId', 'stockFilter', 'categories'));
     }
 
+    private function getFormData($item = null) {
+        $primaryLang = $this->primaryLang;
+        $attributes  = AttributeModel::where('lang', $primaryLang)
+            ->with(['values' => fn($q) => $q->where('lang', $primaryLang)])
+            ->get();
+
+        return compact('attributes', 'item') + [
+            'langs'      => $this->langs,
+            'categories' => $this->getCategories(),
+        ];
+    }
+
     /**
      * Mở form thêm mới
      */
     public function create(Request $request) {
-        $langs      = $this->langs;
-        $categories = $this->getCategories();
-        $primaryLang = $this->primaryLang;
-        $attributes = \App\Models\AttributeModel::query()
-            ->where('lang', $primaryLang)
-            ->with([
-                'values' => function($q) use ($primaryLang) {
-                    $q->where('lang', $primaryLang);
-                }
-            ])->get();
-        
-        return $this->render('admin.product.form', compact('langs', 'categories', 'attributes'));
+        return $this->render('admin.product.form', $this->getFormData());
     }
 
     /**
@@ -75,36 +68,17 @@ class ProductController extends BaseAdminController {
      */
     public function edit(Request $request, $id) {
         $id = $this->parseId($id);
-        
         $item = $this->productService->getProductForEdit($id);
-        
         if (!$item) {
-            return $this->redirect(route('admin.product.index'));
+            return $this->redirect(route($this->routePrefix . '.index'));
         }
         
-        $langs      = $this->langs;
-        $categories = $this->getCategories();
-        $primaryLang = $this->primaryLang;
-        $attributes = \App\Models\AttributeModel::query()
-            ->where('lang', $primaryLang)
-            ->with([
-                'values' => function($q) use ($primaryLang) {
-                    $q->where('lang', $primaryLang);
-                }
-            ])->get();
-        
-        return $this->render('admin.product.form', compact('langs', 'item', 'categories', 'attributes'));
+        return $this->render('admin.product.form', $this->getFormData($item));
     }
 
-    /**
-     * Lưu dữ liệu thêm mới
-     */
-    public function store(Request $request) {
-        if (!$this->validateProduct($request)) {
-            return $this->redirect(route('admin.product.create'));
-        }
-
-        $insertedId = $this->productService->saveProduct($request->all(), $this->langs, user()->id);
+    public function store(ProductRequest $request) {
+        $validatedData = $request->validated();
+        $insertedId = $this->productService->saveProduct($validatedData, $this->langs, AuthManager::user()->id);
 
         if ($insertedId) {
             session('success', 'Thêm sản phẩm thành công!');
@@ -115,46 +89,33 @@ class ProductController extends BaseAdminController {
         return $this->handleSaveRedirect($request, $insertedId);
     }
 
-    /**
-     * Lưu dữ liệu cập nhật
-     */
-    public function update(Request $request, $id) {
+    public function update(ProductRequest $request, $id) {
         $id = $this->parseId($id);
-        
-        if (!$this->validateProduct($request)) {
-            return $this->redirect(route('admin.product.edit', ['id' => $id]));
-        }
+        $validatedData = $request->validated();
 
-        $this->productService->saveProduct($request->all(), $this->langs, user()->id, $id);
+        $this->productService->saveProduct($validatedData, $this->langs, AuthManager::user()->id, $id);
         
         session('success', 'Cập nhật sản phẩm thành công!');
         return $this->handleSaveRedirect($request, $id);
     }
 
-    /**
-     * Cập nhật trạng thái hiển thị qua AJAX
-     */
     public function updateStatusAjax(Request $request) {
-        $id    = (int)$request->input('id');
-        $field = $request->input('field', 'status');
-        $value = (int)$request->input('value', 0);
+        try {
+            $id    = (int)$request->input('id');
+            $field = $request->input('field', 'status');
 
-        if (!in_array($field, ['status', 'is_featured', 'is_new', 'is_hot', 'is_sale'])) {
-            return $this->jsonError('Trường dữ liệu không hợp lệ');
+            if (!in_array($field, $this->allowedToggleFields)) {
+                return $this->jsonError('Trường dữ liệu không hợp lệ');
+            }
+
+            if ($this->productService->updateProductStatus($id, $field)) {
+                return $this->jsonSuccess('Trạng thái đã được cập nhật!');
+            }
+            
+            return $this->jsonError('Không tìm thấy sản phẩm');
+        } catch (\Exception $e) {
+            return $this->jsonError('Lỗi hệ thống: ' . $e->getMessage());
         }
-
-        $query = ProductModel::query();
-        $query->withoutGlobalScope('lang');
-        $product = clone $query;
-        $product = $product->where('id_code', $id)->first();
-        if (!$product) {
-            return $this->json(['success' => false, 'message' => 'Không tìm thấy sản phẩm']);
-        }
-
-        $updateVal = ($product->{$field} == 1) ? 0 : 1;
-        $query->where('id_code', $id)->update([$field => $updateVal]);
-        
-        return $this->jsonSuccess('Trạng thái đã được cập nhật!');
     }
 
     /**
@@ -167,47 +128,35 @@ class ProductController extends BaseAdminController {
             session('success', 'Đã xóa sản phẩm thành công!');
         }
         
-        return $this->redirect(route('admin.product.index'));
+        return $this->redirect(route($this->routePrefix . '.index'));
     }
 
     /**
      * Xóa hàng loạt
      */
     public function destroyMultiple(Request $request) {
-        $ids = $request->input('ids', []);
-        
-        if (!empty($ids) && is_array($ids)) {
-            $deletedCount = 0;
-            foreach ($ids as $id) {
-                if ($this->productService->deleteProduct($id)) {
-                    $deletedCount++;
+        try {
+            $ids = $request->input('ids', []);
+            
+            if (!empty($ids) && is_array($ids)) {
+                // Đảm bảo chỉ xử lý các số nguyên dương hợp lệ
+                $cleanIds = array_filter(array_map('intval', $ids), fn($id) => $id > 0);
+                
+                if (empty($cleanIds)) {
+                    return $this->jsonError('Danh sách ID không hợp lệ');
+                }
+                
+                $deletedCount = count($cleanIds);
+                if ($this->productService->deleteProducts($cleanIds)) {
+                    return $this->jsonSuccess("Đã xóa thành công {$deletedCount} sản phẩm.");
                 }
             }
-            return $this->json(['success' => true, 'message' => "Đã xóa thành công {$deletedCount} sản phẩm."]);
+            return $this->jsonError('Lỗi xóa bản ghi hoặc chưa chọn bản ghi');
+        } catch (\Exception $e) {
+            return $this->jsonError('Lỗi hệ thống: ' . $e->getMessage());
         }
-        return $this->json(['success' => false, 'message' => 'Chưa chọn bản ghi nào']);
     }
 
-    // ============================================================
-    //  HELPER METHODS
-    // ============================================================
-
-    private function validateProduct(Request $request): bool {
-        $validator = new Validator($request->all(), [
-            "title.{$this->primaryLang}" => 'required|max:255'
-        ], [
-            "title.{$this->primaryLang}.required" => 'Tên sản phẩm không được để trống.',
-            "title.{$this->primaryLang}.max"      => 'Tên sản phẩm không được vượt quá 255 ký tự.'
-        ]);
-        
-        if ($validator->fails()) {
-            session('error', $validator->firstError());
-            // Flash data (old/errors) is handled automatically inside Validator::fails()
-            return false;
-        }
-
-        return true;
-    }
 
     private function getCategories() {
         return CategoryModel::getTreeForAdminByModule($this->moduleId);
@@ -219,8 +168,8 @@ class ProductController extends BaseAdminController {
 
     private function handleSaveRedirect(Request $request, $id) {
         if ($request->input('save_action') === 'continue') {
-            return $this->redirect(route('admin.product.edit', ['id' => $id]));
+            return $this->redirect(route($this->routePrefix . '.edit', ['id' => $id]));
         }
-        return $this->redirect(route('admin.product.index'));
+        return $this->redirect(route($this->routePrefix . '.index'));
     }
 }

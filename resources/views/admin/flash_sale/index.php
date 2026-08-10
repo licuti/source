@@ -64,7 +64,7 @@ $title = "Sản phẩm trong Chiến dịch";
                                             </div>
                                         </td>
                                         <td class="text-center fw-bold text-danger">
-                                            <?= number_format($item->gia_flash_sale, 0, ',', '.') ?>đ
+                                            <?= number_format($item->flash_sale_price, 0, ',', '.') ?>đ
                                         </td>
                                         <td class="text-center">
                                             <button type="button" class="btn btn-sm btn-outline-danger btn-delete" data-id="<?= $item->id ?>">
@@ -101,7 +101,7 @@ $title = "Sản phẩm trong Chiến dịch";
                             </div>
                             
                             <?= view('admin.components.input', [
-                                'name' => 'gia_flash_sale',
+                                'name' => 'flash_sale_price',
                                 'label' => 'Giá Flash Sale (VNĐ)',
                                 'value' => '',
                                 'class' => 'format-money',

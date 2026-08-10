@@ -13,10 +13,26 @@ class ProductModel extends \App\Core\Database\Model {
     // ============================================================
 
     /**
-     * Mối quan hệ Nhiều-1 với Danh mục
+     * Mối quan hệ Nhiều-1 với Danh mục (Cũ - Giữ lại để tương thích ngược)
      */
     public function category() {
         return $this->belongsTo(CategoryModel::class, 'category_id', 'id');
+    }
+
+    /**
+     * Mối quan hệ Nhiều-Nhiều với Danh mục (Mới)
+     */
+    public function categories() {
+        return $this->belongsToMany(CategoryModel::class, 'product_category', 'product_id', 'category_id');
+    }
+
+    /**
+     * Helper lấy danh sách Category IDs của sản phẩm hiện tại
+     */
+    public function getCategoryIds(): array {
+        if (empty($this->id)) return [];
+        $catIds = \App\Core\Database\DB::select("SELECT category_id FROM db_product_category WHERE product_id = ?", [$this->id]);
+        return array_column($catIds, 'category_id');
     }
 
     /**
@@ -95,6 +111,7 @@ class ProductModel extends \App\Core\Database\Model {
                 COALESCE(v.max_v, 0)
             )) AS abs_max
         FROM $tableName sp
+        INNER JOIN db_product_category pc ON pc.product_id = sp.id
         LEFT JOIN (
             SELECT product_id,
                    MIN(IF(promotional_price > 0, promotional_price, price)) AS min_v,
@@ -102,7 +119,7 @@ class ProductModel extends \App\Core\Database\Model {
             FROM $tableVariant
             GROUP BY product_id
         ) v ON v.product_id = sp.id_code
-        WHERE sp.category_id IN ($idList) AND sp.status = 1 $langWhere";
+        WHERE pc.category_id IN ($idList) AND sp.status = 1 $langWhere";
 
         $stmt = self::$pdo->prepare($sql);
         $stmt->execute();
@@ -113,6 +130,49 @@ class ProductModel extends \App\Core\Database\Model {
             'max' => (float)($row['abs_max'] ?? 50000000),
         ];
     }
+
+    /**
+     * Query scope: Lọc sản phẩm theo trạng thái tồn kho
+     */
+    public function scopeInStock($query) {
+        return $query->whereRaw('(stock_quantity > low_stock_amount)');
+    }
+
+    public function scopeLowStock($query) {
+        return $query->whereRaw('(stock_quantity > 0 AND stock_quantity <= low_stock_amount)');
+    }
+
+    public function scopeOutOfStock($query) {
+        return $query->whereRaw('(stock_status = "out_of_stock" OR stock_quantity <= 0)');
+    }
+
+    /**
+     * Query scope: Gom nhóm bộ lọc (trạng thái, danh mục, từ khóa, tồn kho)
+     */
+    public function scopeFilter($query, array $filters) {
+        if (isset($filters['status']) && $filters['status'] !== '') {
+            $query->where('status', $filters['status']);
+        }
+        if (!empty($filters['category_id']) && (int)$filters['category_id'] > 0) {
+            $catId = (int)$filters['category_id'];
+            $query->whereRaw("EXISTS (SELECT 1 FROM db_product_category pc WHERE pc.product_id = #_products.id AND pc.category_id = {$catId})");
+        }
+        if (!empty($filters['keyword'])) {
+            $query->whereLike('title', trim($filters['keyword']));
+        }
+
+        $stockFilter = $filters['stock_filter'] ?? 'all';
+        if ($stockFilter === 'in_stock') {
+            $this->scopeInStock($query);
+        } elseif ($stockFilter === 'low_stock') {
+            $this->scopeLowStock($query);
+        } elseif ($stockFilter === 'out_of_stock') {
+            $this->scopeOutOfStock($query);
+        }
+
+        return $query;
+    }
+
     /**
      * Tự động cập nhật đường dẫn (URL) trong Menu nếu Sản phẩm thay đổi slug
      */

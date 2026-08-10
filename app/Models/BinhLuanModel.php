@@ -6,67 +6,17 @@ class BinhLuanModel extends \App\Core\Database\Model {
     
 
     /**
-     * Eager load media for reviews
+     * Quan hệ với media (hình ảnh, video bình luận)
      */
-    public function withMedia(&$data = null) {
-        if ($data === null) {
-            $this->qb_with[] = __FUNCTION__;
-            return $this;
-        }
-        $table = str_replace('#_', self::$prefix, '#_binhluan_media');
-        $this->loadRelation($data, $table, 'id', 'id_binhluan', 'media', true);
-        
-        // Cast raw arrays to objects
-        if (is_array($data)) {
-            foreach ($data as &$item) {
-                if (!empty($item->media)) {
-                    $item->media = array_map(fn($m) => is_array($m) ? (object)$m : $m, $item->media);
-                }
-            }
-        } elseif (is_object($data) && !empty($data->media)) {
-            $data->media = array_map(fn($m) => is_array($m) ? (object)$m : $m, $data->media);
-        }
-        return $data;
+    public function media() {
+        return $this->hasMany(BinhLuanMediaModel::class, 'id_binhluan', 'id');
     }
 
     /**
-     * Eager load replies for reviews
+     * Quan hệ với các câu trả lời
      */
-    public function withReplies(&$data = null) {
-        if ($data === null) {
-            $this->qb_with[] = __FUNCTION__;
-            return $this;
-        }
-        // Thêm điều kiện trang_thai = 1 cho replies
-        $instance = new static();
-        // Cần custom logic cho loadRelation có điều kiện, hoặc tạm dùng loadRelation cơ bản
-        // Tốt nhất là thêm callback vào loadRelation trong tương lai.
-        // Hiện tại loadRelation chưa hỗ trợ condition phụ, ta lấy hết rồi filter hoặc query riêng.
-        // Dùng loadRelation chuẩn:
-        $data = $this->loadRelation($data, static::tableName(), 'id', 'parent', 'replies', true);
-        
-        // Filter replies with trang_thai = 1 and cast to Object
-        if (is_array($data)) {
-            foreach ($data as &$item) {
-                if (isset($item->replies) && is_array($item->replies)) {
-                    $filtered = array_filter($item->replies, function($reply) {
-                        $stt = is_array($reply) ? ($reply['trang_thai'] ?? 0) : ($reply->trang_thai ?? 0);
-                        return (int)$stt === 1;
-                    });
-                    $item->replies = array_values(array_map(fn($r) => is_array($r) ? new static($r) : $r, $filtered));
-                }
-            }
-        } elseif (is_object($data)) {
-            if (isset($data->replies) && is_array($data->replies)) {
-                $filtered = array_filter($data->replies, function($reply) {
-                    $stt = is_array($reply) ? ($reply['trang_thai'] ?? 0) : ($reply->trang_thai ?? 0);
-                    return (int)$stt === 1;
-                });
-                $data->replies = array_values(array_map(fn($r) => is_array($r) ? new static($r) : $r, $filtered));
-            }
-        }
-        
-        return $data;
+    public function replies() {
+        return $this->hasMany(BinhLuanModel::class, 'parent', 'id');
     }
 
     /**

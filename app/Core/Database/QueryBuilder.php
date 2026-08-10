@@ -36,6 +36,15 @@ class QueryBuilder {
         if (method_exists($this->model, $method)) {
             return $this->model->$method(...$parameters);
         }
+
+        // Hỗ trợ Laravel-like Query Scopes (VD: scopeFilter -> filter())
+        $scopeMethod = 'scope' . ucfirst($method);
+        if (method_exists($this->model, $scopeMethod)) {
+            array_unshift($parameters, $this); // Đẩy $this (QueryBuilder) vào làm tham số đầu tiên
+            $result = $this->model->$scopeMethod(...$parameters);
+            return $result ?? $this;
+        }
+
         throw new \BadMethodCallException("Method $method does not exist on Builder or Model.");
     }
 
@@ -298,7 +307,7 @@ class QueryBuilder {
         return (int)$result['total'];
     }
 
-    public function qbSum(string $column): float {
+    public function sum(string $column): float {
         $tableName = $this->model->tableName();
         list($whereSql, $params) = $this->buildWhereClause();
         $sql = "SELECT SUM(`$column`) as total FROM $tableName";

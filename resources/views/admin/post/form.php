@@ -15,9 +15,10 @@ $action = $isEdit ? route('admin.post.update', ['id' => $item['id']]) : route('a
 <div class="app-content">
     <div class="container-fluid">
         <form action="<?= $action ?>" method="POST">
+            <?= csrf_field() ?>
             <input type="hidden" name="lang" value="<?= htmlspecialchars($langCode) ?>">
-            <?php if (isset($item['id'])): ?>
-                <input type="hidden" name="source_id" value="<?= $item['id'] ?>">
+            <?php if (!empty($item['source_id'])): ?>
+                <input type="hidden" name="source_id" value="<?= $item['source_id'] ?>">
             <?php endif; ?>
 
             <div class="row">

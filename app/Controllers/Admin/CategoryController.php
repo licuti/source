@@ -2,12 +2,18 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Request;
-use App\Core\Database\DB;
 use App\Models\CategoryModel;
-use App\Models\CategoryTranslationModel;
 use App\Requests\Admin\CategoryRequest;
+use App\Services\CategoryService;
 
 class CategoryController extends BaseAdminController {
+    
+    private CategoryService $categoryService;
+
+    public function __construct() {
+        parent::__construct();
+        $this->categoryService = new CategoryService();
+    }
     
     /**
      * Hiển thị danh mục dạng cây hoặc danh sách tìm kiếm
@@ -22,36 +28,37 @@ class CategoryController extends BaseAdminController {
         if ($keyword !== '' || $status !== '') {
             $isSearch = true;
             
-            // Tìm kiếm bằng SQL JOIN thay vì vòng lặp PHP trên RAM
-            $query = CategoryModel::query()
-                ->select('#_categories.*')
-                ->join('#_category_translations as t', 't.category_id', '=', '#_categories.id')
-                ->where('t.lang', $this->primaryLang);
+            $query = CategoryModel::withoutGlobalScope('lang')
+                ->where('lang', $this->primaryLang);
                 
             if ($keyword !== '') {
-                $query->whereRaw("(t.title LIKE ? OR #_categories.id = ?)", ["%$keyword%", $keyword]);
+                $query->whereRaw("(title LIKE ? OR id_code = ?)", ["%$keyword%", $keyword]);
             }
             if ($status !== '') {
-                $query->where('#_categories.status', $status);
+                $query->where('status', $status);
             }
             
-            // QueryBuilder paginate() tự động đếm count() và hỗ trợ eager load qua with()
-            $categories = $query->with('translations')
-                                ->orderBy('#_categories.sort_order', 'ASC')
-                                ->orderBy('#_categories.id', 'DESC')
+            $categories = $query->orderBy('sort_order', 'ASC')
+                                ->orderBy('id', 'DESC')
                                 ->paginate($limit, $page, 'page');
                                 
             $totalRows = $categories->total();
             $totalPages = $categories->lastPage();
         } else {
-            // Chế độ mặc định: Cây danh mục
             $isSearch = false;
-            $categories = CategoryModel::getTreeForAdmin(); // getTreeForAdmin đã tự động eager load 'translations'
-            $totalRows = CategoryModel::count();
+            $categories = CategoryModel::getTreeForAdmin(); 
+            $totalRows = CategoryModel::withoutGlobalScope('lang')->where('lang', $this->primaryLang)->count();
             $totalPages = 1;
         }
 
-        return $this->render('admin.category.index', compact('categories', 'isSearch', 'keyword', 'status', 'page', 'totalPages', 'totalRows', 'langs', 'limit'));
+        // Build map ['id_code' => ['vi' => id, 'en' => id]]
+        $allTrans = CategoryModel::withoutGlobalScope('lang')->get('id_code, lang, id');
+        $translations = [];
+        foreach ($allTrans as $t) {
+            $translations[$t->id_code][$t->lang] = $t->id;
+        }
+
+        return $this->render('admin.category.index', compact('categories', 'isSearch', 'keyword', 'status', 'page', 'totalPages', 'totalRows', 'langs', 'limit', 'translations'));
     }
 
     /**
@@ -68,54 +75,19 @@ class CategoryController extends BaseAdminController {
     }
 
     /**
-     * Tách Data Category chuẩn hóa (DRY)
-     */
-    private function extractCategoryData(array $validatedData, int $parentId): array {
-        return [
-            'image'       => $validatedData['image'] ?? '',
-            'banner'      => $validatedData['banner'] ?? '',
-            'parent_id'   => $parentId,
-            'module'      => $validatedData['module'] ?? 0,
-            'sort_order'  => (int)($validatedData['sort_order'] ?? 0),
-            'status'      => isset($validatedData['status']) ? 1 : 0,
-            'is_featured' => isset($validatedData['is_featured']) ? 1 : 0,
-        ];
-    }
-
-    /**
-     * Tách Data Dịch thuật chuẩn hóa (DRY)
-     */
-    private function extractTranslationData(array $validatedData, int $categoryId, string $lang): array {
-        return [
-            'category_id'     => $categoryId,
-            'lang'            => $lang,
-            'title'           => $validatedData['title'] ?? '',
-            'slug'            => empty($validatedData['slug']) ? str_slug($validatedData['title'] ?? '') : $validatedData['slug'],
-            'description'     => $validatedData['description'] ?? '',
-            'content'         => $validatedData['content'] ?? '',
-            'seo_title'       => $validatedData['seo_title'] ?? '',
-            'keyword'         => $validatedData['keyword'] ?? '',
-            'seo_description' => $validatedData['seo_description'] ?? '',
-            'seo_head'        => $validatedData['seo_head'] ?? '',
-            'seo_body'        => $validatedData['seo_body'] ?? '',
-            'seo_schema'      => $validatedData['seo_schema'] ?? '',
-            'seo_canonical'   => $validatedData['seo_canonical'] ?? '',
-        ];
-    }
-
-    /**
      * Mở form thêm mới
      */
     public function create(Request $request) {
         $item         = [];
         $sourceId     = (int)$request->input('source_id', 0);
-        $isTranslating = false; // Đang thêm bản dịch mới cho category có sẵn
+        $isTranslating = false; 
 
         if ($sourceId > 0) {
-            $sourceItem = CategoryModel::find($sourceId);
+            $sourceItem = CategoryModel::withoutGlobalScope('lang')->where('id_code', $sourceId)->first();
             if ($sourceItem) {
                 $item          = $sourceItem->toArray();
-                $item['id']    = $sourceItem->id;
+                $item['id']    = ''; 
+                $item['id_code'] = $sourceId;
                 $isTranslating = true;
             }
         }
@@ -129,26 +101,43 @@ class CategoryController extends BaseAdminController {
      * Mở form chỉnh sửa
      */
     public function edit(Request $request, $id) {
-        $itemObj = CategoryModel::query()->with('translations')->find((int)$id);
-        if (!$itemObj) return $this->redirect(route('admin.category.index'));
-
-        $item = $itemObj->toArray();
+        $id = (int)$id; 
         $langCode = $request->input('lang', $this->primaryLang);
-        $translation = $itemObj->getTranslation($langCode);
 
-        if ($translation) {
-            $translationData = $translation->toArray();
-            unset($translationData['id']); // Ngăn đè ID của category bằng ID của bản dịch
-            $item = array_merge($item, $translationData);
+        $itemObj = CategoryModel::withoutGlobalScope('lang')
+            ->where('id_code', $id)
+            ->where('lang', $langCode)
+            ->first();
+
+        if (!$itemObj) {
+            $primaryObj = CategoryModel::withoutGlobalScope('lang')
+                ->where('id_code', $id)
+                ->where('lang', $this->primaryLang)
+                ->first();
+
+            if (!$primaryObj) return $this->redirect(route('admin.category.index'));
+
+            $item = $primaryObj->toArray();
+            $item['id'] = ''; 
+            $item['lang'] = $langCode;
+            $item['title'] = '';
+            $item['slug'] = '';
+            $item['description'] = '';
+            $item['content'] = '';
+            $item['seo_title'] = '';
+            $item['seo_description'] = '';
+            $item['keyword'] = '';
+            $item['seo_head'] = '';
+            $item['seo_body'] = '';
+            $item['seo_schema'] = '';
+            $item['seo_canonical'] = '';
         } else {
-            foreach ($itemObj->getTranslatedAttributesArray() as $k => $v) {
-                $item[$k] = '';
-            }
+            $item = $itemObj->toArray();
         }
 
-        // Build map ['vi' => id, 'en' => id] để polylang widget biết bản dịch nào đã có
         $translationsMap = [];
-        foreach ($itemObj->translations ?? [] as $t) {
+        $allTrans = CategoryModel::withoutGlobalScope('lang')->where('id_code', $id)->get('id, lang');
+        foreach ($allTrans as $t) {
             $translationsMap[$t->lang] = $t->id;
         }
 
@@ -162,85 +151,38 @@ class CategoryController extends BaseAdminController {
         $validatedData = $request->validated();
         $lang     = $validatedData['lang'] ?? $this->primaryLang;
         $sourceId = (int)($validatedData['id'] ?? 0);
-        $parentId = (int)($validatedData['parent_id'] ?? 0);
 
-        // Kiểm tra source trước transaction để tránh rollBack không cần thiết
-        if ($sourceId > 0 && !CategoryModel::find($sourceId)) {
+        if ($sourceId > 0 && !CategoryModel::withoutGlobalScope('lang')->where('id_code', $sourceId)->first()) {
             return $this->redirect(route('admin.category.index'));
         }
 
-        $categoryId = DB::transaction(function () use ($validatedData, $sourceId, $parentId, $lang) {
-            $categoryData = $this->extractCategoryData($validatedData, $parentId);
+        $categoryId = $this->categoryService->saveCategory($validatedData, $this->primaryLang);
 
-            if ($sourceId > 0) {
-                CategoryModel::where('id', $sourceId)->update($categoryData);
-                $categoryId = $sourceId;
-            } else {
-                $categoryData['created_at'] = $validatedData['created_at'] ?? date('Y-m-d H:i:s');
-                $categoryId = CategoryModel::insertGetId($categoryData);
-            }
-
-            CategoryTranslationModel::updateOrCreate(
-                ['category_id' => $categoryId, 'lang' => $lang],
-                $this->extractTranslationData($validatedData, $categoryId, $lang)
-            );
-
-            return $categoryId;
-        });
-
-        if (($validatedData['save_action'] ?? '') === 'continue') {
-            return $this->redirect(route('admin.category.edit', ['id' => $categoryId, 'lang' => $lang]));
-        }
-        return $this->redirect(route('admin.category.index'));
+        return $this->handleSaveRedirect($request, $categoryId, $lang);
     }
 
     /**
      * Lưu dữ liệu cập nhật
      */
     public function update(CategoryRequest $request, $id) {
-        $id = (int)$id;
+        $id = (int)$id; 
         $validatedData = $request->validated();
         $lang = $validatedData['lang'] ?? $this->primaryLang;
 
-        if (!CategoryModel::find($id)) {
+        if (!CategoryModel::withoutGlobalScope('lang')->where('id_code', $id)->first()) {
             return $this->redirect(route('admin.category.index'));
         }
 
-        // --- XỬ LÝ CHỐNG VÒNG LẶP ĐỆ QUY (INFINITE LOOP) ---
-        $parentId = (int)($validatedData['parent_id'] ?? 0);
-        if ($parentId === $id) {
-            $parentId = 0;
-        } elseif ($parentId > 0) {
-            $childIds = array_filter(explode(',', CategoryModel::getChildrenIds($id, false)));
-            if (in_array($parentId, $childIds)) {
-                $parentId = 0;
-            }
-        }
+        $categoryId = $this->categoryService->updateCategory($id, $validatedData, $this->primaryLang);
 
-        DB::transaction(function () use ($validatedData, $id, $parentId, $lang) {
-            $updateData = $this->extractCategoryData($validatedData, $parentId);
-            if (!empty($validatedData['created_at'])) {
-                $updateData['created_at'] = $validatedData['created_at'];
-            }
-            CategoryModel::where('id', $id)->update($updateData);
-
-            CategoryTranslationModel::updateOrCreate(
-                ['category_id' => $id, 'lang' => $lang],
-                $this->extractTranslationData($validatedData, $id, $lang)
-            );
-        });
-
-        if (($validatedData['save_action'] ?? '') === 'continue') {
-            return $this->redirect(route('admin.category.edit', ['id' => $id, 'lang' => $lang]));
-        }
-        return $this->redirect(route('admin.category.index'));
+        return $this->handleSaveRedirect($request, $categoryId, $lang);
     }
 
     /**
      * Cập nhật trạng thái hiển thị qua AJAX
      */
     public function updateStatusAjax(Request $request) {
-        $id = (int)$request->input('id');
+        $id = (int)$request->input('id'); 
         $field = $request->input('field', 'status');
         $value = (int)$request->input('value', 0);
 
@@ -250,7 +192,7 @@ class CategoryController extends BaseAdminController {
         }
 
         if ($id > 0) {
-            CategoryModel::where('id', $id)->update([$field => $value]);
+            CategoryModel::withoutGlobalScope('lang')->where('id_code', $id)->update([$field => $value]);
             return $this->json(['success' => true]);
         }
         return $this->json(['success' => false, 'message' => 'ID không hợp lệ']);
@@ -260,15 +202,8 @@ class CategoryController extends BaseAdminController {
      * Xóa 1 dòng
      */
     public function destroy(Request $request, $id) {
-        $id  = (int)$id;
-        $ids = array_filter(explode(',', CategoryModel::getChildrenIds($id, true)));
-
-        if (!empty($ids)) {
-            DB::transaction(function () use ($ids) {
-                CategoryTranslationModel::whereIn('category_id', $ids)->delete();
-                CategoryModel::whereIn('id', $ids)->delete();
-            });
-        }
+        $id = (int)$id; 
+        $this->categoryService->deleteCategory($id);
         return $this->redirect(route('admin.category.index'));
     }
 
@@ -285,23 +220,20 @@ class CategoryController extends BaseAdminController {
             return $this->json(['success' => false, 'message' => 'Chưa chọn bản ghi nào hợp lệ']);
         }
 
-        $allIdsToDelete = [];
-        foreach ($ids as $id) {
-            $childIds = array_filter(explode(',', CategoryModel::getChildrenIds((int)$id, true)));
-            $allIdsToDelete = array_merge($allIdsToDelete, $childIds);
+        if ($this->categoryService->deleteMultipleCategories($ids)) {
+            return $this->json(['success' => true]);
         }
-        $allIdsToDelete = array_unique($allIdsToDelete);
+        return $this->json(['success' => false, 'message' => 'Đã xảy ra lỗi khi xóa']);
+    }
 
-        if (!empty($allIdsToDelete)) {
-            try {
-                DB::transaction(function () use ($allIdsToDelete) {
-                    CategoryTranslationModel::whereIn('category_id', $allIdsToDelete)->delete();
-                    CategoryModel::whereIn('id', $allIdsToDelete)->delete();
-                });
-            } catch (\Exception $e) {
-                return $this->json(['success' => false, 'message' => 'Đã xảy ra lỗi khi xóa']);
-            }
+    /**
+     * Xử lý redirect sau khi lưu
+     */
+    private function handleSaveRedirect(Request $request, int $id, string $lang) {
+        $saveAction = $request->input('save_action', 'exit');
+        if ($saveAction === 'continue' && $id) {
+            return $this->redirect(route('admin.category.edit', ['id' => $id, 'lang' => $lang]));
         }
-        return $this->json(['success' => true]);
+        return $this->redirect(route('admin.category.index'));
     }
 }

@@ -145,7 +145,7 @@ class GalleryController extends BaseAdminController {
             return $this->redirectBack();
         }
 
-        $modelId = $this->galleryService->saveGallery($request->all(), user()->id);
+        $modelId = $this->galleryService->saveGallery($request->all(), \App\Core\Auth\AuthManager::user()->id);
         
         session('success', 'Đã lưu Album thành công!');
         return $this->handleSaveRedirect($request, $modelId);
@@ -168,7 +168,7 @@ class GalleryController extends BaseAdminController {
         $inputData = $request->all();
         $inputData['id'] = $id;
         
-        $modelId = $this->galleryService->saveGallery($inputData, user()->id);
+        $modelId = $this->galleryService->saveGallery($inputData, \App\Core\Auth\AuthManager::user()->id);
         
         session('success', 'Cập nhật Album thành công!');
         return $this->handleSaveRedirect($request, $modelId);

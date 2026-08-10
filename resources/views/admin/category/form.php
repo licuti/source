@@ -1,6 +1,6 @@
 <?php
 $isEdit = !empty($item['id']);
-$action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : route('admin.category.store');
+$action = $isEdit ? route('admin.category.update', ['id' => $item['id_code']]) : route('admin.category.store');
 ?>
 
 <?= view('admin.components.breadcrumb', [
@@ -17,8 +17,8 @@ $action = $isEdit ? route('admin.category.update', ['id' => $item['id']]) : rout
         <form action="<?= $action ?>" method="POST">
             <?= csrf_field() ?>
             <input type="hidden" name="lang" value="<?= htmlspecialchars($langCode) ?>">
-            <?php if (!empty($item['id'])): ?>
-                <input type="hidden" name="id" value="<?= $item['id'] ?>">
+            <?php if (!empty($item['id_code'])): ?>
+                <input type="hidden" name="id" value="<?= $item['id_code'] ?>">
             <?php endif; ?>
 
             <div class="row">

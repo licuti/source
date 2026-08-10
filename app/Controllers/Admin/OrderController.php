@@ -114,7 +114,7 @@ class OrderController extends BaseAdminController
                 'status_from' => $old_status,
                 'status_to' => $order->order_status,
                 'note' => $historyNote,
-                'created_by' => user()->id ?? 0,
+                'created_by' => \App\Core\Auth\AuthManager::user()->id ?? 0,
                 'created_at' => date('Y-m-d H:i:s')
             ]);
 

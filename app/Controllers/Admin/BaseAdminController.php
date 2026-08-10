@@ -55,7 +55,8 @@ class BaseAdminController extends Controller {
         if (!$item) return false;
         
         $createdBy = is_array($item) ? ($item['created_by'] ?? 0) : ($item->created_by ?? 0);
-        return ($createdBy == user()->id || user()->is_admin == 1);
+        $user = \App\Core\Auth\AuthManager::user();
+        return ($createdBy == $user->id || $user->is_admin == 1);
     }
 
     /**

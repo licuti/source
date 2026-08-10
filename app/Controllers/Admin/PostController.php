@@ -2,16 +2,18 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Request;
-use App\Core\Validator;
+use App\Core\Auth\AuthManager;
+use App\Requests\Admin\PostRequest;
 use App\Models\CategoryModel;
 use App\Models\PostModel;
-use App\Models\PostTranslationModel;
 use App\Services\PostService;
 
 class PostController extends BaseAdminController {
     
     private PostService $postService;
     private int $moduleId;
+    protected string $routePrefix = 'admin.post';
+    protected int $perPage = 10;
 
     public function __construct() {
         parent::__construct();
@@ -30,36 +32,34 @@ class PostController extends BaseAdminController {
         
         $currentLang = $request->input('lang', $this->primaryLang);
 
-        $postQuery = PostModel::query()
-            ->select('db_posts.*', 't.title', 't.slug')
-            ->join('post_translations as t', 't.post_id', '=', 'db_posts.id')
-            ->where('t.lang', $currentLang)
-            ->ownedByUser(user());
+        $postQuery = $this->getBaseQuery()
+            ->where('lang', $currentLang);
+        $postQuery = (new PostModel())->scopeOwnedByUser($postQuery, AuthManager::user());
 
         if ($status !== '') {
-            $postQuery->where('db_posts.status', $status);
+            $postQuery->where('status', $status);
         }
         if ($categoryId > 0) {
             $postQuery->join('post_category as pc', 'pc.post_id', '=', 'db_posts.id');
             $postQuery->where('pc.category_id', $categoryId);
         }
         if ($keyword !== '') {
-            $postQuery->whereLike('t.title', $keyword);
+            $postQuery->whereLike('title', $keyword);
         }
 
-        $posts = $postQuery->orderBy('db_posts.sort_order', 'ASC')
-                           ->orderBy('db_posts.id', 'DESC')
-                           ->paginate(10);
+        $posts = $postQuery->orderBy('sort_order', 'ASC')
+                           ->orderBy('id', 'DESC')
+                           ->paginate($this->perPage);
 
         $categories = $this->getCategories();
         $langs = $this->langs;
 
-        $ids = array_map(function($a) { return is_array($a) ? ($a['id'] ?? 0) : $a->id; }, $posts->items());
+        $ids = array_map(function($a) { return is_array($a) ? ($a['id_code'] ?? 0) : $a->id_code; }, $posts->items());
         $translations = [];
         if (!empty($ids)) {
-            $allTrans = PostTranslationModel::whereIn('post_id', $ids)->get();
+            $allTrans = $this->getBaseQuery()->whereIn('id_code', $ids)->get('id_code, lang, id');
             foreach ($allTrans as $t) {
-                $translations[$t->post_id][$t->lang] = $t->id;
+                $translations[$t->id_code][$t->lang] = $t->id;
             }
         }
 
@@ -73,18 +73,11 @@ class PostController extends BaseAdminController {
         $langs = $this->langs;
         $categories = $this->getCategories();
         $langCode = $request->input('lang', $this->primaryLang);
-        
-        $currentLangName = 'Unknown';
-        foreach ($langs as $l) {
-            if ($l['code'] === $langCode) {
-                $currentLangName = $l['name'];
-                break;
-            }
-        }
+        $currentLangName = $this->getLangName($langCode);
         
         $translations = [];
-        if (!empty($item['id'])) {
-            $allTrans = PostTranslationModel::where('post_id', $item['id'])->get();
+        if (!empty($item['id_code'])) {
+            $allTrans = $this->getBaseQuery()->where('id_code', $item['id_code'])->get('id, lang');
             foreach ($allTrans as $t) {
                 $translations[$t->lang] = $t->id;
             }
@@ -101,15 +94,15 @@ class PostController extends BaseAdminController {
         $sourceId = (int)$request->input('source_id', 0);
         
         if ($sourceId > 0) {
-            $sourceItem = PostModel::find($sourceId);
+            $sourceItem = $this->getBaseQuery()->where('id_code', $sourceId)->first();
             if ($sourceItem) {
                 $item = $sourceItem->toArray();
-                $item['source_id'] = $sourceItem->id;
-                // Fetch existing categories
-                $catIds = \App\Core\Database\DB::table('post_category')
-                    ->where('post_id', $sourceItem->id)
-                    ->get();
-                $item['category_ids'] = array_column($catIds, 'category_id');
+                $item['id'] = ''; // Clear row ID for new translation row
+                $item['id_code'] = $sourceId;
+                $item['source_id'] = $sourceId;
+                
+                // Fetch categories
+                $item['category_ids'] = $sourceItem->getCategoryIds();
             }
         }
 
@@ -120,32 +113,34 @@ class PostController extends BaseAdminController {
      * Mở form chỉnh sửa
      */
     public function edit(Request $request, $id) {
-        $itemObj = PostModel::find((int)$id);
-        if (!$itemObj) return $this->redirect(route('admin.post.index'));
+        $id = (int)$id; // Row ID
+        $langCode = $request->input('lang', $this->primaryLang);
+        
+        $itemObj = $this->getBaseQuery()->find($id);
+        if (!$itemObj) return $this->redirect(route($this->routePrefix . '.index'));
         if (!$this->canModify($itemObj)) {
             session('error', 'Bạn không có quyền chỉnh sửa bài viết này!');
-            return $this->redirect(route('admin.post.index'));
+            return $this->redirect(route($this->routePrefix . '.index'));
         }
         
-        $item = is_object($itemObj) && method_exists($itemObj, 'toArray') ? $itemObj->toArray() : (array)$itemObj;
+        $idCode = $itemObj->id_code;
         
-        $langCode = $request->input('lang', $this->primaryLang);
-        $translation = $itemObj->getTranslation($langCode);
-        if ($translation) {
-            $translationData = $translation->toArray();
-            unset($translationData['id']); // Ngăn đè ID của post bằng ID của bản dịch
-            $item = array_merge($item, $translationData);
-        } else {
-            foreach ($itemObj->getTranslatedAttributesArray() as $k => $v) {
-                $item[$k] = '';
+        if ($itemObj->lang !== $langCode) {
+            $langObj = $this->getBaseQuery()
+                ->where('id_code', $idCode)
+                ->where('lang', $langCode)
+                ->first();
+                
+            if ($langObj) {
+                $itemObj = $langObj;
+            } else {
+                return $this->redirect(route($this->routePrefix . '.create', ['lang' => $langCode, 'source_id' => $idCode]));
             }
         }
 
-        // Lấy danh sách danh mục đã chọn
-        $catIds = \App\Core\Database\DB::table('post_category')
-                    ->where('post_id', $itemObj->id)
-                    ->get();
-        $item['category_ids'] = array_column($catIds, 'category_id');
+        $item = $itemObj->toArray();
+        
+        $item['category_ids'] = $itemObj->getCategoryIds();
         
         return $this->render('admin.post.form', $this->getFormData($request, $item));
     }
@@ -153,12 +148,10 @@ class PostController extends BaseAdminController {
     /**
      * Lưu dữ liệu thêm mới
      */
-    public function store(Request $request) {
-        if (!$this->validatePost($request)) {
-            return $this->redirect(route('admin.post.create'));
-        }
+    public function store(PostRequest $request) {
+        $validatedData = $request->validated();
 
-        $insertedId = $this->postService->savePost($request->all(), user()->id);
+        $insertedId = $this->postService->savePost($request->all(), AuthManager::user()->id);
 
         if ($insertedId) {
             session('success', 'Thêm bài viết thành công!');
@@ -172,24 +165,21 @@ class PostController extends BaseAdminController {
     /**
      * Lưu dữ liệu cập nhật
      */
-    public function update(Request $request, $id) {
+    public function update(PostRequest $request, $id) {
         $id = (int)$id;
-        
-        if (!$this->validatePost($request)) {
-            return $this->redirect(route('admin.post.edit', ['id' => $id]));
-        }
+        $validatedData = $request->validated();
 
-        $firstPost = PostModel::find($id);
+        $firstPost = $this->getBaseQuery()->find($id);
         
-        if (!$this->canModify($firstPost)) {
+        if (!$firstPost || !$this->canModify($firstPost)) {
             session('error', 'Bạn không có quyền chỉnh sửa bài viết này!');
-            return $this->redirect(route('admin.post.index'));
+            return $this->redirect(route($this->routePrefix . '.index'));
         }
 
         $inputData = $request->all();
         $inputData['id'] = $id;
         
-        $this->postService->savePost($inputData, user()->id);
+        $this->postService->savePost($inputData, AuthManager::user()->id);
         
         session('success', 'Cập nhật bài viết thành công!');
         return $this->handleSaveRedirect($request, $id);
@@ -203,7 +193,7 @@ class PostController extends BaseAdminController {
         $field = $request->input('field', 'status');
         $value = (int)$request->input('value', 0);
 
-        if ($field === 'is_active' || $field === 'hien_thi') {
+        if ($field === 'is_active') {
             $field = 'status';
         }
 
@@ -211,7 +201,7 @@ class PostController extends BaseAdminController {
             return $this->jsonError('Trường dữ liệu không hợp lệ');
         }
 
-        $post = PostModel::find($id);
+        $post = $this->getBaseQuery()->find($id);
         if (!$post) return $this->jsonError('ID không hợp lệ');
 
         if (!$this->canModify($post)) {
@@ -220,7 +210,7 @@ class PostController extends BaseAdminController {
 
         $updateVal = $value == 1 ? 1 : 0;
         
-        PostModel::where('id', $id)->update([$field => $updateVal]);
+        $this->getBaseQuery()->where('id_code', $post->id_code)->update([$field => $updateVal]);
         
         $label = $field === 'is_featured' ? 'Nổi bật' : 'Trạng thái hiển thị';
         return $this->jsonSuccess($label . ' đã được cập nhật!');
@@ -232,7 +222,7 @@ class PostController extends BaseAdminController {
     public function destroyAjax(Request $request) {
         $id = (int)$request->input('id');
         
-        $post = PostModel::find($id);
+        $post = $this->getBaseQuery()->find($id);
         
         if (!$post) {
             return $this->jsonError('Không tìm thấy bài viết!');
@@ -259,7 +249,7 @@ class PostController extends BaseAdminController {
             return $this->jsonError('Không có mục nào được chọn!');
         }
         
-        $posts = PostModel::whereIn('id', $ids)->get();
+        $posts = $this->getBaseQuery()->whereIn('id', $ids)->get();
         if (count($posts) === 0) {
             return $this->jsonError('Không tìm thấy mục nào để xóa!');
         }
@@ -295,28 +285,17 @@ class PostController extends BaseAdminController {
     // ============================================================
 
     /**
+     * Helper tạo query cơ bản bỏ qua scope ngôn ngữ
+     */
+    private function getBaseQuery() {
+        return PostModel::withoutGlobalScope('lang');
+    }
+
+    /**
      * Lấy danh sách chuyên mục cho module Post
      */
     private function getCategories() {
         return CategoryModel::getTreeForAdminByModule($this->moduleId);
-    }
-
-    /**
-     * Validation dùng chung cho Store và Update
-     */
-    private function validatePost(Request $request): bool {
-        $validator = new Validator($request->all(), [
-            "title" => 'required|max:255'
-        ], [
-            "title.required" => 'Vui lòng nhập Tiêu đề bài viết.',
-            "title.max"      => 'Tiêu đề bài viết không được vượt quá 255 ký tự.'
-        ]);
-
-        if ($validator->fails()) {
-            session('error', $validator->firstError());
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -325,10 +304,10 @@ class PostController extends BaseAdminController {
     private function handleSaveRedirect(Request $request, $id) {
         $saveAction = $request->input('save_action', 'exit');
         if ($saveAction === 'continue' && $id) {
-            return $this->redirect(route('admin.post.edit', ['id' => $id]));
+            return $this->redirect(route($this->routePrefix . '.edit', ['id' => $id]));
         } elseif ($saveAction === 'new') {
-            return $this->redirect(route('admin.post.create'));
+            return $this->redirect(route($this->routePrefix . '.create'));
         }
-        return $this->redirect(route('admin.post.index'));
+        return $this->redirect(route($this->routePrefix . '.index'));
     }
 }

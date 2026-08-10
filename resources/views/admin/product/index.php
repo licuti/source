@@ -3,8 +3,8 @@ $breadcrumbActions = [];
 $canAdd = hasPermission('admin.product', 'add');
 $canDelete = hasPermission('admin.product', 'delete');
 $canEdit = hasPermission('admin.product', 'edit');
-$user = user();
-$isAdmin = $user->is_admin == 1;
+$user = \App\Core\Auth\AuthManager::user();
+$isAdmin = $user && $user->is_admin == 1;
 
 if ($canAdd) {
     $breadcrumbActions[] = ['label' => 'Thêm mới', 'icon' => 'fa-plus', 'url' => route('admin.product.create'), 'class' => 'btn-primary'];

@@ -15,6 +15,7 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
 <div class="app-content">
     <div class="container-fluid">
         <form action="<?= $action ?>" method="POST">
+            <?= csrf_field() ?>
             <div class="row">
                 <!-- Cột Trái: Đa Ngôn Ngữ & Dữ liệu sản phẩm -->
                 <div class="col-md-9">
@@ -151,8 +152,8 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                                                 </div>
                                                 <div class="col-md-3">
                                                     <?= view('admin.components.input', [
-                                                        'name' => 'gia_flash_sale',
-                                                        'value' => $item['gia_flash_sale'] ?? 0,
+                                                        'name' => 'flash_sale_price',
+                                                        'value' => $item['flash_sale_price'] ?? 0,
                                                         'label' => 'Giá Flash Sale (VNĐ)',
                                                         'type' => 'number'
                                                     ]) ?>
@@ -384,11 +385,12 @@ $action = $isEdit ? route('admin.product.update', ['id' => $item['id']]) : route
                         <div class="card-body bg-light">
                             
                             <div class="mb-3">
-                                <label class="form-label">Danh mục cha</label>
-                                <select name="category_id" class="form-select form-select-sm">
-                                    <option value="0">--- Chọn danh mục ---</option>
-                                    <?php renderCategoryTree($categories ?? [], $item['category_id'] ?? 0); ?>
-                                </select>
+                                <label class="form-label">Danh mục</label>
+                                <?= view('admin.components.category_tree_checkbox', [
+                                    'categories' => $categories ?? [],
+                                    'name' => 'category_ids[]',
+                                    'selectedIds' => $item['category_ids'] ?? []
+                                ]) ?>
                             </div>
 
                             <?= view('admin.components.input', [

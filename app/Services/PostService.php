@@ -26,10 +26,10 @@ class PostService {
     /**
      * Helper tạo mảng dữ liệu Translation
      */
-    private function buildTranslationData(array $inputData, int $postId, string $lang): array {
+    private function buildTranslationData(array $inputData, int $idCode, string $lang): array {
         $title = $inputData['title'] ?? '';
         return [
-            'post_id'        => $postId,
+            'id_code'        => $idCode,
             'lang'           => $lang,
             'title'          => $title,
             'slug'           => empty($inputData['slug']) ? str_slug($title) : $inputData['slug'],
@@ -43,85 +43,107 @@ class PostService {
     }
 
     /**
-     * Lưu mới hoặc cập nhật bài viết (Two-Table Translatable + Pivot Categories)
+     * Lưu mới hoặc cập nhật bài viết (Single-Table Multi-language)
      */
     public function savePost(array $inputData, int $userId) {
-        $id = (int)($inputData['id'] ?? 0);
-        $sourceId = (int)($inputData['source_id'] ?? 0); // Thêm bản dịch từ bài viết có sẵn
+        $id = (int)($inputData['id'] ?? 0); 
+        $sourceId = (int)($inputData['source_id'] ?? 0); 
         $lang = $inputData['lang'] ?? 'vi';
         
         $postData = $this->buildPostData($inputData, $userId);
 
-        if ($id > 0) {
-            // Update mode
-            $postId = $id;
-            unset($postData['created_by']); // Do not update created_by on edit
-            if (!empty($inputData['created_at'])) {
-                $postData['created_at'] = date('Y-m-d H:i:s', strtotime($inputData['created_at']));
-            }
-            $postData['updated_at'] = date('Y-m-d H:i:s');
-            PostModel::where('id', $postId)->update($postData);
-        } else if ($sourceId > 0) {
-            // Add translation mode
-            $postId = $sourceId;
-            unset($postData['created_by']);
-            $postData['updated_at'] = date('Y-m-d H:i:s');
-            PostModel::where('id', $postId)->update($postData);
-        } else {
-            // Create mode
-            if (!empty($inputData['created_at'])) {
-                $postData['created_at'] = date('Y-m-d H:i:s', strtotime($inputData['created_at']));
+        $postId = \App\Core\Database\DB::transaction(function () use ($inputData, $postData, $id, $sourceId, $lang, $userId) {
+            if ($id > 0) {
+                // Update mode
+                $row = PostModel::withoutGlobalScope('lang')->find($id);
+                if (!$row) return false;
+                
+                $idCode = $row->id_code;
+                
+                unset($postData['created_by']);
+                if (!empty($inputData['created_at'])) {
+                    $postData['created_at'] = date('Y-m-d H:i:s', strtotime($inputData['created_at']));
+                }
+                $postData['updated_at'] = date('Y-m-d H:i:s');
+                PostModel::withoutGlobalScope('lang')->where('id_code', $idCode)->update($postData);
+                
+                $transData = $this->buildTranslationData($inputData, $idCode, $lang);
+                PostModel::withoutGlobalScope('lang')->where('id', $id)->update($transData);
+                
+                $postId = $id;
+            } else if ($sourceId > 0) {
+                // Add translation mode
+                unset($postData['created_by']);
+                $postData['updated_at'] = date('Y-m-d H:i:s');
+                PostModel::withoutGlobalScope('lang')->where('id_code', $sourceId)->update($postData);
+                
+                $transData = $this->buildTranslationData($inputData, $sourceId, $lang);
+                $insertData = array_merge($postData, $transData);
+                if (!empty($inputData['created_at'])) {
+                    $insertData['created_at'] = date('Y-m-d H:i:s', strtotime($inputData['created_at']));
+                } else {
+                    $insertData['created_at'] = date('Y-m-d H:i:s');
+                }
+                $insertData['updated_at'] = date('Y-m-d H:i:s');
+                $postId = PostModel::insertGetId($insertData);
             } else {
-                $postData['created_at'] = date('Y-m-d H:i:s');
+                // Create mode
+                $maxId = (int)(\App\Core\Database\DB::select("SELECT MAX(id_code) as max_id FROM db_posts")[0]['max_id'] ?? 0);
+                $idCode = $maxId + 1;
+                
+                $transData = $this->buildTranslationData($inputData, $idCode, $lang);
+                $insertData = array_merge($postData, $transData);
+                if (!empty($inputData['created_at'])) {
+                    $insertData['created_at'] = date('Y-m-d H:i:s', strtotime($inputData['created_at']));
+                } else {
+                    $insertData['created_at'] = date('Y-m-d H:i:s');
+                }
+                $insertData['updated_at'] = $insertData['created_at'];
+                $postId = PostModel::insertGetId($insertData);
             }
-            $postData['updated_at'] = $postData['created_at'];
-            $postId = PostModel::insertGetId($postData);
-        }
 
-        if ($postId) {
-            // Lưu bản dịch
-            $transData = $this->buildTranslationData($inputData, $postId, $lang);
-            \App\Models\PostTranslationModel::updateOrCreate(
-                ['post_id' => $postId, 'lang' => $lang],
-                $transData
-            );
-
-            // Cập nhật Categories (Pivot Table)
-            // Lấy danh sách ID danh mục từ request
-            $categoryIds = $inputData['category_ids'] ?? [];
-            if (!is_array($categoryIds)) {
-                $categoryIds = empty($categoryIds) ? [] : [$categoryIds];
-            }
-            
-            // Sync categories thủ công qua DB
-            \App\Core\Database\DB::table('post_category')->where('post_id', $postId)->delete();
-            foreach ($categoryIds as $catId) {
-                if ($catId > 0) {
-                    \App\Core\Database\DB::table('post_category')->insert([
-                        'post_id' => $postId,
-                        'category_id' => $catId
-                    ]);
+            if ($postId) {
+                // Sync categories (Pivot Table)
+                $categoryIds = $inputData['category_ids'] ?? [];
+                if (!is_array($categoryIds)) {
+                    $categoryIds = empty($categoryIds) ? [] : [$categoryIds];
+                }
+                
+                \App\Core\Database\DB::statement("DELETE FROM db_post_category WHERE post_id = ?", [$postId]);
+                foreach ($categoryIds as $catId) {
+                    if ($catId > 0) {
+                        \App\Core\Database\DB::statement("INSERT INTO db_post_category (post_id, category_id) VALUES (?, ?)", [$postId, $catId]);
+                    }
                 }
             }
-        }
+            
+            return $postId;
+        });
 
         return $postId;
     }
 
     /**
-     * Xóa bài viết và toàn bộ bản dịch (Cascade delete sẽ tự xử lý ở DB nếu có, nhưng ở đây xóa thủ công cho chắc)
+     * Xóa bài viết và toàn bộ bản dịch
      */
     public function deletePost($id) {
         $ids = is_array($id) ? $id : [$id];
         if (empty($ids)) return false;
 
-        // Xóa bản dịch
-        \App\Models\PostTranslationModel::whereIn('post_id', $ids)->delete();
-        
-        // Xóa pivot
-        \App\Core\Database\DB::table('post_category')->whereIn('post_id', $ids)->delete();
-        
-        // Xóa bảng chính
-        return PostModel::whereIn('id', $ids)->delete();
+        return \App\Core\Database\DB::transaction(function () use ($ids) {
+            $posts = PostModel::withoutGlobalScope('lang')->whereIn('id', $ids)->get('id_code');
+            $idCodes = array_column($posts, 'id_code');
+            if (empty($idCodes)) return false;
+
+            $allRows = PostModel::withoutGlobalScope('lang')->whereIn('id_code', $idCodes)->get('id');
+            $allRowIds = array_column($allRows, 'id');
+
+            if (!empty($allRowIds)) {
+                $placeholders = implode(',', array_fill(0, count($allRowIds), '?'));
+                \App\Core\Database\DB::statement("DELETE FROM db_post_category WHERE post_id IN ($placeholders)", $allRowIds);
+            }
+
+            return PostModel::withoutGlobalScope('lang')->whereIn('id_code', $idCodes)->delete();
+        });
     }
 }

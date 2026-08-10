@@ -91,7 +91,8 @@ if (hasPermission('admin.category', 'add')) {
                                     'categories' => $categories, 
                                     'level' => 0, 
                                     'isSearch' => $isSearch ?? false,
-                                    'langs' => $langs
+                                    'langs' => $langs,
+                                    'translations' => $translations
                                 ]) ?>
                             <?php else: ?>
                                 <tr>

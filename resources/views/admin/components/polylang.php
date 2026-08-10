@@ -63,11 +63,11 @@ $translations = $translations ?? [];
                             </div>
                             
                             <?php if ($hasTrans): ?>
-                                <a href="<?= route($module_route . '.edit', ['id' => $item['id']]) ?>?lang=<?= $l['code'] ?>" class="btn btn-sm btn-light border" title="Chỉnh sửa bản dịch">
+                                <a href="<?= route($module_route . '.edit', ['id' => $translations[$l['code']]]) ?>?lang=<?= $l['code'] ?>" class="btn btn-sm btn-light border" title="Chỉnh sửa bản dịch">
                                     <i class="fa-solid fa-pen text-primary" style="font-size: 0.75rem;"></i>
                                 </a>
                             <?php else: ?>
-                                <a href="<?= route($module_route . '.create') . '?lang=' . $l['code'] . '&source_id=' . $item['id'] ?>" class="btn btn-sm btn-outline-success rounded-pill px-3" title="Thêm bản dịch mới">
+                                <a href="<?= route($module_route . '.create') . '?lang=' . $l['code'] . '&source_id=' . ($item['id_code'] ?? $item['id']) ?>" class="btn btn-sm btn-outline-success rounded-pill px-3" title="Thêm bản dịch mới">
                                     <i class="fa-solid fa-plus me-1"></i> Thêm
                                 </a>
                             <?php endif; ?>
