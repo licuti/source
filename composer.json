@@ -1,0 +1,29 @@
+{
+    "name": "phuongnamv/lms-masterstudy",
+    "description": "LMS MasterStudy - mo rong tren source PHP/MySQL (AROMA)",
+    "type": "project",
+    "require": {
+        "php": ">=7.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lms\\": "lms/services/Lms/",
+            "Tests\\": "tests/"
+        }
+    },
+    "autoload-dev": {
+        "classmap": ["tests/"]
+    },
+    "config": {
+        "vendor-dir": "vendor",
+        "platform": {
+            "php": "7.3.33"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}

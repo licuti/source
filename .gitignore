@@ -21,6 +21,7 @@ sitemap.xml.bak
 _backup_ui/
 admin/_backup_ui/
 scratch/
+database/backups/
 
 # Agent tooling / session state
 .kilo/
@@ -32,4 +33,5 @@ scratch/
 .DS_Store
 
 # OS
-Thumbs.db
+Thumbs.dbtests/.phpunit.result.cache
+cache
