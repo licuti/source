@@ -1,0 +1,9 @@
+# Thư mục lib/ chứa config.php (credentials), class, function.
+# Chặn mọi truy cập HTTP trực tiếp — chỉ được include từ PHP.
+<FilesMatch "\.(php|md|sql|log|ini|env)$">
+    Require all denied
+</FilesMatch>
+
+# Deny toàn bộ thư mục (phòng khi FilesMatch bị server bỏ qua)
+Order allow,deny
+Deny from all

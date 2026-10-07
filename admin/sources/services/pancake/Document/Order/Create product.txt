@@ -1,0 +1,317 @@
+Create product
+post
+https://crm.pancake.vn/api/workspaces/{workspace_id}/products
+Create a new product in the workspace.
+
+type defaults to product when omitted. Type-specific fields are stripped server-side: service drops remain_quantity, service_package drops remain_quantity and duration, and only service_package keeps service_package_product. Provide variations to create product variations in the same request; provide service_package_product (for type: service_package) to link component services with their quantities.
+
+Request
+API key is used to authenticate users when accessing the CRM API.
+
+You can generate an API key in Pancake CRM: Settings → Tools.
+
+The API key may be automatically disabled after a period of inactivity.
+
+How to get api key?
+An API key is a token that you provide when making API calls. Include the token in a query parameter called api_key.
+
+Example: ?api_key=123
+
+Path Parameters
+workspace_id
+integer
+required
+The unique identifier of the workspace.
+
+Body
+
+application/json
+
+application/json
+Product payload
+
+A product, service, or service package sold by a workspace.Show all...
+
+id
+string<uuid>
+Unique identifier (UUID) of the product. Omit when creating; provide when updating.
+
+Example:
+3a5b1b0e-88bd-4d34-9a4b-2c4f4be21f38
+name
+string
+required
+Product name.
+
+Example:
+Áo thun nam
+type
+string
+Product type. Defaults to product on create.
+
+Allowed values:
+product
+service
+service_package
+Default:
+product
+Example:
+product
+custom_id
+string or null
+Custom product code (unique per workspace).
+
+Example:
+SKU-001
+description
+string or null
+Free-text description of the product.
+
+images
+array[string] or null
+List of image URLs for the product.
+
+Example:
+["https://static.pancake.vn/pancake/products/example.jpg"]
+category_ids
+array[string<uuid>] or null
+IDs of the categories this product belongs to.
+
+retail_price
+integer
+Selling price per unit.
+
+Default:
+0
+Example:
+150000
+import_price
+integer
+Cost/import price per unit.
+
+Default:
+0
+Example:
+90000
+remain_quantity
+integer
+Current stock on hand. Only meaningful for type: product — stripped server-side for service and service_package.
+
+Default:
+0
+Example:
+42
+duration
+integer or null
+Service duration in minutes. Only meaningful for type: service — stripped server-side for product and service_package.
+
+Example:
+60
+is_removed
+boolean
+Whether the product has been soft-deleted.
+
+Default:
+false
+product_attributes
+array[Product Attribute]
+Attribute definitions used to build variations (e.g. Color, Size). Each attribute declares a name and its allowed values.
+
+name
+string
+required
+Attribute display name.
+
+Example:
+Color
+values
+array[string]
+Allowed values for this attribute.
+
+Example:
+["Red","Blue","Green"]
+keyword
+array[object]
+Optional keyword metadata per value (used by search / recognition features).
+
+variations
+array[Product Variation]
+Product variations (e.g. Red / Size L). On write, this array fully replaces the current variations: existing rows whose custom_id is missing from the new list are deleted, matching rows are updated, and new ones are inserted.
+
+id
+string<uuid>
+Unique identifier (UUID) of the variation. Omit when creating.
+
+custom_id
+string
+required
+Variation SKU / custom code. Required and used as the merge key on update.
+
+Example:
+SKU-001-RED-L
+retail_price
+integer
+Selling price per unit for this variation.
+
+Default:
+0
+Example:
+160000
+import_price
+integer
+Cost/import price per unit for this variation.
+
+Default:
+0
+remain_quantity
+integer
+Current stock on hand for this variation.
+
+Default:
+0
+images
+array[string]
+Image URLs specific to this variation (falls back to the parent product's images if empty).
+
+sort_variation_attributes
+string or null
+Canonical string of the variation's attribute values used for sorting/matching (typically the attribute values joined in a defined order, e.g. "Red|L").
+
+extra_info
+object
+Free-form additional metadata for the variation.Show all...
+
+Example:
+{"fb_catalog_id":"1234567890"}
+is_removed
+boolean
+Whether the variation has been soft-deleted.
+
+Default:
+false
+service_package_product
+array[Service Package Component]
+Only for type: service_package — the component services included in the package, each with the quantity used per package. On write, fully replaces the existing links.
+
+id
+string<uuid>
+required
+ID of the service product to include in the package.
+
+service_package_product_quantity
+integer
+Quantity of this service consumed per package (write) / included per package (read).
+
+Example:
+1
+Responses
+200
+422
+Product created successfully
+
+Body
+
+application/json
+
+application/json
+responses
+/
+200
+success
+boolean
+data
+Product
+A product, service, or service package sold by a workspace.Show all...
+
+id
+string<uuid>
+Unique identifier (UUID) of the product. Omit when creating; provide when updating.
+
+Example:
+3a5b1b0e-88bd-4d34-9a4b-2c4f4be21f38
+name
+string
+required
+Product name.
+
+Example:
+Áo thun nam
+type
+string
+Product type. Defaults to product on create.
+
+Allowed values:
+product
+service
+service_package
+Default:
+product
+Example:
+product
+custom_id
+string or null
+Custom product code (unique per workspace).
+
+Example:
+SKU-001
+description
+string or null
+Free-text description of the product.
+
+images
+array[string] or null
+List of image URLs for the product.
+
+Example:
+["https://static.pancake.vn/pancake/products/example.jpg"]
+category_ids
+array[string<uuid>] or null
+IDs of the categories this product belongs to.
+
+retail_price
+integer
+Selling price per unit.
+
+Default:
+0
+Example:
+150000
+import_price
+integer
+Cost/import price per unit.
+
+Default:
+0
+Example:
+90000
+remain_quantity
+integer
+Current stock on hand. Only meaningful for type: product — stripped server-side for service and service_package.
+
+Default:
+0
+Example:
+42
+duration
+integer or null
+Service duration in minutes. Only meaningful for type: service — stripped server-side for product and service_package.
+
+Example:
+60
+is_removed
+boolean
+Whether the product has been soft-deleted.
+
+Default:
+false
+product_attributes
+array[Product Attribute]
+Attribute definitions used to build variations (e.g. Color, Size). Each attribute declares a name and its allowed values.
+
+variations
+array[Product Variation]
+Product variations (e.g. Red / Size L). On write, this array fully replaces the current variations: existing rows whose custom_id is missing from the new list are deleted, matching rows are updated, and new ones are inserted.
+
+service_package_product
+array[Service Package Component]
+Only for type: service_package — the component services included in the package, each with the quantity used per package. On write, fully replaces the existing links.

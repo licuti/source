@@ -1,0 +1,208 @@
+Get order
+get
+https://crm.pancake.vn/api/workspaces/{workspace_id}/orders/{id}
+Retrieve a single order by ID, including its line items and related records.
+
+Request
+Path Parameters
+id
+string<uuid>
+required
+The order ID (UUID).
+
+workspace_id
+integer
+required
+The unique identifier of the workspace.
+
+Responses
+200
+404
+Order returned
+
+Body
+
+application/json
+
+application/json
+responses
+/
+200
+Single order response
+
+success
+boolean
+Indicates whether the request was successful
+
+fallback
+string
+Example:
+with_data
+data
+Order
+The order object
+
+id
+string<uuid>
+Unique identifier (UUID) of the order.
+
+Example:
+b20d47ba-cc24-421c-92f6-f59da03b0ce4
+workspace_id
+integer
+ID of the workspace the order belongs to.
+
+Example:
+2
+display_id
+integer
+Human-readable sequential ID of the order within the workspace (rendered as OD{display_id}).
+
+Example:
+12
+custom_id
+string or null
+Custom order code/identifier.
+
+Example:
+OD00012
+status
+string
+Current status of the order.
+
+Default:
+new
+Example:
+new
+bill_phone_number
+string or null
+Billing phone number (defaults to the linked contact's phone number).
+
+Example:
+0972273341
+bill_full_name
+string or null
+Billing full name.
+
+bill_email
+string or null
+Billing email (defaults to the linked contact's email).
+
+note
+string or null
+Free-text note on the order.
+
+note_image
+array[string] or null
+List of image URLs attached to the note.
+
+assigning_seller_id
+string<uuid> or null
+ID of the user (seller) assigned to handle this order.
+
+Example:
+4db4c09e-5fb6-47e7-a4d9-3ad49110155d
+creator_id
+string<uuid> or null
+ID of the user who created the order.
+
+related_owner
+array[string<uuid>] or null
+List of additional user IDs related as owners of this order.
+
+total_quantity
+integer
+Total quantity across all line items (computed server-side).
+
+Example:
+3
+discount
+integer
+Order-level discount amount.
+
+Example:
+0
+total_discount
+integer
+Sum of line-item discounts (computed server-side).
+
+Example:
+0
+transfer_money
+integer
+Amount paid by bank transfer.
+
+Example:
+0
+surcharge
+integer
+Additional surcharge added to the order total.
+
+Example:
+0
+cod
+integer
+Cash-on-delivery amount due, computed as sum(item totals) + surcharge - discount - prepaid.
+
+Example:
+150000
+prepaid
+integer
+Total amount already paid (deposit + cash + transfer_money).
+
+Example:
+0
+deposit
+integer
+Deposit amount paid up front.
+
+Example:
+0
+cash
+integer
+Cash portion of the prepaid amount (prepaid - transfer_money - deposit). Computed virtual field, present in responses only.
+
+Example:
+0
+source_ids
+array[string] or null
+Array of source IDs the order is attributed to.
+
+Example:
+["-11"]
+is_removed
+boolean
+Whether the order has been soft-deleted.
+
+Default:
+false
+Example:
+false
+extra_infor
+object or null
+Dynamic custom fields. Also stores derived helpers such as item_product_ids and item_prices.
+
+items
+array[Order Item]
+Line items belonging to this order.
+
+record_relations
+array[object]
+Records linked to this order (e.g. the related contact, account, deal). Each relation embeds the resolved record object when available.
+
+rating
+object or null
+Latest rating associated with the order, if any.
+
+inserted_at
+string<date-time>
+The date and time when the order was created.
+
+Example:
+2026-02-04T10:14:32.683430
+updated_at
+string<date-time>
+The date and time when the order was last updated.
+
+Example:
+2026-02-04T10:14:32.683430

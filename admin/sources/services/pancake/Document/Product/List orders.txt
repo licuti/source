@@ -1,0 +1,82 @@
+List orders
+get
+https://crm.pancake.vn/api/workspaces/{workspace_id}/orders
+List orders in a workspace, most recent first.
+
+Results are paginated using page / page_size (offset-based) and can be narrowed with search (matches order code OD..., custom ID, or billing phone number) and a structured filter. Only orders the current API key is allowed to see are returned.
+
+Request
+Path Parameters
+workspace_id
+integer
+required
+The unique identifier of the workspace.
+
+Query Parameters
+deal_id
+string<uuid>
+Return only orders linked to this deal (record relation of type deal).
+
+filter
+string
+JSON-encoded structured filter. Shape:Show all...
+
+page
+integer
+Page number for pagination (1-based).
+
+Default:
+1
+page_size
+integer
+Number of items returned per page.
+
+Default:
+30
+search
+string
+Free-text search. Matches the order code (e.g. OD00012 or 12), the custom ID, or the billing phone number.
+
+Responses
+200
+Orders returned
+
+Body
+
+application/json
+
+application/json
+Paginated orders list response
+
+success
+boolean
+Indicates whether the request was successful
+
+fallback
+string
+Example:
+with_data
+data
+object
+Paginated payload
+
+entries
+array[Order]
+List of order objects
+
+page_number
+integer
+Example:
+1
+page_size
+integer
+Example:
+30
+total_entries
+integer
+Example:
+128
+total_pages
+integer
+Example:
+5

@@ -1,0 +1,67 @@
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} -d [OR]
+RewriteCond %{REQUEST_FILENAME} -s
+RewriteRule ^.*$ - [L]
+
+
+RewriteEngine on
+
+# ---------------------------------------------------------------------------
+# Chuyển hướng HTTP -> HTTPS (BẬT khi chạy production có SSL).
+# Hiện đang phát triển ở local (không có HTTPS) nên TẠM COMMENT LẠI.
+# Khi cần chạy, bỏ dấu # ở 3 dòng bên dưới.
+# ---------------------------------------------------------------------------
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+
+Options -Indexes
+DirectoryIndex index.php
+AddDefaultCharset UTF-8
+
+ErrorDocument 401 /index.php
+ErrorDocument 403 /index.php
+ErrorDocument 404 /index.php
+ErrorDocument 500 /index.php
+
+<files .htaccess> 
+order allow,deny 
+deny from all 
+</files> 
+
+<files config.php> 
+order allow,deny 
+deny from all 
+</files> 
+
+# Chặn truy cập file cấu hình / biến môi trường / migration
+<files .env> 
+order allow,deny 
+deny from all 
+</files> 
+
+<files .env.example> 
+order allow,deny 
+deny from all 
+</files> 
+
+<FilesMatch "(^\.env|\.sql$|\.log$)">
+    Require all denied
+</FilesMatch>
+
+RewriteRule ^404/$ index.php?p=404 [L]
+#url đa ngôn ngữ
+
+RewriteRule ^([a-z]+)/$ index.php?com=&lang=$1 [QSA,L]
+RewriteRule ^([a-z]+)/([a-zA-Z0-9_-]+).html$	index.php?lang=$1&com=$2 [QSA,L]
+RewriteRule ^([a-z]+)/([a-zA-Z0-9_-]+).html&page=([0-9]+)$ index.php?lang=$1&com=$2&page=$3 [QSA,L]
+
+#url một ngôn ngữ
+RewriteRule ^([^/]*).html$	index.php?com=$1 [QSA,L]
+RewriteRule ^([a-zA-Z0-9_-]+).html&page=([0-9]+)$ index.php?com=$1&page=$2 [QSA,L]
+
+RewriteRule ^([^/]*)/([^/]*).html$ index.php?alias=$1&com=$2 [QSA,L]
+RewriteRule ^([^/]*)/([^/]*).html(.*)$ index.php?alias=$1&com=$2&page=$3 [QSA,L]
+
+RewriteRule ^([^/]*)/([^/]*)/([^/]*).html$ index.php?alias=$1&alias1=$2&com=$3 [QSA,L]
+RewriteRule ^([^/]*)/([^/]*)/([^/]*).html(.*)$ index.php?alias=$1&alias1=$2&com=$3&page=$4 [QSA,L]

@@ -1,0 +1,533 @@
+/*
+ * menu-builder.css — UI builder Nestable (module Menu)
+ * Scope: .menu-page
+ */
+.menu-page .menu-source,
+.menu-page .menu-structure {
+	background: #fff;
+	border: 1px solid var(--bs-border-color, #dee2e6);
+	border-radius: 0.375rem;
+	padding: 1rem;
+}
+
+.menu-page .menu-source h2,
+.menu-page .menu-structure h2 {
+	font-size: 1.1rem;
+	font-weight: 600;
+	margin: 0 0 0.75rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+}
+
+.menu-page .form-group {
+	margin-bottom: 0.75rem;
+}
+
+.menu-page .form-group label {
+	display: block;
+	font-weight: 600;
+	font-size: 0.875rem;
+	margin-bottom: 0.25rem;
+}
+
+.menu-page .form-group input,
+.menu-page .form-group select,
+.menu-page .source-search,
+.menu-page #menu-name,
+.menu-page #menu-selector {
+	width: 100%;
+	max-width: 100%;
+	padding: 0.375rem 0.75rem;
+	font-size: 0.875rem;
+	border: 1px solid #ced4da;
+	border-radius: 0.375rem;
+	box-sizing: border-box;
+}
+
+.menu-page #menu-management-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 0.75rem;
+	padding: 0.75rem 1rem;
+	margin-bottom: 1rem;
+	background: var(--bs-secondary-bg, #f8f9fa);
+	border: 1px solid var(--bs-border-color, #dee2e6);
+	border-radius: 0.375rem;
+}
+
+.menu-page #menu-management-bar select {
+	width: auto;
+	min-width: 180px;
+}
+
+.menu-page .language-selector {
+	margin-bottom: 0.75rem;
+	padding-bottom: 0.75rem;
+	border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+}
+
+.menu-page .language-selector h3 {
+	font-size: 0.95rem;
+	font-weight: 600;
+	margin: 0 0 0.35rem;
+}
+
+.menu-page .language-selector label {
+	display: block;
+	margin-bottom: 0.25rem;
+	cursor: pointer;
+	font-weight: 400;
+}
+
+.menu-page .source-box {
+	border: 1px solid var(--bs-border-color, #dee2e6);
+	border-radius: 0.375rem;
+	overflow: hidden;
+	margin-bottom: 0.75rem;
+}
+
+.menu-page .source-box h3 {
+	margin: 0;
+	padding: 0.65rem 0.85rem;
+	font-size: 0.95rem;
+	font-weight: 600;
+	background: var(--bs-secondary-bg, #f8f9fa);
+	cursor: pointer;
+	user-select: none;
+}
+
+.menu-page .source-content {
+	padding: 0.75rem;
+	display: none;
+}
+
+.menu-page .source-item {
+	margin-bottom: 0.35rem;
+}
+
+.menu-page .source-item label {
+	cursor: pointer;
+	font-weight: 400;
+	margin: 0;
+}
+
+.menu-page .source-search {
+	margin-bottom: 0.5rem;
+}
+
+.menu-page .select-all-wrap {
+	margin: 0.5rem 0;
+}
+
+.menu-page .pagination {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 0.35rem;
+	margin-top: 0.5rem;
+}
+
+.menu-page .pagination.hidden {
+	display: none;
+}
+
+.menu-page .pagination button {
+	background: #f8f9fa;
+	border: 1px solid #ced4da;
+	padding: 0.25rem 0.6rem;
+	border-radius: 0.25rem;
+	font-size: 0.8rem;
+	cursor: pointer;
+}
+
+.menu-page .pagination button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Nestable */
+.menu-page .dd {
+	max-width: 100%;
+}
+
+.menu-page .dd .dd-empty {
+	display: none !important;
+}
+
+/* Hàng: 1 khối trắng = handle (kéo) + actions (không kéo) */
+.menu-page .dd-item-bar {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 5px 0;
+	min-height: 40px;
+	padding: 6px 10px 6px 12px;
+	background: #fff;
+	border: 1px solid #ced4da;
+	border-radius: 0.375rem;
+	box-sizing: border-box;
+}
+
+.menu-page .dd-handle {
+	display: flex;
+	align-items: center;
+	flex: 1;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	color: #212529;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	cursor: move;
+	box-sizing: border-box;
+}
+
+.menu-page .handle-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+	flex-shrink: 0;
+	padding: 0;
+}
+
+.menu-page .dd-handle .item-title {
+	font-weight: 600;
+	flex: 1;
+	margin: 0 0.5rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.menu-page .dd-handle .item-type {
+	font-size: 0.75rem;
+	color: #6c757d;
+	margin-right: 0.5rem;
+	white-space: nowrap;
+}
+
+.menu-page .handle-left,
+.menu-page .handle-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+}
+
+/* +/- ngoài dd-handle — kích thước cố định, không méo khi kéo */
+.menu-page .dd-tree-btns {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 22px;
+	width: 22px;
+	min-width: 22px;
+	height: 22px;
+}
+
+.menu-page .dd-expand,
+.menu-page .dd-collapse {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid #ced4da;
+	border-radius: 0.25rem;
+	background: #fff;
+	color: #495057;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 1;
+	cursor: pointer;
+	user-select: none;
+	box-sizing: border-box;
+	flex-shrink: 0;
+}
+
+.menu-page .dd-expand:hover,
+.menu-page .dd-collapse:hover {
+	color: #0d6efd;
+	border-color: #0d6efd;
+	background: #f8f9fa;
+}
+
+.menu-page .dd-expand.hidden,
+.menu-page .dd-collapse.hidden {
+	display: none !important;
+}
+
+/* Panel cài đặt: trượt mượt (grid 0fr -> 1fr) */
+.menu-page .item-settings {
+	display: grid;
+	grid-template-rows: 0fr;
+	opacity: 0;
+	margin: 0 0 0 0;
+	transition: grid-template-rows 0.28s ease, opacity 0.22s ease, margin 0.28s ease;
+}
+
+.menu-page .item-settings > .item-settings-inner {
+	overflow: hidden;
+	min-height: 0;
+}
+
+.menu-page .item-settings.is-open {
+	grid-template-rows: 1fr;
+	opacity: 1;
+	margin: 0 0 8px 0;
+}
+
+.menu-page .item-settings-inner {
+	padding: 0 12px;
+	background: #f8f9fa;
+	border: 1px solid transparent;
+	border-radius: 0.375rem;
+	box-sizing: border-box;
+	transition: padding 0.28s ease, border-color 0.22s ease;
+}
+
+.menu-page .item-settings.is-open > .item-settings-inner {
+	padding: 12px;
+	border-color: #dee2e6;
+}
+
+.menu-page .item-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin-top: 0.5rem;
+	padding-top: 0.5rem;
+	border-top: 1px solid #dee2e6;
+}
+
+.menu-page .item-actions .link-btn {
+	cursor: pointer;
+	font-size: 0.875rem;
+	text-decoration: underline;
+	color: #0d6efd;
+}
+
+.menu-page .item-actions .link-btn.danger {
+	color: #dc3545;
+}
+
+.menu-page .menu-locations {
+	margin-top: 1rem;
+	padding: 0.75rem 0;
+}
+
+.menu-page .menu-locations h3 {
+	font-size: 1rem;
+	font-weight: 600;
+	margin-bottom: 0.5rem;
+}
+
+.menu-page .menu-locations label {
+	display: block;
+	margin-bottom: 0.35rem;
+	font-weight: 400;
+	cursor: pointer;
+}
+
+.menu-page .menu-footer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.75rem;
+	padding-top: 1rem;
+	margin-top: 1rem;
+	border-top: 1px solid var(--bs-border-color, #dee2e6);
+}
+
+.menu-page .menu-footer-left {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.menu-page .menu-footer-left a {
+	text-decoration: underline;
+}
+
+.menu-page .menu-footer-left a#delete-menu {
+	color: #dc3545;
+}
+
+.menu-page .menu-footer-right {
+	margin-left: auto;
+}
+
+.menu-page .menu-empty {
+	padding: 1rem;
+	color: #6c757d;
+	font-style: italic;
+}
+
+.menu-page #menu-output {
+	display: none;
+}
+
+.menu-page .item-toggle {
+	padding: 0.15rem 0.4rem;
+	line-height: 1;
+}
+.menu-page .item-toggle i {
+	font-size: 0.85rem;
+}
+
+/*
+ * Ghost kéo: Nestable MOVE cả nhánh (cha+con) vào ol.dd-dragel trên body.
+ * - Chỉ ẩn form cài đặt
+ * - KHÔNG ẩn ol.dd-list (con phải vẫn thấy khi kéo cha)
+ * - KHÔNG xóa DOM
+ */
+.dd-dragel {
+	position: absolute;
+	z-index: 99999;
+	pointer-events: none;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+
+/* Panel đang mở vẫn hiện khi kéo (ghost trên body, ngoài .menu-page) */
+.dd-dragel .item-settings.is-open {
+	display: grid;
+	grid-template-rows: 1fr;
+	opacity: 1;
+	margin: 0 0 8px 0;
+	pointer-events: none;
+}
+
+.dd-dragel .item-settings.is-open > .item-settings-inner {
+	padding: 12px;
+	border: 1px solid #dee2e6;
+	border-radius: 0.375rem;
+	background: #f8f9fa;
+	overflow: hidden;
+}
+
+.dd-dragel .item-settings:not(.is-open) {
+	display: none;
+}
+
+.dd-dragel .dd-item-bar {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 5px 0;
+	min-height: 40px;
+	padding: 6px 10px 6px 12px;
+	background: #fff;
+	border: 1px solid #ced4da;
+	border-radius: 0.375rem;
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
+	box-sizing: border-box;
+}
+
+.dd-dragel .dd-handle {
+	display: flex;
+	align-items: center;
+	flex: 1;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	color: #212529;
+	background: transparent !important;
+	border: 0;
+	box-shadow: none;
+	cursor: grabbing;
+}
+
+.dd-dragel .handle-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+	flex-shrink: 0;
+}
+
+.dd-dragel .dd-handle .item-title {
+	font-weight: 600;
+	flex: 1;
+	margin: 0 0.5rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dd-dragel .dd-tree-btns {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 22px;
+	width: 22px;
+	min-width: 22px;
+	height: 22px;
+}
+
+.dd-dragel .dd-expand,
+.dd-dragel .dd-collapse {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	margin: 0;
+	padding: 0;
+	border: 1px solid #ced4da;
+	border-radius: 0.25rem;
+	background: #fff;
+	color: #495057;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 1;
+	box-sizing: border-box;
+	flex-shrink: 0;
+}
+
+.dd-dragel .dd-expand.hidden,
+.dd-dragel .dd-collapse.hidden {
+	display: none !important;
+}
+
+.dd-dragel .handle-left {
+	display: flex;
+	align-items: center;
+	gap: 0.35rem;
+	min-width: 0;
+	flex: 1;
+}
+
+.dd-dragel .item-type {
+	font-size: 0.75rem;
+	color: #6c757d;
+}
+
+/* Placeholder: cao theo nội dung (cả nhánh), không cố định 40px */
+.menu-page .dd-placeholder {
+	margin: 5px 0;
+	min-height: 40px;
+	background: #e7f1ff;
+	border: 1px dashed #0d6efd;
+	border-radius: 0.375rem;
+	box-sizing: border-box;
+}
+
+.menu-page .dd-item {
+	position: relative;
+}
+
+.menu-page .item-toggle {
+	padding: 0.15rem 0.4rem;
+	line-height: 1;
+}
+
+.menu-page .item-toggle i {
+	font-size: 0.85rem;
+}

@@ -1,0 +1,22 @@
+User-agent: *
+Disallow: /
+Disallow: /admin/
+Disallow: /library/
+Disallow: /sources/
+
+ 
+RewriteCond %{HTTP_HOST} ^www.hyorimvina.com.vn$ [NC]
+RewriteRule ^(.*)$ https://hyorimvina.com.vn/$1 [R=301,L]
+
+# Redirect all links from HTTP to HTTPS
+RewriteCond %{HTTPS} !=on
+RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
+RewriteRule ^(.*) https://%{SERVER_NAME}/$1 [R,L]
+
+RewriteCond %{HTTP_HOST} ^www.hyorimvina.com.vn$ [NC]
+RewriteCond %{REQUEST_URI} !^/[0-9]+\..+\.cpaneldcv$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
+RewriteRule ^(.*)$ http://hyorimvina.com.vn/$1 [R=301,L]
+
+Sitemap: http://source.test/sitemap.xml

@@ -1,0 +1,35 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+vendor/
+.kilo/node_modules/
+
+# Runtime / logs
+logs/
+*.log
+admin/logs/
+
+# Build artifacts
+_cleanup_backup/
+sitemap.xml.bak
+
+# Backup / dev-only scripts (không được deploy)
+_backup_ui/
+admin/_backup_ui/
+scratch/
+
+# Agent tooling / session state
+.kilo/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# OS
+Thumbs.db
