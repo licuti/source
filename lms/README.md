@@ -37,6 +37,9 @@ lms/
     StudentCourseService.php   STU-01/02/03 khoá học + nộp BTVN/test (row-level)
     MonthlyReviewService.php   STU-04 nhận xét tháng (chỉ published)
     NotificationService.php chuông thông báo (db_lms_notifications)
+    TickService.php       BR-TICK-01/02/03 vi phạm (tick) + admin ADM-06
+                          (closePastSessions, scanLate*, evaluateTickPenalty,
+                          manual tick + CRUD ngưỡng)
   app/                  source + template theo portal (KHÔNG đặt lms/<portal>/ —
     admin/              trùng tên thư mục thật với URL /lms/admin → mod_dir's
     teacher/            DirectorySlash sinh 301 dư; xem note trong .htaccess)
@@ -59,6 +62,7 @@ lms/
 | `lms-lop` | ADM-03 | `man` `them` `sua` `xoa` | CRUD lớp (tạo lớp + enroll + sinh sessions tự động) |
 | `lms-lop-hoc-sinh` | ADM-04 | `man` `them` `chuyen` `xoa` | Ma trận học viên × chương trình; thêm/chuyển/xoá HV khỏi lớp |
 | `lms-yeu-cau` | ADM-05 | `man` `xem` `duyet` `tu-choi` | Duyệt/từ chối request của GV (add_session/request_leave/change_schedule): transaction + `FOR UPDATE` idempotent, check trùng lịch GV, insert/cancel session, giảm `remaining_sessions` |
+| `lms-vi-pham` | ADM-06 | `man` `them` `xoa` `nguong` `luu-nguong` `xoa-nguong` | Quản lý vi phạm (tick): log tick + filter GV/lý do/tháng/nguồn + phân trang, thêm tick thủ công (±1), xoá tick thủ công, CRUD ngưỡng `violation_thresholds` |
 | `lms-thong-bao` | SYS-01 | `hienthi` `unread` `mark_read` `mark_all_read` | Thông báo (module ẩn, AJAX có CSRF) |
 
 Mọi action `them`/`sua`/`khoa`/`xoa` check `lms_check_permission(..., 'edit'|'delete', 'admin')`
@@ -165,9 +169,43 @@ php database/seeds/2026_10_07_lms_demo_seed.php
 php database/seeds/2026_10_07_lms_demo_seed.php phuongnamv_db_lms_test
 ```
 
+### Cron quét vi phạm (BR-TICK-01/02/03)
+
+```bash
+# Dry-run (không ghi DB; xem trước số buổi/tick sẽ xử lý)
+php database/cron/lms_tick_cron.php --dry-run
+php database/cron/lms_tick_cron.php --dry-run --db=phuongnamv_db_lms_test
+
+# Chạy thật (ghi tick + thông báo; idempotent — chạy lại không tạo trùng)
+php database/cron/lms_tick_cron.php
+```
+
+Lập lịch **mỗi 15 phút** (SRS §3.1): Windows Task Scheduler hoặc crontab:
+
+```
+*/15 * * * * php /path/to/source/database/cron/lms_tick_cron.php >> /var/log/lms_tick.log 2>&1
+```
+
+Pipeline (theo thứ tự): `closePastSessions` (đóng buổi quá hạn → `finished`) →
+`scanLateLessonSummary` (BR-TICK-01) → `scanLateHwGrading` (BR-TICK-02, 1 tick/session) →
+`evaluateTickPenalty` (BR-TICK-03: `tick_warning` idempotent 1 lần/tháng/GV;
+demote phí chỉ audit + cảnh báo — PayrollService áp dụng ở phase sau).
+
+⚠️ **Timezone**: code dùng `date('Y-m-d H:i:s')` theo PHP default. Cài đặt
+`date.timezone = Asia/Ho_Chi_Minh` (php.ini) **và** MySQL server cùng múi giờ
+thì hạn phạt mới đúng giờ VN. Chạy `php -i | grep date.timezone` để kiểm tra.
+
+⚠️ Tick do cron tạo (`auto_generated = 1`) không xoá qua UI — admin dùng miễn
+giảm thủ công (`manual_exempt`, -1) để bù trừ (giữ lịch sử đối soát lương).
+
 Migration hiện có: `2026_10_07_lms_core.sql` (25 bảng) →
 `2026_10_09_lms_teacher_profile_slots_notes.sql` (TCH-01/02: `teachers.current_address`,
 `sessions.topic_ids`, `db_lms_teacher_free_slots`, `db_lms_teacher_notes`).
+
+Seed ngưỡng vi phạm: `database/seeds/2026_10_10_lms_violation_thresholds_seed.sql`
+(3 khoảng số lớp 1-3/4-7/≥8 → miễn 2/3/4 tick, cảnh báo 5, hạ phí 8, % phí sau
+hạ 50 — chạy trên cả DB thật + DB test; `ticks_to_warn` và
+`fee_percentage_after_demote` là giá trị tạm, cần chốt với business).
 
 Tài khoản demo sau khi seed: `admin/admin123`, `gv01/gv01123456`, `hv01/hv01123456`…
 (chi tiết xem đầu ra script seed).

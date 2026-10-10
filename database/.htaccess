@@ -1,0 +1,10 @@
+# Chặn truy cập web vào toàn bộ thư mục database/ (migration, seed, cron CLI).
+# Các file .sql đã bị chặn ở .htaccess gốc; rule này chặn thêm cron PHP scripts
+# (chỉ chạy qua PHP CLI, không bao giờ qua web).
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
