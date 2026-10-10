@@ -1,6 +1,7 @@
 <?php
     $block_about = $d->getContent(667);
 ?>
+
 <?php if ($block_about): ?>
 	<div class="block block-home-about">
 		<div class="container-fluid"> 

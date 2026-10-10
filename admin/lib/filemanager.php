@@ -125,6 +125,8 @@ if (!function_exists("fm_ckeditor_options")) {
             "filebrowserImageBrowseUrl" => "/admin/ckfinder/ckfinder.html?type=Images",
             "filebrowserUploadUrl"      => "/admin/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Files",
             "filebrowserImageUploadUrl" => "/admin/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=Images",
+            "filebrowserWindowWidth"    => "1280",
+            "filebrowserWindowHeight"   => "800",
         );
     }
 }

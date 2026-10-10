@@ -54,9 +54,9 @@ session_start → auth gate → nạp lib → new func_index → router(?p,&a)
 | # | Vấn đề | Chi tiết | Trạng thái |
 |---|--------|----------|-----------|
 | 2.1 | `sources/ajax.php` là "God file" **742 dòng** | Trộn: menu, update_stt, update_data, xóa ảnh, thuộc tính SP, text, liên hệ, bình luận, coupon… | `[~]` |
-| 2.2 | AJAX nằm rải rác 2 nơi | `sources/ajax.php` + `ajax_pancake_*.php` ở gốc `admin/` (3 file). | `[ ]` |
+| 2.2 | AJAX nằm rải rác 2 nơi | **ĐÃ DỌN 2026-10-07:** gỡ bỏ toàn bộ `ajax_pancake_*.php` và module Pancake khỏi admin. | `[x]` |
 | 2.3 | `services/` đặt sai chỗ khái niệm | `admin/sources/services/` là domain/business layer, không phải "source module". | `[ ]` |
-| 2.4 | Trùng lặp front/back | `api/pancake_webhook.php` (root) tách khỏi `sources/services/pancake/`. | `[ ]` |
+| 2.4 | Trùng lặp front/back | **ĐÃ DỌN 2026-10-07:** gỡ bỏ `api/pancake_webhook.php` và toàn bộ Pancake service. | `[x]` |
 | 2.5 | Dev artifacts trong webroot | `.kilo/` (có `node_modules`), `sitemap.xml.bak`. | `[ ]` |
 | 2.6 | `admin/_backup_ui/` còn tồn tại | **ĐÃ RỖNG** (đã dọn). | `[x]` |
 | 2.7 | `logs/` nằm trong `admin/` (webroot) | Có thể bị tải nếu cấu hình sai → nên ra ngoài webroot. | `[ ]` |
@@ -175,13 +175,14 @@ session_start → auth gate → nạp lib → new func_index → router(?p,&a)
 ### 7.3. TRUNG HẠN
 - [~] **2.1** Tách `sources/ajax.php` thành nhiều file nhỏ; gom `ajax_pancake_*` vào `sources/ajax/`.
   - **Đã làm 2026-09-11:** tách `sources/ajax/menu.php` (176 dòng: `menu_save_items`, create/delete/save menu) và `sources/ajax/detail.php` (165 dòng: `get_binhluan`, `get_coupon`). `sources/ajax.php` từ **831 → 489 dòng**. Dispatcher dùng `require_once` để giữ nguyên URL cũ.
-  - **Còn lại:** tách tiếp nhóm `add_thuoctinh*` (biến thể sản phẩm) + gom `ajax_pancake_*.php` vào `sources/ajax/`.
+  - **Còn lại:** tách tiếp nhóm `add_thuoctinh*` (biến thể sản phẩm). Đã gỡ bỏ toàn bộ Pancake module và `ajax_pancake_*.php` (2026-10-07).
 - [x] **1.4** Tách asset theo module.
-  - **Đã làm:** thêm `admin/lib/page_assets.php` (helper `admin_page_assets($template)`); `index.php` dùng để nạp có điều kiện. CKEditor (~700KB) chỉ tải ở trang form soạn thảo; Sortable chỉ ở trang kéo-thả. DataTables/Select2 giữ nguyên toàn cục để an toàn (không template nào dùng nhưng nhiều module legacy có thể phụ thuộc qua class sinh động).
+  - **Đã làm 2026-09-11:** thêm `admin/lib/page_assets.php` (helper `admin_page_assets($template)`); `index.php` dùng để nạp có điều kiện. CKEditor (~700KB) chỉ tải ở trang form soạn thảo; Sortable chỉ ở trang kéo-thả. DataTables/Select2 giữ nguyên toàn cục để an toàn (không template nào dùng nhưng nhiều module legacy có thể phụ thuộc qua class sinh động).
+  - **Đã làm 2026-10-07:** bỏ hẳn whitelist — asset inline thẳng vào `admin/index.php` và nạp đồng bộ cho mọi trang (jQuery + Fancybox + CKEditor ở head, Sortable ở body). Lý do: người mới khó đọc logic phân biệt, và thêm module mới phải về `page_assets.php` cập nhật whitelist. Đã xóa `admin/lib/page_assets.php` và `admin/js/jquery.twbsPagination.js` (không còn dùng).
 - [ ] **6.2/6.3** Composer + PSR-4 autoload + namespace cho `services/`.
 - [x] **6.4** Chuyển schema change ra migration script.
 - [x] **5.11** Áp CSRF cho các AJAX endpoint.
-  - **Đã làm:** `admin/js/csrf.js` tự gắn `csrf_token` vào mọi POST admin (`$.ajaxPrefilter` + bọc `AdminUI.http.post`). Verify ở `sources/ajax.php`, `sources/aj_checkbox.php`, `ajax_pancake_*.php` (3 file). Trả HTTP 419 khi thiếu token.
+  - **Đã làm:** `admin/js/csrf.js` tự gắn `csrf_token` vào mọi POST admin (`$.ajaxPrefilter` + bọc `AdminUI.http.post`). Verify ở `sources/ajax.php`, `sources/aj_checkbox.php`. Trả HTTP 419 khi thiếu token. (Các file `ajax_pancake_*.php` đã được xóa sạch).
 
 ### 7.4. DÀI HẠN
 - [ ] **4.2** Tách class `func_index` thành trait/service.
@@ -208,9 +209,9 @@ bind tham số login. Đã lint PHP 7.3: tất cả file không lỗi cú pháp.
 **✅ Nhóm 7.3 — Trung hạn (làm 2026-09-11, còn một phần 2.1):**
 - **5.11 CSRF cho AJAX:** file mới `admin/js/csrf.js`, nạp trong `index.php`. Verify
   ở 5 endpoint admin (`sources/ajax.php`, `sources/aj_checkbox.php`, 3 file `ajax_pancake_*.php`).
-- **1.4 Asset theo module:** file mới `admin/lib/page_assets.php`; `index.php` dùng
-  `admin_page_assets($template)` để nạp có điều kiện. Bỏ CKEditor (~700KB) khỏi các trang
-  không soạn thảo.
+- **1.4 Asset theo module:** ban đầu tách ra `admin/lib/page_assets.php`; từ 2026-10-07
+  được inline ngược vào `admin/index.php` và nạp đồng bộ mọi trang (bỏ whitelist,
+  xóa file `page_assets.php` và `jquery.twbsPagination.js`).
 - **2.1 Tách `sources/ajax.php` (một phần):** tách `sources/ajax/menu.php` + `sources/ajax/detail.php`;
   file chính từ 831 → 489 dòng; dispatcher giữ nguyên URL cũ.
 - **6.4 Migration script** (đã làm ở đợt 7.2).
@@ -220,9 +221,12 @@ chuẩn hóa đặt tên, `o_fet` FETCH_ASSOC…) xem mục 7.3–7.4.
 
 **File mới trong đợt 7.3:**
 - `admin/js/csrf.js` — hook `$.ajaxPrefilter` + bọc `AdminUI.http.post`, tự gắn CSRF token.
-- `admin/lib/page_assets.php` — quyết định nạp asset theo module/template.
 - `admin/sources/ajax/menu.php` — partial menu (176 dòng).
 - `admin/sources/ajax/detail.php` — partial detail (165 dòng).
+
+**File đã xóa (2026-10-07):**
+- `admin/lib/page_assets.php` — logic asset theo module, được inline ngược vào `admin/index.php`.
+- `admin/js/jquery.twbsPagination.js` — plugin không còn dùng.
 
 Về tổ chức, vấn đề lớn nhất là **tính không nhất quán** (ngôn ngữ đặt tên, vị trí AJAX,
 trộn vendor/config/core) và **tải asset toàn cục** làm admin nặng.

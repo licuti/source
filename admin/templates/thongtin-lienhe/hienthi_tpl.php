@@ -226,7 +226,7 @@ $defaultRow = $rowByLang[$firstCode] ?? [];
                 <!-- TAB 3: CẤU HÌNH HỆ THỐNG (Không đa ngôn ngữ) -->
                 <div class="tab-pane fade" id="tab-system" role="tabpanel" aria-labelledby="tab-system-tab">
                     <div class="row g-3">
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <?php component('card_open', [
                                 'title' => 'Google reCAPTCHA',
                                 'icon'  => 'fa-solid fa-shield-halved',
@@ -242,43 +242,7 @@ $defaultRow = $rowByLang[$firstCode] ?? [];
                             <?php component('card_close'); ?>
                         </div>
 
-                        <div class="col-lg-4">
-                            <?php component('card_open', [
-                                'title' => 'Cấu hình Pancake POS / CRM',
-                                'icon'  => 'fa-solid fa-cloud-arrow-up',
-                            ]); ?>
-                            <?php component('form/input', [
-                                'label' => 'API Key / Access Token', 'name' => 'pancake_api_key',
-                                'id' => 'pancake_api_key', 'value' => $defaultRow['pancake_api_key'] ?? ($config['pancake']['api_key'] ?? ''),
-                                'placeholder' => 'Nhập API Key Pancake POS / CRM',
-                            ]); ?>
-                            <?php component('form/input', [
-                                'label' => 'Shop ID / Workspace ID', 'name' => 'pancake_shop_id',
-                                'id' => 'pancake_shop_id', 'value' => $defaultRow['pancake_shop_id'] ?? ($config['pancake']['shop_id'] ?? ''),
-                                'placeholder' => 'VD: 9383',
-                            ]); ?>
-                            <?php component('form/input', [
-                                'label' => 'API Base URL', 'name' => 'pancake_api_url',
-                                'id' => 'pancake_api_url', 'value' => $defaultRow['pancake_api_url'] ?? ($config['pancake']['api_url'] ?? 'https://crm.pancake.vn/api'),
-                                'placeholder' => 'https://crm.pancake.vn/api',
-                            ]); ?>
-                            <div class="mb-3">
-                                <label class="form-label d-block">Tự động đồng bộ sang CRM</label>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="pancake_sync_to_crm"
-                                           id="pancake_sync_1" value="1" <?= (int)($defaultRow['pancake_sync_to_crm'] ?? 1) === 1 ? 'checked' : '' ?>>
-                                    <label class="form-check-label" for="pancake_sync_1">Bật</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="pancake_sync_to_crm"
-                                           id="pancake_sync_0" value="0" <?= (int)($defaultRow['pancake_sync_to_crm'] ?? 1) === 0 ? 'checked' : '' ?>>
-                                    <label class="form-check-label" for="pancake_sync_0">Tắt</label>
-                                </div>
-                            </div>
-                            <?php component('card_close'); ?>
-                        </div>
-
-                        <div class="col-lg-4">
+                        <div class="col-lg-6">
                             <?php component('card_open', [
                                 'title' => 'Cấu hình SMTP Mail',
                                 'icon'  => 'fa-solid fa-envelope',

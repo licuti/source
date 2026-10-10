@@ -128,21 +128,12 @@ var main_slide = new Swiper(".main-slide", {
       },
 });
 
-var category = new Swiper(".category-slide", {
-    spaceBetween: 20,
+var main_slide_review = new Swiper(".main-slide-review", {
     autoplay: {
-        delay: 3000,
+        delay: 5000,
         disableOnInteraction: false,
     },
     speed: 1000,
-    navigation: {
-        nextEl: ".category-next",
-        prevEl: ".category-prev",
-    },
-    pagination: {
-        el: ".category-slide .swiper-pagination",
-        clickable: true,
-    },
     breakpoints: {
         320: {
             spaceBetween: 16,
@@ -159,7 +150,7 @@ var category = new Swiper(".category-slide", {
     },
 });
 
-var app_slide = new Swiper(".app-slide", {
+var teaching_staff_slide = new Swiper(".teaching-staff-slide", {
     autoplay: {
         delay: 6000,
         disableOnInteraction: false,
@@ -168,28 +159,31 @@ var app_slide = new Swiper(".app-slide", {
     breakpoints: {
         320: {
             spaceBetween: 8,
-            slidesPerView: 3,
+            slidesPerView: 2,
         },
         768: {
             spaceBetween: 16,
-            slidesPerView: 5,
+            slidesPerView: 3,
         },
         1024: {
             spaceBetween: 24,
-            slidesPerView: 3,
+            slidesPerView: 4,
         },
+    },
+    pagination: {
+        el: ".pagination-teaching-staff",
+        clickable: true,
     },
 });
 
-var certificate_slide = new Swiper(".certificate-slide", {
+var review_slide = new Swiper(".review-slide", {
     autoplay: {
         delay: 6000,
         disableOnInteraction: false,
     },
-    speed: 800,
-    loop: true,
+    speed: 1000,
     pagination: {
-        el: ".swiper-pagination-certificate",
+        el: ".pagination-review-slide",
         clickable: true,
     },
     breakpoints: {
@@ -198,12 +192,12 @@ var certificate_slide = new Swiper(".certificate-slide", {
             spaceBetween: 8,
         },
         768: {
-            slidesPerView: 3,
+            slidesPerView: 2,
             spaceBetween: 16,
         },
         1024: {
-            slidesPerView: 4,
-            spaceBetween: 24,
+            slidesPerView: 2,
+            spaceBetween: 80,
         },
     },
 });

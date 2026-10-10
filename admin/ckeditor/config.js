@@ -10,7 +10,7 @@ CKEDITOR.editorConfig = function(config) {
     //config.extraPlugins = 'codesnippet';
     config.height = '20em';
 
-    config.extraPlugins = 'btgrid, youtube, ckeditorfa,';
+    config.extraPlugins = 'btgrid, youtube, ckeditorfa, fontweight,';
 
     
 

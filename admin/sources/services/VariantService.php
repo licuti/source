@@ -56,10 +56,6 @@ class VariantService
                 'cap_nhat'   => date("Y-m-d H:i:s"),
             ];
 
-            if (isset($variant['pancake_variation_id'])) {
-                $data_bienthe['pancake_variation_id'] = $variant['pancake_variation_id'];
-            }
-
             $id_bienthe = 0;
 
             if ($variant_id > 0 && in_array($variant_id, $old_ids)) {

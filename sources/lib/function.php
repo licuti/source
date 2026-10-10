@@ -601,27 +601,3 @@ function getPaginationHTML($total, $limit, $current_page, $url = '') {
     return $html;
 }
 
-if (!function_exists('getPancakeConfig')) {
-    function getPancakeConfig()
-    {
-        global $d, $config;
-        if (isset($d) && is_object($d) && method_exists($d, 'simple_fetch')) {
-            $dbRow = $d->simple_fetch("SELECT pancake_api_key, pancake_shop_id, pancake_api_url, pancake_sync_to_crm FROM #_thongtin WHERE pancake_api_key IS NOT NULL AND pancake_api_key != '' LIMIT 1");
-            if (is_array($dbRow) && !empty($dbRow['pancake_api_key'])) {
-                return [
-                    'api_key'     => $dbRow['pancake_api_key'],
-                    'shop_id'     => $dbRow['pancake_shop_id'] ?? '',
-                    'api_url'     => !empty($dbRow['pancake_api_url']) ? $dbRow['pancake_api_url'] : 'https://crm.pancake.vn/api',
-                    'sync_to_crm' => (int)($dbRow['pancake_sync_to_crm'] ?? 1) === 1,
-                ];
-            }
-        }
-        return $config['pancake'] ?? [
-            'api_key'     => '',
-            'shop_id'     => '',
-            'api_url'     => 'https://crm.pancake.vn/api',
-            'sync_to_crm' => true,
-        ];
-    }
-}
-

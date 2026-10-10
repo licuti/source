@@ -70,6 +70,7 @@ $groupActionUrl = admin_url(array_filter([
                                 $delG  = admin_url(['p' => $MODULE, 'a' => 'delete_group', 'id' => $gid]);
                                 $addO  = admin_url(['p' => $MODULE, 'a' => 'add', 'parent' => $gid]);
                                 $rowCls = 'nd-opts-' . $gid;
+                                $gDisplayName = (!empty($g['label']) && trim((string) $g['label']) !== '') ? $g['label'] : ($g['ten'] ?? '');
                                 ?>
                                 <tr class="table-light">
                                     <td class="text-center col-shrink">
@@ -89,9 +90,9 @@ $groupActionUrl = admin_url(array_filter([
                                             <?php endif; ?>
                                         </div>
                                     </td>
-                                    <td class="fw-semibold"><?= e($g['ten'] ?? '') ?></td>
+                                    <td class="fw-semibold"><?= e($gDisplayName) ?></td>
                                     <td class="text-center col-shrink">
-                                        <?php component('thumb', ['file' => $g['hinh_anh'] ?? '', 'alt' => $g['ten'] ?? '']); ?>
+                                        <?php component('thumb', ['file' => $g['hinh_anh'] ?? '', 'alt' => $gDisplayName]); ?>
                                     </td>
                                     <td class="text-center col-shrink">
                                         <?php component('switch_toggle', [
@@ -104,7 +105,7 @@ $groupActionUrl = admin_url(array_filter([
                                     <td class="text-center col-shrink">
                                         <?php component('row_actions', [
                                             'edit_url' => $editG, 'delete_url' => $delG,
-                                            'name' => $g['ten'] ?? '', 'child_count' => $nOpt,
+                                            'name' => $gDisplayName, 'child_count' => $nOpt,
                                             'can_edit' => $canEdit, 'can_delete' => $canDelete,
                                         ]); ?>
                                     </td>
@@ -177,21 +178,26 @@ $groupActionUrl = admin_url(array_filter([
                 ]); ?>
 
                 <form method="post" action="<?= e($groupActionUrl) ?>" data-warn-unsaved>
-                    <?php component('form/image_picker', [
-                        'label' => 'Hình ảnh', 'name' => 'hinh_anh',
-                        'value' => $groupMain['hinh_anh'] ?? '',
-                        'table' => '_category_noidung',
-                        'row_id' => $isEditGroup ? (string) ($groupMain['id'] ?? '') : '',
-                        'height' => 100,
-                    ]); ?>
-
-                    <?php component('form/image_picker', [
-                        'label' => 'Background', 'name' => 'background',
-                        'value' => $groupMain['background'] ?? '',
-                        'table' => '_category_noidung',
-                        'row_id' => $isEditGroup ? (string) ($groupMain['id'] ?? '') : '',
-                        'height' => 80,
-                    ]); ?>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <?php component('form/image_picker', [
+                                'label' => 'Hình ảnh', 'name' => 'hinh_anh',
+                                'value' => $groupMain['hinh_anh'] ?? '',
+                                'table' => '_category_noidung',
+                                'row_id' => $isEditGroup ? (string) ($groupMain['id'] ?? '') : '',
+                                'height' => 100,
+                            ]); ?>
+                        </div>
+                        <div class="col-6">
+                            <?php component('form/image_picker', [
+                                'label' => 'Background', 'name' => 'background',
+                                'value' => $groupMain['background'] ?? '',
+                                'table' => '_category_noidung',
+                                'row_id' => $isEditGroup ? (string) ($groupMain['id'] ?? '') : '',
+                                'height' => 100,
+                            ]); ?>
+                        </div>
+                    </div>
 
                     <?php component('form/lang_tabs', ['langs' => $langs, 'prefix' => 'ndg']); ?>
                     <div class="tab-content">
@@ -205,6 +211,11 @@ $groupActionUrl = admin_url(array_filter([
                                 <?php if ($isEditGroup): ?>
                                     <input type="hidden" name="id_row[]" value="<?= e($row['id'] ?? '') ?>">
                                 <?php endif; ?>
+                                <?php component('form/input', [
+                                    'label' => 'Label' . $sfx, 'name' => 'label[]',
+                                    'id' => 'ndg_label_' . $code, 'value' => $row['label'] ?? '',
+                                    'placeholder' => 'Label',
+                                ]); ?>
                                 <?php component('form/input', [
                                     'label' => 'Tên nhóm' . $sfx, 'name' => 'ten[]',
                                     'id' => 'ndg_ten_' . $code, 'value' => $row['ten'] ?? '',

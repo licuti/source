@@ -1,10 +1,26 @@
 RewriteEngine on
+
+# ---- LMS MasterStudy: /lms/<portal>[/<alias>[/<action>]] (D10) ----
+# PHẢI đặt TRƯỚC khối -d/-s bên dưới: lms/admin, lms/teacher, lms/student là
+# thư mục thật (sources/templates) nên khối -d sẽ trả 403 nếu rule này nằm dưới.
+# Pattern chỉ khớp 3 tên portal nên asset thật (lms/public/...) và file entry
+# point (lms/admin.php) không bị ảnh hưởng. [QSA] giữ ?id=/?page=.
+# Substitution BẮT BUỘC dùng path tuyệt đối (/lms/...): nếu dùng path tương đối
+# (lms/$1.php) thì mod_dir's DirectorySlash sinh ra 301 dư cho /lms/admin (thư
+# mục thật) → nhân đôi redirect. Path tuyệt đối → internal redirect thẳng.
+RewriteRule ^lms/?$                                /lms/index.php [L]
+RewriteRule ^lms/(admin|teacher|student)/?$        /lms/$1.php?lms_route=  [QSA,L]
+RewriteRule ^lms/(admin|teacher|student)/(.+?)/?$  /lms/$1.php?lms_route=$2   [QSA,L]
+
 RewriteCond %{REQUEST_FILENAME} -d [OR]
 RewriteCond %{REQUEST_FILENAME} -s
 RewriteRule ^.*$ - [L]
 
 
 RewriteEngine on
+
+# TEMP-PROBE
+RewriteRule ^lmstest/(admin|teacher|student)/?$ /lms/$1.php?lms_route= [QSA,L]
 
 # ---------------------------------------------------------------------------
 # Chuyển hướng HTTP -> HTTPS (BẬT khi chạy production có SSL).
@@ -44,6 +60,11 @@ deny from all
 order allow,deny 
 deny from all 
 </files> 
+
+<files env.php>
+order allow,deny
+deny from all
+</files>
 
 <FilesMatch "(^\.env|\.sql$|\.log$)">
     Require all denied

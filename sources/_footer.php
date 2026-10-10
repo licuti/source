@@ -7,32 +7,9 @@
     <div class="block footer-top py-5 pb-4">
         <div class="container-fluid">
             <div class="row justify-content-between g-4 g-lg-5">
-                <div class="col-12 col-lg-3">
+                <div class="col-12 col-lg-auto">
                     <img src="<?= getImageUrl($footer['hinh_anh']) ?>" class="logo-footer mb-4" alt="Logo">
-                    <h4 class="title-footer"><?= $menu_link[0]['ten'] ?></h4>
-                    <div class="list-footer"><?= $menu_link[0]['noi_dung'] ?></div>
-
-                </div>
-                <div class="col-md-auto col-lg-auto">
-                    <h4 class="title-footer"><?= $menu_link[1]['ten'] ?></h4>
-                    <div class="list-footer"><?= $menu_link[1]['noi_dung'] ?></div>
-                </div>
-                <div class="col-md-auto col-lg-auto">
-                    <h4 class="title-footer"><?= $menu_link[2]['ten'] ?></h4>
-                    <div class="list-footer"><?= $menu_link[2]['noi_dung'] ?></div>
-                </div>
-                <div class="col-md-auto col-lg-auto">
-                    <h4 class="title-footer"><?= $menu_link[3]['ten'] ?></h4>
-                    <div class="list-footer"><?= $menu_link[3]['noi_dung'] ?></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="block footer-bottom">
-        <div class="container-fluid">
-            <div class="row justify-content-between align-items-center g-2">
-                <div class="col-lg-auto">
-                    <div class="social-contact social-contact-footer justify-content-center">
+                    <div class="social-contact social-contact-footer">
                         <span>Theo dõi chúng tôi tại: </span>
                         <?php if ($info['facebook']): ?>
                             <a href="<?= $info['facebook'] ?>" class="item">
@@ -71,15 +48,36 @@
                         <?php endif ?>
                     </div>
                 </div>
-                <div class="col-lg-auto coppyright">
-                    <?= $info['coppy_right'] ?> | <a href="https://phuongnamvina.vn" rel="nofollow" target="_blank"><?= $d->getTxt(131) ?></a>
+                <div class="col-md-auto col-lg-3">
+                    <h4 class="title-footer"><?= $menu_link[0]['ten'] ?></h4>
+                    <div class="list-footer"><?= $menu_link[0]['noi_dung'] ?></div>
+                    <a href="tel:<?= $info['hotline'] ?>" class="box-hotline-footer mt-2">
+                        <div class="icon"><i class="fa-solid fa-phone"></i></div>
+                        <div class="label"><?= $info['hotline'] ?></div>
+                    </a>
+                </div>
+                <div class="col-md-auto col-lg-auto">
+                    <h4 class="title-footer"><?= $menu_link[1]['ten'] ?></h4>
+                    <div class="list-footer"><?= $menu_link[1]['noi_dung'] ?></div>
+                </div>
+                <div class="col-md-auto col-lg-auto">
+                    <h4 class="title-footer"><?= $menu_link[2]['ten'] ?></h4>
+                    <div class="list-footer"><?= $menu_link[2]['noi_dung'] ?></div>
                 </div>
             </div>
         </div>
     </div>
+
+    <?php /* ?>
+    <div class="block footer-bottom">
+        <div class="container-fluid">
+            <?= $info['coppy_right'] ?> | <a href="https://phuongnamvina.vn" rel="nofollow" target="_blank"><?= $d->getTxt(131) ?></a>
+        </div>
+    </div>
+    <?php */ ?>
     <?php if ($footer['background']): ?>
         <div class="bg-cover">
-            <getImageUrl src="<?= getImageUrl($footer['background']) ?>" alt="bg-footer" class="image-cover">
+            <img src="<?= getImageUrl($footer['background']) ?>" alt="bg-footer" class="image-cover">
         </div>
     <?php endif ?>
 </div>

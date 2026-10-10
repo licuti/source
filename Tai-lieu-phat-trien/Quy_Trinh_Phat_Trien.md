@@ -57,6 +57,7 @@ Mô hình áp dụng cho MasterStudy: **Hybrid (Agile Scrum + Waterfall cho phas
     | Search | MySQL FULLTEXT (chưa cần Elasticsearch) |
     | Cronjob | Lịch máy chủ (crontab / Task Scheduler) gọi PHP CLI |
     | Monitoring | `error_log` PHP + bảng `db_lms_cron_runs` + cảnh báo email |
+    | URL portal | Clean URL, không `.php`: `/lms/<portal>/<alias>/<action>` qua `.htaccess` (D10); router parse cả dạng cũ `?p=&a=` |
 
     > `admin/` và `db_user` chỉ phục vụ e-commerce (D2). Tài khoản LMS và tài khoản
     > e-commerce hoàn toàn tách biệt — giảm rủi ro phá nghiệp vụ đang chạy (R9).
@@ -252,7 +253,7 @@ R=Responsible (Thực hiện), A=Accountable (Chịu trách nhiệm chính), C=C
 | R6 | Thay đổi luật thuế TNCN | Thấp | Cao | Config `is_commit_08` ở DB, không hardcode |
 | R7 | Số lượng PH đăng ký đột biến khi khai giảng | Trung bình | Trung bình | Rate-limit login/đăng ký đã có sẵn |
 | R8 | Cron chết không ai biết | Trung bình | Cao | Bảng `db_lms_cron_runs` ghi log mỗi lần chạy + cảnh báo email nếu quá 30 phút không có run mới |
-| R9 | Phá nghiệp vụ e-commerce đang chạy khi thêm LMS | Trung bình | Cao | Schema LMS dùng prefix `db_lms_` tách biệt; smoke test giỏ hàng/đơn hàng/Pancake sync sau mỗi phase |
+| R9 | Phá nghiệp vụ e-commerce đang chạy khi thêm LMS | Trung bình | Cao | Schema LMS dùng prefix `db_lms_` tách biệt; smoke test giỏ hàng/đơn hàng sau mỗi phase |
 
 ---
 

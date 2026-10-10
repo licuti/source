@@ -136,20 +136,6 @@ function donhang_ls_label($code)
     }
     return '#' . $code;
 }
-/** 
- * Đồng bộ đơn hàng lên Pancake CRM
- */
-function donhang_sync_pancake($id) {
-    global $d, $config;
-    require_once __DIR__ . '/services/pancake/PancakeApiClient.php';
-    require_once __DIR__ . '/services/pancake/PancakeOrderPusher.php';
-    $pancakeConfig = function_exists('getPancakeConfig') ? getPancakeConfig() : ($config['pancake'] ?? []);
-    if (!empty($pancakeConfig['api_key'])) {
-        $pancakeApi = new PancakeApiClient($pancakeConfig);
-        $orderPusher = new PancakeOrderPusher($d, $pancakeApi);
-        $orderPusher->pushOrder($id);
-    }
-}
 /* ------------------------------------------------------------------ */
 /* List / detail load                                                 */
 /* ------------------------------------------------------------------ */
@@ -336,7 +322,6 @@ function tiepnhan_don($id_module)
     );
     donhang_log($d, $id, 1, 'Tiếp nhận đơn hàng');
     donhang_flash('success', 'Đã tiếp nhận đơn hàng.');
-    donhang_sync_pancake($id);
     $d->redirect(donhang_back_edit($id));
 }
 
@@ -413,7 +398,6 @@ function luu_xuly($id_module)
 
     if ($ok) {
         donhang_flash('success', 'Đã cập nhật ' . implode(', ', $msg) . '.');
-        donhang_sync_pancake($id);
     } else {
         donhang_flash('warning', 'Không có thay đổi nào được lưu.');
     }

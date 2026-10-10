@@ -55,7 +55,6 @@ function luudulieu($id_module)
         'zalo', 'thoi_gian', 'coppy_right', 'map', 'link_map', 'messenger',
         'youtube', 'pinterest', 'instagram', 'skype', 'whatsapp', 'telegram',
         'iframe', 'tiktok', 'shoppe', 'site_key', 'secret_key',
-        'pancake_api_key', 'pancake_shop_id', 'pancake_api_url', 'pancake_sync_to_crm',
         'smtp_host', 'smtp_port', 'smtp_user', 'smtp_pass', 'smtp_secure'
     );
     $shellFields = array('map', 'link_map');

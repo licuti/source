@@ -55,18 +55,6 @@ if (isset($_POST['dathang'])) {
             $d->insert($data_ct);
         }
 
-        // --- Bắt đầu: Đồng bộ đơn hàng lên Pancake CRM ---
-        require_once __DIR__ . '/../admin/sources/services/pancake/PancakeApiClient.php';
-        require_once __DIR__ . '/../admin/sources/services/pancake/PancakeOrderPusher.php';
-        global $config;
-        $pancakeConfig = function_exists('getPancakeConfig') ? getPancakeConfig() : ($config['pancake'] ?? []);
-        if (!empty($pancakeConfig['api_key'])) {
-            $pancakeApi = new PancakeApiClient($pancakeConfig);
-            $orderPusher = new PancakeOrderPusher($d, $pancakeApi);
-            $orderPusher->pushOrder($id_dh);
-        }
-        // --- Kết thúc: Đồng bộ đơn hàng lên Pancake CRM ---
-
         // Lưu lịch sử sử dụng mã giảm giá (Nếu có)
         if (!empty($_SESSION['ma_sale'])) {
             $data_km_ls = [

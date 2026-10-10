@@ -16,6 +16,10 @@
 >   `db_lms_users` (role ENUM); `admin/` e-commerce và `db_user` **nguyên vẹn** (D3).
 > - **§5 NFR**: bỏ Redis/S3/Elasticsearch/partition/10k concurrent/i18n (xem chi tiết mục §5).
 >
+> Bổ sung kỹ thuật (không thay đổi nghiệp vụ):
+> - **D10 — URL portal**: clean URL `/lms/<portal>/<alias>/<action>` (không `.php`),
+>   qua `.htaccess` rewrite; chi tiết `Huong-Dan-Phat-Trien-Page.md` §3.3.1.
+>
 > Quyết định đầy đủ: xem `Quy_Trinh_Phat_Trien.md` (v3.0) và file kế hoạch
 > `1791257567462-lms-masterstudy-php-extend.md`.
 

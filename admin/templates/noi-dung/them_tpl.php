@@ -70,21 +70,6 @@ $backUrl = admin_url(array_filter([
                                         'placeholder' => 'URL hoặc đường dẫn',
                                     ]); ?>
 
-                                    <?php if ($i === 0): ?>
-                                        <div class="d-flex flex-wrap gap-3 mb-3">
-                                            <?php component('form/checkbox', [
-                                                'label' => 'Nofollow', 'name' => 'nofollow',
-                                                'checked' => ($main['nofollow'] ?? 0) == 1,
-                                                'inline' => true, 'switch' => false,
-                                            ]); ?>
-                                            <?php component('form/checkbox', [
-                                                'label' => 'Mở tab mới', 'name' => 'target',
-                                                'checked' => ($main['target'] ?? 0) == 1,
-                                                'inline' => true, 'switch' => false,
-                                            ]); ?>
-                                        </div>
-                                    <?php endif; ?>
-
                                     <?php component('form/editor', [
                                         'label' => 'Nội dung' . $sfx, 'name' => 'noi_dung[]',
                                         'id' => 'noi_dung_' . $code, 'value' => $row['noi_dung'] ?? '',
@@ -123,6 +108,16 @@ $backUrl = admin_url(array_filter([
                     <?php component('form/checkbox', [
                         'label' => 'Hiển thị', 'name' => 'hien_thi', 'id' => 'hien_thi',
                         'checked' => $isEdit ? (($main['hien_thi'] ?? 0) == 1) : true,
+                    ]); ?>
+
+                    <?php component('form/checkbox', [
+                        'label' => 'Nofollow', 'name' => 'nofollow', 'id' => 'nofollow',
+                        'checked' => ($main['nofollow'] ?? 0) == 1,
+                    ]); ?>
+
+                    <?php component('form/checkbox', [
+                        'label' => 'Mở tab mới', 'name' => 'target', 'id' => 'target',
+                        'checked' => ($main['target'] ?? 0) == 1,
                     ]); ?>
 
                     <?php component('form/actions_bar', [

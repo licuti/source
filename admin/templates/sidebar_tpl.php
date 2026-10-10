@@ -70,15 +70,6 @@ $displayName = isset($_SESSION['name']) ? (string) $_SESSION['name'] : '';
 
     <div class="sidebar-wrapper">
 
-        <div class="d-flex align-items-center gap-2 px-3 py-3 border-bottom border-secondary-subtle">
-            <img src="<?= e($avatar) ?>" class="rounded-circle object-fit-cover"
-                 width="38" height="38" alt="Ảnh đại diện">
-            <div class="small">
-                <div class="fw-medium"><?= e($displayName) ?></div>
-                <span class="text-success"><i class="fa-solid fa-circle" style="font-size:.5rem"></i> Online</span>
-            </div>
-        </div>
-
         <nav class="mt-2">
             <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation"
                 aria-label="Main navigation" data-accordion="false">

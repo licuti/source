@@ -31,21 +31,7 @@ class ProductService
      */
     public function delete($id_code)
     {
-        global $config;
         $id_code = (int) $id_code;
-
-        // Xóa trên Pancake CRM nếu cấu hình bật
-        $pancakeConfig = function_exists('getPancakeConfig') ? getPancakeConfig() : ($config['pancake'] ?? []);
-        if (!empty($pancakeConfig['sync_to_crm']) && !empty($pancakeConfig['api_key'])) {
-            $product = $this->db->safeFetchOne("SELECT pancake_product_id FROM #_sanpham WHERE id_code = ? LIMIT 1", [$id_code]);
-            if ($product && !empty($product['pancake_product_id'])) {
-                require_once __DIR__ . '/pancake/PancakeApiClient.php';
-                require_once __DIR__ . '/pancake/PancakeProductPusher.php';
-                $apiClient = new PancakeApiClient($pancakeConfig);
-                $pusher = new PancakeProductPusher($this->db, $apiClient);
-                $pusher->deleteProduct($product['pancake_product_id']);
-            }
-        }
 
         // Xóa biến thể
         $this->variantService->deleteByProduct($id_code);
@@ -73,29 +59,11 @@ class ProductService
      */
     public function deleteMany(array $ids)
     {
-        global $config;
         if (empty($ids)) {
             return false;
         }
 
         $ids = array_map('intval', $ids);
-
-        // Xóa trên Pancake CRM nếu cấu hình bật
-        $pancakeConfig = function_exists('getPancakeConfig') ? getPancakeConfig() : ($config['pancake'] ?? []);
-        if (!empty($pancakeConfig['sync_to_crm']) && !empty($pancakeConfig['api_key'])) {
-            require_once __DIR__ . '/pancake/PancakeApiClient.php';
-            require_once __DIR__ . '/pancake/PancakeProductPusher.php';
-            $apiClient = new PancakeApiClient($pancakeConfig);
-            $pusher = new PancakeProductPusher($this->db, $apiClient);
-            
-            $ids_str = implode(',', $ids);
-            $products = $this->db->safeFetch("SELECT pancake_product_id FROM #_sanpham WHERE id_code IN ($ids_str)");
-            foreach ($products as $p) {
-                if (!empty($p['pancake_product_id'])) {
-                    $pusher->deleteProduct($p['pancake_product_id']);
-                }
-            }
-        }
 
         foreach ($ids as $id) {
             $this->variantService->deleteByProduct($id);
@@ -506,17 +474,6 @@ class ProductService
             $product_attributes_json,
             $temp_id_map
         );
-
-        // Đồng bộ lên Pancake CRM nếu cấu hình bật
-        global $config;
-        $pancakeConfig = function_exists('getPancakeConfig') ? getPancakeConfig() : ($config['pancake'] ?? []);
-        if (!empty($pancakeConfig['sync_to_crm']) && !empty($pancakeConfig['api_key'])) {
-            require_once __DIR__ . '/pancake/PancakeApiClient.php';
-            require_once __DIR__ . '/pancake/PancakeProductPusher.php';
-            $apiClient = new PancakeApiClient($pancakeConfig);
-            $pusher = new PancakeProductPusher($this->db, $apiClient);
-            $pusher->pushProduct($id_code);
-        }
 
         $this->redirectAfterSave($post, $id_code, $link_option);
     }

@@ -226,15 +226,6 @@ $ngayDangLocal = !empty($main['ngay_dang'])
                             'back_url' => admin_url(['p' => $MODULE, 'a' => 'man']),
                             'can_edit' => $canEdit,
                         ]); ?>
-                        
-                        <?php if ($isEdit): ?>
-                        <div class="mt-3 border-top pt-3 text-center">
-                            <p class="small text-secondary mb-2">Trạng thái POS: <?= !empty($main['pancake_product_id']) ? '<span class="text-success"><i class="fa-solid fa-check-circle me-1"></i> Đã đồng bộ</span>' : '<span class="text-warning"><i class="fa-solid fa-circle-exclamation me-1"></i> Chưa đồng bộ</span>' ?></p>
-                            <button type="button" class="btn btn-sm btn-outline-primary btn-push-pancake" data-id="<?= $editId ?>">
-                                <i class="fa-solid fa-cloud-arrow-up me-1"></i> Đồng bộ lên Pancake
-                            </button>
-                        </div>
-                        <?php endif; ?>
                     <?php component('card_close', ['body' => '']); ?>
 
                     <?php component('card_open', ['title' => 'Thông tin đăng']); ?>
@@ -423,46 +414,5 @@ function xoa_hinh_sp(id){
         }
     });
 }
-
-// Đồng bộ sản phẩm lên Pancake
-$(document).ready(function() {
-    $('.btn-push-pancake').click(function(e) {
-        e.preventDefault();
-        var id = $(this).data('id');
-        var $btn = $(this);
-        
-        $btn.html('<i class="fa-solid fa-spinner fa-spin me-1"></i> Đang xử lý...').addClass('disabled');
-        
-        $.ajax({
-            url: 'ajax_pancake_push.php',
-            type: 'POST',
-            data: { id: id, csrf_token: '<?=admin_csrf_token()?>' },
-            dataType: 'text',
-            success: function(rawText) {
-                var res;
-                try {
-                    res = JSON.parse(rawText);
-                } catch(e) {
-                    alert('Lỗi phản hồi từ server: Không phải JSON hợp lệ.\n\nChi tiết:\n' + rawText.substring(0, 500));
-                    $btn.html('<i class="fa-solid fa-cloud-arrow-up me-1"></i> Đồng bộ lên Pancake').removeClass('disabled');
-                    console.error("Raw response:", rawText);
-                    return;
-                }
-                
-                if (res.success) {
-                    alert('Thành công: ' + res.message);
-                    location.reload();
-                } else {
-                    alert('Lỗi: ' + res.message);
-                    $btn.html('<i class="fa-solid fa-cloud-arrow-up me-1"></i> Đồng bộ lên Pancake').removeClass('disabled');
-                }
-            },
-            error: function(xhr, status, error) {
-                alert('Có lỗi kết nối máy chủ.\nHTTP Status: ' + xhr.status + '\nChi tiết: ' + error);
-                $btn.html('<i class="fa-solid fa-cloud-arrow-up me-1"></i> Đồng bộ lên Pancake').removeClass('disabled');
-            }
-        });
-    });
-});
 </script>
 

@@ -146,7 +146,7 @@ function showdulieu()
 
     $groupOpts = array();
     foreach ($nd_groups as $g) {
-        $groupOpts[(string) $g['id_code']] = $g['ten'];
+        $groupOpts[(string) $g['id_code']] = (!empty($g['label']) && trim((string) $g['label']) !== '') ? $g['label'] : ($g['ten'] ?? '');
     }
 }
 
@@ -164,10 +164,12 @@ function luunhom($id_module)
     $hinh_anh   = addslashes(trim((string) ($_POST['hinh_anh'] ?? '')));
     $background = addslashes(trim((string) ($_POST['background'] ?? '')));
     $tens       = $_POST['ten'] ?? array();
+    $labels     = $_POST['label'] ?? array();
     $noidungs   = $_POST['noi_dung'] ?? array();
     $links      = $_POST['link'] ?? array();
     $id_rows    = $_POST['id_row'] ?? array();
     $ten0       = trim((string) ($tens[0] ?? ''));
+    $label0     = is_array($labels) ? trim((string) ($labels[0] ?? '')) : trim((string) $labels);
     $cap        = $_POST['capnhat'] ?? 'capnhat';
 
     if ($ten0 === '') {
@@ -182,13 +184,15 @@ function luunhom($id_module)
         $d->reset();
         $d->setTable('cf_parent');
         $d->setWhere('id', $id_loai);
-        if (!$d->update(array('ten' => addslashes($ten0)))) {
+        if (!$d->update(array('ten' => addslashes($ten0), 'label' => addslashes($label0)))) {
             noi_dung_flash('error', 'Cập nhật nhóm thất bại.');
             noi_dung_back('', $id_loai);
             return;
         }
         foreach (get_json('lang') as $key => $value) {
+            $labelVal = is_array($labels) ? trim((string) ($labels[$key] ?? '')) : trim((string) $labels);
             $data = array(
+                'label'    => $d->clear(addslashes($labelVal)),
                 'ten'      => $d->clear(addslashes(trim((string) ($tens[$key] ?? '')))),
                 'noi_dung' => $d->clear(addslashes((string) ($noidungs[$key] ?? ''))),
                 'link'     => $d->clear(addslashes((string) ($links[$key] ?? ''))),
@@ -213,7 +217,7 @@ function luunhom($id_module)
     } else {
         $d->reset();
         $d->setTable('cf_parent');
-        $id_code = $d->insert(array('ten' => addslashes($ten0), 'type' => 1));
+        $id_code = $d->insert(array('ten' => addslashes($ten0), 'label' => addslashes($label0), 'type' => 1));
         if (!$id_code) {
             noi_dung_flash('error', 'Thêm nhóm thất bại.');
             noi_dung_back();
@@ -221,9 +225,11 @@ function luunhom($id_module)
         }
         $savedGroupId = (int) $id_code;
         foreach (get_json('lang') as $key => $value) {
+            $labelVal = is_array($labels) ? trim((string) ($labels[$key] ?? '')) : trim((string) $labels);
             $d->reset();
             $d->setTable('#_category_noidung');
             $d->insert(array(
+                'label'      => $d->clear(addslashes($labelVal)),
                 'ten'        => $d->clear(addslashes(trim((string) ($tens[$key] ?? '')))),
                 'noi_dung'   => $d->clear(addslashes((string) ($noidungs[$key] ?? ''))),
                 'link'       => $d->clear(addslashes((string) ($links[$key] ?? ''))),
@@ -295,6 +301,8 @@ function noi_dung_content_row($key, $id_loai, $hinh_anh, $hien_thi, $so_thu_tu)
         'so_thu_tu' => $so_thu_tu,
         'nofollow'  => isset($_POST['nofollow']) ? 1 : 0,
         'target'    => isset($_POST['target']) ? 1 : 0,
+        // NOT NULL, không default — phải khai báo tường minh
+        'ma_video'  => '',
     );
 }
 
@@ -311,8 +319,16 @@ function luudulieu($id_module)
 
     $id        = isset($_REQUEST['id']) ? addslashes($_REQUEST['id']) : '';
     $hinh_anh  = addslashes($_POST['hinh_anh'] ?? '');
-    $id_loai   = addslashes($_POST['id_loai'] ?? '');
-    $so_thu_tu = ($_POST['so_thu_tu'] ?? '') !== '' ? $_POST['so_thu_tu'] : 0;
+    $id_loai   = (int) ($_POST['id_loai'] ?? 0);
+    if ($id_loai <= 0) {
+        $id_loai = (int) ($_GET['parent'] ?? 0);
+    }
+    if ($id_loai <= 0) {
+        noi_dung_flash('error', 'Vui lòng chọn nhóm nội dung.');
+        noi_dung_back($parentGet);
+        return;
+    }
+    $so_thu_tu = ($_POST['so_thu_tu'] ?? '') !== '' ? (int) $_POST['so_thu_tu'] : 0;
     $hien_thi  = isset($_POST['hien_thi']) ? 1 : 0;
     $cap       = $_POST['capnhat'] ?? 'capnhat';
     $ten0      = trim((string) ($_POST['ten'][0] ?? ''));

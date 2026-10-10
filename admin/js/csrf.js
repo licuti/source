@@ -5,8 +5,7 @@
  *
  * Cơ chế:
  *  - Hook `$.ajaxPrefilter` của jQuery: thêm `csrf_token` vào mọi POST tới
- *    các endpoint admin (sources/ajax.php, sources/aj_checkbox.php,
- *    ajax_pancake_*.php).
+ *    các endpoint admin (sources/ajax.php, sources/aj_checkbox.php).
  *  - Bọc `AdminUI.http.post` để luôn gửi kèm `csrf_token`.
  *
  * Form POST thường (submit trang) KHÔNG đi qua đây — các form đã có
@@ -38,7 +37,7 @@
     /* Khớp các endpoint admin cần CSRF. */
     function isAdminAjaxUrl(url) {
         if (!url) { return false; }
-        return /(?:^|\/)(?:sources\/ajax\.php|sources\/aj_checkbox\.php|ajax_pancake_[a-z_]+\.php)(?:[?#]|$)/i.test(url);
+        return /(?:^|\/)(?:sources\/ajax\.php|sources\/aj_checkbox\.php)(?:[?#]|$)/i.test(url);
     }
 
     /* 1) jQuery: áp cho mọi $.ajax POST tới endpoint admin. */

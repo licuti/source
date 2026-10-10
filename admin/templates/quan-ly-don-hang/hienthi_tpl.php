@@ -118,12 +118,6 @@ foreach (donhang_trangthai_map() as $k => $m) {
             'actions'    => ['delete' => 'Xóa'],
             'can_delete' => $canDelete,
             'can_edit'   => false,
-            'extra_actions' => [[
-                'url'   => '#',
-                'label' => 'Sync đơn hàng từ CRM',
-                'icon'  => 'fa-solid fa-cloud-arrow-down',
-                'class' => 'btn-outline-success btn-sync-pancake-orders',
-            ]],
             'filters'    => [
                 [
                     'name'    => 'status',
@@ -315,34 +309,3 @@ foreach (donhang_trangthai_map() as $k => $m) {
         <?php component('card_close', ['body' => 'none']); ?>
     </div>
 </div>
-
-<script>
-$(document).ready(function() {
-    $('.btn-sync-pancake-orders').click(function(e) {
-        e.preventDefault();
-        var $btn = $(this);
-        var originalText = $btn.html();
-        $btn.html('<i class="fa-solid fa-spinner fa-spin"></i> Đang đồng bộ...').addClass('disabled');
-
-        $.ajax({
-            url: 'ajax_pancake_order_sync.php',
-            type: 'POST',
-            data: { page: 1 },
-            dataType: 'json',
-            success: function(res) {
-                if (res.success) {
-                    alert("Đã đồng bộ thành công " + res.total_synced + " đơn hàng từ CRM!");
-                    location.reload();
-                } else {
-                    alert("Lỗi đồng bộ: " + res.message);
-                    $btn.html(originalText).removeClass('disabled');
-                }
-            },
-            error: function() {
-                alert("Có lỗi kết nối khi đồng bộ đơn hàng.");
-                $btn.html(originalText).removeClass('disabled');
-            }
-        });
-    });
-});
-</script>

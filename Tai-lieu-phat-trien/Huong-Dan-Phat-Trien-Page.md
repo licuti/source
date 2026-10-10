@@ -31,7 +31,7 @@ named arguments (8.0+). Dùng `isset($x) ? $x : ''` hoặc `$x ?? ''`.
 ```
 index.php?p=<alias>&a=<action>
    │
-   ├─ admin/index.php            bootstrap: session check, config/function/class, page_assets
+   ├─ admin/index.php            bootstrap: session check, config/function/class, asset shell
    │
    └─ admin/lib/file_router_admin.php
         │  1. Whitelist alias: preg_match('/^[a-z0-9-]+$/', $p)         (dòng 19)
@@ -92,7 +92,10 @@ CREATE TABLE `db_user_permission_group` (
 | `admin_csrf_token($rotate)` | 52 | Sinh token, tự đồng bộ `$_SESSION['token']` cũ |
 | `admin_csrf_verify($token)` | 79 | `hash_equals()` với token session; `null` → lấy `$_POST['csrf_token']` |
 | `admin_flash($type, $msg)` | 98 | Thông báo 1 lần qua session, shell tự render (`admin/index.php:136`) |
-| `admin_page_assets($template)` | `page_assets.php` | Nạp JS/CSS theo module (CKEditor chỉ ở form, Sortable chỉ trang kéo-thả) |
+
+> Asset shell: từ 2026-10-07, `admin/index.php` nạp đồng bộ asset cho mọi trang (jQuery +
+> Fancybox + CKEditor ở head, Sortable ở body) — không còn `admin_page_assets()` /
+> `page_assets.php` (đã xóa). Thêm module mới không cần cập nhật gì.
 
 ### 1.5. UI component (`admin/templates/components/`)
 
@@ -249,11 +252,12 @@ AdminUI.http.post('./sources/ajax.php', { do: 'get_lienhe', id: id })
     .then(function (res) { /* res.json, res.text, res.ok */ });
 ```
 
-### Bước 6 — Asset theo module
+### Bước 6 — Asset
 
-Nếu page cần thư viện riêng (CKEditor, Sortable, chart…): thêm mapping vào
-`admin/lib/page_assets.php` theo `$template`. **Không** nạp `<script>`/`<link>` trực tiếp
-trong template — trừ JS inline nhỏ của chính trang đó (xem `hienthi_tpl.php:201`).
+Shell `admin/index.php` đã nạp đồng bộ cho mọi trang: jQuery + Fancybox + CKEditor
+(head) và Sortable (body). Thêm module mới **không** cần cập nhật chỗ nào cả.
+**Không** nạp `<script>`/`<link>` thư viện trực tiếp trong template — trừ JS inline
+nhỏ của chính trang đó (xem `hienthi_tpl.php:201`).
 
 ### Bước 7 — Kiểm tra
 
@@ -370,8 +374,117 @@ session; mỗi entry point (`lms/admin.php`, `lms/teacher.php`, `lms/student.php
 Nhân bản `file_router_admin.php` nhưng:
 - Lookup `db_lms_modules` thêm điều kiện `portal = _LMS_PORTAL`.
 - Dùng `lms_checkPermission($alias)` thay `checkPermission()`.
-- Include `lms/<portal>/sources/<alias>.php` (ví dụ `lms/admin/sources/lms-hoc-vien.php`).
-- Alias LMS có prefix `lms-` để nhìn URL là biết (URL: `lms/admin.php?p=lms-hoc-vien&a=man`).
+- Include `lms/app/<portal>/sources/<alias>.php` (ví dụ `lms/app/admin/sources/lms-hoc-vien.php`).
+  **Lưu ý:** portal dir nằm dưới `lms/app/`, KHÔNG phải `lms/<portal>/`. Nếu đặt
+  `lms/admin/` thì URL `/lms/admin` trùng tên thư mục thật → mod_dir's
+  DirectorySlash sinh ra 301 dư (`/lms/admin/?lms_route=`) mà mod_rewrite không
+  ghi đè được (đã verify trên Laragon Apache 2.4). Đây cũng là lý do rule
+  `.htaccess` dùng substitution path tuyệt đối `/lms/$1.php`.
+- Alias LMS có prefix `lms-` để nhìn URL là biết.
+
+#### 3.3.1. URL clean — không hiện `.php` (quyết định D10)
+
+URL mặt ngoài dạng **path**, không có `.php` hay `?p=&a=`:
+
+| URL mặt ngoài | Tương đương query cũ |
+|---|---|
+| `/lms/` | trang chọn vai trò (`lms/index.php`, qua `DirectoryIndex`) |
+| `/lms/admin` | `lms/admin.php` — dashboard |
+| `/lms/admin/login` | `lms/admin.php?act=login` |
+| `/lms/admin/logout` | `lms/admin.php?act=logout` |
+| `/lms/admin/lms-hoc-vien` | `lms/admin.php?p=lms-hoc-vien&a=man` |
+| `/lms/admin/lms-hoc-vien/them` | `lms/admin.php?p=lms-hoc-vien&a=them` |
+| `/lms/teacher/lms-lich-day` | `lms/teacher.php?p=lms-lich-day&a=man` |
+| `/lms/student/lms-lich-hoc` | `lms/student.php?p=lms-lich-hoc&a=man` |
+
+ID lẻ (`?id=5`), phân trang (`?page=2`)… **vẫn dùng query** — không biến thành slug.
+
+**Thêm vào `.htaccess` (chèn SAU khối `-d`/`-s` đầu file, TRƯỚC các rule `.html` của storefront):**
+
+```apache
+# ---- LMS MasterStudy: /lms/<portal>[/<alias>[/<action>]] ----
+# File/thư mục thật (admin.php, asset css/js) đã bị khối -d/-s bên trên bỏ qua.
+RewriteRule ^lms/?$                                lms/index.php [L]
+RewriteRule ^lms/(admin|teacher|student)/?$        lms/$1.php?lms_route=     [QSA,L]
+RewriteRule ^lms/(admin|teacher|student)/(.+?)/?$  lms/$1.php?lms_route=$2   [QSA,L]
+```
+
+> Tại sao an toàn cho e-commerce:
+> - Khối `-d`/`-s` đầu `.htaccess` đã `RewriteRule ^.*$ - [L]` với mọi file/thư mục
+>   thật → `lms/admin.php`, `lms/admin/public/js/x.js`… chạy nguyên, không bị rewrite.
+> - Rule LMS đặt **trước** rule storefront `^([a-z]+)/$` (dòng 55) nên `/lms/...` không
+>   bị nuốt vào `index.php?lang=lms`.
+> - `[QSA]` giữ nguyên `?id=` / `?page=`.
+
+**Production nginx** (hosting không đọc `.htaccess`):
+
+```nginx
+location ~ ^/lms/(admin|teacher|student)(/.*)?$ {
+    try_files $uri @lms_rewrite;
+}
+location @lms_rewrite {
+    rewrite ^/lms/(admin|teacher|student)(/.*)?$ /lms/$1.php?lms_route=$2 last;
+}
+```
+
+#### 3.3.2. Parse 2 dạng URL (mới + cũ)
+
+Router đổ path về đúng `$p`/`$a` mà cơ chế whitelist + `lms_check_permission` đã dùng.
+URL cũ `lms/admin.php?p=...&a=...` **vẫn hoạt động** (tiện debug, bookmark cũ):
+
+```php
+// 1) Ưu tiên path dạng /lms/<portal>/<alias>[/<action>]
+$route  = isset($_GET['lms_route']) ? trim((string) $_GET['lms_route'], "/\r\n") : '';
+$parts  = $route !== '' ? explode('/', $route) : array();
+
+$reserved = array('login', 'logout', 'dashboard');   // action không thuộc module nào
+
+if (!empty($parts) && in_array($parts[0], $reserved, true)) {
+    $p = '';            // /lms/admin/login → a=login
+    $a = $parts[0];
+} elseif (!empty($parts)) {
+    $p = $parts[0];     // /lms/admin/lms-hoc-vien[/them]
+    $a = isset($parts[1]) ? $parts[1] : 'man';
+}
+
+// 2) Backward compat: ?p=&a= cũ
+if (!isset($p)) { $p = isset($_GET['p']) ? (string) $_GET['p'] : ''; }
+if (!isset($a)) { $a = isset($_GET['a']) ? (string) $_GET['a'] : ''; }
+
+// 3) Chưa đăng nhập → redirect /lms/<portal>/login
+// 4) Whitelist ^[a-z0-9-]+$ + lookup db_lms_modules (where portal = _LMS_PORTAL)
+//    + lms_checkPermission() → require lms/<portal>/sources/<alias>.php
+```
+
+#### 3.3.3. Helper sinh link trong template
+
+```php
+/**
+ * @param string $alias  alias module ('' = dashboard)
+ * @param string $action
+ * @param array  $params query thêm (id, page, search...)
+ * @return string
+ */
+function lms_url($alias = '', $action = '', array $params = array())
+{
+    $base = '/lms/' . _LMS_PORTAL;              // /lms/admin | /lms/teacher | /lms/student
+    if ($alias === '') {
+        return $base . ($params ? '?' . http_build_query($params) : '');
+    }
+    $url = $base . '/' . $alias . ($action !== '' ? '/' . $action : '');
+    return $params ? $url . '?' . http_build_query($params) : $url;
+}
+
+// lms_url('lms-hoc-vien', 'them', array('id' => 5))
+//   → /lms/admin/lms-hoc-vien/them?id=5
+```
+
+> **Cấm** viết tay `href="/lms/admin/lms-hoc-vien"` trong template — luôn qua
+> `lms_url()` để khi đổi scheme chỉ sửa 1 chỗ.
+
+> **Không khuyến nghị** gom tất cả về 1 front controller `lms/index.php` (dù rule
+> đơn giản hơn): D3 chốt 3 entry point đối xứng, tách file giúp lỗi 1 portal không
+> hạ cả hệ thống.
 
 ### 3.4. Recipe tạo page LMS mới
 
@@ -382,7 +495,7 @@ Giống hệt §2 (6 bước), thay:
 | `db_module_admin` | `db_lms_modules` (+ cột `portal`) |
 | `db_user_permission_group` | `db_lms_role_permissions` (theo role) |
 | `checkPermission*()` | `lms_checkPermission($alias, $action)` |
-| `admin/index.php?p=&a=` | `lms/<portal>.php?p=&a=` |
+| `admin/index.php?p=&a=` | `lms/<portal>.php?p=&a=` (URL mặt ngoài: `/lms/<portal>/<alias>/<action>` — §3.3.1, D10) |
 | `admin/sources/<alias>.php` | `lms/<portal>/sources/<alias>.php` |
 | `admin/templates/<alias>/x_tpl.php` | `lms/<portal>/templates/<alias>/x_tpl.php` |
 | `templates/components/*` | `lms/lib/lms_components/*` (copy/component dùng chung) |
@@ -391,8 +504,8 @@ Giống hệt §2 (6 bước), thay:
 **Ví dụ cụ thể** — ADM-01 quản lý học viên:
 1. `INSERT INTO db_lms_modules (parent, name, alias, portal, icon, so_thu_tu, hien_thi) VALUES (0, 'Quản lý học viên', 'lms-hoc-vien', 'admin', 'fa-solid fa-user-graduate', 2, 1);`
 2. `INSERT INTO db_lms_role_permissions (id_module, role, can_view, can_edit, can_delete) VALUES (<id>, 'admin', 1, 1, 1);`
-3. `lms/admin/sources/lms-hoc-vien.php` (source: `man`/`add`/`edit`/`delete`, mỗi action check `lms_checkPermission('lms-hoc-vien', 'edit'|'delete', 'admin')`).
-4. `lms/admin/templates/lms-hoc-vien/hienthi_tpl.php` + `form_tpl.php`.
+3. `lms/app/admin/sources/lms-hoc-vien.php` (source: `man`/`add`/`edit`/`delete`, mỗi action check `lms_checkPermission('lms-hoc-vien', 'edit'|'delete', 'admin')`).
+4. `lms/app/admin/templates/lms-hoc-vien/hienthi_tpl.php` + `form_tpl.php`.
 
 ### 3.5. Phân quyền cấp dòng (row-level) — KHÔNG làm trong router
 
@@ -423,10 +536,11 @@ Quy tắc: router/page permission quyết định **được vào trang không**
 - [ ] Mỗi action kiểm `lms_checkPermission($alias, $action, $portal)` trước khi xử lý.
 - [ ] Query dùng `safeFetch`/`safeFetchOne`/`safeExec` (bind tham số); whitelist cột sort/search.
 - [ ] Template hậu tố `_tpl.php`; mọi output qua `e()`.
+- [ ] Mọi link nội bộ qua `lms_url()` (không viết tay `/lms/<portal>/...`) — §3.3.3.
 - [ ] Mọi POST có CSRF (`lms_csrf_verify()`); endpoint AJAX có auth guard + CSRF + quyền.
 - [ ] Logic nghiệp vụ nằm trong `lms/services/Lms/*Service.php`, không trong template.
 - [ ] Logic tiền bạc có PHPUnit test pass (Phase 2 trở đi).
-- [ ] Asset nạp qua `page_assets` tương đương, không nhúng thư viện trực tiếp.
+- [ ] Asset shell `admin/index.php` đã đủ (jQuery/Fancybox/CKEditor/Sortable), không nhúng thư viện trực tiếp.
 - [ ] `php -l` 0 lỗi (PHP 7.3).
 - [ ] Test 2 account: có quyền / không quyền + sai portal bị từ chối (D9).
 - [ ] UI khớp mockup PNG ở `Tai-lieu-phat-trien/<role>/`.
@@ -442,9 +556,10 @@ Quy tắc: router/page permission quyết định **được vào trang không**
 | Shell admin (template + asset + CSRF) | `admin/index.php` |
 | Hàm phân quyền | `admin/lib/class.php:588-650` |
 | Helper CSRF/flash | `admin/lib/function.php:52-105` |
-| Asset theo module | `admin/lib/page_assets.php` |
+| Asset shell | `admin/index.php` (nạp đồng bộ mọi trang) |
 | Module mẫu (nhỏ, đọc dễ) | `admin/sources/lien-he.php` + `admin/templates/lien-he/hienthi_tpl.php` |
 | Component UI | `admin/templates/components/README.md`, `js/ui-adapter.js` |
 | Bảo mật đã gia cố | `ANALYSIS-ADMIN-REVIEW.md`, `admin/lib/README.md` |
-| Kế hoạch LMS | `1791257567462-lms-masterstudy-php-extend.md` (D3, §4.1, §5.1) |
+| Kế hoạch LMS | `1791257567462-lms-masterstudy-php-extend.md` (D3, D10, §4.1, §5.1) |
 | RBAC LMS | `SRS_MasterStudy.md` §4 |
+| URL clean LMS (D10) | `.htaccess` (rule `^lms/`) + mục §3.3.1 của file này |

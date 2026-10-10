@@ -60,6 +60,17 @@
                         <div id="header-cart-count" class="label-quantity header-cart-count"><?= count($_SESSION['cart'] ?? []) ?></div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-handbag-icon lucide-handbag"><path d="M2.048 18.566A2 2 0 0 0 4 21h16a2 2 0 0 0 1.952-2.434l-2-9A2 2 0 0 0 18 8H6a2 2 0 0 0-1.952 1.566z"/><path d="M8 11V6a4 4 0 0 1 8 0v5"/></svg>
                     </a>
+
+                    <?php // LMS MasterStudy (D8): nút vào trang chọn vai trò LMS. Chỉ THÊM thẻ <a> + CSS scoped (btn-lms-login), không sửa code cũ. ?>
+                    <link rel="stylesheet" href="<?= URLPATH ?>lms/public/css/lms-header-button.css">
+                    <a href="<?= URLPATH ?>lms/" class="btn-lms-login" title="Đăng nhập LMS MasterStudy" aria-label="Đăng nhập LMS MasterStudy">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 3 3 7l9 4 7.5-3.333"/>
+                            <path d="M6 10.5V15c0 1.657 2.686 3 6 3s6-1.343 6-3v-4.5"/>
+                            <path d="M21 7v5"/>
+                        </svg>
+                    </a>
+
                     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
                         data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
                         aria-label="Toggle navigation">

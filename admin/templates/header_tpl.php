@@ -52,14 +52,16 @@ if ($displayName === '' && !empty($user_login['ho_ten'])) {
             <li class="nav-item dropdown user-menu">
                 <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-2"
                    data-bs-toggle="dropdown">
-                    <img src="<?= e($avatar) ?>" class="rounded-circle object-fit-cover"
-                         width="32" height="32" alt="Ảnh đại diện">
+                    <div style="width: 32px; height: 32px;" class="rounded-circle overflow-hidden flex-shrink-0">
+                        <img src="<?= e($avatar) ?>" class="w-100 h-100 object-fit-cover" alt="Ảnh đại diện">
+                    </div>
                     <span class="d-none d-md-inline"><?= e($displayName) ?></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow">
                     <li class="px-3 py-2 text-center border-bottom">
-                        <img src="<?= e($avatar) ?>" class="rounded-circle object-fit-cover mb-2"
-                             width="64" height="64" alt="Ảnh đại diện">
+                        <div style="width: 64px; height: 64px;" class="rounded-circle overflow-hidden mx-auto mb-2">
+                            <img src="<?= e($avatar) ?>" class="w-100 h-100 object-fit-cover" alt="Ảnh đại diện">
+                        </div>
                         <p class="mb-0 fw-medium"><?= e($displayName) ?></p>
                     </li>
                     <li>
