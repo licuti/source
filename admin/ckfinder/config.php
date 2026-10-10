@@ -147,13 +147,13 @@ $config['accessControl'][] = array(
 
 $config['overwriteOnUpload'] = false;
 $config['checkDoubleExtension'] = true;
-$config['disallowUnsafeCharacters'] = false;
+$config['disallowUnsafeCharacters'] = true;
 $config['secureImageUploads'] = true;
 $config['checkSizeAfterScaling'] = true;
 $config['htmlExtensions'] = array('html', 'htm', 'xml', 'js');
 $config['hideFolders'] = array('.*', 'CVS', '__thumbs');
 $config['hideFiles'] = array('.*');
-$config['forceAscii'] = false;
+$config['forceAscii'] = true;
 $config['xSendfile'] = false;
 
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_debug
