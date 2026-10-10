@@ -1,0 +1,50 @@
+/* ==========================================================================
+   Nút "Đăng nhập LMS" trên header storefront (T8, D8).
+   Scoped hoàn toàn vào class .btn-lms-login — không đụng style e-commerce.
+   ========================================================================== */
+
+.btn-lms-login {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin-left: .35rem;
+    border-radius: 50%;
+    color: inherit;
+    text-decoration: none;
+    transition: background .15s ease-in-out, transform .15s ease-in-out;
+}
+
+.btn-lms-login:hover {
+    text-decoration: none;
+    background: rgba(242, 107, 42, .12);
+    transform: translateY(-1px);
+}
+
+.btn-lms-login svg {
+    width: 23px;
+    height: 23px;
+}
+
+.btn-lms-login .btn-lms-login-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 3px;
+    border-radius: 999px;
+    background: #F26B2A;
+    color: #fff;
+    font-size: .6rem;
+    font-weight: 700;
+    line-height: 15px;
+    text-align: center;
+    display: none;
+}
+
+.btn-lms-login .btn-lms-login-badge.show {
+    display: block;
+}

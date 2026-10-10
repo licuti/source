@@ -22,6 +22,11 @@ _backup_ui/
 admin/_backup_ui/
 scratch/
 database/backups/
+database/phuongnamv_db_backup.sql
+__tmp_tok.php
+
+# Media cache (thumbnail CKFinder — sinh lại tự động)
+media/.ckfinder/cache/
 
 # Agent tooling / session state
 .kilo/
@@ -33,5 +38,6 @@ database/backups/
 .DS_Store
 
 # OS
-Thumbs.dbtests/.phpunit.result.cache
+Thumbs.db
+tests/.phpunit.result.cache
 cache

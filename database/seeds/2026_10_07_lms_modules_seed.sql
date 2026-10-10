@@ -45,15 +45,28 @@ INSERT INTO `db_lms_modules` (`parent`, `name`, `alias`, `portal`, `icon`, `so_t
 (0, 'Nhận xét tháng',  'lms-nhan-xet-thang', 'student', 'fa-solid fa-comment-dots',           4, 1),  -- STU-04
 (0, 'Nội quy lớp học', 'lms-noi-quy',        'student', 'fa-solid fa-scroll',                 5, 1);
 
+-- ===================== Module ẩn: trang thông báo (chuông header, T10) =====================
+-- hien_thi = 0 → không hiện sidebar (giữ đúng số mục theo mockup: admin 14 / GV 6 / HV 5),
+-- nhưng có page riêng để router phục vụ + endpoint AJAX (auth gate + CSRF + quyền portal).
+INSERT INTO `db_lms_modules` (`parent`, `name`, `alias`, `portal`, `icon`, `so_thu_tu`, `hien_thi`) VALUES
+(0, 'Thông báo', 'lms-thong-bao', 'admin',   'fa-solid fa-bell', 99, 0),
+(0, 'Thông báo', 'lms-thong-bao', 'teacher', 'fa-solid fa-bell', 99, 0),
+(0, 'Thông báo', 'lms-thong-bao', 'student', 'fa-solid fa-bell', 99, 0);
+
 -- ===================== PHÂN QUYỀN THEO ROLE =====================
 -- Admin: toàn quyền (super_admin còn bypass qua lms_check_permission).
+-- Chỉ module hiện trên sidebar (hien_thi = 1); module ẩn lms-thong-bao có block riêng bên dưới.
 INSERT INTO `db_lms_role_permissions` (`id_module`, `role`, `can_view`, `can_edit`, `can_delete`)
-SELECT m.id, 'admin', 1, 1, 1 FROM `db_lms_modules` m WHERE m.portal = 'admin';
+SELECT m.id, 'admin', 1, 1, 1 FROM `db_lms_modules` m WHERE m.portal = 'admin' and m.hien_thi = 1;
 
 -- Teacher: xem + sửa module portal teacher (không xoá).
 INSERT INTO `db_lms_role_permissions` (`id_module`, `role`, `can_view`, `can_edit`, `can_delete`)
-SELECT m.id, 'teacher', 1, 1, 0 FROM `db_lms_modules` m WHERE m.portal = 'teacher';
+SELECT m.id, 'teacher', 1, 1, 0 FROM `db_lms_modules` m WHERE m.portal = 'teacher' and m.hien_thi = 1;
 
 -- Student: chỉ xem.
 INSERT INTO `db_lms_role_permissions` (`id_module`, `role`, `can_view`, `can_edit`, `can_delete`)
-SELECT m.id, 'student', 1, 0, 0 FROM `db_lms_modules` m WHERE m.portal = 'student';
+SELECT m.id, 'student', 1, 0, 0 FROM `db_lms_modules` m WHERE m.portal = 'student' and m.hien_thi = 1;
+
+-- Module ẩn lms-thong-bao: 3 role đều được xem (trang + endpoint AJAX chuông header).
+INSERT INTO `db_lms_role_permissions` (`id_module`, `role`, `can_view`, `can_edit`, `can_delete`)
+SELECT m.id, m.portal, 1, 0, 0 FROM `db_lms_modules` m WHERE m.alias = 'lms-thong-bao';

@@ -38,6 +38,17 @@ abstract class LmsTestCase extends TestCase
         $this->truncateLmsTables();
     }
 
+    protected function tearDown(): void
+    {
+        // PHPUnit giữ mọi TestCase trong bộ nhớ tới hết run → mỗi test giữ 1
+        // connection PDO. Trả về pool khi test xong (MySQL mặc định 151 conn).
+        if ($this->db !== null) {
+            $this->db->disconnect();
+            $this->db = null;
+        }
+        parent::tearDown();
+    }
+
     /**
      * Xoá toàn bộ dữ liệu trong các bảng db_lms_* (theo thứ tự FK).
      */

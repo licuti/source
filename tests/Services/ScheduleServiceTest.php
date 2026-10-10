@@ -42,6 +42,8 @@ class ScheduleServiceTest extends LmsTestCase
             'teacher_code' => 'TES01',
             'full_name'    => 'GV Sched',
             'status'       => 'active',
+            // BR max_classes (ADM-03): test tạo 2 lớp cùng GV nên để giới hạn rộng
+            'max_classes'  => 10,
         ));
 
         $this->classId = $this->classSvc->createClass(array(
@@ -119,5 +121,101 @@ class ScheduleServiceTest extends LmsTestCase
     public function testRejectsInvalidDayOfWeek()
     {
         $this->assertNull($this->svc->addSchedule($this->classId, 1, '17:30', '19:00', date('Y-m-d')));
+    }
+
+    // ===================== TCH-01/02 — Lịch trống GV =====================
+
+    public function testAddFreeSlotSuccess()
+    {
+        $id = $this->svc->addFreeSlot($this->teacherId, 6, '08:00', '10:00');
+        $this->assertGreaterThan(0, $id);
+
+        $rows = $this->svc->listFreeSlots($this->teacherId);
+        $this->assertCount(1, $rows);
+        $this->assertSame('08:00:00', $rows[0]['start_time']);
+        $this->assertSame(1, (int) $this->db->count('db_lms_audit_logs', 'action = ?', array('add_free_slot')));
+    }
+
+    public function testAddFreeSlotRejectsOverlap()
+    {
+        $this->assertGreaterThan(0, $this->svc->addFreeSlot($this->teacherId, 6, '08:00', '10:00'));
+        // 09:00-11:00 giao nhau → từ chối
+        $this->assertNull($this->svc->addFreeSlot($this->teacherId, 6, '09:00', '11:00'));
+        $this->assertArrayHasKey('slot', $this->svc->errors());
+    }
+
+    public function testAddFreeSlotAllowsAnotherDay()
+    {
+        $this->assertGreaterThan(0, $this->svc->addFreeSlot($this->teacherId, 6, '08:00', '10:00'));
+        $this->assertGreaterThan(0, $this->svc->addFreeSlot($this->teacherId, 7, '08:00', '10:00'));
+    }
+
+    public function testAddFreeSlotRejectsInvalidTime()
+    {
+        $this->assertNull($this->svc->addFreeSlot($this->teacherId, 2, '10:00', '08:00'));
+        $this->assertNull($this->svc->addFreeSlot($this->teacherId, 9, '08:00', '10:00'));
+    }
+
+    public function testDeleteFreeSlotRowLevel()
+    {
+        $id = $this->svc->addFreeSlot($this->teacherId, 6, '08:00', '10:00');
+        $this->assertGreaterThan(0, $id);
+
+        // GV khác xoá → lỗi
+        $userSvc = new \Lms\UserService($this->db);
+        $otherTeacher = $userSvc->createUser('gv_sched2', 'matkhau123', 'teacher');
+        $this->db->insert('db_lms_teachers', array(
+            'user_id'      => $otherTeacher,
+            'teacher_code' => 'TES02',
+            'full_name'    => 'GV Sched 2',
+            'status'       => 'active',
+        ));
+        $this->assertFalse($this->svc->deleteFreeSlot($otherTeacher, $id));
+        $this->assertSame(1, (int) $this->db->count('db_lms_teacher_free_slots'));
+
+        // GV chủ xoá → OK
+        $this->assertTrue($this->svc->deleteFreeSlot($this->teacherId, $id));
+        $this->assertSame(0, (int) $this->db->count('db_lms_teacher_free_slots'));
+    }
+
+    public function testFreeSlotsForWeekRespectsEffectiveRange()
+    {
+        $monday = date('Y-m-d', strtotime('monday this week'));
+
+        // Slot hiệu lực từ tuần sau → không xuất hiện tuần này
+        $nextMonday = date('Y-m-d', strtotime('+7 days', strtotime($monday)));
+        $this->db->insert('db_lms_teacher_free_slots', array(
+            'teacher_id'     => $this->teacherId,
+            'day_of_week'    => 2,
+            'start_time'     => '08:00',
+            'end_time'       => '10:00',
+            'effective_from' => $nextMonday,
+        ));
+
+        $map = $this->svc->freeSlotsForWeek($this->teacherId, $monday);
+        $this->assertSame(array(), $map);
+
+        // Tuần sau → xuất hiện
+        $mapNext = $this->svc->freeSlotsForWeek($this->teacherId, $nextMonday);
+        $this->assertArrayHasKey(2, $mapNext);
+        $this->assertSame('08:00', $mapNext[2][0]['start']);
+    }
+
+    public function testFreeSlotsForWeekIgnoresExpired()
+    {
+        $monday = date('Y-m-d', strtotime('monday this week'));
+
+        // Slot đã hết hiệu lực từ hôm qua (chọn thứ 7 của tuần này — sau effective_to)
+        $this->db->insert('db_lms_teacher_free_slots', array(
+            'teacher_id'     => $this->teacherId,
+            'day_of_week'    => 7,
+            'start_time'     => '08:00',
+            'end_time'       => '10:00',
+            'effective_from' => date('Y-m-d', strtotime('-30 days')),
+            'effective_to'   => date('Y-m-d', strtotime('-1 day')),
+        ));
+
+        $map = $this->svc->freeSlotsForWeek($this->teacherId, $monday);
+        $this->assertFalse(isset($map[7]));
     }
 }

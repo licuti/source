@@ -29,6 +29,8 @@ if (!defined('_LMS_PORTAL')) {
 
 require_once __DIR__ . '/lms_db.php';
 require_once __DIR__ . '/lms_auth.php';
+require_once __DIR__ . '/lms_url.php';
+require_once __DIR__ . '/lms_upload.php';
 
 // ===================== Autoload namespace Lms\ =====================
 // Lms\Foo\Bar -> lms/services/Lms/Foo/Bar.php
@@ -53,50 +55,10 @@ if (!function_exists('lms_autoload')) {
 
 // ===================== Load .env =====================
 
-if (!function_exists('lms_load_env')) {
-    /**
-     * Đọc .env ở gốc dự án (cùng helper đơn giản như admin_load_env).
-     *
-     * @param string $path
-     * @return array
-     */
-    function lms_load_env($path)
-    {
-        $out = array();
-        if (!is_file($path) || !is_readable($path)) {
-            return $out;
-        }
-        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        if (!is_array($lines)) {
-            return $out;
-        }
-        foreach ($lines as $line) {
-            $line = trim($line);
-            if (substr($line, 0, 3) === "\xEF\xBB\xBF") {
-                $line = substr($line, 3);
-            }
-            if ($line === '' || $line[0] === '#') {
-                continue;
-            }
-            $pos = strpos($line, '=');
-            if ($pos === false) {
-                continue;
-            }
-            $key = trim(substr($line, 0, $pos));
-            $val = trim(substr($line, $pos + 1));
-            if (strlen($val) >= 2) {
-                $first = $val[0];
-                $last  = substr($val, -1);
-                if (($first === '"' && $last === '"') || ($first === "'" && $last === "'")) {
-                    $val = substr($val, 1, -1);
-                }
-            }
-            if ($key !== '') {
-                $out[$key] = $val;
-            }
-        }
-        return $out;
-    }
+// Helper env_load() nằm ở root dự án (file env.php) — vị trí trung lập,
+// e-commerce và LMS cùng dùng mà không phụ thuộc lẫn nhau (D2).
+if (!function_exists('env_load')) {
+    require_once _LMS_ROOT . DIRECTORY_SEPARATOR . 'env.php';
 }
 
 if (!function_exists('lms_db_config')) {
@@ -107,10 +69,15 @@ if (!function_exists('lms_db_config')) {
      */
     function lms_db_config()
     {
-        $env = lms_load_env(_LMS_ROOT . DIRECTORY_SEPARATOR . '.env');
+        $env = env_load(_LMS_ROOT . DIRECTORY_SEPARATOR . '.env');
+        // Cho phép override qua env (VD: smoke test CLI trỏ sang DB test)
+        $name = getenv('LMS_DB_NAME');
+        if ($name === false || $name === '') {
+            $name = isset($env['DB_NAME']) ? $env['DB_NAME'] : 'phuongnamv_db';
+        }
         return array(
             'host' => isset($env['DB_HOST']) ? $env['DB_HOST'] : 'localhost',
-            'name' => isset($env['DB_NAME']) ? $env['DB_NAME'] : 'phuongnamv_db',
+            'name' => $name,
             'user' => isset($env['DB_USER']) ? $env['DB_USER'] : 'root',
             'pass' => isset($env['DB_PASS']) ? $env['DB_PASS'] : '',
         );

@@ -1,0 +1,1632 @@
+/* ==========================================================================
+   LMS MasterStudy — stylesheet chung 3 portal (admin / teacher / student)
+   Theo mockup: header cam #F26B2A + sidebar trái + footer cam.
+   Bootstrap 5 cơ sở, không dùng AdminLTE (P2 — cô lập với admin/ e-commerce).
+   ========================================================================== */
+
+:root {
+    --lms-primary: #F26B2A;
+    --lms-primary-dark: #D9551A;
+    --lms-primary-soft: #FDEDE3;
+    --lms-sidebar-width: 250px;
+    --lms-header-height: 64px;
+    --lms-footer-bg: #F26B2A;
+    --lms-body-bg: #f4f6f9;
+    --lms-link: #F26B2A;
+}
+
+/* -------------------- Khung trang -------------------- */
+
+.lms-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--lms-body-bg);
+}
+
+.lms-body {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* -------------------- Header cam -------------------- */
+
+.lms-header {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    height: var(--lms-header-height);
+    background: var(--lms-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.lms-header a,
+.lms-header button {
+    color: #fff;
+    text-decoration: none;
+}
+
+.lms-header .lms-brand {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    white-space: nowrap;
+}
+
+.lms-header .lms-brand .lms-brand-sub {
+    font-weight: 400;
+    font-size: .8rem;
+    opacity: .9;
+}
+
+.lms-header .lms-search {
+    flex: 1 1 auto;
+    max-width: 420px;
+    margin: 0 1rem;
+}
+
+.lms-header .lms-search .form-control:focus {
+    border-color: #fff;
+    box-shadow: none;
+}
+
+.lms-header .lms-search input::placeholder {
+    color: rgba(255, 255, 255, .65);
+}
+
+.lms-header .form-control {
+    background: rgba(255, 255, 255, .16);
+    border: 1px solid rgba(255, 255, 255, .35);
+    color: #fff;
+}
+
+.lms-header-actions {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    margin-left: auto;
+}
+
+.lms-header-actions .lms-icon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 0;
+    background: transparent;
+    font-size: 1.15rem;
+    color: #fff;
+    cursor: pointer;
+    transition: background .15s ease-in-out;
+}
+
+.lms-header-actions .lms-icon-btn:hover {
+    background: rgba(255, 255, 255, .18);
+}
+
+.lms-badge-dot {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #dc3545;
+    color: #fff;
+    font-size: .65rem;
+    font-weight: 700;
+    line-height: 17px;
+    text-align: center;
+    border: 2px solid var(--lms-primary);
+}
+
+.lms-user-chip {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .3rem .55rem .3rem .3rem;
+    border-radius: 999px;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .15s ease-in-out;
+}
+
+.lms-user-chip:hover {
+    background: rgba(255, 255, 255, .18);
+    color: #fff;
+}
+
+.lms-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .25);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: .85rem;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.lms-user-chip .lms-user-name {
+    font-size: .9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Dropdown thông báo + user menu */
+
+.lms-dropdown {
+    position: relative;
+}
+
+.lms-dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 320px;
+    background: #fff;
+    color: #212529;
+    border: 0;
+    border-radius: .6rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .18);
+    padding: .35rem 0;
+    z-index: 1080;
+    display: none;
+}
+
+.lms-dropdown.open .lms-dropdown-menu {
+    display: block;
+}
+
+.lms-dropdown-menu .lms-dd-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .6rem .9rem;
+    border-bottom: 1px solid #eee;
+    font-weight: 700;
+    font-size: .9rem;
+}
+
+.lms-dropdown-menu .lms-dd-list {
+    max-height: 340px;
+    overflow-y: auto;
+}
+
+.lms-dropdown-menu .lms-dd-item {
+    display: block;
+    padding: .6rem .9rem;
+    border-bottom: 1px solid #f2f2f2;
+    color: #212529;
+    text-decoration: none;
+}
+
+.lms-dropdown-menu .lms-dd-item:hover {
+    background: #fafafa;
+}
+
+.lms-dropdown-menu .lms-dd-item .lms-dd-title {
+    font-weight: 600;
+    font-size: .88rem;
+    margin-bottom: 2px;
+}
+
+.lms-dropdown-menu .lms-dd-item .lms-dd-msg {
+    font-size: .8rem;
+    color: #6c757d;
+}
+
+.lms-dropdown-menu .lms-dd-item .lms-dd-time {
+    font-size: .72rem;
+    color: #adb5bd;
+    margin-top: 3px;
+}
+
+.lms-dropdown-menu .lms-dd-item.lms-unread {
+    background: var(--lms-primary-soft);
+}
+
+.lms-dropdown-menu .lms-dd-item.lms-unread .lms-dd-title::before {
+    content: "";
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--lms-primary);
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+.lms-dropdown-menu .lms-dd-empty {
+    padding: 1.6rem .9rem;
+    text-align: center;
+    color: #adb5bd;
+    font-size: .85rem;
+}
+
+.lms-dropdown-menu .lms-dd-footer {
+    padding: .5rem .9rem;
+    text-align: center;
+    border-top: 1px solid #eee;
+}
+
+.lms-dropdown-menu .lms-dd-footer a {
+    color: var(--lms-primary);
+    font-size: .82rem;
+    font-weight: 600;
+}
+
+/* User menu nhỏ hơn */
+
+.lms-user-menu {
+    min-width: 220px;
+}
+
+.lms-user-menu .lms-dd-item {
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.lms-user-menu .lms-dd-item:hover {
+    color: var(--lms-primary);
+}
+
+/* -------------------- Sidebar -------------------- */
+
+.lms-sidebar {
+    width: var(--lms-sidebar-width);
+    flex: 0 0 var(--lms-sidebar-width);
+    background: #fff;
+    border-right: 1px solid #e3e6ec;
+    padding: 1rem 0;
+    overflow-y: auto;
+}
+
+.lms-sidebar .lms-nav-link {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .7rem 1.1rem;
+    color: #4a5260;
+    text-decoration: none;
+    font-size: .92rem;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: background .12s ease-in-out, color .12s ease-in-out;
+}
+
+.lms-sidebar .lms-nav-link:hover {
+    background: var(--lms-primary-soft);
+    color: var(--lms-primary-dark);
+}
+
+.lms-sidebar .lms-nav-link i {
+    width: 20px;
+    text-align: center;
+    font-size: 1rem;
+    color: #8a93a3;
+    flex: 0 0 auto;
+}
+
+.lms-sidebar .lms-nav-link.active {
+    background: var(--lms-primary-soft);
+    color: var(--lms-primary-dark);
+    font-weight: 700;
+    border-left-color: var(--lms-primary);
+}
+
+.lms-sidebar .lms-nav-link.active i {
+    color: var(--lms-primary);
+}
+
+/* -------------------- Content + footer -------------------- */
+
+.lms-content {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 1.5rem;
+}
+
+.lms-content.lms-fluid {
+    padding: 1.5rem 0;
+}
+
+.lms-footer {
+    background: var(--lms-footer-bg);
+    color: #fff;
+    padding: 1.4rem 1.5rem;
+    margin-top: auto;
+}
+
+.lms-footer .lms-footer-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+    font-size: .85rem;
+}
+
+.lms-footer a {
+    color: #fff;
+    text-decoration: none;
+    opacity: .95;
+}
+
+.lms-footer a:hover {
+    text-decoration: underline;
+}
+
+.lms-footer .lms-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+}
+
+.lms-footer .lms-footer-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem 1.5rem;
+}
+
+.lms-footer .lms-footer-brand {
+    font-weight: 700;
+    font-size: .95rem;
+}
+
+/* -------------------- Tiêu đề trang + thẻ -------------------- */
+
+.lms-page-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #232a35;
+    margin-bottom: 1rem;
+}
+
+.lms-stat-card {
+    background: #fff;
+    border: 1px solid #e8ebf0;
+    border-radius: .65rem;
+    padding: 1.1rem 1.2rem;
+    height: 100%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+}
+
+.lms-stat-card .lms-stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: .55rem;
+    background: var(--lms-primary-soft);
+    color: var(--lms-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: .6rem;
+}
+
+.lms-stat-card .lms-stat-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #232a35;
+}
+
+.lms-stat-card .lms-stat-label {
+    font-size: .82rem;
+    color: #6c757d;
+    margin-top: .15rem;
+}
+
+.lms-card {
+    background: #fff;
+    border: 1px solid #e8ebf0;
+    border-radius: .65rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+}
+
+.lms-card .lms-card-header {
+    padding: .85rem 1.1rem;
+    border-bottom: 1px solid #e8ebf0;
+    font-weight: 700;
+    font-size: .98rem;
+}
+
+.lms-card .lms-card-body {
+    padding: 1.1rem;
+}
+
+.lms-table {
+    width: 100%;
+    font-size: .88rem;
+}
+
+.lms-table th {
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: #6c757d;
+    border-bottom: 2px solid #e8ebf0;
+    padding: .55rem .7rem;
+    white-space: nowrap;
+}
+
+.lms-table td {
+    padding: .6rem .7rem;
+    border-bottom: 1px solid #f0f2f5;
+    vertical-align: middle;
+}
+
+.lms-table tbody tr:hover {
+    background: #fafbfc;
+}
+
+/* -------------------- Tabs ngang (mockup §2: 2 loại lớp) -------------------- */
+
+.lms-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem .1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    border-bottom: 2px solid #e8ebf0;
+}
+
+.lms-tabs li {
+    margin-bottom: -2px;
+}
+
+.lms-tabs a {
+    display: inline-block;
+    padding: .55rem 1.1rem;
+    font-weight: 600;
+    font-size: .9rem;
+    color: #6c757d;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+    border-radius: .5rem .5rem 0 0;
+}
+
+.lms-tabs a:hover {
+    color: var(--lms-primary-dark);
+    background: var(--lms-primary-soft);
+}
+
+.lms-tabs a.active {
+    color: var(--lms-primary-dark);
+    border-bottom-color: var(--lms-primary);
+}
+
+/* -------------------- Ma trận HV × chương trình -------------------- */
+
+.lms-matrix-scroll {
+    overflow-x: auto;
+}
+
+.lms-matrix-code {
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    white-space: nowrap;
+    padding: .1rem 0;
+}
+
+.lms-matrix-code .lms-link {
+    font-size: .85rem;
+}
+
+.lms-matrix-sched {
+    color: #6c757d;
+    cursor: help;
+    font-size: .8rem;
+}
+
+/* -------------------- Badge / chip trạng thái -------------------- */
+
+.lms-badge {
+    display: inline-block;
+    padding: .22em .6em;
+    font-size: .74rem;
+    font-weight: 700;
+    border-radius: 999px;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.lms-badge-success { background: #d1e7dd; color: #0a3622; }
+.lms-badge-warning { background: #fff3cd; color: #664d03; }
+.lms-badge-danger  { background: #f8d7da; color: #58151c; }
+.lms-badge-info    { background: #cff4fc; color: #055160; }
+.lms-badge-secondary { background: #e2e3e5; color: #41464b; }
+.lms-badge-primary { background: var(--lms-primary-soft); color: var(--lms-primary-dark); }
+
+/* -------------------- Nút cam (gốc LMS) -------------------- */
+
+.btn-lms {
+    background: var(--lms-primary);
+    border-color: var(--lms-primary);
+    color: #fff;
+    font-weight: 600;
+}
+
+.btn-lms:hover {
+    background: var(--lms-primary-dark);
+    border-color: var(--lms-primary-dark);
+    color: #fff;
+}
+
+.btn-outline-lms {
+    border-color: var(--lms-primary);
+    color: var(--lms-primary-dark);
+    font-weight: 600;
+    background: #fff;
+}
+
+.btn-outline-lms:hover {
+    background: var(--lms-primary);
+    border-color: var(--lms-primary);
+    color: #fff;
+}
+
+a.lms-link {
+    color: var(--lms-primary-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+a.lms-link:hover {
+    text-decoration: underline;
+}
+
+/* -------------------- Chat widget placeholder (Phase 3+) -------------------- */
+
+.lms-chat-fab {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1050;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--lms-primary);
+    color: #fff;
+    border: 0;
+    box-shadow: 0 6px 18px rgba(242, 107, 42, .45);
+    font-size: 1.35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.lms-chat-fab:hover { background: var(--lms-primary-dark); }
+
+.lms-chat-popover {
+    position: fixed;
+    right: 20px;
+    bottom: 88px;
+    z-index: 1051;
+    width: 290px;
+    background: #fff;
+    color: #212529;
+    border-radius: .7rem;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, .22);
+    padding: 1rem;
+    display: none;
+    font-size: .88rem;
+}
+
+.lms-chat-popover.show { display: block; }
+
+/* -------------------- Banner cảnh báo (tick / hạ phí — Phase 2) -------------------- */
+
+.lms-alert-banner {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    background: #fff3cd;
+    border: 1px solid #ffe69c;
+    color: #664d03;
+    border-radius: .55rem;
+    padding: .7rem .95rem;
+    margin-bottom: 1rem;
+    font-size: .88rem;
+}
+
+.lms-alert-banner .btn-close-lms {
+    margin-left: auto;
+    background: none;
+    border: 0;
+    color: #664d03;
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: .65;
+}
+
+/* -------------------- Flash message (toast) -------------------- */
+
+.lms-flash-container {
+    position: fixed;
+    top: calc(var(--lms-header-height) + 12px);
+    right: 16px;
+    z-index: 1090;
+    max-width: 380px;
+}
+
+/* -------------------- Responsive -------------------- */
+
+.lms-sidebar-toggle {
+    display: none;
+}
+
+@media (max-width: 991.98px) {
+    .lms-header .lms-search { display: none; }
+    .lms-user-chip .lms-user-name { display: none; }
+}
+
+@media (max-width: 767.98px) {
+    .lms-body { flex-direction: column; }
+
+    .lms-sidebar {
+        position: fixed;
+        top: var(--lms-header-height);
+        left: 0;
+        bottom: 0;
+        z-index: 1045;
+        width: 270px;
+        flex-basis: 270px;
+        transform: translateX(-100%);
+        transition: transform .22s ease-in-out;
+        box-shadow: 4px 0 18px rgba(0, 0, 0, .15);
+    }
+
+    .lms-sidebar.show { transform: translateX(0); }
+
+    .lms-sidebar-toggle { display: inline-flex; }
+
+    .lms-content { padding: 1rem; }
+
+    .lms-sidebar-backdrop {
+        position: fixed;
+        inset: var(--lms-header-height) 0 0 0;
+        background: rgba(0, 0, 0, .4);
+        z-index: 1044;
+        display: none;
+    }
+
+    .lms-sidebar-backdrop.show { display: block; }
+
+    .lms-footer .lms-footer-grid { flex-direction: column; align-items: flex-start; }
+}
+
+/* -------------------- Trang đăng nhập (không dùng layout chính) -------------------- */
+
+.lms-login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #efeef1;
+    padding: 1.5rem;
+}
+
+.lms-login-card {
+    width: 100%;
+    max-width: 420px;
+    background: #fff;
+    border-radius: .8rem;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, .12);
+    padding: 2rem 1.75rem;
+}
+
+.lms-login-card .lms-login-logo {
+    text-align: center;
+    margin-bottom: 1.25rem;
+}
+
+.lms-login-card .lms-login-logo .lms-login-brand {
+    color: var(--lms-primary);
+    font-size: 1.35rem;
+    font-weight: 800;
+    display: block;
+}
+
+.lms-login-card .lms-login-logo .lms-login-sub {
+    color: #6c757d;
+    font-size: .82rem;
+}
+
+.lms-login-card .lms-login-portal-label {
+    text-align: center;
+    margin-bottom: 1.1rem;
+}
+
+.lms-login-card .lms-login-portal-label .lms-portal-tag {
+    display: inline-block;
+    background: var(--lms-primary-soft);
+    color: var(--lms-primary-dark);
+    font-weight: 700;
+    font-size: .8rem;
+    padding: .28em .8em;
+    border-radius: 999px;
+}
+
+.lms-login-card .form-control:focus {
+    border-color: var(--lms-primary);
+    box-shadow: 0 0 0 .2rem rgba(242, 107, 42, .18);
+}
+
+.lms-login-footer-note {
+    text-align: center;
+    font-size: .78rem;
+    color: #9aa1ab;
+    margin-top: 1.1rem;
+}
+
+/* -------------------- Trang chọn vai trò (/lms/) -------------------- */
+
+.lms-role-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #efeef1;
+}
+
+.lms-role-page .lms-role-main {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1.5rem;
+}
+
+.lms-role-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 960px;
+}
+
+.lms-role-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: .75rem;
+    background: #fff;
+    border: 1px solid #e8ebf0;
+    border-radius: .9rem;
+    padding: 2.2rem 1.5rem;
+    text-decoration: none;
+    color: #232a35;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+    transition: transform .16s ease-in-out, box-shadow .16s ease-in-out, border-color .16s ease-in-out;
+}
+
+.lms-role-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 34px rgba(242, 107, 42, .22);
+    border-color: var(--lms-primary);
+    color: #232a35;
+}
+
+.lms-role-card .lms-role-icon {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    background: var(--lms-primary-soft);
+    color: var(--lms-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.lms-role-card .lms-role-name {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.lms-role-card .lms-role-desc {
+    font-size: .85rem;
+    color: #6c757d;
+}
+
+.lms-role-card .lms-role-btn {
+    margin-top: .35rem;
+    color: var(--lms-primary-dark);
+    font-weight: 700;
+    font-size: .88rem;
+}
+
+@media (max-width: 767.98px) {
+    .lms-role-grid { grid-template-columns: 1fr; }
+}
+
+/* -------------------- Phân trang -------------------- */
+
+.lms-pagination ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+    margin: 1.2rem 0 0;
+    padding: 0;
+    justify-content: center;
+}
+
+.lms-pagination li a,
+.lms-pagination li span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 .55rem;
+    border: 1px solid #e0e3e9;
+    border-radius: .4rem;
+    background: #fff;
+    color: #3c4452;
+    font-size: .85rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.lms-pagination li a:hover {
+    border-color: var(--lms-primary);
+    color: var(--lms-primary-dark);
+}
+
+.lms-pagination li.active span {
+    background: var(--lms-primary);
+    border-color: var(--lms-primary);
+    color: #fff;
+}
+
+.lms-pagination li.disabled span {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+/* -------------------- Form CRUD (ADM-01/ADM-02...) -------------------- */
+
+.lms-form-label {
+    font-weight: 600;
+    font-size: .85rem;
+    margin-bottom: .3rem;
+}
+
+.lms-form .form-control:focus,
+.lms-form .form-select:focus {
+    border-color: var(--lms-primary);
+    box-shadow: 0 0 0 .2rem rgba(242, 107, 42, .15);
+}
+
+.lms-form-actions {
+    display: flex;
+    gap: .6rem;
+    flex-wrap: wrap;
+    margin-top: 1.4rem;
+}
+
+/* Khung giờ rảnh: dòng thêm/bớt động */
+.lms-slots-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 1fr 38px;
+    gap: .5rem;
+    margin-bottom: .5rem;
+    align-items: center;
+}
+
+.lms-slots-row .lms-slot-remove {
+    border: 0;
+    background: #fdecec;
+    color: #dc3545;
+    width: 34px;
+    height: 34px;
+    border-radius: .4rem;
+    cursor: pointer;
+    font-size: .9rem;
+}
+
+.lms-slots-row .lms-slot-remove:hover {
+    background: #f8d7da;
+}
+
+@media (max-width: 575.98px) {
+    .lms-slots-row { grid-template-columns: 1fr 1fr; }
+    .lms-slots-row .lms-slot-remove { grid-column: 2; justify-self: end; }
+}
+
+/* Bộ lọc danh sách */
+.lms-filter-bar .form-control,
+.lms-filter-bar .form-select {
+    font-size: .88rem;
+}
+
+.lms-text-muted-sm {
+    font-size: .78rem;
+    color: #9aa1ab;
+}
+
+/* Multi-select: cao tối thiểu để dễ chọn nhiều */
+.lms-form select[multiple] {
+    min-height: 120px;
+}
+
+
+/* -------------------- TCH-01/02 — Quản lý lịch (calendar) -------------------- */
+
+.lms-cal-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lms-cal-nav {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-size: 1rem;
+}
+
+.lms-cal-actions {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.lms-cal-scroll {
+    overflow-x: auto;
+}
+
+.lms-cal {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+.lms-cal-th {
+    border: 1px solid #e0e3e9;
+    background: #f7f8fa;
+    color: #3c4452;
+    font-size: .8rem;
+    font-weight: 600;
+    text-align: center;
+    padding: .45rem .2rem;
+    vertical-align: middle;
+}
+
+.lms-cal-th small {
+    display: block;
+    font-weight: 400;
+    color: #9aa1ab;
+}
+
+.lms-cal-th-hour {
+    width: 62px;
+}
+
+.lms-cal-cell {
+    border: 1px solid #e8eaee;
+    min-height: 64px;
+    height: 64px;
+    position: relative;
+    padding: .2rem;
+    vertical-align: top;
+    background: #fff;
+}
+
+.lms-cal-link {
+    display: block;
+    text-decoration: none;
+    border-radius: .35rem;
+    padding: .15rem .3rem;
+    font-size: .76rem;
+    line-height: 1.25;
+}
+
+.lms-cal-code {
+    display: block;
+    font-weight: 700;
+}
+
+.lms-cal-time {
+    display: block;
+    color: #6b7280;
+    font-size: .72rem;
+}
+
+.lms-cal-edit {
+    display: block;
+    padding: 0;
+    font-size: .72rem;
+    color: var(--lms-primary-dark);
+    text-decoration: underline;
+}
+
+/* Buổi sắp tới: đỏ đậm */
+.lms-cal-upcoming {
+    background: #dc3545;
+}
+.lms-cal-upcoming .lms-cal-link {
+    color: #fff;
+}
+.lms-cal-upcoming .lms-cal-time {
+    color: #ffe3e6;
+}
+.lms-cal-upcoming .lms-cal-edit {
+    color: #fff;
+}
+
+/* Thiếu BTVN: hồng đậm + ✗ */
+.lms-cal-missing {
+    background: #f8d7da;
+}
+.lms-cal-missing .lms-cal-link {
+    color: #842029;
+}
+.lms-cal-missing-x {
+    position: absolute;
+    top: .2rem;
+    right: .35rem;
+    color: #dc3545;
+    font-weight: 700;
+}
+
+/* Đã hoàn thành: hồng nhạt */
+.lms-cal-finished {
+    background: #fdeef0;
+}
+.lms-cal-finished .lms-cal-link {
+    color: #a14453;
+}
+
+/* Đã nghỉ: xám */
+.lms-cal-cancelled {
+    background: #e9ecef;
+}
+.lms-cal-cancelled .lms-cal-link {
+    color: #6c757d;
+    text-decoration: line-through;
+}
+
+/* Lịch trống: xanh lá */
+.lms-cal-free {
+    background: #d1e7dd;
+}
+.lms-cal-free-btn {
+    width: 100%;
+    height: 100%;
+    min-height: 56px;
+    border: 0;
+    background: transparent;
+    color: #0a3622;
+    font-size: .76rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: .35rem;
+}
+.lms-cal-free-btn:hover {
+    background: rgba(10, 54, 34, .08);
+}
+
+/* Chú thích */
+.lms-cal-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.4rem;
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    font-size: .8rem;
+    color: #3c4452;
+}
+.lms-cal-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: .35rem;
+    vertical-align: -1px;
+}
+.lms-cal-upcoming-dot  { background: #dc3545; }
+.lms-cal-missing-dot   { background: #f8d7da; border: 1px solid #e5a8b0; }
+.lms-cal-finished-dot  { background: #fdeef0; border: 1px solid #eec3cb; }
+.lms-cal-cancelled-dot { background: #e9ecef; }
+.lms-cal-free-dot      { background: #d1e7dd; }
+
+/* Lịch trống đã đăng ký (collapse) */
+.lms-free-slots {
+    background: #f7f8fa;
+    border: 1px solid #e0e3e9;
+    border-radius: .5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+.lms-free-slots-title {
+    font-size: .95rem;
+    margin: 0 0 .6rem;
+}
+.lms-free-slot-list {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    font-size: .85rem;
+}
+.lms-slot-del {
+    padding: 0 .35rem;
+    margin-left: .5rem;
+}
+
+/* Chi tiết buổi học */
+.lms-section-title {
+    font-size: 1.05rem;
+    margin: 0 0 .8rem;
+    padding-bottom: .4rem;
+    border-bottom: 2px solid var(--lms-primary);
+    color: var(--lms-primary-dark);
+}
+.lms-readonly-block {
+    background: #f7f8fa;
+    border: 1px solid #e0e3e9;
+    border-radius: .5rem;
+    padding: 1rem;
+}
+.lms-readonly-block h3 {
+    font-size: .9rem;
+    margin: .8rem 0 .3rem;
+    color: #3c4452;
+}
+.lms-readonly-block h3:first-child {
+    margin-top: 0;
+}
+.lms-file-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    font-size: .85rem;
+}
+.lms-file-pickers {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: .5rem;
+}
+.lms-hw-card {
+    border: 1px solid #e0e3e9;
+    border-radius: .5rem;
+    margin-bottom: .8rem;
+    overflow: hidden;
+}
+.lms-hw-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+    background: #f7f8fa;
+    padding: .6rem .9rem;
+    font-size: .88rem;
+}
+.lms-hw-card-body {
+    padding: .8rem .9rem;
+}
+.lms-hw-card-body h4 {
+    font-size: .82rem;
+    color: #6b7280;
+    margin: .6rem 0 .3rem;
+}
+.lms-hw-due {
+    margin-left: auto;
+    font-size: .78rem;
+    color: #6b7280;
+}
+.lms-hw-due-over {
+    color: #dc3545;
+    font-weight: 700;
+}
+
+/* Alert đơn giản (dùng trong chi tiết buổi học) */
+.lms-alert {
+    border-radius: .45rem;
+    padding: .7rem .9rem;
+    font-size: .86rem;
+    margin-bottom: 1rem;
+}
+.lms-alert-warning {
+    background: #fff3cd;
+    color: #664d03;
+    border: 1px solid #ffe69c;
+}
+.lms-alert-danger {
+    background: #f8d7da;
+    color: #58151c;
+    border: 1px solid #f1aeb5;
+}
+/* =====================================================================
+   STU-01..04 - Portal Student (2026_10_10)
+   Class mo'i: class cards, topic cards, progress, hw rows, upload slots,
+   test cards, collapse cards (nhan xet thang), calendar view wrapper.
+   ===================================================================== */
+
+/* ---- Back link ---- */
+.lms-back-link {
+    color: #F26B2A;
+    font-size: .85rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+.lms-back-link:hover {
+    text-decoration: underline;
+    color: #c9531d;
+}
+
+/* ---- Subject group (khoa hoc list) ---- */
+.lms-subject-group .lms-card-header {
+    cursor: pointer;
+    user-select: none;
+}
+.lms-subject-header {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .95rem;
+}
+.lms-subject-count {
+    margin-left: auto;
+    font-size: .75rem;
+    color: #6b7280;
+    background: #f1f3f5;
+    border-radius: 999px;
+    padding: .1rem .6rem;
+}
+.lms-subject-chevron {
+    margin-left: .35rem;
+    font-size: .8rem;
+    color: #9aa3af;
+    transition: transform .2s;
+}
+.lms-subject-header[aria-expanded="false"] .lms-subject-chevron {
+    transform: rotate(-90deg);
+}
+
+/* ---- Class card (khoa hoc list) ---- */
+.lms-class-card {
+    display: block;
+    border: 1px solid #e5e7eb;
+    border-radius: .6rem;
+    padding: .9rem 1rem;
+    text-decoration: none;
+    color: #212529;
+    background: #fff;
+    transition: box-shadow .15s, border-color .15s;
+    height: 100%;
+}
+.lms-class-card:hover {
+    border-color: #F26B2A;
+    box-shadow: 0 .35rem .9rem rgba(242, 107, 42, .14);
+}
+.lms-class-card-head {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .45rem;
+}
+.lms-class-card-name {
+    font-weight: 700;
+    font-size: .98rem;
+}
+.lms-class-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem .9rem;
+    font-size: .82rem;
+    color: #6b7280;
+    margin-bottom: .4rem;
+}
+.lms-class-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: .55rem;
+}
+.lms-class-card-go {
+    font-size: .8rem;
+    font-weight: 600;
+    color: #F26B2A;
+    white-space: nowrap;
+}
+.lms-class-card:hover .lms-class-card-go i {
+    transform: translateX(2px);
+}
+.lms-class-card-go i {
+    transition: transform .15s;
+}
+
+/* ---- Progress bar ---- */
+.lms-progress {
+    height: .55rem;
+    background: #e9ecef;
+    border-radius: 999px;
+    overflow: hidden;
+}
+.lms-progress-lg {
+    height: .8rem;
+}
+.lms-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #F26B2A, #f89a5f);
+    border-radius: 999px;
+    transition: width .3s;
+}
+.lms-progress-percent {
+    font-size: .78rem;
+    font-weight: 700;
+    color: #F26B2A;
+    white-space: nowrap;
+}
+
+/* ---- Class detail header ---- */
+.lms-class-detail .lms-card-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.lms-class-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem 1.1rem;
+    font-size: .85rem;
+    color: #6b7280;
+    margin-bottom: .5rem;
+}
+
+/* ---- Topic card (lop detail) ---- */
+.lms-topic-card {
+    border: 1px solid #e5e7eb;
+    border-radius: .6rem;
+    padding: .85rem .95rem;
+    background: #fff;
+    height: 100%;
+}
+.lms-topic-card-head {
+    margin-bottom: .4rem;
+}
+.lms-topic-card-name {
+    font-weight: 700;
+    font-size: .95rem;
+    color: #212529;
+    text-decoration: none;
+}
+.lms-topic-card-name:hover {
+    color: #F26B2A;
+}
+.lms-topic-card-status {
+    font-size: .82rem;
+    color: #6b7280;
+    margin-bottom: .45rem;
+}
+.lms-topic-card-status.lms-topic-done {
+    color: #198754;
+    font-weight: 600;
+}
+.lms-topic-card-scores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin-bottom: .55rem;
+}
+.lms-topic-card-actions .btn {
+    background: #F26B2A;
+    border-color: #F26B2A;
+    color: #fff;
+}
+.lms-topic-card-actions .btn[disabled] {
+    background: #ced4da;
+    border-color: #ced4da;
+    color: #6c757d;
+}
+
+/* ---- HW rows (chuyen de + buoi) ---- */
+.lms-hw-card-title {
+    font-weight: 700;
+    font-size: .95rem;
+}
+.lms-hw-row {
+    display: flex;
+    gap: .6rem;
+    font-size: .88rem;
+    margin-bottom: .55rem;
+}
+.lms-hw-row > span:last-child {
+    flex: 1;
+}
+.lms-hw-label {
+    min-width: 8.5rem;
+    font-weight: 600;
+    color: #495057;
+    white-space: nowrap;
+}
+.lms-hw-future {
+    color: #dc3545;
+    font-style: italic;
+    font-weight: 600;
+    margin: 0 0 .3rem;
+}
+.lms-hw-note {
+    font-size: .8rem;
+    color: #6b7280;
+}
+.lms-submit-form {
+    margin-top: .7rem;
+    padding-top: .7rem;
+    border-top: 1px dashed #e5e7eb;
+}
+.lms-upload-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: .45rem;
+    margin-bottom: .55rem;
+}
+
+/* ---- Test card (section test/minitest) ---- */
+.lms-test-card {
+    border: 1px solid #e5e7eb;
+    border-radius: .6rem;
+    margin-bottom: .8rem;
+}
+.lms-test-card-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .5rem;
+    padding: .65rem .9rem;
+    border-bottom: 1px solid #eef0f2;
+    font-weight: 600;
+    font-size: .92rem;
+}
+.lms-test-card-body {
+    padding: .8rem .9rem;
+}
+
+/* ---- Collapse card (nhan xet thang) ---- */
+.lms-collapse-card .lms-card-header {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+}
+.lms-collapse-header[aria-expanded="false"] .lms-subject-chevron {
+    transform: rotate(-90deg);
+}
+.lms-collapse-avatar {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 50%;
+    background: #fdece3;
+    color: #F26B2A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.lms-collapse-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+}
+.lms-collapse-name {
+    font-weight: 700;
+    font-size: .95rem;
+}
+.lms-collapse-meta {
+    font-size: .78rem;
+    color: #6b7280;
+}
+.lms-collapse-count {
+    margin-left: auto;
+    font-size: .75rem;
+    color: #6b7280;
+    background: #f1f3f5;
+    border-radius: 999px;
+    padding: .15rem .6rem;
+    white-space: nowrap;
+}
+
+/* ---- Review item (nhan xet thang) ---- */
+.lmnx-review {
+    border-bottom: 1px solid #eef0f2;
+    padding: .75rem 0;
+}
+.lmnx-review:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+.lmnx-review:first-child {
+    padding-top: 0;
+}
+.lmnx-review-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin-bottom: .45rem;
+}
+.lmnx-review-teacher {
+    margin-left: auto;
+    font-size: .78rem;
+    color: #6b7280;
+}
+.lmnx-review-content {
+    font-size: .9rem;
+    line-height: 1.55;
+    color: #374151;
+    white-space: pre-wrap;
+}
+.lmnx-review-progress {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-top: .6rem;
+}
+.lmnx-review-progress-label {
+    font-size: .78rem;
+    color: #6b7280;
+    white-space: nowrap;
+}
+.lmnx-review-progress .lms-progress {
+    flex: 1;
+}
+
+/* ---- Noi quy ---- */
+.lmnq-list {
+    margin: 0;
+    padding-left: 1.4rem;
+}
+.lmnq-list li {
+    margin-bottom: .6rem;
+    font-size: .9rem;
+    line-height: 1.5;
+}
+.lmnq-list li > div {
+    color: #495057;
+    margin-top: .15rem;
+}
+
+/* ---- Calendar view wrapper (lich hoc student) ---- */
+.lms-cal-view {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: .6rem;
+    padding: .6rem;
+    overflow-x: auto;
+}
