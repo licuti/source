@@ -1,0 +1,29 @@
+# LMS MasterStudy — lập lịch cron production
+#
+# Cài đặt (Linux):
+#   crontab -e
+#   :r /path/to/source/database/cron/lms_crontab.txt
+# (hoặc copy từng dòng). Đảm bảo binary PHP CLI (>= 7.3) nằm trong PATH,
+# nếu không dùng đường dẫn tuyệt đối: /usr/bin/php.
+#
+# Yêu cầu cấu hình php.ini CLI: date.timezone = Asia/Ho_Chi_Minh
+# (BR-TICK phạt đúng giờ VN; xem lms/README.md mục Timezone).
+#
+# Giám sát (R8): cả 3 job ghi db_lms_cron_runs. Cảnh báo nếu job chết
+# >30 phút (check qua endpoint admin hoặc query thủ công):
+#   select job_name, status, finished_at from db_lms_cron_runs
+#   order by id desc limit 9;
+#
+# Log: mỗi job ghi ra file riêng trong /var/log. Bật logrotate.
+
+# Quét vi phạm (tick) mỗi 15 phút: đóng buổi quá hạn + BR-TICK-01/02/03.
+# Tần suất theo SRS §3.1.
+*/15 * * * * php /path/to/source/database/cron/lms_tick_cron.php >> /var/log/lms_tick.log 2>&1
+
+# Sinh buổi học (sessions) mỗi ngày lúc 01:00 — sinh trước 4 tuần cho mọi
+# lớp active + đồng bộ session_students. Idempotent.
+0 1 * * * php /path/to/source/database/cron/lms_session_generate.php >> /var/log/lms_session_generate.log 2>&1
+
+# Chốt lương giáo viên ngày 1 hàng tháng lúc 09:00 (sau khi tick cron đã
+# chốt xong tháng cũ). Idempotent.
+15 0 1 * * php /path/to/source/database/cron/lms_payroll_cron.php >> /var/log/lms_payroll.log 2>&1

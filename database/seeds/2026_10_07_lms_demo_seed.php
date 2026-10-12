@@ -351,13 +351,14 @@ if (!empty($lateSession)) {
 }
 
 // ===================== Violation thresholds (BR-TICK-03) =====================
+// Giá trị đã chốt (xem 2026_10_10_lms_violation_thresholds_seed.sql).
 $db->insert('db_lms_violation_thresholds', array(
     'min_classes'              => 1,
-    'max_classes'              => 2,
-    'ticks_to_warn'            => 3,
-    'ticks_to_demote_fee'      => 5,
-    'fee_percentage_after_demote' => 30.00,
-    'ticks_exempted'           => 1,
+    'max_classes'              => 3,
+    'ticks_to_warn'            => 5,
+    'ticks_to_demote_fee'      => 8,
+    'fee_percentage_after_demote' => 50.00,
+    'ticks_exempted'           => 2,
     'effective_from'           => date('Y-m-d', strtotime('-1 month')),
 ));
 

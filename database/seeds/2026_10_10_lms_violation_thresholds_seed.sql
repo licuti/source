@@ -9,10 +9,13 @@
 --
 -- Chạy trên cả DB thật (phuongnamv_db) và DB test (phuongnamv_db_lms_test).
 --
--- Giá trị chưa chốt trong SRS (cần confirm business):
+-- Giá trị đã chốt (business confirm 12/10/2026 — P4):
 --  - ticks_to_warn = 5: cảnh báo trước khi chạm ngưỡng hạ phí (8).
+--    Khoảng cách 5→8 cho GV 3 tick "thời gian sửa sai" sau cảnh báo.
 --  - fee_percentage_after_demote = 50.00: % phí dịch vụ sau khi bị hạ
---    (mặc định teachers.service_fee_percentage = 48.00).
+--    (mặc định teachers.service_fee_percentage = 48.00 → hạ còn 50% mức
+--    mặc định khi vi phạm). Đổi qua UI ADM-06 (module lms-vi-pham) khi
+--    business yêu cầu, KHÔNG sửa seed này (chỉ áp dụng cho DB mới).
 -- ---------------------------------------------------------------------------
 
 INSERT INTO `db_lms_violation_thresholds`

@@ -21,9 +21,10 @@ class SessionService extends LmsService
      *
      * @param int    $weeks
      * @param string $fromDate 'Y-m-d' (mặc định hôm nay)
-     * @return int số session mới được sinh
+     * @param bool   $dryRun   true → chỉ đếm session sẽ sinh, không ghi DB
+     * @return int số session mới được sinh (hoặc sẽ sinh nếu dry-run)
      */
-    public function generateUpcoming($weeks = self::DEFAULT_LOOKAHEAD_WEEKS, $fromDate = null)
+    public function generateUpcoming($weeks = self::DEFAULT_LOOKAHEAD_WEEKS, $fromDate = null, $dryRun = false)
     {
         $created = 0;
         $start = $fromDate === null ? date('Y-m-d') : (string) $fromDate;
@@ -36,7 +37,13 @@ class SessionService extends LmsService
         );
 
         foreach ($classes as $class) {
-            $created += $this->generateForClass((int) $class['id'], (int) $class['teacher_id'], $start, $endDate);
+            $created += $this->generateForClass(
+                (int) $class['id'],
+                (int) $class['teacher_id'],
+                $start,
+                $endDate,
+                $dryRun
+            );
         }
 
         return $created;
@@ -49,9 +56,10 @@ class SessionService extends LmsService
      * @param int    $teacherId
      * @param string $startDate 'Y-m-d'
      * @param string $endDate   'Y-m-d'
+     * @param bool   $dryRun    true → chỉ đếm, không ghi DB
      * @return int
      */
-    public function generateForClass($classId, $teacherId, $startDate, $endDate)
+    public function generateForClass($classId, $teacherId, $startDate, $endDate, $dryRun = false)
     {
         $classId   = (int) $classId;
         $teacherId = (int) $teacherId;
@@ -103,6 +111,11 @@ class SessionService extends LmsService
                     continue;
                 }
 
+                if ($dryRun) {
+                    $created++;
+                    continue;
+                }
+
                 $ok = $this->db->insert('db_lms_sessions', array(
                     'class_id'     => $classId,
                     'teacher_id'   => $teacherId,
@@ -117,6 +130,66 @@ class SessionService extends LmsService
             }
 
             $day = strtotime('+1 day', $day);
+        }
+
+        return $created;
+    }
+
+    /**
+     * Đảm bảo session_students tồn tại cho mọi session upcoming trong khoảng,
+     * cho mọi học viên active của lớp (idempotent).
+     *
+     * Dùng cho cron session_generate: HV nhập lớp giữa kỳ (EnrolmentService
+     * đã sync từ hôm nay), hoặc session sinh ra trước khi enrol → row nộp bài
+     * được đảm bảo, HV không phải chạm UI mới có row.
+     *
+     * @param string $fromDate 'Y-m-d' (mặc định hôm nay)
+     * @param int    $weeks    khoảng tuần cần xử lý
+     * @param bool   $dryRun   true → chỉ đếm, không ghi DB
+     * @return int số row session_students mới (hoặc sẽ tạo nếu dry-run)
+     */
+    public function ensureUpcomingSessionStudents($fromDate = null, $weeks = self::DEFAULT_LOOKAHEAD_WEEKS, $dryRun = false)
+    {
+        $start = $fromDate === null ? date('Y-m-d') : (string) $fromDate;
+        $end   = date('Y-m-d', strtotime('+' . (int) $weeks . ' weeks', strtotime($start)));
+
+        $sessions = $this->db->safeFetch(
+            'select s.id, s.class_id from db_lms_sessions s'
+            . ' join db_lms_classes c on c.id = s.class_id and c.deleted_at is null'
+            . ' where s.status = ? and s.session_date between ? and ?',
+            array('upcoming', $start, $end)
+        );
+
+        $created = 0;
+        foreach ($sessions as $sess) {
+            $sessionId = (int) $sess['id'];
+            $students  = $this->db->safeFetch(
+                'select student_id from db_lms_class_students'
+                . ' where class_id = ? and status = ?',
+                array((int) $sess['class_id'], 'active')
+            );
+            foreach ($students as $row) {
+                $studentId = (int) $row['student_id'];
+                $exists = $this->db->safeFetchOne(
+                    'select id from db_lms_session_students where session_id = ? and student_id = ? limit 1',
+                    array($sessionId, $studentId)
+                );
+                if (!empty($exists)) {
+                    continue;
+                }
+                if ($dryRun) {
+                    $created++;
+                    continue;
+                }
+                $ok = $this->db->insert('db_lms_session_students', array(
+                    'session_id' => $sessionId,
+                    'student_id' => $studentId,
+                    'status'     => 'not_submitted',
+                ));
+                if ($ok) {
+                    $created++;
+                }
+            }
         }
 
         return $created;

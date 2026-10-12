@@ -228,7 +228,8 @@ php database/cron/lms_tick_cron.php --dry-run --db=phuongnamv_db_lms_test
 php database/cron/lms_tick_cron.php
 ```
 
-Lập lịch **mỗi 15 phút** (SRS §3.1). Trên máy dev (Windows/Laragon) đã bật 2 scheduled task (non-elevated, chạy khi user đăng nhập):
+Lập lịch **mỗi 15 phút** (SRS §3.1). Cả 3 cron LMS lập lịch qua 1 script (xem
+mục "Lập lịch production" bên dưới):
 
 ```
 PowerShell (admin không cần):
@@ -252,9 +253,50 @@ thì hạn phạt mới đúng giờ VN. Chạy `php -i | grep date.timezone` đ
 ⚠️ Tick do cron tạo (`auto_generated = 1`) không xoá qua UI — admin dùng miễn
 giảm thủ công (`manual_exempt`, -1) để bù trừ (giữ lịch sử đối soát lương).
 
-Cả 2 cron ghi `db_lms_cron_runs` (job `tick_scan` / `payroll_close`) qua helper
-`lms/lib/lms_cron.php` (dry-run KHÔNG ghi — tránh reset bộ đếm monitoring khi
-chạy tay). Monitoring (R1/R8): cảnh báo nếu cron chết >30 phút.
+Cả 3 cron ghi `db_lms_cron_runs` (job `tick_scan` / `session_generate` /
+`payroll_close`) qua helper `lms/lib/lms_cron.php` (dry-run KHÔNG ghi — tránh
+reset bộ đếm monitoring khi chạy tay). Monitoring (R1/R8): cảnh báo nếu cron
+chết >30 phút.
+
+### Cron sinh buổi học (ADM-03 §4.1)
+
+```bash
+# Dry-run (đếm session/session_students sẽ sinh, không ghi DB)
+php database/cron/lms_session_generate.php --dry-run
+php database/cron/lms_session_generate.php --dry-run --weeks=8 --db=phuongnamv_db_lms_test
+
+# Chạy thật (mặc định sinh trước 4 tuần; idempotent)
+php database/cron/lms_session_generate.php
+php database/cron/lms_session_generate.php --weeks=8 --from=2026-11-01
+```
+
+Mỗi ngày: quét mọi lớp `active` (bỏ `paused`/`deleted_at`), sinh
+`db_lms_sessions` từ `db_lms_schedules` trong khoảng `--weeks` tuần từ
+`--from` (mặc định hôm nay), rồi đồng bộ `db_lms_session_students` cho học
+viên `active` (đảm bảo row nộp bài tồn tại cho HV nhập giữa kỳ). Idempotent:
+UNIQUE(class_id, session_date, start_time) + check tồn tại.
+
+Lập lịch **hàng ngày 01:00** (sau nửa đêm, trước khi có buổi học sáng).
+
+### Lập lịch production (cả 3 cron)
+
+```bash
+# Windows (Task Scheduler; non-elevated, chạy khi user đăng nhập)
+php database/cron/lms_install_scheduled_tasks.php
+
+# PowerShell — xem/chạy/gỡ
+Get-ScheduledTask -TaskName "LMS_*"
+Start-ScheduledTask -TaskName "LMS_session_generate"
+Unregister-ScheduledTask -TaskName "LMS_session_generate" -Confirm:$false
+
+# Linux (crontab) — tham khảo database/cron/lms_crontab.txt
+*/15 * * * *  php /path/to/source/database/cron/lms_tick_cron.php           >> /var/log/lms_tick.log 2>&1
+0 1 * * *     php /path/to/source/database/cron/lms_session_generate.php    >> /var/log/lms_session_generate.log 2>&1
+15 0 1 * *    php /path/to/source/database/cron/lms_payroll_cron.php        >> /var/log/lms_payroll.log 2>&1
+```
+
+Task Windows tạo ra: `LMS_tick_scan` (15 phút), `LMS_session_generate`
+(hàng ngày 01:00), `LMS_payroll_close` (ngày 1 hàng tháng 00:15).
 
 ### Cron chốt lương (BR-PAY-01/02/03)
 
@@ -268,11 +310,7 @@ php database/cron/lms_payroll_cron.php
 php database/cron/lms_payroll_cron.php --teacher=3 --month=2026-09   # chỉ 1 GV
 ```
 
-Lập lịch **ngày 1 hàng tháng 09:00** (sau khi tick cron đã chốt xong tháng cũ). Trên máy dev là scheduled task `LMS_payroll_close` (monthly, ngày 1):
-
-```
-15 0 1 * * php /path/to/source/database/cron/lms_payroll_cron.php >> /var/log/lms_payroll.log 2>&1
-```
+Lập lịch **ngày 1 hàng tháng 00:15** (sau khi tick cron đã chốt xong tháng cũ).
 
 Chỉ chốt buổi `status='finished'` VÀ không còn `session_students.status='submitted'`
 (nên chạy sau khi tất cả BTVN đã chấm xong). Nếu admin chốt tay giữa tháng qua
@@ -282,13 +320,22 @@ Migration hiện có: `2026_10_07_lms_core.sql` (25 bảng) →
 `2026_10_09_lms_teacher_profile_slots_notes.sql` (TCH-01/02: `teachers.current_address`,
 `sessions.topic_ids`, `db_lms_teacher_free_slots`, `db_lms_teacher_notes`) →
 `2026_10_10_lms_payroll_status.sql` (ADM-07: `transactions.status` draft|pending|paid
-+ `paid_at`).
++ `paid_at`) → `2026_10_12_lms_library_*.sql` (TCH-07) +
+`2026_10_12_lms_class_rules.sql` (nội quy) +
+`2026_10_12_lms_teacher_monthly_reviews_module.sql` (module TCH-06).
+
+⚠️ Áp dụng migration/seed qua `mysql.exe` PHẢI thêm
+`--default-character-set=utf8mb4`, nếu không tên tiếng Việt bị mojibake.
 
 Seed ngưỡng vi phạm: `database/seeds/2026_10_10_lms_violation_thresholds_seed.sql`
 (3 khoảng số lớp 1-3/4-7/≥8 → miễn 2/3/4 tick, cảnh báo 5, hạ phí 8, % phí sau
 hạ 50 — chạy trên cả DB thật + DB test). `ticks_to_warn=5` và
-`fee_percentage_after_demote=50.00` đã chốt tạm (12/10/2026); đổi qua UI ADM-06
-(module `lms-vi-pham`) khi business yêu cầu.
+`fee_percentage_after_demote=50.00` **đã chốt** (business confirm 12/10/2026,
+P4); đổi qua UI ADM-06 (module `lms-vi-pham`) khi business yêu cầu, KHÔNG sửa
+seed (seed chỉ áp dụng cho DB mới).
+
+Kế hoạch kiểm thử đầy đủ: `Tai-lieu-phat-trien/Test_Plan_MasterStudy.md`
+(355 test / 1261 assertion + smoke test HTTP + checklist cron).
 
 Tài khoản demo sau khi seed: `admin/admin123`, `gv01/gv01123456`, `hv01/hv01123456`…
 (chi tiết xem đầu ra script seed).

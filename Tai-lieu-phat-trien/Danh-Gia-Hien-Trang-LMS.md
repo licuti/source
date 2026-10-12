@@ -8,13 +8,13 @@
 
 ---
 
-## 0. TIẾN ĐỘ MỚI NHẤT (cập nhật 12/10/2026)
+## 0. TIẾN ĐỘ MỚI NHẤT (cập nhật 12/10/2026 — P4 hoàn thành)
 
-Tính đến commit `2769188` (12/10/2026), **Phase 0–2 đã hoàn thành**:
+Tính đến P4, **toàn bộ Phase 0–4 đã hoàn thành**:
 - **Phase 1** (commit `3b05aba`): toàn bộ portal Admin/Teacher/Student cơ bản + STU-01..04 + TCH-01..03 + ADM-01..05 — 248 test pass.
 - **Phase 2** (commit `61550b5` + `8b00351` + `2769188`): `TickService` (BR-TICK-01/02/03) + `TaxService` (BR-PAY-03) + `PayrollService` (BR-PAY-01/02/04) + cron quét tick + cron chốt lương + logging `db_lms_cron_runs` + module `lms-vi-pham` (ADM-06) + `lms-phi-dv` (ADM-07 admin + TCH-05 teacher) — **309 test / 989 assertion pass**.
-- **Phase 3 (đang làm)**: ADM-04 `MatchingService`; TCH-07 `LibraryService`; 4 module admin báo cáo/nội quy; TCH-06 teacher monthly reviews; hồ sơ HV có subject + giới tính GV mong muốn.
-- Kiểm thử hiện hành sau P3: **348 tests / 1214 assertions pass**.
+- **Phase 3** (commit `0ce200a` + `21f1e4e` + `4a858c9`): ADM-04 `MatchingService`; TCH-07 `LibraryService`; 4 module admin báo cáo/nội quy; TCH-06 teacher monthly reviews; hồ sơ HV có subject + giới tính GV mong muốn — **348 test / 1214 assertions pass**.
+- **P4 — Ops** (commit `4a858c9` tiếp): cron `lms_session_generate` hàng ngày (sinh 4 tuần + đồng bộ session_students, idempotent); lập lịch production cả 3 cron (Windows Task Scheduler + `lms_crontab.txt` Linux); chốt `ticks_to_warn=5` / `fee_percentage_after_demote=50.00`; viết `Test_Plan_MasterStudy.md` — **355 test / 1261 assertion pass**.
 
 ### Bảng module đã build (12/10/2026)
 
@@ -24,10 +24,10 @@ Tính đến commit `2769188` (12/10/2026), **Phase 0–2 đã hoàn thành**:
 | **Teacher** | 7 | **7** | — |
 | **Student** | 5 | **5** | **100%** (`lms-noi-quy` hiển thị nội quy admin cấu hình) |
 
-### Việc còn lại (Priority 12/10/2026)
+### Việc còn lại (Priority sau P4)
 
-1. **P4 — Ops**: lên lịch cron production (tick 15 phút, payroll ngày 1, thiếu `session_generate` hàng ngày), chốt 2 giá trị seed tạm (`ticks_to_warn=5`, `fee_percentage_after_demote=50.00`), viết `Test_Plan_MasterStudy.md`.
-2. **Mockup gaps** (xem mục 3 bên dưới — vẫn còn nguyên giá trị): Admin Tổng quan thiếu timeline calendar, Teacher Tổng quan bố cục 3 cột, Teacher "Học viên của tôi" dạng cards grid, widget Chat, tìm kiếm toàn cục.
+1. **Mockup gaps** (xem mục 3 bên dưới — vẫn còn nguyên giá trị): Admin Tổng quan thiếu timeline calendar, Teacher Tổng quan bố cục 3 cột, Teacher "Học viên của tôi" dạng cards grid, widget Chat, tìm kiếm toàn cục.
+2. **Scale/Toanse** (xem mục 5): session tập trung khi multi-server, chunk export lớn, quota file upload.
 
 ---
 
@@ -42,7 +42,7 @@ Hệ thống LMS được quy hoạch nằm gọn trong thư mục `lms/` với 
 | **Admin LMS** | 14 module | **15** (14 menu + module thông báo ẩn) | **0** | **100%** |
 | **Teacher LMS** | 7 module | **7** (`Tổng quan`, `Học viên của tôi`, `Quản lý lịch`, `Phí dịch vụ`, `Vi phạm`, `Thư viện`, `Nhận xét tháng`) | **0** | **100%** |
 | **Student LMS** | 5 module | **5** (`Tổng quan`, `Khoá học`, `Lịch học`, `Nhận xét tháng`, `Nội quy`) | **0** | **100%** |
-| **Chung (Core & System)** | Auth, Layout, Router, Notif | **Đã hoàn thành bộ khung lõi** | Background Cronjobs | **~75%** |
+| **Chung (Core & System)** | Auth, Layout, Router, Notif | **Đã hoàn thành bộ khung lõi** | — (3 cron đã có + lập lịch production) | **100%** |
 
 (*) Admin có 14 menu hiển thị; module `Thông báo` là module ẩn, dùng cho chuông thông báo.
 
@@ -270,11 +270,13 @@ Kiểm tra chi tiết từng file ảnh mockup PNG và so sánh với file templ
 2. ✅ `PayrollService` + `TaxService`: phí dịch vụ, hạ phí theo tick, thuế TNCN (cam kết 08).
 3. ✅ Màn hình **Thống kê phí dịch vụ** Admin (`lms-phi-dv`, ADM-07, kèm xuất CSV + duyệt draft→pending→paid) + **Phí dịch vụ** Teacher (TCH-05).
 
-### Giai đoạn 4: Cronjobs tự động — một phần ✅
+### Giai đoạn 4: Cronjobs tự động ✅ (hoàn thành 12/10/2026 — P4)
 1. ✅ `database/cron/lms_tick_cron.php`: quét lesson summary trễ (BR-TICK-01) + chấm BTVN trễ (BR-TICK-02) + đánh giá tick (BR-TICK-03).
-2. ⏳ `database/cron/lms_session_generate.php`: sinh buổi học cho các tuần tiếp theo — **chưa có** (hiện chỉ sinh khi tạo/sửa lớp qua ADM-03).
+2. ✅ `database/cron/lms_session_generate.php`: sinh buổi học 4 tuần + đồng bộ `session_students` hàng ngày (idempotent, dry-run, log `cron_runs`).
 3. ✅ `database/cron/lms_payroll_cron.php`: chốt lương ngày 1 hàng tháng.
-4. ⏳ **Lên lịch production** (Task Scheduler/crontab) cho cả 3 cron + cảnh báo email khi `db_lms_cron_runs` chết >30 phút (R8).
+4. ✅ **Lập lịch production**: `lms_install_scheduled_tasks.php` (Windows: `LMS_tick_scan` 15 phút, `LMS_session_generate` 01:00 daily, `LMS_payroll_close` ngày 1) + `lms_crontab.txt` (Linux). Đã verify chạy thật rc=0.
+5. ✅ Chốt `ticks_to_warn=5` / `fee_percentage_after_demote=50.00` (seed áp dụng cả DB thật + DB test).
+6. ✅ `Test_Plan_MasterStudy.md` (355 test / 1261 assertion + smoke test HTTP + checklist cron).
 
 ### Giai đoạn 5: Phase 3 (P3 modules) ✅
 1. **ADM-04 Sắp xếp lớp**: đã hoàn thành trong commit `0ce200a`.
