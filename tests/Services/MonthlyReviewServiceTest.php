@@ -159,4 +159,38 @@ class MonthlyReviewServiceTest extends LmsTestCase
     {
         $this->assertSame('Tháng 7 / 2026', $this->svc->monthLabel('2026-07'));
     }
+
+    public function testTeacherCanSaveDraftAndPublishOnlyOwnClassReview()
+    {
+        $data = array(
+            'class_id' => $this->classId,
+            'student_id' => $this->studentId,
+            'review_month' => '2026-09',
+            'overall_rating' => 'good',
+            'content' => 'Tiến bộ tốt trong tháng.',
+            'progress_percent' => '75',
+        );
+        $this->assertTrue($this->svc->saveForTeacher($this->teacherId, $data, false));
+        $rows = $this->svc->listForTeacher($this->teacherId, '2026-09');
+        $this->assertNotEmpty($rows);
+        $this->assertNull($rows[0]['published_at']);
+
+        $this->assertTrue($this->svc->saveForTeacher($this->teacherId, $data, true));
+        $rows = $this->svc->listForTeacher($this->teacherId, '2026-09');
+        $this->assertNotEmpty($rows[0]['published_at']);
+        $this->assertSame('Tiến bộ tốt trong tháng.', $rows[0]['content']);
+    }
+
+    public function testTeacherCannotReviewStudentOutsideOwnClass()
+    {
+        $this->assertFalse($this->svc->saveForTeacher($this->teacherId, array(
+            'class_id' => $this->classId,
+            'student_id' => $this->otherStudentId,
+            'review_month' => '2026-09',
+            'overall_rating' => 'good',
+            'content' => 'Should be rejected',
+            'progress_percent' => 50,
+        ), true));
+        $this->assertArrayHasKey('system', $this->svc->errors());
+    }
 }

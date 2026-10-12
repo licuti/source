@@ -5,8 +5,7 @@
  * Action:
  *   - 'man' (GET) → khung nội quy read-only.
  *
- * Nội dung do admin nhập ở module "Quản lý nội quy" (Phase 3). Giai đoạn này hiển
- * thị placeholder (plan STU quyết định #2 — không tạo bảng/service admin).
+ * Nội dung do admin quản lý ở module lms-noi-quy; render read-only và escape HTML.
  *
  * PHP 7.3 compatible.
  */
@@ -33,10 +32,10 @@ switch ($action) {
 function lmnq_show()
 {
     global $title, $template, $rules;
-
-    // Placeholder: admin nhập nội quy qua module "Quản lý nội quy" (Phase 3).
-    // Khi có dữ liệu, thay mảng này bằng query db_lms_class_rules.
-    $rules = array();
+    $content = (new \Lms\ClassRulesService(lms_db()))->getRules();
+    $rules = trim((string) $content['content']) === ''
+        ? array()
+        : array(array('title' => 'Nội quy chung', 'content' => $content['content']));
 
     $title    = 'Nội quy lớp học';
     $template = 'lms-noi-quy/hienthi';

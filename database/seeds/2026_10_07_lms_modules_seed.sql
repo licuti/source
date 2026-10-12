@@ -28,7 +28,7 @@ INSERT INTO `db_lms_modules` (`parent`, `name`, `alias`, `portal`, `icon`, `so_t
 (0, 'Thống kê số buổi học', 'lms-thong-ke-buoi-hoc', 'admin', 'fa-solid fa-calendar-check',13, 1),
 (0, 'Sắp xếp lớp',          'lms-sap-xep-lop',       'admin', 'fa-solid fa-shuffle',       14, 1); -- ADM-04
 
--- ===================== PORTAL TEACHER (6) =====================
+-- ===================== PORTAL TEACHER (6 base; TCH-06 added by later migration) =====================
 INSERT INTO `db_lms_modules` (`parent`, `name`, `alias`, `portal`, `icon`, `so_thu_tu`, `hien_thi`) VALUES
 (0, 'Tổng quan',         'lms-tong-quan',          'teacher', 'fa-solid fa-gauge-high',         1, 1),  -- TCH-00
 (0, 'Học viên của tôi',  'lms-hoc-vien-cua-toi',   'teacher', 'fa-solid fa-user-graduate',      2, 1),
@@ -46,7 +46,7 @@ INSERT INTO `db_lms_modules` (`parent`, `name`, `alias`, `portal`, `icon`, `so_t
 (0, 'Nội quy lớp học', 'lms-noi-quy',        'student', 'fa-solid fa-scroll',                 5, 1);
 
 -- ===================== Module ẩn: trang thông báo (chuông header, T10) =====================
--- hien_thi = 0 → không hiện sidebar (giữ đúng số mục theo mockup: admin 14 / GV 6 / HV 5),
+-- hien_thi = 0 → không hiện sidebar (14 admin / 7 teacher after TCH-06 migration / 5 student),
 -- nhưng có page riêng để router phục vụ + endpoint AJAX (auth gate + CSRF + quyền portal).
 INSERT INTO `db_lms_modules` (`parent`, `name`, `alias`, `portal`, `icon`, `so_thu_tu`, `hien_thi`) VALUES
 (0, 'Thông báo', 'lms-thong-bao', 'admin',   'fa-solid fa-bell', 99, 0),

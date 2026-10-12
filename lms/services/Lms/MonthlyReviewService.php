@@ -20,6 +20,109 @@ class MonthlyReviewService extends LmsService
         'need_improvement' => 'Cần cố gắng',
     );
 
+    /** List students in a teacher's active classes, with their review for a month. */
+    public function listForTeacher($teacherId, $month)
+    {
+        $teacherId = (int) $teacherId;
+        $month = (string) $month;
+        if ($teacherId <= 0 || !preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $month)) {
+            return array();
+        }
+        return $this->db->safeFetch(
+            'select c.id as class_id, c.class_code, c.name as class_name,'
+            . ' sub.name as subject_name, s.user_id as student_id, s.student_code, s.full_name as student_name,'
+            . ' r.id as review_id, r.review_month, r.overall_rating, r.content, r.progress_percent, r.published_at'
+            . ' from db_lms_classes c'
+            . ' join db_lms_class_students cs on cs.class_id=c.id and cs.status="active"'
+            . ' join db_lms_students s on s.user_id=cs.student_id'
+            . ' left join db_lms_subjects sub on sub.id=c.subject_id'
+            . ' left join db_lms_monthly_reviews r on r.class_id=c.id and r.student_id=s.user_id and r.review_month=?'
+            . ' where c.teacher_id=? and c.status="active" and c.deleted_at is null'
+            . ' order by c.name, s.full_name',
+            array($month, $teacherId)
+        );
+    }
+
+    /** Create/update one monthly review after verifying teacher owns the active enrolment. */
+    public function saveForTeacher($teacherId, array $data, $publish = false)
+    {
+        $this->clearErrors();
+        $teacherId = (int) $teacherId;
+        $classId = isset($data['class_id']) ? (int) $data['class_id'] : 0;
+        $studentId = isset($data['student_id']) ? (int) $data['student_id'] : 0;
+        $month = isset($data['review_month']) ? trim((string) $data['review_month']) : '';
+        $rating = isset($data['overall_rating']) ? (string) $data['overall_rating'] : '';
+        $content = isset($data['content']) ? trim((string) $data['content']) : '';
+        $percent = isset($data['progress_percent']) && (string) $data['progress_percent'] !== ''
+            ? (float) $data['progress_percent'] : null;
+
+        if ($teacherId <= 0 || $classId <= 0 || $studentId <= 0
+            || !preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $month)) {
+            $this->addError('system', 'Thông tin lớp, học viên hoặc tháng không hợp lệ.');
+            return false;
+        }
+        if ($rating !== '' && !isset(self::OVERALL_RATINGS[$rating])) {
+            $this->addError('overall_rating', 'Mức đánh giá không hợp lệ.');
+            return false;
+        }
+        if ($publish && $rating === '') {
+            $this->addError('overall_rating', 'Chọn mức đánh giá trước khi đăng nhận xét.');
+            return false;
+        }
+        if ($content === '') {
+            $this->addError('content', 'Nội dung nhận xét là bắt buộc.');
+            return false;
+        }
+        if (mb_strlen($content, 'UTF-8') > 10000) {
+            $this->addError('content', 'Nội dung nhận xét không được quá 10.000 ký tự.');
+            return false;
+        }
+        if ($percent !== null && ($percent < 0 || $percent > 100)) {
+            $this->addError('progress_percent', 'Tiến bộ phải nằm trong khoảng 0–100%.');
+            return false;
+        }
+        if ($publish && $percent === null) {
+            $this->addError('progress_percent', 'Nhập tỷ lệ tiến bộ trước khi đăng nhận xét.');
+            return false;
+        }
+        $enrolment = $this->db->safeFetchOne(
+            'select c.id from db_lms_classes c join db_lms_class_students cs on cs.class_id=c.id'
+            . ' where c.id=? and c.teacher_id=? and c.status="active" and c.deleted_at is null'
+            . ' and cs.student_id=? and cs.status="active" limit 1',
+            array($classId, $teacherId, $studentId)
+        );
+        if (empty($enrolment)) {
+            $this->addError('system', 'Học viên không thuộc lớp đang dạy của bạn.');
+            return false;
+        }
+        $before = $this->db->safeFetchOne(
+            'select * from db_lms_monthly_reviews where student_id=? and class_id=? and review_month=? limit 1',
+            array($studentId, $classId, $month)
+        );
+        $publishedAt = $publish ? (!empty($before['published_at']) ? $before['published_at'] : $this->now()) : null;
+        $values = array(
+            'overall_rating' => $rating !== '' ? $rating : null,
+            'content' => $content,
+            'progress_percent' => $percent,
+            'published_at' => $publishedAt,
+        );
+        if (!empty($before)) {
+            $ok = $this->db->update('db_lms_monthly_reviews', $values,
+                'id=? and teacher_id=?', array((int) $before['id'], $teacherId));
+            $reviewId = (int) $before['id'];
+        } else {
+            $values += array('student_id'=>$studentId,'class_id'=>$classId,'teacher_id'=>$teacherId,'review_month'=>$month);
+            $ok = $this->db->insert('db_lms_monthly_reviews', $values);
+            $reviewId = (int) $this->db->insertId;
+        }
+        if (!$ok) {
+            $this->addError('system', 'Không thể lưu nhận xét tháng.');
+            return false;
+        }
+        $this->audit($publish ? 'publish_monthly_review' : 'save_monthly_review', 'monthly_reviews', $reviewId, $before, $values, 'teacher');
+        return true;
+    }
+
     /**
      * Danh sách lớp HV đang học + nhận xét tháng đã published của từng lớp.
      *

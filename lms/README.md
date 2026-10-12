@@ -54,6 +54,9 @@ lms/
                           (tạo lớp 1-1 tự động + đổi status HV + xoá lịch trống)
     LibraryService.php    TCH-07 + admin: upload/list/filter/sửa/xoá mềm tài liệu,
                           row-level scope lớp GV, download ACL + download_count
+    AdminReportService.php Báo cáo chỉ đọc ADM: BTVN, danh mục chuyên đề,
+                           thống kê buổi theo học viên + CSV
+    ClassRulesService.php Admin lưu nội quy chung; Student chỉ đọc nội dung đã escape
   app/                  source + template theo portal (KHÔNG đặt lms/<portal>/ —
     admin/              trùng tên thư mục thật với URL /lms/admin → mod_dir's
     teacher/            DirectorySlash sinh 301 dư; xem note trong .htaccess)
@@ -77,6 +80,10 @@ lms/
 | `lms-lop-hoc-sinh` | ADM-04 | `man` `them` `chuyen` `xoa` | Ma trận học viên × chương trình; thêm/chuyển/xoá HV khỏi lớp |
 | `lms-sap-xep-lop` | ADM-04 | `man` `chi-tiet-gv` `tao-lop` | Sắp xếp lớp: danh sách HV chờ xếp (pending_arrange) → GV phù hợp theo điểm match (môn/quận/giới tính/online/lịch rảnh/sức chứa) + chi tiết lịch tuần GV + tạo lớp 1-1 tự động (CSRF, cấu hình mặc định, HV → chờ thu phí) |
 | `lms-thu-vien` | TCH-07 | `man` `them` `sua` `xoa` `tai` | Quản trị thư viện: tìm/lọc tài liệu, upload file (MIME whitelist, 100 MB), gắn lớp/môn/chuyên đề, sửa metadata, bật/tắt quyền tải của GV, xoá mềm, tải file |
+| `lms-bai-tap-ve-nha` | — | `man` | Báo cáo buổi học, BTVN, lesson summary và số bài nộp; lọc ngày/lớp/GV |
+| `lms-lo-trinh` | — | `man` | Tra cứu danh mục chủ đề theo môn, chương trình, loại test và nội dung mẫu nhận xét |
+| `lms-noi-quy` | — | `man` | Quản trị nội quy văn bản thuần (CSRF + audit); nội dung hiển thị ở portal student |
+| `lms-thong-ke-buoi-hoc` | — | `man` `xuat` | Lịch sử buổi theo mã HV, khoảng ngày, tổng số buổi và xuất CSV |
 | `lms-yeu-cau` | ADM-05 | `man` `xem` `duyet` `tu-choi` | Duyệt/từ chối request của GV (add_session/request_leave/change_schedule): transaction + `FOR UPDATE` idempotent, check trùng lịch GV, insert/cancel session, giảm `remaining_sessions` |
 | `lms-vi-pham` | ADM-06 | `man` `them` `xoa` `nguong` `luu-nguong` `xoa-nguong` | Quản lý vi phạm (tick): log tick + filter GV/lý do/tháng/nguồn + phân trang, thêm tick thủ công (±1), xoá tick thủ công, CRUD ngưỡng `violation_thresholds` |
 | `lms-phi-dv` | ADM-07 | `man` `chi-tiet` `them-dieu-chinh` `duyet` `xuat` | Thống kê phí dịch vụ theo tháng (tổng thu/phạt/thưởng/thuế/thực nhận + status), chi tiết GV×tháng + form điều chỉnh thủ công (penalty/bonus/adjustment), duyệt draft→pending→paid (atomic cả tháng), xuất CSV (UTF-8 BOM) |
@@ -95,6 +102,7 @@ trước khi xử lý; POST đều có `lms_csrf_verify()`; ghi `db_lms_audit_lo
 | `lms-phi-dv` | TCH-05 | `man` | Phí dịch vụ của tôi: transactions theo tháng (filter type) + tổng hợp thực nhận (BR-PAY-04) + banner cảnh báo khi tick đạt ngưỡng hạ phí (BR-TICK-03) |
 | `lms-vi-pham` | — | `man` | Vi phạm nội quy của tôi: tick theo tháng (filter lý do) + panel tổng hợp (raw/miễn/thực tế/ngưỡng) + cảnh báo sắp/vượt ngưỡng |
 | `lms-thu-vien` | TCH-07 | `man` `them` `xoa` `tai` | Tìm/xem tài liệu chung hoặc tài liệu lớp mình dạy; chỉ tải khi admin cho phép; upload file cho lớp của mình, soft-delete file do mình upload |
+| `lms-nhan-xet-thang` | TCH-06 | `man` `luu` | Danh sách HV theo lớp active; lưu bản nháp hoặc đăng nhận xét tháng (điểm tổng thể, nội dung, tiến bộ %), chỉ xem/sửa roster thuộc GV hiện tại |
 | `lms-thong-bao` | SYS-01 | `hienthi` `unread` `mark_read` `mark_all_read` | Thông báo (module ẩn, AJAX có CSRF) |
 
 Row-level: service lọc `teacher_id = user id` (guide §3.5); GV chỉ thấy/sửa buổi của chính mình.
@@ -181,6 +189,7 @@ php vendor/phpunit/phpunit/phpunit
 # Migration (forward-only; chạy trên cả DB thật + DB test khi áp dụng schema mới)
 php database/migrations/<file>.sql   # qua runner tạm hoặc client MySQL
 # TCH-07: đổi uploader FK sang db_lms_users và thêm is_downloadable; đã áp dụng 12/10/2026
+# P3: db_lms_class_rules + module/quyền teacher lms-nhan-xet-thang; migrations 2026_10_12_lms_class_rules.sql, 2026_10_12_lms_teacher_monthly_reviews_module.sql
 
 # Seed module/permission (chạy 1 lần)
 php database/seeds/... (xem file SQL trong database/seeds/)
