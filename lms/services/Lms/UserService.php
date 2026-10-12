@@ -610,6 +610,22 @@ class UserService extends LmsService
         if ($district !== '' && !in_array($district, self::HCMC_DISTRICTS, true)) {
             $this->addError('district', 'Quận không thuộc danh sách TP.HCM.');
         }
+
+        $subjectId = isset($in['subject_id']) ? (int) $in['subject_id'] : 0;
+        if ($subjectId > 0) {
+            $subject = $this->db->safeFetchOne(
+                'select id from db_lms_subjects where id = ? limit 1',
+                array($subjectId)
+            );
+            if (empty($subject)) {
+                $this->addError('subject_id', 'Môn học không tồn tại.');
+            }
+        }
+
+        $preferredGender = $this->trimIn($in, 'preferred_teacher_gender');
+        if ($preferredGender !== '' && !in_array($preferredGender, array('male', 'female'), true)) {
+            $this->addError('preferred_teacher_gender', 'Yêu cầu giới tính giáo viên không hợp lệ.');
+        }
     }
 
     /**
@@ -628,6 +644,12 @@ class UserService extends LmsService
             'parent_name'     => $this->trimIn($in, 'parent_name'),
             'parent_phone'    => $this->trimIn($in, 'parent_phone'),
             'grade'           => $this->trimIn($in, 'grade'),
+            'subject_id'      => isset($in['subject_id']) && (int) $in['subject_id'] > 0
+                ? (int) $in['subject_id']
+                : null,
+            'preferred_teacher_gender' => $this->trimIn($in, 'preferred_teacher_gender') !== ''
+                ? $this->trimIn($in, 'preferred_teacher_gender')
+                : null,
             'school_name'     => $this->trimIn($in, 'school_name'),
             'district'        => $this->trimIn($in, 'district'),
             'ward'            => $this->trimIn($in, 'ward'),
@@ -688,9 +710,11 @@ class UserService extends LmsService
             . ' s.user_id, s.student_code, s.full_name, s.parent_name, s.parent_phone,'
             . ' s.grade, s.school_name, s.district, s.ward, s.current_address,'
             . ' s.learning_type, s.priority_number, s.status as student_status, s.note,'
+            . ' s.subject_id, s.preferred_teacher_gender, subj.name as subject_name,'
             . ' s.free_time_slots'
             . ' from db_lms_users u'
             . ' join db_lms_students s on s.user_id = u.id'
+            . ' left join db_lms_subjects subj on subj.id = s.subject_id'
             . ' where u.id = ? and u.role = ? limit 1',
             array((int) $userId, self::ROLE_STUDENT)
         );
@@ -739,7 +763,7 @@ class UserService extends LmsService
             'select u.id, u.username, u.email, u.phone, u.status as user_status, u.created_at,'
             . ' s.student_code, s.full_name, s.parent_name, s.parent_phone, s.grade, s.school_name,'
             . ' s.district, s.ward, s.current_address, s.learning_type, s.priority_number,'
-            . ' s.status as student_status, s.note,'
+            . ' s.status as student_status, s.note, s.subject_id, subj.name as subject_name,'
             . ' (select group_concat(distinct c.name order by c.name separator "; ")'
             . '    from db_lms_class_students cs'
             . '    join db_lms_classes c on c.id = cs.class_id and c.deleted_at is null'
@@ -752,6 +776,7 @@ class UserService extends LmsService
             . '   where cs.student_id = u.id and cs.status = "active") as teacher_1on1'
             . ' from db_lms_users u'
             . ' join db_lms_students s on s.user_id = u.id'
+            . ' left join db_lms_subjects subj on subj.id = s.subject_id'
             . ' where ' . $whereSql
             . ' order by s.priority_number desc, u.id desc'
             . ' limit ' . $offset . ', ' . $perPage,

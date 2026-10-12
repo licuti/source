@@ -13,22 +13,22 @@
 Tính đến commit `2769188` (12/10/2026), **Phase 0–2 đã hoàn thành**:
 - **Phase 1** (commit `3b05aba`): toàn bộ portal Admin/Teacher/Student cơ bản + STU-01..04 + TCH-01..03 + ADM-01..05 — 248 test pass.
 - **Phase 2** (commit `61550b5` + `8b00351` + `2769188`): `TickService` (BR-TICK-01/02/03) + `TaxService` (BR-PAY-03) + `PayrollService` (BR-PAY-01/02/04) + cron quét tick + cron chốt lương + logging `db_lms_cron_runs` + module `lms-vi-pham` (ADM-06) + `lms-phi-dv` (ADM-07 admin + TCH-05 teacher) — **309 test / 989 assertion pass**.
+- **Phase 3 (đang làm)** (commit sau `2769188`): `MatchingService` + module `lms-sap-xep-lop` (ADM-04 Sắp xếp lớp — FR admin cuối cùng) + thêm `subject_id` / `preferred_teacher_gender` cho hồ sơ học viên (ADM-01) — **328 test / 1088 assertion pass**.
 
 ### Bảng module đã build (12/10/2026)
 
 | Portal | Đăng ký | Đã build | Còn thiếu |
 |---|:---:|:---:|---|
-| **Admin** | 14 | **9** | `lms-sap-xep-lop` (ADM-04), `lms-bai-tap-ve-nha`, `lms-lo-trinh`, `lms-noi-quy`, `lms-thu-vien`, `lms-thong-ke-buoi-hoc` |
+| **Admin** | 14 | **10** | `lms-bai-tap-ve-nha`, `lms-lo-trinh`, `lms-noi-quy`, `lms-thu-vien`, `lms-thong-ke-buoi-hoc` |
 | **Teacher** | 6 | **5** | `lms-thu-vien` (TCH-07) |
 | **Student** | 5 | **5** | **100%** (riêng `lms-noi-quy` là placeholder chờ module admin nội quy) |
 
 ### Việc còn lại (Priority 12/10/2026)
 
-1. **P1 — ADM-04 Sắp xếp lớp (Class Matching)**: FR admin cuối cùng còn thiếu; cần service match GV (subject/district/lịch rảnh/max_classes) + module `lms-sap-xep-lop`.
-2. **P2 — TCH-07 Thư viện** (teacher + admin): schema `db_lms_library_files` đã có; reuse `lms_upload.php`.
-3. **P3 — 4 module admin view-only** (`bai-tap-ve-nha`, `lo-trinh`, `noi-quy`, `thong-ke-buoi-hoc`) + kiểm tra TCH-06 (MonthlyReviewService đã có, chưa có UI teacher).
-4. **P4 — Ops**: lên lịch cron production (tick 15 phút, payroll ngày 1, thiếu `session_generate` hàng ngày), chốt 2 giá trị seed tạm (`ticks_to_warn=5`, `fee_percentage_after_demote=50.00`), viết `Test_Plan_MasterStudy.md`.
-5. **Mockup gaps** (xem mục 3 bên dưới — vẫn còn nguyên giá trị): Admin Tổng quan thiếu timeline calendar, Teacher Tổng quan bố cục 3 cột, Teacher "Học viên của tôi" dạng cards grid, widget Chat, tìm kiếm toàn cục.
+1. **P2 — TCH-07 Thư viện** (teacher + admin): schema `db_lms_library_files` đã có; reuse `lms_upload.php`.
+2. **P3 — 4 module admin view-only** (`bai-tap-ve-nha`, `lo-trinh`, `noi-quy`, `thong-ke-buoi-hoc`) + kiểm tra TCH-06 (MonthlyReviewService đã có, chưa có UI teacher).
+3. **P4 — Ops**: lên lịch cron production (tick 15 phút, payroll ngày 1, thiếu `session_generate` hàng ngày), chốt 2 giá trị seed tạm (`ticks_to_warn=5`, `fee_percentage_after_demote=50.00`), viết `Test_Plan_MasterStudy.md`.
+4. **Mockup gaps** (xem mục 3 bên dưới — vẫn còn nguyên giá trị): Admin Tổng quan thiếu timeline calendar, Teacher Tổng quan bố cục 3 cột, Teacher "Học viên của tôi" dạng cards grid, widget Chat, tìm kiếm toàn cục.
 
 ---
 
@@ -40,10 +40,12 @@ Hệ thống LMS được quy hoạch nằm gọn trong thư mục `lms/` với 
 
 | Phân hệ (Portal) | Tổng module menu | Đã có Controller & Template | Chưa có Code (Trang 404) | Tỷ lệ hoàn thành UI |
 |---|:---:|:---:|:---:|:---:|
-| **Admin LMS** | 14 module | **5** (`Tổng quan`, `Học viên`, `Giáo viên`, `Lớp học`, `Học sinh - Lớp học`) | **9** module | **~35%** |
-| **Teacher LMS** | 6 module | **3** (`Tổng quan`, `Học viên của tôi`, `Quản lý lịch`) | **3** module | **~50%** |
-| **Student LMS** | 5 module | **1** (`Tổng quan`) | **4** module | **~20%** |
+| **Admin LMS** | 14 module | **10** (`Tổng quan`, `Học viên`, `Giáo viên`, `Lớp học`, `Học sinh - Lớp học`, `Vi phạm`, `Yêu cầu`, `Phí dịch vụ`, `Sắp xếp lớp`, `Thông báo`*) | **5** module | **~64%** |
+| **Teacher LMS** | 6 module | **5** (`Tổng quan`, `Học viên của tôi`, `Quản lý lịch`, `Phí dịch vụ`, `Vi phạm`) | **1** module | **~83%** |
+| **Student LMS** | 5 module | **5** (`Tổng quan`, `Khoá học`, `Lịch học`, `Nhận xét tháng`, `Nội quy`) | **0** | **100%** |
 | **Chung (Core & System)** | Auth, Layout, Router, Notif | **Đã hoàn thành bộ khung lõi** | Background Cronjobs | **~75%** |
+
+(*) `Thông báo` là module ẩn (không hiển thị menu, dùng cho chuông thông báo).
 
 ---
 
@@ -128,17 +130,21 @@ Hệ thống LMS được quy hoạch nằm gọn trong thư mục `lms/` với 
 | **ADM-01** | Quản lý học viên | CRUD, mã HV tự sinh, SĐT phụ huynh, khung giờ rảnh theo tuần. | Đã có trong `lms-hoc-vien.php` và bảng phụ `free_time_slots`. | **ĐẠT** |
 | **ADM-02** | Quản lý giáo viên | CCCD, MST, Cam kết 08, Hạng GV, % Phí DV, môn/quận dạy được. | Đã có trong `lms-giao-vien.php` và `TeacherProfileService`. | **ĐẠT** |
 | **ADM-03** | Quản lý lớp học | Tạo lớp 1-1/nhóm, lịch cố định, tự động sinh 4 tuần sessions, hạn BTVN. | Đã có trong `lms-lop.php` & `ClassService`. Sinh sessions tự động. | **ĐẠT** |
-| **ADM-04** | Học sinh - Lớp học | Ma trận HV theo chương trình, 2 tab lớp nhóm và 1-1, gán lớp trực tiếp. | Đã có trong `lms-lop-hoc-sinh.php` (thêm/chuyển lớp trực tiếp). | **ĐẠT** |
-| **ADM-05** | Quản lý yêu cầu | Duyệt/Từ chối request: xin nghỉ, thêm buổi, đổi lịch, gửi test. | Đã có `RequestService` nhưng **chưa có giao diện Admin**. | **THIẾU UI** |
-| **ADM-06** | Quản lý vi phạm | CRUD `violation_thresholds`, cộng/trừ tick, hạ phí dịch vụ. | Database có bảng, Service có logic nhưng **chưa có UI Admin**. | **THIẾU UI** |
-| **ADM-07** | Thống kê tài chính | Tính phí DV theo tháng, trừ phạt, tính thuế TNCN, xuất Excel. | Chưa có `PayrollService` và **chưa có giao diện Admin**. | **CHƯA LÀM** |
+| **ADM-04** | Học sinh - Lớp học + Sắp xếp lớp | Ma trận HV theo chương trình, 2 tab lớp nhóm và 1-1, gán lớp trực tiếp; ghép GV cho HV chờ xếp. | Đã có `lms-lop-hoc-sinh.php` (thêm/chuyển lớp) + `lms-sap-xep-lop.php` (`MatchingService`: hard filter môn/quận/giới tính/online/lịch + điểm 0-100, tạo lớp 1-1 tự động). | **ĐẠT** |
+| **ADM-05** | Quản lý yêu cầu | Duyệt/Từ chối request: xin nghỉ, thêm buổi, đổi lịch, gửi test. | Đã có `lms-yeu-cau.php` + `RequestService` (duyệt atomic, check trùng lịch, trừ remaining_sessions). | **ĐẠT** |
+| **ADM-06** | Quản lý vi phạm | CRUD `violation_thresholds`, cộng/trừ tick, hạ phí dịch vụ. | Đã có `lms-vi-pham.php` + `TickService` (BR-TICK-01/02/03) + cron quét 15 phút. | **ĐẠT** |
+| **ADM-07** | Thống kê tài chính | Tính phí DV theo tháng, trừ phạt, tính thuế TNCN, xuất Excel. | Đã có `lms-phi-dv.php` + `PayrollService`/`TaxService` (BR-PAY-01..04) + cron chốt lương + xuất CSV. | **ĐẠT** |
 | **TCH-01** | Quản lý lịch dạy | Lịch tuần, 5 màu trạng thái, đăng ký lịch trống, xin nghỉ, thêm buổi. | Đã hoàn thành trong `lms-lich-day.php` và `buoi_tpl.php`. | **ĐẠT** |
-| **TCH-02** | Ghi Lesson Summary | Chọn chuyên đề, nhập tóm tắt, đính kèm file, deadline 12:00 hôm sau. | Chưa có màn hình chi tiết buổi học để GV thao tác. | **CHƯA LÀM** |
-| **TCH-03** | Chấm BTVN | Tải bài làm học sinh, chấm điểm, nhận xét, upload file đã chấm. | Chưa có giao diện chấm bài tập. | **CHƯA LÀM** |
-| **TCH-04** | Chấm Test / Minitest | Chấm điểm thang 20 và %, tải bài nộp, upload file Excel chấm điểm. | Chưa có giao diện chấm test. | **CHƯA LÀM** |
-| **TCH-05** | Phí DV & Vi phạm | Xem bảng kê thu nhập, theo dõi tick thực tế và cảnh báo hạ phí. | Chưa có giao diện cho giáo viên. | **CHƯA LÀM** |
-| **STU-01** | Lộ trình khóa học | Cây chuyên đề, xem tiến độ buổi học, tải đề, nộp BTVN, nộp Test. | Chưa có giao diện cho học viên. | **CHƯA LÀM** |
-| **STU-02** | Lịch học học viên | Xem lịch học tuần, trạng thái buổi học, link học online. | Chưa có giao diện lịch học học viên. | **CHƯA LÀM** |
+| **TCH-02** | Ghi Lesson Summary | Chọn chuyên đề, nhập tóm tắt, đính kèm file, deadline 12:00 hôm sau. | Đã có trong chi tiết buổi học (`buoi_tpl.php`); cron tự đánh `is_summary_late` + tạo tick. | **ĐẠT** |
+| **TCH-03** | Chấm BTVN | Tải bài làm học viên, chấm điểm, nhận xét, upload file đã chấm. | Đã có trong `buoi_tpl.php` (chấm BTVN + is_graded_late). | **ĐẠT** |
+| **TCH-04** | Chấm Test / Minitest | Chấm điểm thang 20 và %, tải bài nộp, upload file Excel chấm điểm. | Đã có trong `buoi_tpl.php` (chấm test/minitest qua `StudentCourseService`). | **ĐẠT** |
+| **TCH-05** | Phí DV & Vi phạm | Xem bảng kê thu nhập, theo dõi tick thực tế và cảnh báo hạ phí. | Đã có `lms-phi-dv.php` + `lms-vi-pham.php` (portal teacher). | **ĐẠT** |
+| **TCH-06** | Nhận xét tháng | GV xem nhận xét tháng của mình. | `MonthlyReviewService` đã có; **chưa có UI teacher**. | **THIẾU UI** |
+| **TCH-07** | Thư viện | Xem/tải tài liệu lớp học. | Schema `db_lms_library_files` đã có; **chưa có UI**. | **THIẾU UI** |
+| **STU-01** | Lộ trình khóa học | Cây chuyên đề, xem tiến độ buổi học, tải đề, nộp BTVN, nộp Test. | Đã có `lms-khoa-hoc.php` (học + nộp BTVN/test). | **ĐẠT** |
+| **STU-02** | Lịch học học viên | Xem lịch học tuần, trạng thái buổi học, link học online. | Đã có `lms-lich-hoc.php`. | **ĐẠT** |
+| **STU-03** | Nhận xét tháng | Xem nhận xét tháng từ GV (chỉ khi published). | Đã có `lms-nhan-xet-thang.php`. | **ĐẠT** |
+| **STU-04** | Nội quy lớp học | Xem nội quy. | Đã có `lms-noi-quy.php` (read-only; nội quy do admin cấu hình — module admin nội quy chưa build). | **ĐẠT (UI view)** |
 
 ---
 

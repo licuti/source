@@ -82,7 +82,8 @@ function lms_hoc_vien_list(\Lms\UserService $userSvc)
 
 function lms_hoc_vien_form(\Lms\UserService $userSvc, $isEdit)
 {
-    global $title, $template, $row, $errors, $isEditMode, $formId, $d, $user, $alias;
+    global $title, $template, $row, $errors, $isEditMode, $formId,
+           $subjectOptions, $d, $user, $alias;
 
     $errors      = array();
     $isEditMode  = $isEdit;
@@ -141,8 +142,34 @@ function lms_hoc_vien_form(\Lms\UserService $userSvc, $isEdit)
         isset($row['free_time_slots']) ? $row['free_time_slots'] : array()
     );
 
+    $subjectOptions = lms_hoc_vien_subject_map(lms_db());
+
     $title    = $isEdit ? 'Sửa học viên' : 'Thêm học viên';
     $template = 'lms-hoc-vien/form';
+}
+
+/**
+ * Map subject_id → tên môn + tên chương trình (dùng cho form chọn môn).
+ *
+ * @param LmsDb $d
+ * @return array id => array('name' => , 'program' => )
+ */
+function lms_hoc_vien_subject_map(LmsDb $d)
+{
+    $rows = $d->safeFetch(
+        'select s.id, s.name, p.name as program_name'
+        . ' from db_lms_subjects s'
+        . ' join db_lms_programs p on p.id = s.program_id'
+        . ' order by p.name, s.name'
+    );
+    $map = array();
+    foreach ($rows as $r) {
+        $map[(int) $r['id']] = array(
+            'name'    => (string) $r['name'],
+            'program' => (string) $r['program_name'],
+        );
+    }
+    return $map;
 }
 
 /**

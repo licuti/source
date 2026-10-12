@@ -64,15 +64,17 @@ $db->insert('db_lms_admins', array(
 $creds['admin'] = array('admin', $adminPass);
 
 // ===================== Giáo viên (3) =====================
+// teachable_subjects để ADM-04 match theo môn; lịch trống đăng ký qua
+// ScheduleService ở phần dưới để demo sắp xếp lớp.
 $teachers = array(
     array('username' => 'gv01', 'password' => 'gv01123456', 'code' => 'TE001',
-          'name' => 'Nguyễn Thị Phương', 'rank' => 'green', 'fee' => 50.00, 'commit08' => 1,
+          'name' => 'Nguyễn Thị Phương', 'gender' => 'female', 'rank' => 'green', 'fee' => 50.00, 'commit08' => 1,
           'districts' => array('Quận 1', 'Quận 3'), 'max_classes' => 4),
     array('username' => 'gv02', 'password' => 'gv02123456', 'code' => 'TE002',
-          'name' => 'Trần Văn Duy', 'rank' => 'gold', 'fee' => 48.00, 'commit08' => 0,
+          'name' => 'Trần Văn Duy', 'gender' => 'male', 'rank' => 'gold', 'fee' => 48.00, 'commit08' => 0,
           'districts' => array('Quận 1'), 'max_classes' => 3),
     array('username' => 'gv03', 'password' => 'gv03123456', 'code' => 'TE003',
-          'name' => 'Lê Minh Châu', 'rank' => 'bronze', 'fee' => 45.00, 'commit08' => 1,
+          'name' => 'Lê Minh Châu', 'gender' => 'female', 'rank' => 'bronze', 'fee' => 45.00, 'commit08' => 1,
           'districts' => array('Quận 5', 'Quận 10'), 'max_classes' => 2),
 );
 $teacherIds = array();
@@ -82,9 +84,11 @@ foreach ($teachers as $t) {
         'user_id'             => $uid,
         'teacher_code'        => $t['code'],
         'full_name'           => $t['name'],
-        'gender'              => 'female',
+        'gender'              => $t['gender'],
         'tax_code'            => '8' . str_pad((string) $uid, 9, '0', STR_PAD_LEFT),
-        'teachable_districts' => json_encode($t['districts']),
+        'teachable_districts' => json_encode($t['districts'], JSON_UNESCAPED_UNICODE),
+        // teachable_subjects gán ID sau khi tạo subjects (xem phần Curriculum)
+        'teachable_subjects'  => null,
         'can_teach_online'    => 1,
         'rank'                => $t['rank'],
         'max_classes'         => $t['max_classes'],
@@ -153,6 +157,9 @@ foreach ($subjects as $s) {
     $subjectIds[$s[1]] = (int) $db->insertId;
 }
 
+// teachable_subjects + môn muốn học của HV được gán trong phần ADM-04 bên dưới
+// (sau khi đã có subjectIds).
+
 $topics = array(
     array($subjectIds['Math Problems'], 'Phép cộng trừ cơ bản', 0, 0, 8, 1),
     array($subjectIds['Math Problems'], 'Phép nhân chia', 0, 0, 8, 2),
@@ -173,6 +180,53 @@ foreach ($topics as $t) {
     ));
 }
 
+// ===================== ADM-04: môn dạy được + lịch trống =====================
+$db->update(
+    'db_lms_teachers',
+    array('teachable_subjects' => json_encode(array(
+        $subjectIds['Math Problems'], $subjectIds['Math IQ'],
+    ), JSON_UNESCAPED_UNICODE)),
+    'user_id = ?',
+    array($teacherIds['gv01'])
+);
+$db->update(
+    'db_lms_teachers',
+    array('teachable_subjects' => json_encode(array(
+        $subjectIds['Math Problems'], $subjectIds['Math IQ'], $subjectIds['Speaking'],
+    ), JSON_UNESCAPED_UNICODE)),
+    'user_id = ?',
+    array($teacherIds['gv02'])
+);
+$db->update(
+    'db_lms_teachers',
+    array('teachable_subjects' => json_encode(array(
+        $subjectIds['Math Problems'], $subjectIds['Listening'],
+    ), JSON_UNESCAPED_UNICODE)),
+    'user_id = ?',
+    array($teacherIds['gv03'])
+);
+
+// hv05 (chờ xếp, Quận 10, offline) cần học Math Problems
+$db->update(
+    'db_lms_students',
+    array(
+        'subject_id' => $subjectIds['Math Problems'],
+        'free_time_slots' => json_encode(array(
+            array('day' => 2, 'start' => '18:00', 'end' => '19:30'),
+            array('day' => 4, 'start' => '18:30', 'end' => '20:00'),
+        ), JSON_UNESCAPED_UNICODE),
+    ),
+    'user_id = ?',
+    array($studentIds['hv05'])
+);
+
+// Lịch trống: gv03 dạy Quận 10 → khớp hv05; gv01/gv02 Quận 1/3 → không khớp hv05
+$schedSvc->addFreeSlot($teacherIds['gv01'], 3, '18:00', '19:30');
+$schedSvc->addFreeSlot($teacherIds['gv01'], 5, '18:00', '19:30');
+$schedSvc->addFreeSlot($teacherIds['gv02'], 6, '09:00', '10:30');
+$schedSvc->addFreeSlot($teacherIds['gv03'], 2, '17:30', '19:30');
+$schedSvc->addFreeSlot($teacherIds['gv03'], 4, '18:00', '20:30');
+
 // ===================== Lớp học (2) =====================
 // Lớp 1-1: gv01 + hv01 — Toán TĐN
 $class11 = $classSvc->createClass(array(
@@ -188,20 +242,20 @@ $class11 = $classSvc->createClass(array(
 ));
 $classSvc->enrollStudent($class11, $studentIds['hv01']);
 
-// Lớp nhóm: gv02 + hv02..hv05 — Toán IQ
+// Lớp nhóm: gv02 + hv02..hv04 — Toán IQ (hv05 chờ xếp riêng ở ADM-04)
 $classGroup = $classSvc->createClass(array(
     'program_id'        => $progToan,
     'subject_id'        => $subjectIds['Math IQ'],
     'teacher_id'        => $teacherIds['gv02'],
     'class_type'        => 'group',
-    'name'              => 'Toán IQ - Nhóm Quận 1 (4 HV)',
+    'name'              => 'Toán IQ - Nhóm Quận 1 (3 HV)',
     'price_per_session' => 350000,
     'teacher_percentage' => 55.00,
     'total_sessions'    => 16,
     'hw_deadline_time'  => '12:00',
     'hw_check_hours'    => 24,
 ));
-foreach (array('hv02', 'hv03', 'hv04', 'hv05') as $u) {
+foreach (array('hv02', 'hv03', 'hv04') as $u) {
     $classSvc->enrollStudent($classGroup, $studentIds[$u]);
 }
 

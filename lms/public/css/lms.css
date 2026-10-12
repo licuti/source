@@ -1630,3 +1630,27 @@ a.lms-link:hover {
     padding: .6rem;
     overflow-x: auto;
 }
+
+/* ---- Sap xep lop: chi tich lich giao vien (ADM-04) ---- */
+.lms-schedule-block {
+    border-radius: .4rem;
+    padding: .35rem .5rem;
+    font-size: .8rem;
+    line-height: 1.35;
+}
+.lms-schedule-busy {
+    background: #fce7f1;
+    border: 1px solid #f6c6dd;
+    color: #6b2a4d;
+}
+.lms-schedule-free {
+    background: #e7f6ec;
+    border: 1px solid #bfe3cd;
+    color: #14532d;
+}
+.lms-schedule-none {
+    background: #f3f4f6;
+    border: 1px dashed #d1d5db;
+    color: #9ca3af;
+    text-align: center;
+}

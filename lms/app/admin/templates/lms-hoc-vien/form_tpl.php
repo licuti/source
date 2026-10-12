@@ -8,6 +8,7 @@ $studentStatuses = \Lms\UserService::STUDENT_STATUSES;
 $learningTypes = \Lms\UserService::LEARNING_TYPES;
 $districts = \Lms\UserService::HCMC_DISTRICTS;
 $weekdays = \Lms\UserService::WEEKDAYS;
+$subjectOptions = isset($subjectOptions) && is_array($subjectOptions) ? $subjectOptions : array();
 $slots = isset($row['free_time_slots']) && is_array($row['free_time_slots']) ? $row['free_time_slots'] : array();
 
 $formUrl = $isEditMode
@@ -111,6 +112,35 @@ $formUrl = $isEditMode
                             <label class="lms-form-label" for="fld-school">Trường học</label>
                             <input type="text" class="form-control" id="fld-school" name="school_name"
                                    value="<?= e(lms_form_old($_POST, $row, 'school_name')) ?>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="lms-form-label" for="fld-subject">Môn học muốn học</label>
+                            <select class="form-select" id="fld-subject" name="subject_id">
+                                <option value="">— Chọn môn —</option>
+                                <?php foreach ($subjectOptions as $sid => $s): ?>
+                                    <option value="<?= e((string) $sid) ?>"<?= lms_selected(
+                                        (string) lms_form_old($_POST, $row, 'subject_id'),
+                                        (string) $sid
+                                    ) ?>><?= e($s['program']) ?> — <?= e($s['name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div class="lms-text-muted-sm mt-1">Dùng cho module Sắp xếp lớp (ADM-04).</div>
+                            <?= lms_field_error($errors, 'subject_id') ?>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="lms-form-label" for="fld-preferred-gender">Yêu cầu giới tính GV</label>
+                            <select class="form-select" id="fld-preferred-gender" name="preferred_teacher_gender">
+                                <option value="">— Không yêu cầu —</option>
+                                <option value="male"<?= lms_selected(
+                                    (string) lms_form_old($_POST, $row, 'preferred_teacher_gender'),
+                                    'male'
+                                ) ?>>Giáo viên nam</option>
+                                <option value="female"<?= lms_selected(
+                                    (string) lms_form_old($_POST, $row, 'preferred_teacher_gender'),
+                                    'female'
+                                ) ?>>Giáo viên nữ</option>
+                            </select>
+                            <?= lms_field_error($errors, 'preferred_teacher_gender') ?>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="lms-form-label" for="fld-learning-type">Hình thức học</label>

@@ -47,6 +47,11 @@ lms/
                           idempotent + FOR UPDATE), BR-PAY-02 áp phí đã hạ theo
                           tick tháng trước, monthSummary/monthSummaryAll,
                           setMonthStatus (draft→pending→paid), addAdjustment
+    MatchingService.php   ADM-04 sắp xếp lớp (listPendingStudents,
+                          matchTeachers — hard filter môn/quận/giới tính/
+                          online/lịch/ sức chứa + tính điểm 0-100, xếp hạng),
+                          teacherWeekDetail (lịch tuần GV), createClassFromMatch
+                          (tạo lớp 1-1 tự động + đổi status HV + xoá lịch trống)
   app/                  source + template theo portal (KHÔNG đặt lms/<portal>/ —
     admin/              trùng tên thư mục thật với URL /lms/admin → mod_dir's
     teacher/            DirectorySlash sinh 301 dư; xem note trong .htaccess)
@@ -68,6 +73,7 @@ lms/
 | `lms-giao-vien` | ADM-02 | `man` `them` `sua` `khoa` `mo` `xoa` | CRUD giáo viên (CCCD/MST/% phí DV, môn/quận dạy, cam kết 08) |
 | `lms-lop` | ADM-03 | `man` `them` `sua` `xoa` | CRUD lớp (tạo lớp + enroll + sinh sessions tự động) |
 | `lms-lop-hoc-sinh` | ADM-04 | `man` `them` `chuyen` `xoa` | Ma trận học viên × chương trình; thêm/chuyển/xoá HV khỏi lớp |
+| `lms-sap-xep-lop` | ADM-04 | `man` `chi-tiet-gv` `tao-lop` | Sắp xếp lớp: danh sách HV chờ xếp (pending_arrange) → GV phù hợp theo điểm match (môn/quận/giới tính/online/lịch rảnh/sức chứa) + chi tiết lịch tuần GV + tạo lớp 1-1 tự động (CSRF, cấu hình mặc định, HV → chờ thu phí) |
 | `lms-yeu-cau` | ADM-05 | `man` `xem` `duyet` `tu-choi` | Duyệt/từ chối request của GV (add_session/request_leave/change_schedule): transaction + `FOR UPDATE` idempotent, check trùng lịch GV, insert/cancel session, giảm `remaining_sessions` |
 | `lms-vi-pham` | ADM-06 | `man` `them` `xoa` `nguong` `luu-nguong` `xoa-nguong` | Quản lý vi phạm (tick): log tick + filter GV/lý do/tháng/nguồn + phân trang, thêm tick thủ công (±1), xoá tick thủ công, CRUD ngưỡng `violation_thresholds` |
 | `lms-phi-dv` | ADM-07 | `man` `chi-tiet` `them-dieu-chinh` `duyet` `xuat` | Thống kê phí dịch vụ theo tháng (tổng thu/phạt/thưởng/thuế/thực nhận + status), chi tiết GV×tháng + form điều chỉnh thủ công (penalty/bonus/adjustment), duyệt draft→pending→paid (atomic cả tháng), xuất CSV (UTF-8 BOM) |
@@ -179,6 +185,24 @@ php database/seeds/2026_10_07_lms_demo_seed.php
 php database/seeds/2026_10_07_lms_demo_seed.php phuongnamv_db_lms_test
 ```
 
+⚠️ PHPUnit truncate toàn bộ bảng `db_lms_*` của DB test trước mỗi test → sau khi
+chạy suite, DB test trống. Cần reseed modules + demo trước khi smoke test thủ công.
+
+### Sắp xếp lớp (ADM-04 — MatchingService)
+
+- HV chờ xếp = `students.status = 'pending_arrange'` VÀ chưa thuộc lớp active nào.
+- Match GV (hard filter): GV active, dạy được môn HV cần (`teachable_subjects`
+  rỗng = không giới hạn), đúng quận (offline, `teachable_districts` rỗng = mọi
+  quận) hoặc dạy được online (online), giới tính khớp `preferred_teacher_gender`
+  nếu HV yêu cầu, ≥ 1 khung giờ rảnh giao lịch trống GV, còn sức chứa
+  (`current_classes < max_classes`).
+- Điểm 0-100: 50 (tỉ lệ slot khớp) + 15 (khu vực/online) + hạng (green 20 /
+  gold 12 / bronze 5) + 15 (tỉ lệ sức chứa trống).
+- Tạo lớp: lớp 1-1 với lịch = các khung giờ giao nhau, cấu hình mặc định
+  (học phí/số buổi = 0, deadline 12:00, check 24h — admin sửa lại trong ADM-03).
+  HV chuyển sang `waiting_fee` (đã xếp, chờ thu phí); lịch trống GV giao lịch
+  lớp mới bị xoá để không match trùng.
+
 ### Cron quét vi phạm (BR-TICK-01/02/03)
 
 ```bash
@@ -190,10 +214,16 @@ php database/cron/lms_tick_cron.php --dry-run --db=phuongnamv_db_lms_test
 php database/cron/lms_tick_cron.php
 ```
 
-Lập lịch **mỗi 15 phút** (SRS §3.1): Windows Task Scheduler hoặc crontab:
+Lập lịch **mỗi 15 phút** (SRS §3.1). Trên máy dev (Windows/Laragon) đã bật 2 scheduled task (non-elevated, chạy khi user đăng nhập):
 
 ```
-*/15 * * * * php /path/to/source/database/cron/lms_tick_cron.php >> /var/log/lms_tick.log 2>&1
+PowerShell (admin không cần):
+  Get-ScheduledTask -TaskName "LMS_*"          # xem trạng thái
+  Start-ScheduledTask -TaskName "LMS_tick_scan" # chạy ngay
+  Unregister-ScheduledTask -TaskName "LMS_tick_scan" -Confirm:$false   # gỡ
+
+Linux/production (crontab):
+  */15 * * * * php /path/to/source/database/cron/lms_tick_cron.php >> /var/log/lms_tick.log 2>&1
 ```
 
 Pipeline (theo thứ tự): `closePastSessions` (đóng buổi quá hạn → `finished`) →
@@ -224,7 +254,7 @@ php database/cron/lms_payroll_cron.php
 php database/cron/lms_payroll_cron.php --teacher=3 --month=2026-09   # chỉ 1 GV
 ```
 
-Lập lịch **ngày 1 hàng tháng** (sau khi tick cron đã chốt xong tháng cũ):
+Lập lịch **ngày 1 hàng tháng 09:00** (sau khi tick cron đã chốt xong tháng cũ). Trên máy dev là scheduled task `LMS_payroll_close` (monthly, ngày 1):
 
 ```
 15 0 1 * * php /path/to/source/database/cron/lms_payroll_cron.php >> /var/log/lms_payroll.log 2>&1
@@ -242,8 +272,9 @@ Migration hiện có: `2026_10_07_lms_core.sql` (25 bảng) →
 
 Seed ngưỡng vi phạm: `database/seeds/2026_10_10_lms_violation_thresholds_seed.sql`
 (3 khoảng số lớp 1-3/4-7/≥8 → miễn 2/3/4 tick, cảnh báo 5, hạ phí 8, % phí sau
-hạ 50 — chạy trên cả DB thật + DB test; `ticks_to_warn` và
-`fee_percentage_after_demote` là giá trị tạm, cần chốt với business).
+hạ 50 — chạy trên cả DB thật + DB test). `ticks_to_warn=5` và
+`fee_percentage_after_demote=50.00` đã chốt tạm (12/10/2026); đổi qua UI ADM-06
+(module `lms-vi-pham`) khi business yêu cầu.
 
 Tài khoản demo sau khi seed: `admin/admin123`, `gv01/gv01123456`, `hv01/hv01123456`…
 (chi tiết xem đầu ra script seed).
