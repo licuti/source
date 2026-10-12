@@ -1654,3 +1654,41 @@ a.lms-link:hover {
     color: #9ca3af;
     text-align: center;
 }
+
+/* ---- Library cards (TCH-07) ---- */
+.lms-library-icon {
+    width: 2.6rem;
+    height: 2.6rem;
+    display: grid;
+    place-items: center;
+    margin-bottom: .7rem;
+    border-radius: .7rem;
+    background: var(--lms-primary-soft, #e7efff);
+    color: var(--lms-primary, #3157a4);
+    font-size: 1.2rem;
+}
+.lms-library-card {
+    border: 1px solid #e5e7eb;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.lms-library-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .4rem 1rem rgba(31, 41, 55, .08);
+}
+.lms-library-card .lms-card-body + .lms-card-body {
+    border-top: 1px solid #f0f1f3;
+}
+.lms-library-card h3 {
+    overflow-wrap: anywhere;
+}
+.lms-library-grid > div {
+    min-width: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+    .lms-library-card {
+        transition: none;
+    }
+    .lms-library-card:hover {
+        transform: none;
+    }
+}

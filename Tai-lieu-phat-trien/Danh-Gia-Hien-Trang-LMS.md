@@ -13,22 +13,21 @@
 Tính đến commit `2769188` (12/10/2026), **Phase 0–2 đã hoàn thành**:
 - **Phase 1** (commit `3b05aba`): toàn bộ portal Admin/Teacher/Student cơ bản + STU-01..04 + TCH-01..03 + ADM-01..05 — 248 test pass.
 - **Phase 2** (commit `61550b5` + `8b00351` + `2769188`): `TickService` (BR-TICK-01/02/03) + `TaxService` (BR-PAY-03) + `PayrollService` (BR-PAY-01/02/04) + cron quét tick + cron chốt lương + logging `db_lms_cron_runs` + module `lms-vi-pham` (ADM-06) + `lms-phi-dv` (ADM-07 admin + TCH-05 teacher) — **309 test / 989 assertion pass**.
-- **Phase 3 (đang làm)** (commit sau `2769188`): `MatchingService` + module `lms-sap-xep-lop` (ADM-04 Sắp xếp lớp — FR admin cuối cùng) + thêm `subject_id` / `preferred_teacher_gender` cho hồ sơ học viên (ADM-01) — **328 test / 1088 assertion pass**.
+- **Phase 3 (đang làm)**: ADM-04 `MatchingService` + module `lms-sap-xep-lop`; TCH-07 `LibraryService` + thư viện admin/teacher; hồ sơ học viên lưu `subject_id` / `preferred_teacher_gender` — **341 test / 1180 assertion pass**.
 
 ### Bảng module đã build (12/10/2026)
 
 | Portal | Đăng ký | Đã build | Còn thiếu |
 |---|:---:|:---:|---|
-| **Admin** | 14 | **10** | `lms-bai-tap-ve-nha`, `lms-lo-trinh`, `lms-noi-quy`, `lms-thu-vien`, `lms-thong-ke-buoi-hoc` |
-| **Teacher** | 6 | **5** | `lms-thu-vien` (TCH-07) |
+| **Admin** | 14 | **11** | `lms-bai-tap-ve-nha`, `lms-lo-trinh`, `lms-noi-quy`, `lms-thong-ke-buoi-hoc` |
+| **Teacher** | 6 | **6** | — |
 | **Student** | 5 | **5** | **100%** (riêng `lms-noi-quy` là placeholder chờ module admin nội quy) |
 
 ### Việc còn lại (Priority 12/10/2026)
 
-1. **P2 — TCH-07 Thư viện** (teacher + admin): schema `db_lms_library_files` đã có; reuse `lms_upload.php`.
-2. **P3 — 4 module admin view-only** (`bai-tap-ve-nha`, `lo-trinh`, `noi-quy`, `thong-ke-buoi-hoc`) + kiểm tra TCH-06 (MonthlyReviewService đã có, chưa có UI teacher).
-3. **P4 — Ops**: lên lịch cron production (tick 15 phút, payroll ngày 1, thiếu `session_generate` hàng ngày), chốt 2 giá trị seed tạm (`ticks_to_warn=5`, `fee_percentage_after_demote=50.00`), viết `Test_Plan_MasterStudy.md`.
-4. **Mockup gaps** (xem mục 3 bên dưới — vẫn còn nguyên giá trị): Admin Tổng quan thiếu timeline calendar, Teacher Tổng quan bố cục 3 cột, Teacher "Học viên của tôi" dạng cards grid, widget Chat, tìm kiếm toàn cục.
+1. **P3 — 4 module admin view-only** (`bai-tap-ve-nha`, `lo-trinh`, `noi-quy`, `thong-ke-buoi-hoc`) + kiểm tra TCH-06 (MonthlyReviewService đã có, chưa có UI teacher).
+2. **P4 — Ops**: lên lịch cron production (tick 15 phút, payroll ngày 1, thiếu `session_generate` hàng ngày), chốt 2 giá trị seed tạm (`ticks_to_warn=5`, `fee_percentage_after_demote=50.00`), viết `Test_Plan_MasterStudy.md`.
+3. **Mockup gaps** (xem mục 3 bên dưới — vẫn còn nguyên giá trị): Admin Tổng quan thiếu timeline calendar, Teacher Tổng quan bố cục 3 cột, Teacher "Học viên của tôi" dạng cards grid, widget Chat, tìm kiếm toàn cục.
 
 ---
 
@@ -40,8 +39,8 @@ Hệ thống LMS được quy hoạch nằm gọn trong thư mục `lms/` với 
 
 | Phân hệ (Portal) | Tổng module menu | Đã có Controller & Template | Chưa có Code (Trang 404) | Tỷ lệ hoàn thành UI |
 |---|:---:|:---:|:---:|:---:|
-| **Admin LMS** | 14 module | **10** (`Tổng quan`, `Học viên`, `Giáo viên`, `Lớp học`, `Học sinh - Lớp học`, `Vi phạm`, `Yêu cầu`, `Phí dịch vụ`, `Sắp xếp lớp`, `Thông báo`*) | **5** module | **~64%** |
-| **Teacher LMS** | 6 module | **5** (`Tổng quan`, `Học viên của tôi`, `Quản lý lịch`, `Phí dịch vụ`, `Vi phạm`) | **1** module | **~83%** |
+| **Admin LMS** | 14 module | **11** (`Tổng quan`, `Học viên`, `Giáo viên`, `Lớp học`, `Học sinh - Lớp học`, `Vi phạm`, `Yêu cầu`, `Phí dịch vụ`, `Sắp xếp lớp`, `Thư viện`, `Thông báo`*) | **4** module | **~71%** |
+| **Teacher LMS** | 6 module | **6** (`Tổng quan`, `Học viên của tôi`, `Quản lý lịch`, `Phí dịch vụ`, `Vi phạm`, `Thư viện`) | **0** module | **100%** |
 | **Student LMS** | 5 module | **5** (`Tổng quan`, `Khoá học`, `Lịch học`, `Nhận xét tháng`, `Nội quy`) | **0** | **100%** |
 | **Chung (Core & System)** | Auth, Layout, Router, Notif | **Đã hoàn thành bộ khung lõi** | Background Cronjobs | **~75%** |
 
@@ -140,7 +139,7 @@ Hệ thống LMS được quy hoạch nằm gọn trong thư mục `lms/` với 
 | **TCH-04** | Chấm Test / Minitest | Chấm điểm thang 20 và %, tải bài nộp, upload file Excel chấm điểm. | Đã có trong `buoi_tpl.php` (chấm test/minitest qua `StudentCourseService`). | **ĐẠT** |
 | **TCH-05** | Phí DV & Vi phạm | Xem bảng kê thu nhập, theo dõi tick thực tế và cảnh báo hạ phí. | Đã có `lms-phi-dv.php` + `lms-vi-pham.php` (portal teacher). | **ĐẠT** |
 | **TCH-06** | Nhận xét tháng | GV xem nhận xét tháng của mình. | `MonthlyReviewService` đã có; **chưa có UI teacher**. | **THIẾU UI** |
-| **TCH-07** | Thư viện | Xem/tải tài liệu lớp học. | Schema `db_lms_library_files` đã có; **chưa có UI**. | **THIẾU UI** |
+| **TCH-07** | Thư viện | Upload/xem/tải tài liệu lớp học. | Đã có `lms-thu-vien.php` ở admin + teacher, `LibraryService` (upload MIME whitelist, 100 MB, scope lớp GV, soft delete, download counter). | **ĐẠT** |
 | **STU-01** | Lộ trình khóa học | Cây chuyên đề, xem tiến độ buổi học, tải đề, nộp BTVN, nộp Test. | Đã có `lms-khoa-hoc.php` (học + nộp BTVN/test). | **ĐẠT** |
 | **STU-02** | Lịch học học viên | Xem lịch học tuần, trạng thái buổi học, link học online. | Đã có `lms-lich-hoc.php`. | **ĐẠT** |
 | **STU-03** | Nhận xét tháng | Xem nhận xét tháng từ GV (chỉ khi published). | Đã có `lms-nhan-xet-thang.php`. | **ĐẠT** |
@@ -278,7 +277,7 @@ Kiểm tra chi tiết từng file ảnh mockup PNG và so sánh với file templ
 4. ⏳ **Lên lịch production** (Task Scheduler/crontab) cho cả 3 cron + cảnh báo email khi `db_lms_cron_runs` chết >30 phút (R8).
 
 ### Giai đoạn 5: Phase 3 còn lại ⏳
-1. **ADM-04 Sắp xếp lớp** (module `lms-sap-xep-lop` + service match GV).
-2. **TCH-07 Thư viện** (teacher + admin, schema `db_lms_library_files` đã có).
-3. Các module admin view-only: `lms-lo-trinh`, `lms-noi-quy`, `lms-thong-ke-buoi-hoc`.
+1. **ADM-04 Sắp xếp lớp**: đã hoàn thành trong commit `0ce200a`.
+2. **TCH-07 Thư viện** (admin + teacher): đã hoàn thành trong phần việc hiện tại.
+3. Các module admin view-only còn lại: `lms-bai-tap-ve-nha`, `lms-lo-trinh`, `lms-noi-quy`, `lms-thong-ke-buoi-hoc`.
 4. Kiểm tra TCH-06 (MonthlyReviewService đã có, chỉ thiếu UI teacher).

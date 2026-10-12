@@ -43,6 +43,40 @@ if (!function_exists('lms_upload_dir')) {
     }
 }
 
+if (!function_exists('lms_prepare_private_upload_dir')) {
+    /**
+     * Prepare an uploads subdirectory that may only be served through an
+     * authenticated controller (for example library files with download ACLs).
+     *
+     * @param string $subdir safe relative directory below uploads/
+     * @return string|null absolute directory path
+     */
+    function lms_prepare_private_upload_dir($subdir)
+    {
+        $subdir = trim((string) $subdir, "/\r\n");
+        if ($subdir === '' || !preg_match('#^[A-Za-z0-9_/-]+$#', $subdir)) {
+            return null;
+        }
+        $base = lms_upload_dir();
+        if ($base === null) {
+            return null;
+        }
+        $dir = $base . '/' . $subdir;
+        if (!is_dir($dir) && !@mkdir($dir, 0755, true) && !is_dir($dir)) {
+            return null;
+        }
+        $htaccess = $dir . '/.htaccess';
+        if (!is_file($htaccess)) {
+            $rules = "<IfModule mod_authz_core.c>\nRequire all denied\n</IfModule>\n"
+                . "<IfModule !mod_authz_core.c>\nDeny from all\n</IfModule>\n";
+            if (@file_put_contents($htaccess, $rules) === false) {
+                return null;
+            }
+        }
+        return $dir;
+    }
+}
+
 if (!function_exists('lms_save_files')) {
     /**
      * Lưu nhiều file từ cấu trúc $_FILES (multi-file).
