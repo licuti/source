@@ -492,7 +492,7 @@ class TickService extends LmsService
     {
         $teacherId = (int) $teacherId;
         $threshold = $this->findThreshold($this->countActiveClasses($teacherId));
-        $exempted = is_array($threshold) ? (int) $threshold['ticks_exempted'] : 0;
+        $exempted  = !empty($threshold) && is_array($threshold) ? (int) $threshold['ticks_exempted'] : 0;
 
         $row = $this->db->safeFetchOne(
             'select coalesce(sum(tick_amount), 0) as s from db_lms_violations where teacher_id = ?',
@@ -504,7 +504,46 @@ class TickService extends LmsService
             'raw'      => $raw,
             'exempted' => $exempted,
             'real'     => max(0, $raw - $exempted),
-            'threshold' => is_array($threshold) ? $threshold : null,
+            'threshold' => !empty($threshold) && is_array($threshold) ? $threshold : null,
+        );
+    }
+
+    /**
+     * tick_thực_tế của 1 tháng cụ thể (cho BR-PAY-02: chốt lương tháng M xem
+     * tick tháng M-1).
+     *
+     * exempted theo class count HIỆN TẠI (giản lược — không lưu lịch sử số lớp
+     * theo tháng; nếu GV nghỉ/bớt lớp giữa kỳ thì exempted có thể lệch).
+     *
+     * @param int    $teacherId
+     * @param string $month 'Y-m' (không hợp lệ → coi như 0 tick)
+     * @return array array('raw', 'exempted', 'real', 'threshold' => array|null)
+     */
+    public function monthTickSummary($teacherId, $month)
+    {
+        $teacherId = (int) $teacherId;
+        $raw       = 0;
+
+        if (preg_match('/^\d{4}-\d{2}$/', (string) $month)) {
+            // Dùng last day thật (PHP) — '<month>-31' bị MySQL coerce thành
+            // 0000-00-00 với tháng 2 (cùng fix đã dùng trong listViolations).
+            $lastDay = date('Y-m-t', strtotime($month . '-01'));
+            $row     = $this->db->safeFetchOne(
+                'select coalesce(sum(tick_amount), 0) as s from db_lms_violations'
+                . ' where teacher_id = ? and violation_date between ? and ?',
+                array($teacherId, $month . '-01', $lastDay)
+            );
+            $raw = isset($row['s']) ? (int) $row['s'] : 0;
+        }
+
+        $threshold = $this->findThreshold($this->countActiveClasses($teacherId));
+        $exempted  = !empty($threshold) && is_array($threshold) ? (int) $threshold['ticks_exempted'] : 0;
+
+        return array(
+            'raw'       => $raw,
+            'exempted'  => $exempted,
+            'real'      => max(0, $raw - $exempted),
+            'threshold' => !empty($threshold) && is_array($threshold) ? $threshold : null,
         );
     }
 

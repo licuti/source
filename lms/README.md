@@ -22,7 +22,8 @@ lms/
     lms_notif_tpl.php   view chung trang thông báo (T10)
     lms_admin_forms.php helper chung form CRUD portal admin: guard, pagination, field error
     lms_upload.php       lms_save_files() upload an toàn (MIME whitelist, tên random)
-                        + lms_upload_dir() tạo dir + .htaccess cấm execute PHP
+                         + lms_upload_dir() tạo dir + .htaccess cấm execute PHP
+    lms_cron.php         helper logging cron vào db_lms_cron_runs (R1/R8 monitoring)
   services/Lms/         business layer (PascalCase, namespace Lms\)
     LmsService.php      base: db(), errors(), audit()
     UserService.php     auth 3 portal (D9) + CRUD học viên (ADM-01) + giáo viên (ADM-02)
@@ -39,7 +40,13 @@ lms/
     NotificationService.php chuông thông báo (db_lms_notifications)
     TickService.php       BR-TICK-01/02/03 vi phạm (tick) + admin ADM-06
                           (closePastSessions, scanLate*, evaluateTickPenalty,
-                          manual tick + CRUD ngưỡng)
+                          manual tick + CRUD ngưỡng, monthTickSummary theo tháng)
+    TaxService.php        BR-PAY-03 thuế TNCN (0% nếu cam kết 08 hoặc dưới 5tr,
+                          10% phần vượt) + ghi transaction 'tax'
+    PayrollService.php    BR-PAY-01/02/04 chốt lương (closeMonth/closeMonthAll,
+                          idempotent + FOR UPDATE), BR-PAY-02 áp phí đã hạ theo
+                          tick tháng trước, monthSummary/monthSummaryAll,
+                          setMonthStatus (draft→pending→paid), addAdjustment
   app/                  source + template theo portal (KHÔNG đặt lms/<portal>/ —
     admin/              trùng tên thư mục thật với URL /lms/admin → mod_dir's
     teacher/            DirectorySlash sinh 301 dư; xem note trong .htaccess)
@@ -63,6 +70,7 @@ lms/
 | `lms-lop-hoc-sinh` | ADM-04 | `man` `them` `chuyen` `xoa` | Ma trận học viên × chương trình; thêm/chuyển/xoá HV khỏi lớp |
 | `lms-yeu-cau` | ADM-05 | `man` `xem` `duyet` `tu-choi` | Duyệt/từ chối request của GV (add_session/request_leave/change_schedule): transaction + `FOR UPDATE` idempotent, check trùng lịch GV, insert/cancel session, giảm `remaining_sessions` |
 | `lms-vi-pham` | ADM-06 | `man` `them` `xoa` `nguong` `luu-nguong` `xoa-nguong` | Quản lý vi phạm (tick): log tick + filter GV/lý do/tháng/nguồn + phân trang, thêm tick thủ công (±1), xoá tick thủ công, CRUD ngưỡng `violation_thresholds` |
+| `lms-phi-dv` | ADM-07 | `man` `chi-tiet` `them-dieu-chinh` `duyet` `xuat` | Thống kê phí dịch vụ theo tháng (tổng thu/phạt/thưởng/thuế/thực nhận + status), chi tiết GV×tháng + form điều chỉnh thủ công (penalty/bonus/adjustment), duyệt draft→pending→paid (atomic cả tháng), xuất CSV (UTF-8 BOM) |
 | `lms-thong-bao` | SYS-01 | `hienthi` `unread` `mark_read` `mark_all_read` | Thông báo (module ẩn, AJAX có CSRF) |
 
 Mọi action `them`/`sua`/`khoa`/`xoa` check `lms_check_permission(..., 'edit'|'delete', 'admin')`
@@ -75,6 +83,8 @@ trước khi xử lý; POST đều có `lms_csrf_verify()`; ghi `db_lms_audit_lo
 | `lms-tong-quan` | TCH-00 | `hienthi` | Dashboard giáo viên |
 | `lms-lich-day` | TCH-01/02 | `man` `luu-thong-tin` `them-slot` `xoa-slot` `buoi` `luu-buoi` `cham-btvn` `gui-yeu-cau` | Quản lý lịch: calendar tuần (7 cột × khung giờ, 5 màu ô), form thông tin cá nhân + ghi chú tuần, đăng ký lịch trống, 3 loại request (thêm buổi / xin nghỉ / đổi lịch), lesson summary + giao BTVN (upload file), chấm BTVN |
 | `lms-hoc-vien-cua-toi` | TCH-03 | `man` | Danh sách học viên giáo viên đang dạy |
+| `lms-phi-dv` | TCH-05 | `man` | Phí dịch vụ của tôi: transactions theo tháng (filter type) + tổng hợp thực nhận (BR-PAY-04) + banner cảnh báo khi tick đạt ngưỡng hạ phí (BR-TICK-03) |
+| `lms-vi-pham` | — | `man` | Vi phạm nội quy của tôi: tick theo tháng (filter lý do) + panel tổng hợp (raw/miễn/thực tế/ngưỡng) + cảnh báo sắp/vượt ngưỡng |
 | `lms-thong-bao` | SYS-01 | `hienthi` `unread` `mark_read` `mark_all_read` | Thông báo (module ẩn, AJAX có CSRF) |
 
 Row-level: service lọc `teacher_id = user id` (guide §3.5); GV chỉ thấy/sửa buổi của chính mình.
@@ -198,9 +208,37 @@ thì hạn phạt mới đúng giờ VN. Chạy `php -i | grep date.timezone` đ
 ⚠️ Tick do cron tạo (`auto_generated = 1`) không xoá qua UI — admin dùng miễn
 giảm thủ công (`manual_exempt`, -1) để bù trừ (giữ lịch sử đối soát lương).
 
+Cả 2 cron ghi `db_lms_cron_runs` (job `tick_scan` / `payroll_close`) qua helper
+`lms/lib/lms_cron.php` (dry-run KHÔNG ghi — tránh reset bộ đếm monitoring khi
+chạy tay). Monitoring (R1/R8): cảnh báo nếu cron chết >30 phút.
+
+### Cron chốt lương (BR-PAY-01/02/03)
+
+```bash
+# Dry-run (không ghi DB; xem trước)
+php database/cron/lms_payroll_cron.php --dry-run
+php database/cron/lms_payroll_cron.php --dry-run --month=2026-09 --db=phuongnamv_db_lms_test
+
+# Chạy thật (mặc định chốt tháng trước; idempotent — chạy lại không tạo trùng)
+php database/cron/lms_payroll_cron.php
+php database/cron/lms_payroll_cron.php --teacher=3 --month=2026-09   # chỉ 1 GV
+```
+
+Lập lịch **ngày 1 hàng tháng** (sau khi tick cron đã chốt xong tháng cũ):
+
+```
+15 0 1 * * php /path/to/source/database/cron/lms_payroll_cron.php >> /var/log/lms_payroll.log 2>&1
+```
+
+Chỉ chốt buổi `status='finished'` VÀ không còn `session_students.status='submitted'`
+(nên chạy sau khi tất cả BTVN đã chấm xong). Nếu admin chốt tay giữa tháng qua
+UI ADM-07, buổi chưa chấm xong sẽ bị bỏ qua — không tự re-run.
+
 Migration hiện có: `2026_10_07_lms_core.sql` (25 bảng) →
 `2026_10_09_lms_teacher_profile_slots_notes.sql` (TCH-01/02: `teachers.current_address`,
-`sessions.topic_ids`, `db_lms_teacher_free_slots`, `db_lms_teacher_notes`).
+`sessions.topic_ids`, `db_lms_teacher_free_slots`, `db_lms_teacher_notes`) →
+`2026_10_10_lms_payroll_status.sql` (ADM-07: `transactions.status` draft|pending|paid
++ `paid_at`).
 
 Seed ngưỡng vi phạm: `database/seeds/2026_10_10_lms_violation_thresholds_seed.sql`
 (3 khoảng số lớp 1-3/4-7/≥8 → miễn 2/3/4 tick, cảnh báo 5, hạ phí 8, % phí sau

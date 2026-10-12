@@ -23,6 +23,7 @@ admin/_backup_ui/
 scratch/
 database/backups/
 database/phuongnamv_db_backup.sql
+database/phuongnamv_db_last.sql
 __tmp_tok.php
 
 # Media cache (thumbnail CKFinder — sinh lại tự động)

@@ -31,6 +31,7 @@ require_once __DIR__ . '/lms_db.php';
 require_once __DIR__ . '/lms_auth.php';
 require_once __DIR__ . '/lms_url.php';
 require_once __DIR__ . '/lms_upload.php';
+require_once __DIR__ . '/lms_cron.php';
 
 // ===================== Autoload namespace Lms\ =====================
 // Lms\Foo\Bar -> lms/services/Lms/Foo/Bar.php

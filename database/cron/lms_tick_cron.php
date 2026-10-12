@@ -28,7 +28,10 @@ if (php_sapi_name() !== 'cli') {
 
 require_once __DIR__ . '/../../lms/lib/lms_bootstrap.php';
 
-// ===================== Parse tham số =====================
+// ===================== Parse tham số + chạy pipeline =====================
+//
+// Ghi db_lms_cron_runs (R1/R8: cảnh báo khi cron chết >30 phút).
+// Dry-run KHÔNG ghi — tránh làm bộ đếm monitoring reset khi chạy tay.
 
 $dryRun = false;
 $dbName = null;
@@ -41,23 +44,54 @@ foreach (array_slice($argv, 1) as $arg) {
     }
 }
 
-// Override DB PHẢI chạy trước khi lms_db() kết nối lần đầu.
+// Override DB PHẢI chạy trước khi lms_db() kết nối lần đầu (nó cache static).
 if ($dbName !== null && $dbName !== '') {
     putenv('LMS_DB_NAME=' . $dbName);
 }
 
-// ===================== Chạy pipeline =====================
+$d = lms_db();
 
-$svc   = new \Lms\TickService(lms_db());
-$stats = $svc->runAll($dryRun);
+$runId = $dryRun ? null : lms_cron_start($d, 'tick_scan');
+
+try {
+    $svc   = new \Lms\TickService($d);
+    $stats = $svc->runAll($dryRun);
+} catch (Exception $e) {
+    if ($runId !== null) {
+        lms_cron_finish($d, $runId, 'failed', 0, $e->getMessage());
+    }
+    echo json_encode(
+        array(
+            'time'   => date('Y-m-d H:i:s'),
+            'result' => 'exception',
+            'error'  => $e->getMessage(),
+        ),
+        JSON_UNESCAPED_UNICODE
+    ), PHP_EOL;
+    exit(1);
+}
 
 // ===================== Báo cáo =====================
 
 $hasErrors = false;
+$rowsAffected = 0;
 foreach ($stats as $step) {
-    if (is_array($step) && isset($step['errors']) && (int) $step['errors'] > 0) {
+    if (!is_array($step)) {
+        continue;
+    }
+    if (isset($step['errors']) && (int) $step['errors'] > 0) {
         $hasErrors = true;
     }
+    if (isset($step['closed'])) {
+        $rowsAffected += (int) $step['closed'];
+    }
+    if (isset($step['ticked'])) {
+        $rowsAffected += (int) $step['ticked'];
+    }
+}
+
+if ($runId !== null) {
+    lms_cron_finish($d, $runId, $hasErrors ? 'failed' : 'success', $rowsAffected);
 }
 
 $config = lms_db_config();
