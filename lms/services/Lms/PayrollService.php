@@ -14,7 +14,9 @@
  *    session_students.status='submitted' (chưa chấm xong).
  *  - Tick không tự sinh transaction penalty (Q2) — phạt gián tiếp qua BR-PAY-02.
  *  - BR-PAY-02: chốt tháng M, nếu tick_thực_tế tháng M-1 >= ticks_to_demote_fee
- *    thì MỌI buổi của tháng M dùng fee_percentage_after_demote.
+ *    thì MỌI buổi của tháng M dùng fee_percentage_after_demote. Đây là phần
+ *    trăm trực tiếp; không được phép làm tỷ lệ thực nhận tăng so với tỷ lệ
+ *    hiện hành của lớp/GV.
  *
  * Idempotency: SELECT ... FOR UPDATE trên row teacher + check đã tồn tại
  * salary_session của teacher+month (Q7).
@@ -153,12 +155,15 @@ class PayrollService extends LmsService
 
             foreach ($rows as $row) {
                 $price = (float) $row['price_per_session'];
+                $baseFeePct = $row['teacher_percentage'] !== null
+                    ? (float) $row['teacher_percentage']
+                    : (float) $row['service_fee_percentage'];
                 if ($demoted && $demoteFee !== null) {
-                    $feePct = $demoteFee;
+                    // The configured value is a direct percentage, but a bad
+                    // threshold must never turn a demotion into an increase.
+                    $feePct = min($demoteFee, $baseFeePct);
                 } else {
-                    $feePct = $row['teacher_percentage'] !== null
-                        ? (float) $row['teacher_percentage']
-                        : (float) $row['service_fee_percentage'];
+                    $feePct = $baseFeePct;
                 }
                 $amount = round($price * $feePct / 100.0, 2);
                 $salary += $amount;

@@ -146,7 +146,7 @@ function lvp_field($key, $default = '')
                             <label class="lms-form-label" for="fld-fee">% phí sau hạ <span class="text-danger">*</span></label>
                             <input type="number" min="0" max="100" step="0.5" class="form-control" id="fld-fee"
                                    name="fee_percentage_after_demote"
-                                   value="<?= e(lvp_field('fee_percentage_after_demote', '50')) ?>" required>
+                                    value="<?= e(lvp_field('fee_percentage_after_demote', '30')) ?>" required>
                             <?= lms_field_error($errors, 'fee_percentage_after_demote') ?>
                         </div>
                         <div class="col-md-6 mb-3">

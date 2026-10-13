@@ -24,6 +24,6 @@
 # lớp active + đồng bộ session_students. Idempotent.
 0 1 * * * php /path/to/source/database/cron/lms_session_generate.php >> /var/log/lms_session_generate.log 2>&1
 
-# Chốt lương giáo viên ngày 1 hàng tháng lúc 09:00 (sau khi tick cron đã
+# Chốt lương giáo viên ngày 1 hàng tháng lúc 00:15 (sau khi tick cron đã
 # chốt xong tháng cũ). Idempotent.
 15 0 1 * * php /path/to/source/database/cron/lms_payroll_cron.php >> /var/log/lms_payroll.log 2>&1

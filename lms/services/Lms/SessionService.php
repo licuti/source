@@ -116,14 +116,22 @@ class SessionService extends LmsService
                     continue;
                 }
 
-                $ok = $this->db->insert('db_lms_sessions', array(
-                    'class_id'     => $classId,
-                    'teacher_id'   => $teacherId,
-                    'session_date' => $dateStr,
-                    'start_time'   => $sch['start_time'],
-                    'end_time'     => $sch['end_time'],
-                    'status'       => 'upcoming',
-                ));
+                try {
+                    $ok = $this->db->insert('db_lms_sessions', array(
+                        'class_id'     => $classId,
+                        'teacher_id'   => $teacherId,
+                        'session_date' => $dateStr,
+                        'start_time'   => $sch['start_time'],
+                        'end_time'     => $sch['end_time'],
+                        'status'       => 'upcoming',
+                    ));
+                } catch (\PDOException $e) {
+                    // Another cron process may have inserted the same fixed slot.
+                    if (!$this->isDuplicateKeyException($e)) {
+                        throw $e;
+                    }
+                    $ok = false;
+                }
                 if ($ok) {
                     $created++;
                 }
@@ -181,11 +189,18 @@ class SessionService extends LmsService
                     $created++;
                     continue;
                 }
-                $ok = $this->db->insert('db_lms_session_students', array(
-                    'session_id' => $sessionId,
-                    'student_id' => $studentId,
-                    'status'     => 'not_submitted',
-                ));
+                try {
+                    $ok = $this->db->insert('db_lms_session_students', array(
+                        'session_id' => $sessionId,
+                        'student_id' => $studentId,
+                        'status'     => 'not_submitted',
+                    ));
+                } catch (\PDOException $e) {
+                    if (!$this->isDuplicateKeyException($e)) {
+                        throw $e;
+                    }
+                    $ok = false;
+                }
                 if ($ok) {
                     $created++;
                 }
@@ -193,6 +208,73 @@ class SessionService extends LmsService
         }
 
         return $created;
+    }
+
+    /**
+     * Dry-run counterpart for session_students. It counts rows that would be
+     * created for both existing upcoming sessions and virtual sessions that
+     * generateUpcoming(--dry-run) would create in the same invocation.
+     */
+    public function estimateUpcomingSessionStudents($fromDate = null, $weeks = self::DEFAULT_LOOKAHEAD_WEEKS)
+    {
+        $start = $fromDate === null ? date('Y-m-d') : (string) $fromDate;
+        $end = date('Y-m-d', strtotime('+' . (int) $weeks . ' weeks', strtotime($start)));
+        // The write path syncs every existing upcoming session, even if its
+        // class is paused or its original schedule has since changed.
+        $existingRow = $this->db->safeFetchOne(
+            'select count(*) as c from db_lms_sessions s'
+            . ' join db_lms_classes c on c.id=s.class_id and c.deleted_at is null'
+            . ' join db_lms_class_students cs on cs.class_id=c.id and cs.status=?'
+            . ' left join db_lms_session_students ss on ss.session_id=s.id and ss.student_id=cs.student_id'
+            . ' where s.status=? and s.session_date between ? and ? and ss.id is null',
+            array('active', 'upcoming', $start, $end)
+        );
+        $count = isset($existingRow['c']) ? (int) $existingRow['c'] : 0;
+        $classes = $this->db->safeFetch(
+            'select id from db_lms_classes where status = ? and deleted_at is null',
+            array('active')
+        );
+        foreach ($classes as $class) {
+            $classId = (int) $class['id'];
+            $students = $this->db->safeFetch(
+                'select student_id from db_lms_class_students where class_id = ? and status = ?',
+                array($classId, 'active')
+            );
+            if (empty($students)) {
+                continue;
+            }
+            $schedules = $this->db->safeFetch(
+                'select day_of_week, start_time, effective_from, effective_to'
+                . ' from db_lms_schedules where class_id = ?',
+                array($classId)
+            );
+            $day = strtotime($start);
+            $endTs = strtotime($end);
+            while ($day <= $endTs) {
+                $dateStr = date('Y-m-d', $day);
+                $dow = (int) date('N', $day) + 1;
+                foreach ($schedules as $schedule) {
+                    if ((int) $schedule['day_of_week'] !== $dow
+                        || strcmp($dateStr, (string) $schedule['effective_from']) < 0
+                        || (!empty($schedule['effective_to']) && strcmp($dateStr, (string) $schedule['effective_to']) > 0)) {
+                        continue;
+                    }
+                    $session = $this->db->safeFetchOne(
+                        'select id from db_lms_sessions where class_id = ? and session_date = ? and start_time = ? limit 1',
+                        array($classId, $dateStr, $schedule['start_time'])
+                    );
+                    if (!empty($session)) {
+                        // Existing rows were counted in the aggregate above.
+                        continue;
+                    }
+                    foreach ($students as $student) {
+                        $count++;
+                    }
+                }
+                $day = strtotime('+1 day', $day);
+            }
+        }
+        return $count;
     }
 
     /**
@@ -253,16 +335,29 @@ class SessionService extends LmsService
                 $count++;
                 continue;
             }
-            $ok = $this->db->insert('db_lms_session_students', array(
-                'session_id' => $sessionId,
-                'student_id' => (int) $row['student_id'],
-                'status'     => 'not_submitted',
-            ));
+            try {
+                $ok = $this->db->insert('db_lms_session_students', array(
+                    'session_id' => $sessionId,
+                    'student_id' => (int) $row['student_id'],
+                    'status'     => 'not_submitted',
+                ));
+            } catch (\PDOException $e) {
+                if (!$this->isDuplicateKeyException($e)) {
+                    throw $e;
+                }
+                $ok = false;
+            }
             if ($ok) {
                 $count++;
             }
         }
         return $count;
+    }
+
+    /** Detect MySQL duplicate-entry errors without hiding other DB failures. */
+    private function isDuplicateKeyException(\PDOException $e)
+    {
+        return isset($e->errorInfo[1]) && (int) $e->errorInfo[1] === 1062;
     }
 
     /**

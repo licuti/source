@@ -25,7 +25,7 @@
 
 | Lớp | Công cụ | Số lượng | Phạm vi |
 |---|---|---:|---|
-| **Unit/Integration (service)** | PHPUnit + DB test `phuongnamv_db_lms_test` | **355 test / 1261 assertion** | Toàn bộ `lms/services/Lms/` + cron CLI |
+| **Unit/Integration (service)** | PHPUnit + DB test `phuongnamv_db_lms_test` | **359 test / 1272 assertions** | Toàn bộ `lms/services/Lms/` + cron CLI |
 | **Smoke test HTTP** | Apache local (`source.test`) + session cookie | 15+ trang đã verify | 3 portal, render + POST + export |
 | **Cron dry-run** | CLI `--dry-run` trên cả 2 DB | 3 jobs | Xem trước không ghi DB |
 | **Kiểm tra thủ công (mockup)** | So sánh PNG vs template | Xem §6 | Gap giao diện |
@@ -84,7 +84,7 @@ Bảng dưới ánh xạ service → test class → số test → các BR/module
 | Job | Test class | Test | Bao phủ |
 |---|---|---:|---|
 | `lms_tick_cron.php` | `TickServiceTest` (service layer) | 20 | BR-TICK pipeline 4 bước, dry-run không ghi |
-| `lms_session_generate.php` | `SessionGenerateCronTest` | 7 | Sinh sessions + `session_students`, idempotent, dry-run, `--weeks`, bỏ qua lớp paused, guard CLI, log `cron_runs` |
+| `lms_session_generate.php` | `SessionGenerateCronTest` | 9 | Sinh sessions + `session_students`, idempotent, dry-run đếm cả session ảo, unique DB key chống race, `--weeks`/`--from`, bỏ qua lớp paused, guard CLI, log `cron_runs` |
 | `lms_payroll_cron.php` | `PayrollServiceTest` (service layer) | 26 | Chốt tháng, `--teacher`, `--month` |
 
 **Chạy:**
@@ -202,6 +202,8 @@ php database/cron/lms_tick_cron.php --dry-run --db=phuongnamv_db_lms_test
 # Session generate — đếm session/session_students sẽ sinh
 php database/cron/lms_session_generate.php --dry-run
 php database/cron/lms_session_generate.php --dry-run --weeks=8
+# --from phải là ngày lịch hợp lệ YYYY-MM-DD (ngày không tồn tại trả exit code 2)
+php database/cron/lms_session_generate.php --from=2026-02-30
 
 # Payroll — xem trước tháng trước
 php database/cron/lms_payroll_cron.php --dry-run
@@ -229,6 +231,9 @@ from db_lms_cron_runs order by id desc limit 9;
 
 **Cảnh báo nếu:** job `running` >30 phút (chết treo), hoặc `status='failed'`.
 Dry-run KHÔNG ghi row (tránh reset bộ đếm monitoring khi chạy tay).
+Unique key `uniq_session_fixed_slot(class_id, session_date, start_time)` và
+`uniq_session_student(session_id, student_id)` bảo vệ khi cron chạy chồng; duplicate-key
+race được coi là slot đã được process khác tạo.
 
 ---
 
@@ -239,14 +244,17 @@ Dry-run KHÔNG ghi row (tránh reset bộ đếm monitoring khi chạy tay).
 | File | Mục đích | DB |
 |---|---|---|
 | `2026_10_07_lms_modules_seed.sql` | 15 module admin / 8 teacher / 6 student + phân quyền role | cả 2 |
-| `2026_10_10_lms_violation_thresholds_seed.sql` | 3 khoảng lớp → miễn 2/3/4 tick, warn 5, demote 8, phí sau hạ 50% | cả 2 |
+| `2026_10_10_lms_violation_thresholds_seed.sql` | 3 khoảng lớp → miễn 2/3/4 tick, warn 5, demote 8, phí sau hạ 30% | cả 2 |
 | `2026_10_12_lms_teacher_monthly_reviews_module.sql` | Đăng ký module TCH-06 cho teacher + permission | cả 2 |
 | `2026_10_12_lms_class_rules.sql` | Bảng nội quy `db_lms_class_rules` | cả 2 |
+| `2026_10_13_lms_session_unique_slot.sql` | Unique fixed slot chống cron session chạy trùng | cả 2 |
 | `2026_10_07_lms_demo_seed.php` | 1 admin + 3 GV + 5 HV + 2 lớp + sessions 4 tuần + tick/transaction mẫu | cả 2 |
 
 **Giá trị đã chốt (business, 12/10/2026):**
 - `ticks_to_warn = 5` — cảnh báo trước ngưỡng hạ phí.
-- `fee_percentage_after_demote = 50.00` — % phí sau hạ (mặc định 48%).
+- `fee_percentage_after_demote = 30.00` — tỷ lệ trực tiếp sau hạ, thấp hơn
+  mức mặc định 48% (khớp ví dụ ERD); Payroll chặn không tăng nếu tỷ lệ hiện
+  hành thấp hơn.
 - Đổi qua UI ADM-06 (`lms-vi-pham`), không sửa seed.
 
 ⚠️ **Áp dụng migration/seed bằng `mysql.exe` phải thêm `--default-character-set=utf8mb4`**,
@@ -320,4 +328,5 @@ Trước mỗi đợt release:
 | 12/10/2026 | Phase 3 ADM-04 | 341 | 1180 |
 | 12/10/2026 | TCH-07 thư viện | 348 | 1214 |
 | 12/10/2026 | P3 view-only + TCH-06 | 348 | 1214 |
-| 12/10/2026 | P4 cron session_generate | **355** | **1261** |
+| 13/10/2026 | P4 hardening: unique slot + dry-run estimate + ngày `--from` | **357** | **1264** |
+| 13/10/2026 | P4 hardening fix: seed 3 khoảng × phí sau hạ 30% | **359** | **1272** |

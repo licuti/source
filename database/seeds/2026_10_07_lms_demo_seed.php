@@ -352,15 +352,23 @@ if (!empty($lateSession)) {
 
 // ===================== Violation thresholds (BR-TICK-03) =====================
 // Giá trị đã chốt (xem 2026_10_10_lms_violation_thresholds_seed.sql).
-$db->insert('db_lms_violation_thresholds', array(
-    'min_classes'              => 1,
-    'max_classes'              => 3,
-    'ticks_to_warn'            => 5,
-    'ticks_to_demote_fee'      => 8,
-    'fee_percentage_after_demote' => 50.00,
-    'ticks_exempted'           => 2,
-    'effective_from'           => date('Y-m-d', strtotime('-1 month')),
-));
+// fee_percentage_after_demote là tỷ lệ trực tiếp, có chặn không tăng trong
+// PayrollService nếu cao hơn tỷ lệ hiện hành của lớp/GV.
+foreach (array(
+    array(1, 3, 2),
+    array(4, 7, 3),
+    array(8, null, 4),
+) as $threshold) {
+    $db->insert('db_lms_violation_thresholds', array(
+        'min_classes'                 => $threshold[0],
+        'max_classes'                 => $threshold[1],
+        'ticks_to_warn'               => 5,
+        'ticks_to_demote_fee'         => 8,
+        'fee_percentage_after_demote' => 30.00,
+        'ticks_exempted'              => $threshold[2],
+        'effective_from'              => '2026-10-10',
+    ));
+}
 
 // ===================== Thông báo demo =====================
 $notifSvc->notify($teacherIds['gv02'], 'tick_warning', 'Cảnh báo vi phạm', 'Bạn có 1 vi phạm nội quy mới.', 'lms/teacher.php?p=lms-vi-pham');

@@ -61,13 +61,13 @@ class TickServiceTest extends LmsTestCase
         ));
         $this->classId = (int) $this->db->insertId;
 
-        // Seed threshold: 1-3 lớp → miễn 2, warn 5, demote 8, phí sau hạ 50%
+        // Seed threshold: 1-3 lớp → miễn 2, warn 5, demote 8, phí sau hạ 30%
         $this->db->insert('db_lms_violation_thresholds', array(
             'min_classes'              => 1,
             'max_classes'              => 3,
             'ticks_to_warn'            => 5,
             'ticks_to_demote_fee'      => 8,
-            'fee_percentage_after_demote' => 50.00,
+            'fee_percentage_after_demote' => 30.00,
             'ticks_exempted'           => 2,
             'effective_from'           => date('Y-m-01'),
             'effective_to'             => null,
@@ -162,7 +162,10 @@ class TickServiceTest extends LmsTestCase
         $this->createSession(
             date('Y-m-d', strtotime('-3 days')),
             'finished',
-            array('summary_submitted_at' => date('Y-m-d H:i:s'))
+            array(
+                'start_time' => '19:00',
+                'summary_submitted_at' => date('Y-m-d H:i:s'),
+            )
         );
 
         $stats = $this->svc->closePastSessions();

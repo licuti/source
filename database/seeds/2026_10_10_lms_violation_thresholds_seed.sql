@@ -12,16 +12,23 @@
 -- Giá trị đã chốt (business confirm 12/10/2026 — P4):
 --  - ticks_to_warn = 5: cảnh báo trước khi chạm ngưỡng hạ phí (8).
 --    Khoảng cách 5→8 cho GV 3 tick "thời gian sửa sai" sau cảnh báo.
---  - fee_percentage_after_demote = 50.00: % phí dịch vụ sau khi bị hạ
---    (mặc định teachers.service_fee_percentage = 48.00 → hạ còn 50% mức
---    mặc định khi vi phạm). Đổi qua UI ADM-06 (module lms-vi-pham) khi
---    business yêu cầu, KHÔNG sửa seed này (chỉ áp dụng cho DB mới).
+--  - fee_percentage_after_demote = 30.00: tỷ lệ phí dịch vụ trực tiếp sau khi
+--    bị hạ (thấp hơn mức mặc định teachers.service_fee_percentage = 48.00, khớp
+--    ví dụ ERD). Payroll không cho phép giá trị này làm tăng tỷ lệ hiện hành
+--    (GV đang ở 48% vẫn nhận tối đa 48%). Đổi qua UI ADM-06 khi business yêu
+--    cầu, KHÔNG sửa seed này (chỉ áp dụng cho DB mới).
 -- ---------------------------------------------------------------------------
+
+-- Re-running this production seed replaces the official 2026-10-10 set
+-- without accumulating duplicate threshold rows. Historical effective dates
+-- remain untouched.
+DELETE FROM `db_lms_violation_thresholds`
+ WHERE `effective_from` = '2026-10-10';
 
 INSERT INTO `db_lms_violation_thresholds`
     (`min_classes`, `max_classes`, `ticks_to_warn`, `ticks_to_demote_fee`,
      `fee_percentage_after_demote`, `ticks_exempted`, `effective_from`, `effective_to`)
 VALUES
-    (1, 3,    5, 8, 50.00, 2, '2026-10-10', NULL),
-    (4, 7,    5, 8, 50.00, 3, '2026-10-10', NULL),
-    (8, NULL, 5, 8, 50.00, 4, '2026-10-10', NULL);
+    (1, 3,    5, 8, 30.00, 2, '2026-10-10', NULL),
+    (4, 7,    5, 8, 30.00, 3, '2026-10-10', NULL),
+    (8, NULL, 5, 8, 30.00, 4, '2026-10-10', NULL);

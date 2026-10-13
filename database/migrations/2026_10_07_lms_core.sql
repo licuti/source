@@ -140,6 +140,7 @@ CREATE TABLE `db_lms_sessions` (
     `created_at`         DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`         DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
+    UNIQUE KEY `uniq_session_fixed_slot` (`class_id`, `session_date`, `start_time`),
     KEY `idx_session_class_date` (`class_id`, `session_date`),
     KEY `idx_session_teacher_date` (`teacher_id`, `session_date`),
     KEY `idx_session_status_date` (`status`, `session_date`),

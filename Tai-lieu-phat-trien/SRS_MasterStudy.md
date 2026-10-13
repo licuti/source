@@ -261,7 +261,7 @@ Hỗ trợ: lớp 1-1 và lớp nhóm, lịch học linh hoạt, BTVN/Test, hệ
   - `thu_nhap_buoi = classes.price_per_session * COALESCE(classes.teacher_percentage, teachers.service_fee_percentage) / 100`
 
 **BR-PAY-02: Điều chỉnh % theo tick**
-- Nếu tháng tính lương GV có `tick_thực_tế >= ticks_to_demote_fee` ở tháng trước → dùng `fee_percentage_after_demote` thay cho % mặc định.
+- Nếu tháng tính lương GV có `tick_thực_tế >= ticks_to_demote_fee` ở tháng trước → dùng `fee_percentage_after_demote` (tỷ lệ trực tiếp) thay cho % mặc định; nếu giá trị cấu hình cao hơn tỷ lệ hiện hành thì dùng tỷ lệ hiện hành để việc hạ phí không làm tăng thu nhập.
 
 **BR-PAY-03: Tính thuế TNCN**
 - Nếu `teachers.is_commit_08 = TRUE` → thuế = 0%.

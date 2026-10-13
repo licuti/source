@@ -56,8 +56,12 @@ foreach (array_slice($argv, 1) as $arg) {
 if ($weeks < 1) {
     $weeks = \Lms\SessionService::DEFAULT_LOOKAHEAD_WEEKS;
 }
-if ($fromDate !== null && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $fromDate)) {
-    $fromDate = null;
+if ($fromDate !== null) {
+    $parsedFrom = \DateTime::createFromFormat('!Y-m-d', $fromDate);
+    if (!$parsedFrom || $parsedFrom->format('Y-m-d') !== $fromDate) {
+        fwrite(STDERR, "Invalid --from date; expected YYYY-MM-DD.\n");
+        exit(2);
+    }
 }
 
 // Override DB PHẢI chạy trước khi lms_db() kết nối lần đầu (nó cache static).
@@ -76,7 +80,9 @@ try {
         'weeks'               => $weeks,
         'from'                => $fromDate !== null ? $fromDate : date('Y-m-d'),
         'sessions_created'    => $svc->generateUpcoming($weeks, $fromDate, $dryRun),
-        'session_students_created' => $svc->ensureUpcomingSessionStudents($fromDate, $weeks, $dryRun),
+        'session_students_created' => $dryRun
+            ? $svc->estimateUpcomingSessionStudents($fromDate, $weeks)
+            : $svc->ensureUpcomingSessionStudents($fromDate, $weeks, false),
     );
     $errors = false;
 } catch (Exception $e) {

@@ -65,13 +65,13 @@ class PayrollServiceTest extends LmsTestCase
         ));
         $this->classId = (int) $this->db->insertId;
 
-        // Seed threshold: 1-3 lớp → miễn 2, warn 5, demote 8, phí sau hạ 50%
+        // Seed threshold: 1-3 lớp → miễn 2, warn 5, demote 8, phí sau hạ 30%
         $this->db->insert('db_lms_violation_thresholds', array(
             'min_classes'                 => 1,
             'max_classes'                 => 3,
             'ticks_to_warn'               => 5,
             'ticks_to_demote_fee'         => 8,
-            'fee_percentage_after_demote' => 50.00,
+            'fee_percentage_after_demote' => 30.00,
             'ticks_exempted'              => 2,
             'effective_from'              => '2026-01-01',
             'effective_to'                => null,
@@ -216,10 +216,27 @@ class PayrollServiceTest extends LmsTestCase
         $stats = $this->svc->closeMonth($this->teacherId, '2026-09');
 
         $this->assertTrue($stats['demoted']);
-        // 500000 × 50% = 250000 (chứ không phải 240000).
-        $this->assertSame(250000.0, $stats['salary']);
+        // 30% là tỷ lệ trực tiếp và thấp hơn mức mặc định 48% → 500000 × 30%.
+        $this->assertSame(150000.0, $stats['salary']);
         $rows = $this->salaryRows();
-        $this->assertSame('250000.00', $rows[0]['amount']);
+        $this->assertSame('150000.00', $rows[0]['amount']);
+    }
+
+    public function testCloseMonth_DemotedFeeUsesDirectPercentageWhenBelowCurrent()
+    {
+        $this->db->update(
+            'db_lms_violation_thresholds',
+            array('fee_percentage_after_demote' => 30.00),
+            'min_classes = ? and effective_from = ?',
+            array(1, '2026-01-01')
+        );
+        $this->insertPrevMonthTicks(10);
+        $this->createSession('2026-09-05');
+
+        $stats = $this->svc->closeMonth($this->teacherId, '2026-09');
+
+        $this->assertTrue($stats['demoted']);
+        $this->assertSame(150000.0, $stats['salary']);
     }
 
     public function testCloseMonth_KeepsDefaultFeeWhenPrevMonthTicksBelowThreshold()

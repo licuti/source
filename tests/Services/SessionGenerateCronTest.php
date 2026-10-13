@@ -120,6 +120,7 @@ class SessionGenerateCronTest extends LmsTestCase
         $this->assertTrue($stats['dry_run']);
         $this->assertSame('ok', $stats['result']);
         $this->assertGreaterThan(0, (int) $stats['sessions_created'], 'phải thấy session sẽ sinh');
+        $this->assertGreaterThan(0, (int) $stats['session_students_created'], 'dry-run phải đếm cả session_students ảo');
 
         // Dry-run không ghi DB
         $this->assertSame(0, (int) $this->db->count('db_lms_sessions'));
@@ -127,6 +128,23 @@ class SessionGenerateCronTest extends LmsTestCase
             0,
             (int) $this->db->count('db_lms_cron_runs', 'job_name = ?', array('session_generate')),
             'dry-run không được ghi cron_runs'
+        );
+    }
+
+    public function testDryRunSessionStudentEstimateMatchesWriteRun()
+    {
+        $dry = $this->runCron(array('--dry-run'));
+        $actual = $this->runCron();
+
+        $this->assertSame(
+            (int) $dry['sessions_created'],
+            (int) $actual['sessions_created'],
+            'dry-run phải dự đoán đúng số session mới'
+        );
+        $this->assertSame(
+            (int) $dry['session_students_created'],
+            (int) $actual['session_students_created'],
+            'dry-run phải dự đoán đúng số session_students mới'
         );
     }
 
@@ -223,5 +241,23 @@ class SessionGenerateCronTest extends LmsTestCase
         // nên không thể simulate web; verify guard tồn tại ở đầu file.
         $src = file_get_contents($this->cronPath);
         $this->assertStringContainsString("php_sapi_name() !== 'cli'", $src);
+    }
+
+    public function testSessionFixedSlotHasDatabaseUniqueConstraint()
+    {
+        $row = $this->db->safeFetchOne(
+            'select count(*) as c from information_schema.statistics'
+            . ' where table_schema = database() and table_name = "db_lms_sessions"'
+            . ' and index_name = "uniq_session_fixed_slot"'
+        );
+        $this->assertGreaterThanOrEqual(3, (int) $row['c']);
+    }
+
+    public function testInvalidFromDateIsRejectedByCron()
+    {
+        $cmd = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($this->cronPath)
+            . ' --from=2026-02-30 --db=' . escapeshellarg($this->testDb) . ' 2>&1';
+        $out = shell_exec($cmd);
+        $this->assertStringContainsString('Invalid --from date', (string) $out);
     }
 }

@@ -190,6 +190,7 @@ php vendor/phpunit/phpunit/phpunit
 php database/migrations/<file>.sql   # qua runner tạm hoặc client MySQL
 # TCH-07: đổi uploader FK sang db_lms_users và thêm is_downloadable; đã áp dụng 12/10/2026
 # P3: db_lms_class_rules + module/quyền teacher lms-nhan-xet-thang; migrations 2026_10_12_lms_class_rules.sql, 2026_10_12_lms_teacher_monthly_reviews_module.sql
+# P4 hardening: uniq_session_fixed_slot trên db_lms_sessions; migration 2026_10_13_lms_session_unique_slot.sql
 
 # Seed module/permission (chạy 1 lần)
 php database/seeds/... (xem file SQL trong database/seeds/)
@@ -329,13 +330,14 @@ Migration hiện có: `2026_10_07_lms_core.sql` (25 bảng) →
 
 Seed ngưỡng vi phạm: `database/seeds/2026_10_10_lms_violation_thresholds_seed.sql`
 (3 khoảng số lớp 1-3/4-7/≥8 → miễn 2/3/4 tick, cảnh báo 5, hạ phí 8, % phí sau
-hạ 50 — chạy trên cả DB thật + DB test). `ticks_to_warn=5` và
-`fee_percentage_after_demote=50.00` **đã chốt** (business confirm 12/10/2026,
+ hạ 30, là tỷ lệ trực tiếp, thấp hơn mức mặc định 48% và không được làm tăng tỷ
+ lệ hiện hành — chạy trên cả DB thật + DB test). `ticks_to_warn=5` và
+`fee_percentage_after_demote=30.00` **đã chốt** (business confirm 12/10/2026,
 P4); đổi qua UI ADM-06 (module `lms-vi-pham`) khi business yêu cầu, KHÔNG sửa
 seed (seed chỉ áp dụng cho DB mới).
 
 Kế hoạch kiểm thử đầy đủ: `Tai-lieu-phat-trien/Test_Plan_MasterStudy.md`
-(355 test / 1261 assertion + smoke test HTTP + checklist cron).
+(359 tests / 1272 assertions + smoke test HTTP + checklist cron).
 
 Tài khoản demo sau khi seed: `admin/admin123`, `gv01/gv01123456`, `hv01/hv01123456`…
 (chi tiết xem đầu ra script seed).

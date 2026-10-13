@@ -173,9 +173,57 @@ $class2Id = $classSvc->createClass(array(
 ));
 $classSvc->enrollStudent($class2Id, $hvIds[2]);
 $classSvc->enrollStudent($class2Id, $hvIds[3]);
-$classSvc->enrollStudent($class2Id, $hvIds[4]);
 
-echo "[OK] 2 lớp created (CLS1: 1-1 GV01+2HV, CLS2: group GV02+3HV).\n";
+echo "[OK] 2 lớp created (CLS1: 1-1 GV01+2HV, CLS2: group GV02+2HV).\n";
+
+// ===================== ADM-04: data demo sắp xếp lớp =====================
+// hv05 chuyển sang chờ xếp (tách khỏi lớp nhóm) để demo module Sắp xếp lớp.
+$db->update(
+    'db_lms_students',
+    array(
+        'status'        => 'pending_arrange',
+        'district'      => 'Quận 1',
+        'learning_type' => 'offline',
+        'subject_id'    => $subject1Id,
+        'free_time_slots' => json_encode(array(
+            array('day' => 7, 'start' => '09:00', 'end' => '10:30'),
+            array('day' => 3, 'start' => '19:30', 'end' => '21:00'),
+        ), JSON_UNESCAPED_UNICODE),
+    ),
+    'user_id = ?',
+    array($hvIds[4])
+);
+
+// GV dạy được môn Toán Đại số (ADM-04 match theo môn)
+$db->update(
+    'db_lms_teachers',
+    array('teachable_subjects' => json_encode(array($subject1Id, $subject2Id), JSON_UNESCAPED_UNICODE)),
+    'user_id = ?',
+    array($gv1Id)
+);
+$db->update(
+    'db_lms_teachers',
+    array(
+        'teachable_subjects'  => json_encode(array($subject1Id), JSON_UNESCAPED_UNICODE),
+        'teachable_districts' => json_encode(array('Quận 3'), JSON_UNESCAPED_UNICODE),
+    ),
+    'user_id = ?',
+    array($gv2Id)
+);
+$db->update(
+    'db_lms_teachers',
+    array('teachable_subjects' => json_encode(array($subject1Id), JSON_UNESCAPED_UNICODE)),
+    'user_id = ?',
+    array($gv3Id)
+);
+
+// Lịch trống: GV01 khớp T7, GV03 khớp cả T7 lẫn T3, GV02 sai quận (Quận 3)
+$schedSvc->addFreeSlot($gv1Id, 7, '08:30', '11:00');
+$schedSvc->addFreeSlot($gv3Id, 7, '08:30', '11:00');
+$schedSvc->addFreeSlot($gv3Id, 3, '19:00', '21:00');
+$schedSvc->addFreeSlot($gv2Id, 3, '18:30', '20:30');
+
+echo "[OK] ADM-04 demo data: hv05 pending_arrange (Quận 1, Toán Đại số).\n";
 
 $monday = date('Y-m-d', strtotime('monday this week'));
 
@@ -209,6 +257,29 @@ foreach ($allSessions as $s) {
 }
 
 echo "[OK] Sessions: class1={$c1}, class2={$c2}, total_session_students={$totalStudents}.\n";
+
+// ===================== Violation thresholds (BR-TICK-03) =====================
+// Script này TRUNCATE db_lms_violation_thresholds ở đầu (xem list $truncate),
+// nên phải insert lại đủ 3 khoảng — đồng nhất với
+// 2026_10_10_lms_violation_thresholds_seed.sql.
+// fee_percentage_after_demote là tỷ lệ trực tiếp (30% < mặc định 48%).
+foreach (array(
+    array(1, 3, 2),
+    array(4, 7, 3),
+    array(8, null, 4),
+) as $threshold) {
+    $db->insert('db_lms_violation_thresholds', array(
+        'min_classes'                 => $threshold[0],
+        'max_classes'                 => $threshold[1],
+        'ticks_to_warn'               => 5,
+        'ticks_to_demote_fee'         => 8,
+        'fee_percentage_after_demote' => 30.00,
+        'ticks_exempted'              => $threshold[2],
+        'effective_from'              => '2026-10-10',
+    ));
+}
+
+echo "[OK] Violation thresholds seeded (3 khoảng, fee_after_demote=30%).\n";
 
 $db->insert('db_lms_notifications', array(
     'user_id' => $adminId,
