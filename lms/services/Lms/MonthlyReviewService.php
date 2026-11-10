@@ -29,8 +29,9 @@ class MonthlyReviewService extends LmsService
             return array();
         }
         return $this->db->safeFetch(
-            'select c.id as class_id, c.class_code, c.name as class_name,'
+            'select c.id as class_id, c.class_code, c.name as class_name, c.class_type,'
             . ' sub.name as subject_name, s.user_id as student_id, s.student_code, s.full_name as student_name,'
+            . ' s.grade, s.avatar,'
             . ' r.id as review_id, r.review_month, r.overall_rating, r.content, r.progress_percent, r.published_at'
             . ' from db_lms_classes c'
             . ' join db_lms_class_students cs on cs.class_id=c.id and cs.status="active"'
@@ -43,6 +44,93 @@ class MonthlyReviewService extends LmsService
         );
     }
 
+    /**
+     * Gom danh sách học viên theo lớp cho giao diện card Teacher.
+     *
+     * Lớp 1-1 có 1 học viên; lớp nhóm có nhiều học viên (mỗi HV một field nhận xét).
+     *
+     * @param int    $teacherId
+     * @param string $month 'YYYY-MM'
+     * @return array
+     */
+    public function listClassesForTeacher($teacherId, $month)
+    {
+        $rows = $this->listForTeacher($teacherId, $month);
+        if (empty($rows)) {
+            return array();
+        }
+
+        $classIds = array();
+        foreach ($rows as $row) {
+            $classIds[] = (int) $row['class_id'];
+        }
+        $classIds = array_values(array_unique($classIds));
+        $scheduleMap = $this->scheduleRowsMap($classIds);
+
+        $classes = array();
+        foreach ($rows as $row) {
+            $cid = (int) $row['class_id'];
+            if (!isset($classes[$cid])) {
+                $classes[$cid] = array(
+                    'class_id'      => $cid,
+                    'class_code'    => (string) $row['class_code'],
+                    'class_name'    => (string) $row['class_name'],
+                    'class_type'    => (string) $row['class_type'],
+                    'subject_name'  => (string) $row['subject_name'],
+                    'schedule_rows' => isset($scheduleMap[$cid]) ? $scheduleMap[$cid] : array(),
+                    'students'      => array(),
+                );
+            }
+
+            $classes[$cid]['students'][] = array(
+                'student_id'       => (int) $row['student_id'],
+                'student_code'     => (string) $row['student_code'],
+                'student_name'     => (string) $row['student_name'],
+                'grade'            => (string) $row['grade'],
+                'avatar'           => (string) $row['avatar'],
+                'review_id'        => !empty($row['review_id']) ? (int) $row['review_id'] : 0,
+                'review_month'     => (string) $row['review_month'],
+                'overall_rating'   => (string) $row['overall_rating'],
+                'content'          => (string) $row['content'],
+                'progress_percent' => $row['progress_percent'],
+                'published_at'     => $row['published_at'],
+            );
+        }
+
+        return array_values($classes);
+    }
+
+    /**
+     * Tháng cho dropdown Teacher: 12 tháng gần nhất + các tháng đã có nhận xét.
+     *
+     * @param int $teacherId
+     * @param int $monthsBack
+     * @return array map 'YYYY-MM' => 'Tháng N / YYYY' (mới nhất trước)
+     */
+    public function teacherMonthOptions($teacherId, $monthsBack = 12)
+    {
+        $options = array();
+        $monthsBack = max(1, (int) $monthsBack);
+        for ($i = 0; $i < $monthsBack; $i++) {
+            $month = date('Y-m', strtotime(date('Y-m-01') . ' -' . $i . ' month'));
+            $options[$month] = $this->monthLabel($month);
+        }
+
+        $rows = $this->db->safeFetch(
+            'select distinct review_month from db_lms_monthly_reviews where teacher_id = ?',
+            array((int) $teacherId)
+        );
+        foreach ($rows as $row) {
+            $month = (string) $row['review_month'];
+            if ($month !== '' && !isset($options[$month])) {
+                $options[$month] = $this->monthLabel($month);
+            }
+        }
+
+        krsort($options);
+        return $options;
+    }
+
     /** Create/update one monthly review after verifying teacher owns the active enrolment. */
     public function saveForTeacher($teacherId, array $data, $publish = false)
     {
@@ -51,9 +139,11 @@ class MonthlyReviewService extends LmsService
         $classId = isset($data['class_id']) ? (int) $data['class_id'] : 0;
         $studentId = isset($data['student_id']) ? (int) $data['student_id'] : 0;
         $month = isset($data['review_month']) ? trim((string) $data['review_month']) : '';
-        $rating = isset($data['overall_rating']) ? (string) $data['overall_rating'] : '';
+        $hasRating = array_key_exists('overall_rating', $data);
+        $rating = $hasRating ? (string) $data['overall_rating'] : '';
         $content = isset($data['content']) ? trim((string) $data['content']) : '';
-        $percent = isset($data['progress_percent']) && (string) $data['progress_percent'] !== ''
+        $hasPercent = array_key_exists('progress_percent', $data);
+        $percent = $hasPercent && (string) $data['progress_percent'] !== ''
             ? (float) $data['progress_percent'] : null;
 
         if ($teacherId <= 0 || $classId <= 0 || $studentId <= 0
@@ -63,10 +153,6 @@ class MonthlyReviewService extends LmsService
         }
         if ($rating !== '' && !isset(self::OVERALL_RATINGS[$rating])) {
             $this->addError('overall_rating', 'Mức đánh giá không hợp lệ.');
-            return false;
-        }
-        if ($publish && $rating === '') {
-            $this->addError('overall_rating', 'Chọn mức đánh giá trước khi đăng nhận xét.');
             return false;
         }
         if ($content === '') {
@@ -79,10 +165,6 @@ class MonthlyReviewService extends LmsService
         }
         if ($percent !== null && ($percent < 0 || $percent > 100)) {
             $this->addError('progress_percent', 'Tiến bộ phải nằm trong khoảng 0–100%.');
-            return false;
-        }
-        if ($publish && $percent === null) {
-            $this->addError('progress_percent', 'Nhập tỷ lệ tiến bộ trước khi đăng nhận xét.');
             return false;
         }
         $enrolment = $this->db->safeFetchOne(
@@ -99,6 +181,15 @@ class MonthlyReviewService extends LmsService
             'select * from db_lms_monthly_reviews where student_id=? and class_id=? and review_month=? limit 1',
             array($studentId, $classId, $month)
         );
+        // Form mới chỉ gửi nội dung → giữ nguyên đánh giá/tiến bộ đã có thay vì xoá trắng.
+        if (!empty($before)) {
+            if (!$hasRating) {
+                $rating = (string) $before['overall_rating'];
+            }
+            if (!$hasPercent) {
+                $percent = $before['progress_percent'] === null ? null : (float) $before['progress_percent'];
+            }
+        }
         $publishedAt = $publish ? (!empty($before['published_at']) ? $before['published_at'] : $this->now()) : null;
         $values = array(
             'overall_rating' => $rating !== '' ? $rating : null,
@@ -141,9 +232,10 @@ class MonthlyReviewService extends LmsService
         $classes = $this->db->safeFetch(
             'select c.id, c.name, c.class_code, c.subject_id,'
             . ' sub.name as subject_name,'
-            . ' t.full_name as teacher_name'
+            . ' t.full_name as teacher_name, st.grade'
             . ' from db_lms_class_students cs'
             . ' join db_lms_classes c on c.id = cs.class_id and c.deleted_at is null'
+            . ' left join db_lms_students st on st.user_id = cs.student_id'
             . ' left join db_lms_subjects sub on sub.id = c.subject_id'
             . ' left join db_lms_teachers t on t.user_id = c.teacher_id'
             . ' where cs.student_id = ? and cs.status = ? and c.status = ?'
@@ -191,14 +283,33 @@ class MonthlyReviewService extends LmsService
             }
         }
 
-        // ---- Lịch học text cho mỗi lớp ("Thứ 2 19:00-20:30 / Thứ 4 ...") ----
-        $scheduleMap = $this->schedulesMap($classIds);
+        // ---- Lịch học mỗi lớp: ưu tiên lịch cycle đang hiệu lực, fallback lịch lớp ----
+        $scheduleMap = $this->scheduleRowsMap($classIds);
 
         $items = array();
         foreach ($classes as $c) {
             $cid = (int) $c['id'];
             $c['reviews'] = isset($byClass[$cid]) ? $byClass[$cid] : array();
-            $c['schedules_text'] = isset($scheduleMap[$cid]) ? $scheduleMap[$cid] : '';
+
+            $rows = isset($scheduleMap[$cid]) ? $scheduleMap[$cid] : array();
+            $texts = array();
+            foreach ($rows as $row) {
+                // Giữ định dạng cũ "19:00-20:30" cho schedules_text (tương thích test/consumer cũ).
+                $texts[] = $row['day'] . ' ' . str_replace(' - ', '-', $row['time']);
+            }
+            $c['schedules_text'] = implode(' / ', $texts);
+            $c['schedule_rows'] = $rows;
+
+            // Tháng có nhận xét của riêng lớp (dropdown từng card).
+            $classMonths = array();
+            foreach ($c['reviews'] as $review) {
+                $reviewMonth = (string) $review['review_month'];
+                if (!isset($classMonths[$reviewMonth])) {
+                    $classMonths[$reviewMonth] = $this->monthLabel($reviewMonth);
+                }
+            }
+            $c['months'] = $classMonths;
+
             $items[] = $c;
         }
 
@@ -227,12 +338,15 @@ class MonthlyReviewService extends LmsService
     }
 
     /**
-     * Map class_id → text lịch học.
+     * Map class_id → danh sách lịch học (day + time).
+     *
+     * Ưu tiên lịch của cycle đang hiệu lực; lớp chưa có cycle/schedule thì
+     * fallback về db_lms_schedules để không làm mất dữ liệu cũ.
      *
      * @param array $classIds
      * @return array
      */
-    private function schedulesMap(array $classIds)
+    public function scheduleRowsMap(array $classIds)
     {
         $out = array();
         if ($classIds === array()) {
@@ -240,24 +354,60 @@ class MonthlyReviewService extends LmsService
         }
         $placeholders = implode(', ', array_fill(0, count($classIds), '?'));
         $rows = $this->db->safeFetch(
-            'select class_id, day_of_week, start_time, end_time from db_lms_schedules'
-            . ' where class_id in (' . $placeholders . ')'
-            . ' order by day_of_week, start_time',
-            $classIds
+            'select cc.class_id, sch.day_of_week, sch.start_time, sch.end_time'
+            . ' from db_lms_course_cycles cc'
+            . ' join db_lms_cycle_schedules sch on sch.cycle_id = cc.id'
+            . ' where cc.class_id in (' . $placeholders . ') and cc.status = ?'
+            . ' and sch.effective_from <= curdate()'
+            . ' and (sch.effective_to is null or sch.effective_to >= curdate())'
+            . ' order by cc.class_id, sch.day_of_week, sch.start_time',
+            array_merge($classIds, array('active'))
         );
-        $weekdays = \Lms\UserService::WEEKDAYS;
+
+        $fallbackIds = array();
+        $seen = array();
         foreach ($rows as $r) {
             $cid = (int) $r['class_id'];
-            $dow = (int) $r['day_of_week'];
-            $label = isset($weekdays[$dow]) ? $weekdays[$dow] : '';
-            $text = $label . ' ' . substr((string) $r['start_time'], 0, 5)
-                . '-' . substr((string) $r['end_time'], 0, 5);
-            if (isset($out[$cid])) {
-                $out[$cid] .= ' / ' . $text;
-            } else {
-                $out[$cid] = $text;
+            $seen[$cid] = true;
+            $out[$cid][] = $this->formatScheduleRow($r);
+        }
+        foreach ($classIds as $cid) {
+            if (!isset($seen[(int) $cid])) {
+                $fallbackIds[] = (int) $cid;
             }
         }
+
+        if ($fallbackIds !== array()) {
+            $fbPlaceholders = implode(', ', array_fill(0, count($fallbackIds), '?'));
+            $fallback = $this->db->safeFetch(
+                'select class_id, day_of_week, start_time, end_time from db_lms_schedules'
+                . ' where class_id in (' . $fbPlaceholders . ')'
+                . ' order by class_id, day_of_week, start_time',
+                $fallbackIds
+            );
+            foreach ($fallback as $r) {
+                $cid = (int) $r['class_id'];
+                $out[$cid][] = $this->formatScheduleRow($r);
+            }
+        }
+
         return $out;
+    }
+
+    /**
+     * Chuẩn hoá một dòng lịch học cho template.
+     *
+     * @param array $row
+     * @return array array('day' => 'Thứ 2', 'time' => '19:00 - 20:30')
+     */
+    private function formatScheduleRow(array $row)
+    {
+        $weekdays = \Lms\UserService::WEEKDAYS;
+        $dow = (int) $row['day_of_week'];
+        return array(
+            'day'  => isset($weekdays[$dow]) ? $weekdays[$dow] : '',
+            'time' => substr((string) $row['start_time'], 0, 5)
+                . ' - ' . substr((string) $row['end_time'], 0, 5),
+        );
     }
 }

@@ -51,6 +51,13 @@ if (empty($user['role']) || $user['role'] !== _LMS_PORTAL) {
     exit;
 }
 
+// BR-AUTH-01: chưa đổi mật khẩu lần đầu → ép qua trang đổi mật khẩu
+if (!empty($user['must_change_password'])) {
+    lms_flash('warning', 'Tài khoản của bạn cần đổi mật khẩu trước khi sử dụng hệ thống.');
+    header('Location: ' . lms_url('', 'doi-mat-khau'));
+    exit;
+}
+
 // ===================== 3) Whitelist alias =====================
 
 if (!preg_match('/^[a-z0-9-]+$/', $p)) {
@@ -113,6 +120,8 @@ lms_layout_open(array(
     'portal' => _LMS_PORTAL,
     'title'  => isset($title) && $title !== '' ? (string) $title : (string) $module['name'],
     'active' => $p,
+    'hide_title' => !empty($hidePageTitle),
+    'alert' => isset($layoutAlert) && is_array($layoutAlert) ? $layoutAlert : null,
 ));
 
 require $tplFile;

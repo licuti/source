@@ -1,14 +1,14 @@
 <?php
 /**
- * LibraryService — Thư viện tài liệu lớp học (TCH-07 + admin, Phase 3).
+ * LibraryService — Thư viện tài liệu lớp học (ADM-12 / TCH-07).
  *
  * Quản lý bảng db_lms_library_files:
- *  - Admin xem/upload/sửa/xoá mọi file.
- *  - GV upload cho lớp của mình, xem/xoá file của mình.
- *  - Download: mọi người có quyền truy cập lớp đó; mỗi lần tải tăng download_count.
+ *  - Admin xem/upload/sửa/xoá mọi file và cấu hình quyền tải xuống (is_downloadable).
+ *  - GV xem tài liệu chung của trung tâm và tài liệu thuộc lớp mình dạy, tải xuống khi is_downloadable = 1.
+ *  - Mỗi lượt tải/mở qua action 'tai' tăng download_count.
  *
  * File được lưu tại lms/public/uploads/library/<subdir>/ qua lms_upload.php.
- * file_url = relative path trong uploads/ (không có tiền tố /uploads/).
+ * file_url = relative path trong uploads/ (không có tiền tố /uploads/) hoặc URL http(s)://.
  *
  * PHP 7.3 compatible.
  */
@@ -19,6 +19,11 @@ class LibraryService extends LmsService
 {
     /** Loại file hợp lệ (db_lms_library_files.file_type). */
     const FILE_TYPES = array(
+        'link'     => 'Liên kết (Link)',
+        'pdf'      => 'Tài liệu PDF',
+        'doc'      => 'Tài liệu Word (DOC)',
+        'xls'      => 'Bảng tính Excel (XLS)',
+        'internal' => 'Tài liệu nội bộ',
         'slide'    => 'Slide bài giảng',
         'exam'     => 'Đề thi / Bài test',
         'video'    => 'Video',
@@ -28,10 +33,64 @@ class LibraryService extends LmsService
     );
 
     /** Đuôi file cho phép upload vào thư viện. */
-    const ALLOWED_EXTENSIONS = array('pdf', 'docx', 'xlsx', 'pptx', 'jpg', 'jpeg', 'png', 'mp3', 'mp4', 'zip');
+    const ALLOWED_EXTENSIONS = array('pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'jpg', 'jpeg', 'png', 'mp3', 'mp4', 'zip');
 
     /** Dung lượng tối đa 1 file thư viện (100 MB). */
     const MAX_FILE_SIZE = 104857600;
+
+    /**
+     * Tự động nhận diện loại file theo URL/tên file hoặc phân loại danh mục
+     *
+     * @param string $fileUrl
+     * @param string $category
+     * @return string
+     */
+    public static function detectFileType($fileUrl, $category = '')
+    {
+        $fileUrl = trim((string) $fileUrl);
+        $category = trim((string) $category);
+
+        if ($category === '[Nội bộ]') {
+            return 'internal';
+        }
+
+        $pathPart = (string) parse_url($fileUrl, PHP_URL_PATH);
+        $ext = strtolower(pathinfo($pathPart !== '' ? $pathPart : $fileUrl, PATHINFO_EXTENSION));
+        if ($ext === 'pdf') {
+            return 'pdf';
+        }
+        if (in_array($ext, array('doc', 'docx'), true)) {
+            return 'doc';
+        }
+        if (in_array($ext, array('xls', 'xlsx'), true)) {
+            return 'xls';
+        }
+        if (in_array($ext, array('ppt', 'pptx'), true)) {
+            return 'slide';
+        }
+        if (in_array($ext, array('mp4', 'mov', 'avi', 'mkv'), true)) {
+            return 'video';
+        }
+        if (in_array($ext, array('mp3', 'wav', 'ogg'), true)) {
+            return 'audio';
+        }
+
+        if ($category === '[Sách]') {
+            return 'link';
+        }
+        if ($category === '[Review]') {
+            return 'pdf';
+        }
+        if ($category === '[Test]') {
+            return 'doc';
+        }
+
+        if (preg_match('#^https?://#i', $fileUrl)) {
+            return 'link';
+        }
+
+        return 'other';
+    }
 
     /**
      * Danh sách file thư viện + filter + phân trang.
@@ -105,7 +164,7 @@ class LibraryService extends LmsService
             . ' left join db_lms_classes c on c.id = f.class_id'
             . ' left join db_lms_topics top on top.id = f.topic_id'
             . ' where ' . $whereSql
-            . ' order by f.created_at desc'
+            . ' order by f.created_at desc, f.id asc'
             . ' limit ' . $offset . ', ' . $perPage,
             $params
         );
@@ -147,8 +206,8 @@ class LibraryService extends LmsService
 
     /**
      * Kiểm tra file có thể xem/tải trong portal Teacher hay không.
-     * File chung (class_id NULL) chỉ truy cập được bởi uploader; file theo lớp
-     * chỉ truy cập nếu GV hiện tại đang dạy lớp đó.
+     * File chung (class_id NULL) truy cập được bởi mọi GV; file theo lớp
+     * chỉ truy cập nếu GV hiện tại đang dạy lớp đó hoặc là người upload.
      */
     public function canTeacherAccessFile($id, $teacherId)
     {
@@ -186,7 +245,7 @@ class LibraryService extends LmsService
      * Thêm file thư viện mới (sau khi đã upload file lên disk qua lms_upload.php).
      *
      * @param array $data file_url (required), file_type, title, description,
-     *                     file_size_bytes, subject_id, class_id, topic_id
+     *                     file_size_bytes, subject_id, class_id, topic_id, is_downloadable
      * @param int   $uploadedBy user id (admin or teacher)
      * @param int|null $teacherScope when set, class_id must belong to this teacher
      * @return int|null file id
@@ -273,18 +332,18 @@ class LibraryService extends LmsService
 
         $fileId = (int) $this->db->insertId;
         $this->audit('upload_library_file', 'library_files', $fileId, null, array(
-            'file_url' => $fileUrl,
+            'file_url'  => $fileUrl,
             'file_type' => $fileType,
-            'class_id' => $classId,
+            'class_id'  => $classId,
         ));
         return $fileId;
     }
 
     /**
-     * Sửa metadata file (tiêu đề, mô tả, loại file, lớp/môn/chuyên đề).
+     * Sửa metadata file (tiêu đề, đường dẫn, loại file, mô tả, quyền tải, lớp/môn/chuyên đề).
      *
      * @param int   $id
-     * @param array $data title, file_type, description, class_id, subject_id, topic_id
+     * @param array $data title, file_url, file_size_bytes, file_type, description, class_id, subject_id, topic_id, is_downloadable
      * @return bool
      */
     public function updateFile($id, array $data)
@@ -308,12 +367,15 @@ class LibraryService extends LmsService
             $fileType = 'other';
         }
 
-        $classId = isset($data['class_id']) && (int) $data['class_id'] > 0
-            ? (int) $data['class_id'] : null;
-        $subjectId = isset($data['subject_id']) && (int) $data['subject_id'] > 0
-            ? (int) $data['subject_id'] : null;
-        $topicId = isset($data['topic_id']) && (int) $data['topic_id'] > 0
-            ? (int) $data['topic_id'] : null;
+        $classId = array_key_exists('class_id', $data)
+            ? ((int) $data['class_id'] > 0 ? (int) $data['class_id'] : null)
+            : ($before['class_id'] !== null ? (int) $before['class_id'] : null);
+        $subjectId = array_key_exists('subject_id', $data)
+            ? ((int) $data['subject_id'] > 0 ? (int) $data['subject_id'] : null)
+            : ($before['subject_id'] !== null ? (int) $before['subject_id'] : null);
+        $topicId = array_key_exists('topic_id', $data)
+            ? ((int) $data['topic_id'] > 0 ? (int) $data['topic_id'] : null)
+            : ($before['topic_id'] !== null ? (int) $before['topic_id'] : null);
 
         $title = isset($data['title']) ? trim((string) $data['title']) : '';
         if ($title === '') {
@@ -323,13 +385,27 @@ class LibraryService extends LmsService
             $title = mb_substr($title, 0, 200, 'UTF-8');
         }
 
+        $fileUrl = isset($data['file_url']) && trim((string) $data['file_url']) !== ''
+            ? trim((string) $data['file_url'])
+            : (string) $before['file_url'];
+
+        $fileSizeBytes = array_key_exists('file_size_bytes', $data)
+            ? ($data['file_size_bytes'] !== null ? (int) $data['file_size_bytes'] : null)
+            : ($before['file_size_bytes'] !== null ? (int) $before['file_size_bytes'] : null);
+
+        $description = array_key_exists('description', $data)
+            ? ($data['description'] !== null ? trim((string) $data['description']) : null)
+            : $before['description'];
+
         $ok = $this->db->update('db_lms_library_files', array(
-            'title'       => $title,
-            'file_type'   => $fileType,
-            'description' => isset($data['description']) ? trim((string) $data['description']) : null,
-            'class_id'    => $classId,
-            'subject_id'  => $subjectId,
-            'topic_id'    => $topicId,
+            'title'           => $title,
+            'file_type'       => $fileType,
+            'file_url'        => $fileUrl,
+            'file_size_bytes' => $fileSizeBytes,
+            'description'     => $description,
+            'class_id'        => $classId,
+            'subject_id'      => $subjectId,
+            'topic_id'        => $topicId,
             'is_downloadable' => isset($data['is_downloadable']) ? (int) (bool) $data['is_downloadable'] : (int) $before['is_downloadable'],
         ), 'id = ?', array($id));
 
@@ -406,7 +482,6 @@ class LibraryService extends LmsService
 
     /**
      * Danh sách file của các lớp 1 GV đang dạy (portal Teacher).
-     * Gộp filter teacher_id vào listFiles.
      *
      * @param int   $teacherId
      * @param array $filters q, file_type, class_id
@@ -430,8 +505,7 @@ class LibraryService extends LmsService
         foreach ($classRows as $r) {
             $classIds[] = (int) $r['id'];
         }
-        // Teacher thấy: file do chính mình upload HOẶC file gắn với lớp mình dạy
-        // Phạm vi: (uploaded_by = teacher) OR (class_id IN lớp của teacher)
+
         $page    = max(1, (int) $page);
         $perPage = max(1, min(100, (int) $perPage));
         $offset  = ($page - 1) * $perPage;
@@ -439,7 +513,7 @@ class LibraryService extends LmsService
         $where  = array('f.deleted_at is null');
         $params = array();
 
-        // Scope GV: tài liệu chung, file của mình, hoặc file lớp mình dạy.
+        // Scope GV: tài liệu chung (class_id IS NULL), file của mình, hoặc file lớp mình dạy.
         if ($classIds !== array()) {
             $inPh = implode(', ', array_fill(0, count($classIds), '?'));
             $where[] = '(f.class_id is null or f.uploaded_by = ? or f.class_id in (' . $inPh . '))';
@@ -489,7 +563,7 @@ class LibraryService extends LmsService
             . ' left join db_lms_subjects s on s.id = f.subject_id'
             . ' left join db_lms_classes c on c.id = f.class_id'
             . ' where ' . $whereSql
-            . ' order by f.created_at desc'
+            . ' order by f.created_at desc, f.id asc'
             . ' limit ' . $offset . ', ' . $perPage,
             $params
         );

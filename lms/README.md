@@ -24,6 +24,10 @@ lms/
     lms_upload.php       lms_save_files() upload an toàn (MIME whitelist, tên random)
                          + lms_upload_dir() tạo dir + .htaccess cấm execute PHP
     lms_cron.php         helper logging cron vào db_lms_cron_runs (R1/R8 monitoring)
+    lms_calendar.php     helper lưới lịch tuần dùng chung 3 portal: lms_cal_variant/
+                         lms_cal_missing_hw/lms_cal_time_text + lms_cal_offset_px (top theo
+                         phút lẻ), lms_cal_span_px (cao theo thời lượng), lms_cal_lanes_for_rows
+                         (chia lane khi chồng giờ) + hằng số LMS_CAL_HOUR_H (72px/hàng)
   services/Lms/         business layer (PascalCase, namespace Lms\)
     LmsService.php      base: db(), errors(), audit()
     UserService.php     auth 3 portal (D9) + CRUD học viên (ADM-01) + giáo viên (ADM-02)
@@ -32,7 +36,7 @@ lms/
     SessionService.php  sinh sessions từ lịch (idempotent), hạn BTVN,
                         lesson summary + chấm BTVN (row-level theo teacher)
                         + listWeekForStudent / listUpcomingForStudent (STU-02)
-    EnrolmentService.php  ADM-04 thêm/chuyển/xoá HV khỏi lớp
+    EnrolmentService.php  ADM-03 thêm/chuyển/xoá HV khỏi lớp (màn Học sinh - Lớp học)
     TeacherProfileService.php  TCH-01 profile GV + ghi chú tuần
     RequestService.php    TCH-01 3 loại request (add_session/leave/change_schedule)
     StudentCourseService.php   STU-01/02/03 khoá học + nộp BTVN/test (row-level)
@@ -45,7 +49,7 @@ lms/
                           10% phần vượt) + ghi transaction 'tax'
     PayrollService.php    BR-PAY-01/02/04 chốt lương (closeMonth/closeMonthAll,
                           idempotent + FOR UPDATE), BR-PAY-02 áp phí đã hạ theo
-                          tick tháng trước, monthSummary/monthSummaryAll,
+                          tick tháng trước, monthSummary,
                           setMonthStatus (draft→pending→paid), addAdjustment
     MatchingService.php   ADM-04 sắp xếp lớp (listPendingStudents,
                           matchTeachers — hard filter môn/quận/giới tính/
@@ -67,6 +71,7 @@ lms/
   index.php             trang chọn vai trò (T7 + D8, công khai)
   public/               asset tĩnh: vendor (bootstrap/jquery/fontawesome6/toastify)
                          + css/lms.css + js/lms.js + js/lms-notif.js (T2)
+                         + images/login/ (background.png, hoc-vien.png, giao-vien.png, spark-left.svg, spark-right.svg)
 ```
 
 ### Module đã xây dựng (portal Admin)
@@ -76,15 +81,16 @@ lms/
 | `lms-tong-quan` | — | `hienthi` | Dashboard: 4 thẻ số liệu + thống kê chương trình |
 | `lms-hoc-vien` | ADM-01 | `man` `them` `sua` `khoa` `mo` `xoa` | CRUD học viên + khoá/mở tài khoản; filter + phân trang |
 | `lms-giao-vien` | ADM-02 | `man` `them` `sua` `khoa` `mo` `xoa` | CRUD giáo viên (CCCD/MST/% phí DV, môn/quận dạy, cam kết 08) |
-| `lms-lop` | ADM-03 | `man` `them` `sua` `xoa` | CRUD lớp (tạo lớp + enroll + sinh sessions tự động) |
-| `lms-lop-hoc-sinh` | ADM-04 | `man` `them` `chuyen` `xoa` | Ma trận học viên × chương trình; thêm/chuyển/xoá HV khỏi lớp |
-| `lms-sap-xep-lop` | ADM-04 | `man` `chi-tiet-gv` `tao-lop` | Sắp xếp lớp: danh sách HV chờ xếp (pending_arrange) → GV phù hợp theo điểm match (môn/quận/giới tính/online/lịch rảnh/sức chứa) + chi tiết lịch tuần GV + tạo lớp 1-1 tự động (CSRF, cấu hình mặc định, HV → chờ thu phí) |
+| `lms-lop` | ADM-03 | `man` `them` `sua` `xoa` `lich-hoc` `cap-nhat-lich-co-dinh` | CRUD lớp + lịch tuần 24 giờ; lưới lịch dùng `calendar_week` + `calendar_week_event`, block "Lịch cố định" dùng chung component `form/class_schedule_slots` với form sửa lớp |
+| `lms-lop-hoc-sinh` | ADM-03 | `man` `them` `chuyen` `xoa` | Ma trận học viên × chương trình; thêm/chuyển/xoá HV khỏi lớp |
+| `lms-sap-xep-lop` | ADM-04 | `man` `ajax-hoc-vien` `cap-nhat-ghi-chu` `an-giao-vien` `bo-an-giao-vien` | Sắp xếp lớp theo 2 mockup: tìm GV theo tiêu chí HV (auto-fill từ username), theo lịch trống (nhiều ngày/khung giờ) và tiêu chí GV; bảng 10 cột sắp xếp theo hạng/cập nhật; modal chi tiết lịch tuần (lịch lớp + lịch trống + link hồ sơ HV) và ghi chú tuần; "Xoá" = ẩn GV khỏi gợi ý trong phiên, có nút hiện lại. Tạo lớp thực hiện tại ADM-03 |
 | `lms-thu-vien` | TCH-07 | `man` `them` `sua` `xoa` `tai` | Quản trị thư viện: tìm/lọc tài liệu, upload file (MIME whitelist, 100 MB), gắn lớp/môn/chuyên đề, sửa metadata, bật/tắt quyền tải của GV, xoá mềm, tải file |
-| `lms-bai-tap-ve-nha` | — | `man` | Báo cáo buổi học, BTVN, lesson summary và số bài nộp; lọc ngày/lớp/GV |
+| `lms-bai-tap-ve-nha` | — | `man` | Danh sách buổi đã kết thúc kèm BTVN, lesson summary (buổi chưa báo cáo hiện "Chưa giao"); lọc ngày/mã lớp/mã GV, nhiều chuyên đề cách nhau dấu phẩy |
 | `lms-lo-trinh` | — | `man` | Tra cứu danh mục chủ đề theo môn, chương trình, loại test và nội dung mẫu nhận xét |
 | `lms-noi-quy` | — | `man` | Quản trị nội quy văn bản thuần (CSRF + audit); nội dung hiển thị ở portal student |
 | `lms-thong-ke-buoi-hoc` | — | `man` `xuat` | Lịch sử buổi theo mã HV, khoảng ngày, tổng số buổi và xuất CSV |
-| `lms-yeu-cau` | ADM-05 | `man` `xem` `duyet` `tu-choi` | Duyệt/từ chối request của GV (add_session/request_leave/change_schedule): transaction + `FOR UPDATE` idempotent, check trùng lịch GV, insert/cancel session, giảm `remaining_sessions` |
+| `lms-audit-log` | — | `hienthi` | Nhật ký hệ thống (read-only): lọc theo người thực hiện/thao tác/đối tượng/khoảng ngày, bảng 6 cột, xem JSON trước–sau kèm IP & User-Agent, phân trang 50 dòng |
+| `lms-yeu-cau` | ADM-05 | `man` `xem` `duyet` `tu-choi` `xoa-yeu-cau` `duyet-test` `xoa-test` `ket-qua` `cap-nhat-kq` `xac-nhan-kq` `xoa-kq` | 5 tab theo mockup: Request thêm buổi / Request test (test draft) / Duyệt KQ test (bài nộp chưa chấm) / Request đổi lịch / Kiểm tra số buổi (<5 buổi). Duyệt request add_session/request_leave/change_schedule dùng `RequestService` (transaction + `FOR UPDATE`, check trùng lịch, insert/cancel session, giảm `remaining_sessions`); xác nhận gửi test draft, chấm điểm + xác nhận KQ test, xoá request/test/bài nộp |
 | `lms-vi-pham` | ADM-06 | `man` `them` `xoa` `nguong` `luu-nguong` `xoa-nguong` | Quản lý vi phạm (tick): log tick + filter GV/lý do/tháng/nguồn + phân trang, thêm tick thủ công (±1), xoá tick thủ công, CRUD ngưỡng `violation_thresholds` |
 | `lms-phi-dv` | ADM-07 | `man` `chi-tiet` `them-dieu-chinh` `duyet` `xuat` | Thống kê phí dịch vụ theo tháng (tổng thu/phạt/thưởng/thuế/thực nhận + status), chi tiết GV×tháng + form điều chỉnh thủ công (penalty/bonus/adjustment), duyệt draft→pending→paid (atomic cả tháng), xuất CSV (UTF-8 BOM) |
 | `lms-thong-bao` | SYS-01 | `hienthi` `unread` `mark_read` `mark_all_read` | Thông báo (module ẩn, AJAX có CSRF) |
@@ -96,11 +102,12 @@ trước khi xử lý; POST đều có `lms_csrf_verify()`; ghi `db_lms_audit_lo
 
 | Alias | FR | Action | Mô tả |
 |---|---|---|---|
-| `lms-tong-quan` | TCH-00 | `hienthi` | Dashboard giáo viên |
-| `lms-lich-day` | TCH-01/02 | `man` `luu-thong-tin` `them-slot` `xoa-slot` `buoi` `luu-buoi` `cham-btvn` `gui-yeu-cau` | Quản lý lịch: calendar tuần (7 cột × khung giờ, 5 màu ô), form thông tin cá nhân + ghi chú tuần, đăng ký lịch trống, 3 loại request (thêm buổi / xin nghỉ / đổi lịch), lesson summary + giao BTVN (upload file), chấm BTVN |
-| `lms-hoc-vien-cua-toi` | TCH-03 | `man` | Danh sách học viên giáo viên đang dạy |
-| `lms-phi-dv` | TCH-05 | `man` | Phí dịch vụ của tôi: transactions theo tháng (filter type) + tổng hợp thực nhận (BR-PAY-04) + banner cảnh báo khi tick đạt ngưỡng hạ phí (BR-TICK-03) |
-| `lms-vi-pham` | — | `man` | Vi phạm nội quy của tôi: tick theo tháng (filter lý do) + panel tổng hợp (raw/miễn/thực tế/ngưỡng) + cảnh báo sắp/vượt ngưỡng |
+| `lms-tong-quan` | TCH-00 | `hienthi` | Dashboard GV: banner cảnh báo tick (BR-TICK-03), "Buổi học sắp tới" (3 buổi upcoming), lưới thẻ "Các học viên hiện tại" (kèm khung lịch cố định), "Thông báo" gồm card tác vụ (ghi báo cáo/chấm bài) + thông báo gần đây; header hiển thị hạng GV; chat chỉ là placeholder |
+| `lms-tai-khoan` | — | `man` | Giáo viên tự xem/cập nhật hồ sơ cá nhân, thông tin giảng dạy và thanh toán; upload avatar (teacher_profiles); chỉ whitelist trường được sửa, không đổi được username/rank/status/phí |
+| `lms-lich-day` | TCH-01/02 | `man` `luu-thong-tin` `luu-ghi-chu` `them-slot` `xoa-slot` `buoi` `luu-buoi` `cham-btvn` `gui-yeu-cau` | Quản lý lịch: form hồ sơ (địa chỉ, khu vực dạy dạng tag nhóm quận/phường Thủ Đức, online, số lớp tối đa), ghi chú tuần, lưới tuần dùng component chung `calendar_week` + `calendar_week_event` (5 màu: sắp tới/thiếu BTVN/hoàn thành/đã nghỉ/lịch trống, giờ lẻ thụt theo phút), đăng ký & xoá lịch trống, 3 modal request (thêm buổi / xin nghỉ / đổi lịch cố định), chi tiết buổi + lesson summary + chấm BTVN |
+| `lms-hoc-vien-cua-toi` | TCH-03 | `man` | Danh sách học viên/lớp dùng card chung `.lmnx-card--avatar`; click mở chi tiết khóa học hoặc chi tiết lớp nhóm |
+| `lms-phi-dv` | TCH-05 | `man` | Phí dịch vụ của tôi theo mockup: lọc học viên + khoảng ngày, ô Tổng tiền (VND, công thức BR-PAY-04 khớp admin), bảng Ngày/Học viên/Số tiền/Nội dung, banner cảnh báo tick (BR-TICK-03) |
+| `lms-vi-pham` | — | `man` | Vi phạm chất lượng dịch vụ của tôi: panel raw/miễn/thực tế/ngưỡng hạ phí, bảng Ngày/Học viên/Số tick/Nội dung, ghi chú chính sách miễn giảm, phân trang 20 dòng; cảnh báo sắp/vượt ngưỡng |
 | `lms-thu-vien` | TCH-07 | `man` `them` `xoa` `tai` | Tìm/xem tài liệu chung hoặc tài liệu lớp mình dạy; chỉ tải khi admin cho phép; upload file cho lớp của mình, soft-delete file do mình upload |
 | `lms-nhan-xet-thang` | TCH-06 | `man` `luu` | Danh sách HV theo lớp active; lưu bản nháp hoặc đăng nhận xét tháng (điểm tổng thể, nội dung, tiến bộ %), chỉ xem/sửa roster thuộc GV hiện tại |
 | `lms-thong-bao` | SYS-01 | `hienthi` `unread` `mark_read` `mark_all_read` | Thông báo (module ẩn, AJAX có CSRF) |
@@ -115,7 +122,7 @@ Module không insert session trực tiếp — GV tạo `db_lms_requests` (`pend
 |---|---|---|---|
 | `lms-tong-quan` | — | `hienthi` | Dashboard học viên |
 | `lms-khoa-hoc` | STU-01/02/03 | `hienthi` `lop` `chuyen-de` `nop-btvn` `nop-test` | Các khoá học: lộ trình chuyên đề + nội dung buổi học + nộp BTVN/test (upload ≤4 file, on_time/late) |
-| `lms-lich-hoc` | STU-02 | `hienthi` `buoi` | Lịch học calendar tuần (3 màu: sắp tới/đã hoàn thành/đã nghỉ) + chi tiết buổi + nộp BTVN |
+| `lms-lich-hoc` | STU-02 | `hienthi` `buoi` | Lịch học calendar tuần (3 màu: sắp tới/đã hoàn thành/đã nghỉ) qua component chung `calendar_week` + `calendar_week_event` + chi tiết buổi + nộp BTVN |
 | `lms-nhan-xet-thang` | STU-04 | `hienthi` | Nhận xét tháng theo lớp (collapse card + filter tháng, chỉ xem đã published) |
 | `lms-noi-quy` | — | `hienthi` | Nội quy lớp học (read-only, placeholder chờ module admin Phase 3) |
 | `lms-thong-bao` | SYS-01 | `hienthi` `unread` `mark_read` `mark_all_read` | Thông báo (module ẩn, AJAX có CSRF) |
@@ -129,9 +136,9 @@ test/minitest phải `status='published'` (minitest draft → "chưa được ad
 URL (D10 — clean URL, PHP không bao giờ viết tay link, dùng `lms_url()`):
 
 ```
-/lms/                               trang chọn vai trò
+/lms/                               trang chọn vai trò (2 thẻ Học viên / Giáo viên)
 /lms/<portal>                       dashboard (chưa login → chuyển login)
-/lms/<portal>/login | /logout       action thuần
+/lms/<portal>/login | /logout       action thuần (Admin vào trực tiếp /lms/admin/login)
 /lms/<portal>/<alias>[/<action>]    module (alias từ db_lms_modules)
 /lms/public/...                     asset tĩnh
 ```

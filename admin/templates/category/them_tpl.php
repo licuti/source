@@ -241,7 +241,7 @@ foreach (($module ?? []) as $m) {
                         component('form/select', [
                             'label'   => 'Module',
                             'name'    => 'module',
-                            'id'      => 'module',
+                            'id'      => 'cat_module',
                             'options' => $moduleOptions,
                             'value'   => $items[0]['module'] ?? '',
                         ]);

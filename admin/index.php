@@ -104,6 +104,7 @@ $csrfToken = admin_csrf_token(false);
     <script src="js/admin.js"></script>
     <script src="js/admin-ui.js"></script>
     <script>window.ADMIN_FM_CONFIG = <?= fm_client_config_json() ?>;</script>
+    <script src="js/ckfinder-copy-url.js"></script>
     <script src="js/ckfinder-adapter.js"></script>
     <script src="js/admin-shell.js"></script>
 

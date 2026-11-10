@@ -20,7 +20,8 @@ $name       = $name       ?? '';
 $child_count = (int) ($child_count ?? 0);
 $can_edit   = !empty($can_edit);
 $can_delete = !empty($can_delete);
-$extra      = $extra      ?? '';
+$extra       = $extra       ?? '';
+$ajax_delete = !empty($ajax_delete);
 ?>
 <div class="btn-group btn-group-sm" role="group" aria-label="Tác vụ">
     <?php if ($view_url !== ''): ?>
@@ -37,8 +38,8 @@ $extra      = $extra      ?? '';
     <?php endif; ?>
 
     <?php if ($can_delete && $delete_url !== ''): ?>
-        <a href="<?= e($delete_url) ?>" class="btn btn-sm btn-outline-danger" title="Xóa"
-           data-confirm-delete
+        <a href="<?= e($delete_url) ?>" class="btn btn-sm btn-outline-danger<?= $ajax_delete ? ' js-ajax-delete' : '' ?>" title="Xóa"
+           <?= $ajax_delete ? 'data-ajax-delete' : 'data-confirm-delete' ?>
            data-name="<?= e($name) ?>"
            data-child-count="<?= $child_count ?>">
             <i class="fa-solid fa-trash"></i>

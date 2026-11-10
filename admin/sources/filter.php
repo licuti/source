@@ -45,7 +45,7 @@ function filter_want_stay()
     return isset($_POST['capnhat']) && $_POST['capnhat'] === 'capnhat_sua';
 }
 
-function filter_back($parent = '', $editId = 0)
+function filter_back($parent = '', $editId = 0, $savedItemId = 0)
 {
     global $d;
     if ($editId > 0) {
@@ -58,7 +58,10 @@ function filter_back($parent = '', $editId = 0)
     }
     $url = 'index.php?p=filter&a=man';
     if ($parent !== '' && $parent !== null) {
-        $url .= '&parent=' . urlencode($parent);
+        $url .= '&id_loai=' . urlencode($parent);
+    }
+    if ($savedItemId > 0) {
+        $url .= '&scroll_item=' . (int) $savedItemId;
     }
     $d->redirect($url);
 }
@@ -141,6 +144,8 @@ function luunhom($id_module)
     $noidungs  = $_POST['noi_dung'] ?? array();
     $id_rows   = $_POST['id_row'] ?? array();
     $ten0      = trim((string) ($tens[0] ?? ''));
+    $cap       = $_POST['capnhat'] ?? 'capnhat';
+    $savedGroupId = $id_loai;
 
     if ($ten0 === '') {
         filter_flash('error', 'Vui lòng nhập tên nhóm.');
@@ -181,6 +186,7 @@ function luunhom($id_module)
             filter_back();
             return;
         }
+        $savedGroupId = (int) $id_code;
         foreach (get_json('lang') as $key => $value) {
             $d->reset();
             $d->setTable('#_filter');
@@ -195,6 +201,10 @@ function luunhom($id_module)
             ));
         }
         filter_flash('success', 'Đã thêm nhóm filter.');
+    }
+    if ($cap === 'capnhat_sua' && $savedGroupId > 0) {
+        $d->redirect('index.php?p=filter&a=man&id_loai=' . $savedGroupId . '&scroll_group=' . $savedGroupId);
+        return;
     }
     filter_back();
 }
@@ -280,7 +290,7 @@ function luudulieu($id_module)
             ));
         }
         filter_flash('success', 'Đã cập nhật tùy chọn.');
-        filter_back($back, $stay ? (int) $id : 0);
+        filter_back($back, $stay ? (int) $id : 0, (int) $id);
         return;
     }
 
@@ -307,26 +317,43 @@ function luudulieu($id_module)
         ));
     }
     filter_flash('success', 'Đã thêm tùy chọn.');
-    filter_back($back, $stay ? (int) $id_code : 0);
+    filter_back($back, $stay ? (int) $id_code : 0, (int) $id_code);
 }
 
 function xoadulieu($id_module)
 {
     global $d;
     $parent = $_GET['parent'] ?? '';
+    $isAjax = !empty($_REQUEST['ajax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+
     if ($d->checkPermission_dele($id_module) != 1 || empty($_GET['id'])) {
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(array('ok' => false, 'message' => 'Bạn không có quyền xóa hoặc thiếu dữ liệu.'));
+            exit;
+        }
         filter_flash('error', 'Không xóa được.');
         filter_back($parent);
         return;
     }
-    $id = addslashes($_GET['id']);
+    $id = (int) $_GET['id'];
     $d->reset();
     $d->setTable('#_filter_content');
     $d->setWhere('id_code', $id);
     if ($d->delete()) {
         $d->o_que('delete from cf_parent where id=' . (int) $id);
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(array('ok' => true, 'message' => 'Đã xóa tùy chọn.', 'id' => (int) $id));
+            exit;
+        }
         filter_flash('success', 'Đã xóa tùy chọn.');
     } else {
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(array('ok' => false, 'message' => 'Xóa thất bại.'));
+            exit;
+        }
         filter_flash('error', 'Xóa thất bại.');
     }
     filter_back($parent);

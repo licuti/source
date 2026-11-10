@@ -115,6 +115,39 @@ class TickServiceTest extends LmsTestCase
         return (int) $this->db->insertId;
     }
 
+    private function enrollForReminder($sessionId, $studentId)
+    {
+        $classEnrollment = $this->db->safeFetchOne(
+            'select id from db_lms_class_students where class_id = ? and student_id = ?',
+            array($this->classId, $studentId)
+        );
+        if (empty($classEnrollment)) {
+            $this->db->insert('db_lms_class_students', array(
+                'class_id' => $this->classId,
+                'student_id' => $studentId,
+                'status' => 'active',
+            ));
+        }
+        $this->db->insert('db_lms_session_students', array(
+            'session_id' => $sessionId,
+            'student_id' => $studentId,
+            'status' => 'not_submitted',
+        ));
+        return (int) $this->db->insertId;
+    }
+
+    private function createReminderSession($minutesAhead, $status = 'upcoming')
+    {
+        $start = $this->db->safeFetchOne(
+            'select date_add(now(), interval ? minute) as starts_at',
+            array((int) $minutesAhead)
+        );
+        $startTs = strtotime((string) $start['starts_at']);
+        return $this->createSession(date('Y-m-d', $startTs), $status, array(
+            'start_time' => date('H:i:s', $startTs),
+        ));
+    }
+
     private function insertTicks($n, $reason = 'late_lesson_summary')
     {
         for ($i = 0; $i < $n; $i++) {
@@ -183,6 +216,114 @@ class TickServiceTest extends LmsTestCase
         $this->assertSame(1, $stats['closed']);
         $row = $this->db->safeFetchOne('select status from db_lms_sessions where id = ?', array($pastId));
         $this->assertSame('upcoming', (string) $row['status']);
+    }
+
+    public function testSessionReminderSendsOncePerActiveEnrollment()
+    {
+        $sessionId = $this->createReminderSession(60);
+        $enrollmentId = $this->enrollForReminder($sessionId, $this->studentId);
+
+        $stats = $this->svc->sendUpcomingSessionReminders();
+        $this->assertSame(1, $stats['sent']);
+        $this->assertSame(0, $stats['errors']);
+
+        $notice = $this->db->safeFetchOne(
+            'select * from db_lms_notifications where user_id = ? and type = ?',
+            array($this->studentId, 'session_reminder')
+        );
+        $this->assertNotEmpty($notice);
+        $this->assertStringContainsString('Lớp tick test', (string) $notice['message']);
+        $this->assertStringContainsString('lms/student/lms-lich-hoc/buoi?id=' . $sessionId, (string) $notice['link_url']);
+        $row = $this->db->safeFetchOne('select reminder_sent_at from db_lms_session_students where id = ?', array($enrollmentId));
+        $this->assertNotEmpty($row['reminder_sent_at']);
+
+        $again = $this->svc->sendUpcomingSessionReminders();
+        $this->assertSame(0, $again['candidates']);
+        $this->assertSame(1, $this->db->count('db_lms_notifications', 'type = ?', array('session_reminder')));
+    }
+
+    public function testSessionReminderSkipsOutsideWindowAndInactiveEnrollment()
+    {
+        $outside = $this->createReminderSession(90);
+        $this->enrollForReminder($outside, $this->studentId);
+        $inactiveStudent = $this->createStudent('hv_tick_inactive', 'TSINAC');
+        $inactiveSession = $this->createReminderSession(62);
+        $this->db->insert('db_lms_class_students', array(
+            'class_id' => $this->classId,
+            'student_id' => $inactiveStudent,
+            'status' => 'transferred_out',
+        ));
+        $this->db->insert('db_lms_session_students', array(
+            'session_id' => $inactiveSession,
+            'student_id' => $inactiveStudent,
+            'status' => 'not_submitted',
+        ));
+        $cancelled = $this->createReminderSession(64, 'cancelled');
+        $this->enrollForReminder($cancelled, $this->studentId);
+
+        $stats = $this->svc->sendUpcomingSessionReminders();
+        $this->assertSame(0, $stats['sent']);
+        $this->assertSame(0, $stats['candidates']);
+        $this->assertSame(0, $this->db->count('db_lms_notifications', 'type = ?', array('session_reminder')));
+    }
+
+    public function testSessionReminderDryRunDoesNotClaimOrNotify()
+    {
+        $sessionId = $this->createReminderSession(60);
+        $enrollmentId = $this->enrollForReminder($sessionId, $this->studentId);
+
+        $stats = $this->svc->sendUpcomingSessionReminders(true);
+        $this->assertTrue($stats['dry_run']);
+        $this->assertSame(1, $stats['candidates']);
+        $this->assertSame(0, $stats['sent']);
+        $this->assertSame(0, $this->db->count('db_lms_notifications', 'type = ?', array('session_reminder')));
+        $row = $this->db->safeFetchOne('select reminder_sent_at from db_lms_session_students where id = ?', array($enrollmentId));
+        $this->assertNull($row['reminder_sent_at']);
+    }
+
+    public function testSessionReminderIsIndependentForEachStudent()
+    {
+        $student2 = $this->createStudent('hv_tick_reminder2', 'TSREM2');
+        $sessionId = $this->createReminderSession(60);
+        $this->enrollForReminder($sessionId, $this->studentId);
+        $this->enrollForReminder($sessionId, $student2);
+
+        $stats = $this->svc->sendUpcomingSessionReminders();
+        $this->assertSame(2, $stats['sent']);
+        $this->assertSame(2, $this->db->count('db_lms_notifications', 'type = ?', array('session_reminder')));
+    }
+
+    public function testEnrollmentAddedAfterAnotherStudentWasRemindedGetsItsOwnReminder()
+    {
+        $sessionId = $this->createReminderSession(60);
+        $this->enrollForReminder($sessionId, $this->studentId);
+        $first = $this->svc->sendUpcomingSessionReminders();
+        $this->assertSame(1, $first['sent']);
+
+        $student2 = $this->createStudent('hv_tick_late_enrol', 'TSLATE');
+        $this->enrollForReminder($sessionId, $student2);
+        $second = $this->svc->sendUpcomingSessionReminders();
+        $this->assertSame(1, $second['sent']);
+        $this->assertSame(2, $this->db->count('db_lms_notifications', 'type = ?', array('session_reminder')));
+    }
+
+    public function testReminderInsertFailureRollsBackClaimAndReportsError()
+    {
+        $sessionId = $this->createReminderSession(60);
+        $enrollmentId = $this->enrollForReminder($sessionId, $this->studentId);
+        $failingService = new class($this->db) extends TickService {
+            protected function createSessionReminderNotification($studentId, $message, $link)
+            {
+                return null;
+            }
+        };
+
+        $stats = $failingService->sendUpcomingSessionReminders();
+        $this->assertSame(1, $stats['errors']);
+        $this->assertSame(0, $stats['sent']);
+        $row = $this->db->safeFetchOne('select reminder_sent_at from db_lms_session_students where id = ?', array($enrollmentId));
+        $this->assertNull($row['reminder_sent_at']);
+        $this->assertSame(0, $this->db->count('db_lms_notifications', 'type = ?', array('session_reminder')));
     }
 
     // ===================== BR-TICK-01: giao bài trễ =====================

@@ -1,21 +1,54 @@
 <?php
     $block_teaching_staff = $d->getContent(668);
     $content_teaching_staff = $d->getContents(668);
+
+    // Lấy giáo viên động từ LMS Profiles
+    $dynamic_teachers = $d->safeFetch(
+        "SELECT p.*, t.full_name, t.teacher_code 
+         FROM #_lms_teacher_profiles p 
+         JOIN #_lms_teachers t ON t.user_id = p.teacher_id 
+         WHERE p.show_on_website = 1 
+         ORDER BY COALESCE(p.so_thu_tu, 9999) ASC, t.full_name ASC"
+    );
 ?>
 
 <div class="block block-teaching-staff">
 	<div class="container-fluid">
 		<div class="heading-content text-center mb-4">
-			<?= $block_teaching_staff['noi_dung'] ?>
+			<?= $block_teaching_staff['noi_dung'] ?? '<h2 class="title">ĐỘI NGŨ GIÁO VIÊN</h2>' ?>
 		</div>
 		<div class="wrapper-slide">
             <div class="swiper teaching-staff-slide">
                 <div class="swiper-wrapper">
+                    <?php if (!empty($dynamic_teachers)): ?>
+                        <?php foreach ($dynamic_teachers as $dt): 
+                            $dtImg = !empty($dt['avatar']) ? getImageUrl($dt['avatar']) : URLPATH . 'media/images/demo/img-teaching-staff-1.png';
+                            $dtLink = URLPATH . 'giao-vien/' . $dt['slug'] . '.html';
+                            $dtRole = !empty($dt['title_badge']) ? $dt['title_badge'] : 'Giáo viên Master Chuyên Anh';
+                        ?>
+                            <div class="swiper-slide">
+                                <a href="<?= $dtLink ?>" class="text-decoration-none">
+                                    <div class="box-teaching-staff">
+                                    	<div class="box-thumbnail">
+                                    		<div class="inner-thumbnail ratio ratio-1x1">
+                                    			<img src="<?= $dtImg ?>" alt="<?= htmlspecialchars($dt['full_name']) ?>" class="image-cover" onerror="this.src='<?= URLPATH ?>media/images/demo/img-teaching-staff-1.png'">
+                                    		</div>
+                                    	</div>
+                                    	<div class="box-content">
+                                    		<h3 class="title"><?= htmlspecialchars($dt['full_name']) ?></h3>
+                                    		<p class="position"><?= htmlspecialchars($dtRole) ?></p>
+                                    	</div>
+                                    </div>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <!-- Fallback mẫu khi chưa có giáo viên nào bật hiển thị -->
                         <div class="swiper-slide">
                             <div class="box-teaching-staff">
                             	<div class="box-thumbnail">
                             		<div class="inner-thumbnail ratio ratio-1x1">
-                            			<img src="https://media.dolenglish.vn/PUBLIC/MEDIA/co-nguyen-phan-thuy-linh-giao-vien-dol-english-online.jpg" class="image-cover">
+                            			<img src="<?= URLPATH ?>media/images/demo/img-teaching-staff-1.png" class="image-cover">
                             		</div>
                             	</div>
                             	<div class="box-content">
@@ -24,58 +57,7 @@
                             	</div>
                             </div>
                         </div>
-                        <div class="swiper-slide">
-                            <div class="box-teaching-staff">
-                            	<div class="box-thumbnail">
-                            		<div class="inner-thumbnail ratio ratio-1x1">
-                            			<img src="https://media.dolenglish.vn/PUBLIC/MEDIA/co-nguyen-phan-thuy-linh-giao-vien-dol-english-online.jpg" class="image-cover">
-                            		</div>
-                            	</div>
-                            	<div class="box-content">
-                            		<h3 class="title">Ms. Duyên</h3>
-                            		<p class="position">Flyers, Movers</p>
-                            	</div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="box-teaching-staff">
-                            	<div class="box-thumbnail">
-                            		<div class="inner-thumbnail ratio ratio-1x1">
-                            			<img src="https://media.dolenglish.vn/PUBLIC/MEDIA/co-nguyen-phan-thuy-linh-giao-vien-dol-english-online.jpg" class="image-cover">
-                            		</div>
-                            	</div>
-                            	<div class="box-content">
-                            		<h3 class="title">Ms. Duyên</h3>
-                            		<p class="position">Flyers, Movers</p>
-                            	</div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="box-teaching-staff">
-                            	<div class="box-thumbnail">
-                            		<div class="inner-thumbnail ratio ratio-1x1">
-                            			<img src="https://media.dolenglish.vn/PUBLIC/MEDIA/co-nguyen-phan-thuy-linh-giao-vien-dol-english-online.jpg" class="image-cover">
-                            		</div>
-                            	</div>
-                            	<div class="box-content">
-                            		<h3 class="title">Ms. Duyên</h3>
-                            		<p class="position">Flyers, Movers</p>
-                            	</div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="box-teaching-staff">
-                            	<div class="box-thumbnail">
-                            		<div class="inner-thumbnail ratio ratio-1x1">
-                            			<img src="https://media.dolenglish.vn/PUBLIC/MEDIA/co-nguyen-phan-thuy-linh-giao-vien-dol-english-online.jpg" class="image-cover">
-                            		</div>
-                            	</div>
-                            	<div class="box-content">
-                            		<h3 class="title">Ms. Duyên</h3>
-                            		<p class="position">Flyers, Movers</p>
-                            	</div>
-                            </div>
-                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="swiper-pagination swiper-pagination-simple pagination-teaching-staff"></div>

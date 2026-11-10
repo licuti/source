@@ -11,4 +11,4 @@ $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
 $perPage = 25;
 $res = $svc->homeworkList(array('q' => $q, 'date_from' => $dateFrom, 'date_to' => $dateTo), $page, $perPage);
 $items = $res['items']; $total = $res['total']; $totalPages = max(1, (int) ceil($total / $perPage));
-$title = 'Quản lý BTVN'; $template = 'lms-bai-tap-ve-nha/hienthi';
+$title = 'Quản lý Bài tập về nhà'; $template = 'lms-bai-tap-ve-nha/hienthi';

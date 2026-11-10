@@ -317,8 +317,10 @@ class EnrolmentServiceTest extends LmsTestCase
             'class_id'     => $classA,
             'teacher_id'   => $this->teacher1,
             'session_date' => date('Y-m-d', strtotime('+1 day')),
-            'start_time'   => '19:00',
-            'end_time'     => '20:30',
+            // Avoid the class's generated 19:00 recurring slot so this test
+            // stays deterministic regardless of the current weekday.
+            'start_time'   => '19:15',
+            'end_time'     => '20:45',
             'status'       => 'upcoming',
         ));
         $sessionId = (int) $this->db->insertId;
@@ -367,8 +369,9 @@ class EnrolmentServiceTest extends LmsTestCase
             'class_id'     => $classId,
             'teacher_id'   => $this->teacher1,
             'session_date' => date('Y-m-d', strtotime('+2 days')),
-            'start_time'   => '19:00',
-            'end_time'     => '20:30',
+            // Avoid the class schedule's generated recurring slot.
+            'start_time'   => '19:15',
+            'end_time'     => '20:45',
             'status'       => 'upcoming',
         ));
         $sessionId = (int) $this->db->insertId;

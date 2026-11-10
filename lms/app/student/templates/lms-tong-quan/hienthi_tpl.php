@@ -1,113 +1,93 @@
 <?php
 /**
- * Student — Tổng quan (view).
- * Data do source chuẩn bị: $classes, $upcoming, $notifications, $hwLabels.
+ * Student — Tổng quan (view theo mockup Trang chủ Student).
+ * Dùng lại class layout của Teacher Tổng quan (.lms-ov-*).
+ * Data do source chuẩn bị: $classes, $upcoming, $notifications.
  */
+$nextSession = !empty($upcoming) ? $upcoming[0] : null;
 ?>
-<div class="row g-3 mb-4">
-    <div class="col-6 col-lg-3">
-        <div class="lms-stat-card">
-            <span class="lms-stat-icon"><i class="fa-solid fa-school"></i></span>
-            <div class="lms-stat-value"><?= e((string) number_format(count($classes))) ?></div>
-            <div class="lms-stat-label">Lớp đang học</div>
-        </div>
-    </div>
-    <div class="col-6 col-lg-3">
-        <div class="lms-stat-card">
-            <span class="lms-stat-icon"><i class="fa-solid fa-calendar-days"></i></span>
-            <div class="lms-stat-value"><?= e((string) number_format(count($upcoming))) ?></div>
-            <div class="lms-stat-label">Buổi học sắp tới</div>
-        </div>
-    </div>
-</div>
+<div class="row g-4">
+    <div class="col-lg-8">
+        <h2 class="lms-page-title">Buổi học sắp tới</h2>
 
-<div class="row g-3">
-    <div class="col-lg-7">
-        <div class="lms-card">
-            <div class="lms-card-header">
-                <i class="fa-solid fa-calendar-days me-1"></i> Buổi học sắp tới
-            </div>
-            <div class="lms-card-body">
-                <?php if (empty($upcoming)): ?>
-                    <p class="text-muted mb-0">Bạn không có buổi học sắp tới.</p>
-                <?php else: ?>
-                    <div class="table-responsive">
-                        <table class="lms-table">
-                            <thead>
-                                <tr>
-                                    <th>Ngày</th>
-                                    <th>Giờ</th>
-                                    <th>Lớp</th>
-                                    <th>BTVN</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($upcoming as $s): ?>
-                                    <?php
-                                    $hw = isset($s['hw_status']) ? (string) $s['hw_status'] : 'not_submitted';
-                                    $hwLabel = isset($hwLabels[$hw]) ? $hwLabels[$hw] : array($hw, 'lms-badge-secondary');
-                                    ?>
-                                    <tr>
-                                        <td><?= e(date('d/m/Y', strtotime((string) $s['session_date']))) ?></td>
-                                        <td><?= e(substr((string) $s['start_time'], 0, 5)) ?>–<?= e(substr((string) $s['end_time'], 0, 5)) ?></td>
-                                        <td><?= e((string) $s['class_name']) ?></td>
-                                        <td><span class="lms-badge <?= e($hwLabel[1]) ?>"><?= e($hwLabel[0]) ?></span></td>
-                                    </tr>
+        <?php if ($nextSession === null): ?>
+            <div class="lms-ov-empty">Bạn không có buổi học sắp tới.</div>
+        <?php else: ?>
+            <a class="lms-ov-session"
+               href="<?= e(lms_url('lms-lich-hoc', 'buoi', array('id' => (int) $nextSession['id']))) ?>">
+                <span class="lms-ov-session-title"><?= e((string) $nextSession['class_name']) ?></span>
+                <span class="lms-ov-session-meta">
+                    <span>
+                        <i class="fa-regular fa-calendar"></i>
+                        <?= e(date('d/m/Y', strtotime((string) $nextSession['session_date']))) ?>
+                    </span>
+                    <span>
+                        <i class="fa-regular fa-clock"></i>
+                        <?= e(substr((string) $nextSession['start_time'], 0, 5)) ?> - <?= e(substr((string) $nextSession['end_time'], 0, 5)) ?>
+                    </span>
+                    <span class="lms-ov-session-status">Sắp diễn ra</span>
+                </span>
+            </a>
+        <?php endif; ?>
+
+        <h2 class="lms-page-title mt-4">Các khoá học của tôi</h2>
+
+        <?php if (empty($classes)): ?>
+            <div class="lms-ov-empty">Bạn chưa được xếp vào lớp nào.</div>
+        <?php else: ?>
+            <div class="lms-ov-student-grid">
+                <?php foreach ($classes as $class): ?>
+                    <?php
+                    $scheduleLines = !empty($class['schedule_lines'])
+                        ? explode('|', (string) $class['schedule_lines'])
+                        : array();
+                    ?>
+                    <a class="lms-ov-student"
+                       href="<?= e(lms_url('lms-khoa-hoc', 'lop', array('class_id' => (int) $class['id']))) ?>">
+                        <span class="lms-ov-student-avatar">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </span>
+                        <span class="lms-ov-student-body">
+                            <span class="lms-ov-student-name"><?= e((string) $class['name']) ?></span>
+                            <?php if ($scheduleLines === array()): ?>
+                                <span class="lms-ov-student-slot text-muted">Chưa có lịch</span>
+                            <?php else: ?>
+                                <?php foreach ($scheduleLines as $line): ?>
+                                    <span class="lms-ov-student-slot"><?= e((string) $line) ?></span>
                                 <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php endif; ?>
+                            <?php endif; ?>
+                        </span>
+                    </a>
+                <?php endforeach; ?>
             </div>
-        </div>
+        <?php endif; ?>
     </div>
 
-    <div class="col-lg-5">
-        <div class="lms-card mb-3">
-            <div class="lms-card-header">
-                <i class="fa-solid fa-bell me-1"></i> Thông báo
-            </div>
-            <div class="lms-card-body">
-                <?php if (empty($notifications)): ?>
-                    <p class="text-muted mb-0">Chưa có thông báo.</p>
-                <?php else: ?>
-                    <?php foreach ($notifications as $n): ?>
-                        <div class="d-flex gap-2 py-2 border-bottom">
-                            <i class="fa-solid fa-circle-info text-secondary mt-1"></i>
-                            <div>
-                                <div class="fw-semibold" style="font-size:.9rem;"><?= e((string) $n['title']) ?></div>
-                                <div class="text-muted" style="font-size:.82rem;"><?= e((string) $n['message']) ?></div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-        </div>
+    <div class="col-lg-4">
+        <h2 class="lms-page-title">Thông báo</h2>
 
-        <div class="lms-card">
-            <div class="lms-card-header">
-                <i class="fa-solid fa-book-open me-1"></i> Các khoá học đang học
-            </div>
-            <div class="lms-card-body">
-                <?php if (empty($classes)): ?>
-                    <p class="text-muted mb-0">Bạn chưa được xếp vào lớp nào.</p>
-                <?php else: ?>
-                    <?php foreach ($classes as $c): ?>
-                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                            <div>
-                                <div class="fw-semibold" style="font-size:.92rem;"><?= e((string) $c['name']) ?></div>
-                                <div class="text-muted" style="font-size:.8rem;">
-                                    <?= e((string) $c['subject_name']) ?> · GV <?= e((string) $c['teacher_name']) ?>
-                                </div>
-                            </div>
-                            <span class="lms-badge lms-badge-primary">
-                                <?= e((string) number_format((int) $c['remaining_sessions'])) ?>
-                                / <?= e((string) number_format((int) $c['total_sessions'])) ?> buổi
-                            </span>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
+        <div class="lms-ov-notice-list">
+            <?php if (empty($notifications)): ?>
+                <div class="lms-ov-empty">Chưa có thông báo.</div>
+            <?php else: ?>
+                <?php foreach ($notifications as $notification): ?>
+                    <?php
+                    $notifUrl = !empty($notification['link_url'])
+                        ? (string) $notification['link_url']
+                        : lms_url('lms-thong-bao');
+                    ?>
+                    <div class="lms-ov-notice">
+                        <h3 class="lms-ov-notice-title"><?= e((string) $notification['title']) ?></h3>
+                        <p class="lms-ov-notice-text"><?= nl2br(e((string) $notification['message'])) ?></p>
+                        <?php lms_component('button', array(
+                            'label'   => 'Xem chi tiết',
+                            'href'    => $notifUrl,
+                            'variant' => 'primary',
+                            'size'    => 'md',
+                        )); ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
 </div>

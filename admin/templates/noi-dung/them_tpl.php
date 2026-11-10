@@ -18,7 +18,8 @@ $actionUrl = admin_url(array_filter([
 ]));
 $backUrl = admin_url(array_filter([
     'p' => $MODULE, 'a' => 'man',
-    'parent' => $parent ?: null,
+    'id_loai' => $parent ?: null,
+    'scroll_item' => $isEdit ? $editId : null,
 ]));
 ?>
 
@@ -90,7 +91,15 @@ $backUrl = admin_url(array_filter([
                         'value' => $main['hinh_anh'] ?? '',
                         'table' => '_content',
                         'row_id' => $isEdit ? (string) $editId : '',
-                        'height' => 140,
+                        'height' => 120,
+                    ]); ?>
+
+                    <?php component('form/image_picker', [
+                        'label' => 'Background', 'name' => 'background',
+                        'value' => $main['background'] ?? '',
+                        'table' => '_content',
+                        'row_id' => $isEdit ? (string) $editId : '',
+                        'height' => 120,
                     ]); ?>
 
                     <?php component('form/select', [

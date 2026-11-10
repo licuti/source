@@ -1,16 +1,15 @@
 <?php
 /**
- * Teacher LMS — Vi phạm nội quy / tick của tôi (Phase 2).
+ * Teacher LMS — Vi phạm chất lượng dịch vụ / tick của tôi (Phase 2).
  *
- * SRS §TCH-05 (mặt vi phạm): GV xem tick của chính mình + tổng hợp + cảnh báo
- * khi sắp đạt ngưỡng (BR-TICK-03).
+ * SRS §TCH-05 (mặt vi phạm): GV xem toàn bộ tick của chính mình + tổng hợp
+ * (raw / miễn / thực tế / ngưỡng) + cảnh báo khi sắp đạt ngưỡng (BR-TICK-03).
  *
  * Action:
- *  - 'man' (GET) → danh sách violations của CHÍNH MÌNH (filter month/reason) +
- *    panel tổng hợp (raw / miễn / thực tế / ngưỡng).
+ *  - 'man' (GET) → danh sách violations của CHÍNH MÌNH (phân trang) +
+ *    panel tổng hợp all-time.
  *
- * Row-level: teacher_id = user id hiện tại (source phải truyền, chặn xem của
- * người khác — listViolations không tự biết user).
+ * Row-level: teacher_id = user id hiện tại.
  *
  * PHP 7.3 compatible.
  */
@@ -32,21 +31,12 @@ switch ($action) {
         break;
 }
 
-// ===================== Helpers =====================
-
-function lvpv_default_month()
-{
-    $ts = strtotime('first day of previous month');
-    return $ts !== false ? date('Y-m', $ts) : date('Y-m');
-}
-
 // ===================== Danh sách tick của mình =====================
 
 function lvpv_list()
 {
-    global $title, $template, $teacherId, $month, $filterReason,
-           $items, $total, $tickSummary, $warnMessage,
-           $d, $user, $alias;
+    global $title, $template, $teacherId, $items, $total, $page, $totalPages,
+           $tickSummary, $warnMessage, $d, $alias;
 
     if ($teacherId <= 0) {
         lms_flash('error', 'Vui lòng đăng nhập lại.');
@@ -54,22 +44,18 @@ function lvpv_list()
         exit;
     }
 
-    $month = isset($_GET['month']) ? (string) $_GET['month'] : '';
-    if (!preg_match('/^\d{4}-\d{2}$/', $month)) {
-        $month = lvpv_default_month();
-    }
-    $filterReason = isset($_GET['reason']) ? (string) $_GET['reason'] : '';
-
     $tickSvc = new \Lms\TickService($d);
 
-    $res = $tickSvc->listViolations(array(
-        'teacher_id' => $teacherId,
-        'month'      => $month,
-        'reason'     => $filterReason,
-    ));
-
-    $items = $res['items'];
+    $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
+    $perPage = 20;
+    $res = $tickSvc->listViolations(array('teacher_id' => $teacherId), $page, $perPage);
     $total = (int) $res['total'];
+    $totalPages = max(1, (int) ceil($total / $perPage));
+    if ($page > $totalPages) {
+        $page = $totalPages;
+        $res = $tickSvc->listViolations(array('teacher_id' => $teacherId), $page, $perPage);
+    }
+    $items = $res['items'];
 
     $tickSummary = $tickSvc->teacherTickSummary($teacherId);
 
@@ -89,6 +75,6 @@ function lvpv_list()
         }
     }
 
-    $title    = 'Vi phạm nội quy';
+    $title    = 'Các vi phạm';
     $template = 'lms-vi-pham/hienthi';
 }

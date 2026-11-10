@@ -70,7 +70,7 @@ class RequestService extends LmsService
 
         // Row-level: lớp phải thuộc GV này và chưa xoá
         $class = $this->db->safeFetchOne(
-            'select id, class_code, teacher_id, subject_id from db_lms_classes'
+            'select id, class_code, teacher_id, subject_id, class_type from db_lms_classes'
             . ' where id = ? and teacher_id = ? and deleted_at is null limit 1',
             array($classId, $teacherId)
         );
@@ -86,20 +86,24 @@ class RequestService extends LmsService
         $title = '';
 
         if ($requestType === 'add_session') {
-            // HV phải đang active trong lớp
+            // Lớp 1-1 bắt buộc chọn HV; lớp nhóm cho phép yêu cầu thêm buổi cho cả lớp.
             $studentId = isset($in['student_id']) ? (int) $in['student_id'] : 0;
-            if ($studentId <= 0) {
+            if ($studentId <= 0 && (string) $class['class_type'] !== 'group') {
                 $this->addError('student_id', 'Vui lòng chọn học viên.');
                 return null;
             }
-            $enrolled = $this->db->safeFetchOne(
-                'select id from db_lms_class_students'
-                . ' where class_id = ? and student_id = ? and status = ? limit 1',
-                array($classId, $studentId, 'active')
-            );
-            if (empty($enrolled)) {
-                $this->addError('student_id', 'Học viên không đang học trong lớp này.');
-                return null;
+            if ($studentId > 0) {
+                $enrolled = $this->db->safeFetchOne(
+                    'select id from db_lms_class_students'
+                    . ' where class_id = ? and student_id = ? and status = ? limit 1',
+                    array($classId, $studentId, 'active')
+                );
+                if (empty($enrolled)) {
+                    $this->addError('student_id', 'Học viên không đang học trong lớp này.');
+                    return null;
+                }
+            } else {
+                $studentId = null;
             }
 
             $sessionDate = isset($in['session_date']) ? trim((string) $in['session_date']) : '';
@@ -470,13 +474,16 @@ class RequestService extends LmsService
                     return false;
                 }
 
+                $feeSnap = $sessionSvc->resolveSessionFeeSnapshot($classId, 0, $teacherId);
                 $ok = $this->db->insert('db_lms_sessions', array(
-                    'class_id'     => $classId,
-                    'teacher_id'   => $teacherId,
-                    'session_date' => $sessionDate,
-                    'start_time'   => $startTime,
-                    'end_time'     => $endTime,
-                    'status'       => 'upcoming',
+                    'class_id'           => $classId,
+                    'teacher_id'         => $teacherId,
+                    'session_date'       => $sessionDate,
+                    'start_time'         => $startTime,
+                    'end_time'           => $endTime,
+                    'price_per_session'  => $feeSnap['price_per_session'],
+                    'teacher_percentage' => $feeSnap['teacher_percentage'],
+                    'status'             => 'upcoming',
                 ));
                 if (!$ok) {
                     throw new \RuntimeException('Không thể tạo buổi học.');
@@ -568,14 +575,17 @@ class RequestService extends LmsService
                     return false;
                 }
 
+                $feeSnap = $sessionSvc->resolveSessionFeeSnapshot($classId, 0, $teacherId);
                 foreach ($slots as $slot) {
                     $ok = $this->db->insert('db_lms_sessions', array(
-                        'class_id'     => $classId,
-                        'teacher_id'   => $teacherId,
-                        'session_date' => trim((string) $slot['date']),
-                        'start_time'   => trim((string) $slot['start']),
-                        'end_time'     => trim((string) $slot['end']),
-                        'status'       => 'upcoming',
+                        'class_id'           => $classId,
+                        'teacher_id'         => $teacherId,
+                        'session_date'       => trim((string) $slot['date']),
+                        'start_time'         => trim((string) $slot['start']),
+                        'end_time'           => trim((string) $slot['end']),
+                        'price_per_session'  => $feeSnap['price_per_session'],
+                        'teacher_percentage' => $feeSnap['teacher_percentage'],
+                        'status'             => 'upcoming',
                     ));
                     if (!$ok) {
                         throw new \RuntimeException('Không thể tạo buổi học.');

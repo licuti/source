@@ -109,23 +109,6 @@ function lmlh_calendar_cells(array $sessionsByDate, $monday)
 }
 
 /**
- * Class CSS ô lịch theo trạng thái buổi (3 màu, §9 L201-204).
- *
- * @param string $status
- * @return string
- */
-function lmlh_cell_class($status)
-{
-    if ($status === 'cancelled' || $status === 'absent_teacher' || $status === 'absent_student') {
-        return 'lms-cal-cancelled';
-    }
-    if ($status === 'upcoming') {
-        return 'lms-cal-upcoming';
-    }
-    return 'lms-cal-finished';
-}
-
-/**
  * Tiêu đề buổi: "Thứ 2 21/7".
  *
  * @param array $session
@@ -185,7 +168,7 @@ function lmlh_calendar()
 
 function lmlh_session()
 {
-    global $title, $template, $session, $sessionId, $weekMonday, $studentId, $d, $alias;
+    global $title, $template, $session, $sessionId, $weekMonday, $studentId, $d, $alias, $hidePageTitle;
 
     $sessionId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
     $weekMonday = lmlh_week_monday($_GET);
@@ -213,7 +196,9 @@ function lmlh_session()
         isset($session['hw_submission_status']) ? (string) $session['hw_submission_status'] : 'not_submitted'
     );
     $session['graded'] = !empty($session['hw_graded_at']);
+    $session['feedback_approved'] = ((string) (isset($session['ss_status']) ? $session['ss_status'] : '') === 'approved');
 
-    $title    = 'Buổi học ' . lmlh_session_title($session);
-    $template = 'lms-lich-hoc/buoi';
+    $title         = 'Buổi học ' . lmlh_session_title($session);
+    $template      = 'lms-lich-hoc/buoi';
+    $hidePageTitle = true;
 }

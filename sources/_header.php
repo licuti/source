@@ -32,64 +32,68 @@
 <?php ?>
 
 <nav class="navbar navbar-expand-lg" aria-label="Offcanvas navbar large">
-    <div class="block navbar-main">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-auto d-flex justify-content-between align-items-center order-1">
-                    <a href="<?= URLPATH ?>" class="navbar-brand">
-                        <img src="<?= _logo ?>" alt="<?= $info['company'] ?>" class="logo">
-                    </a>
-                </div>
-                <div class="col-auto d-flex align-items-center gap-4 order-2 order-lg-3 ms-auto">
-    
-                    <?php //include _source . "/module/header/search-header.php" ?>
-                    
-                    <button type="button" class="btn-custom btn-popup-search" data-bs-toggle="modal"
-                        data-bs-target="#searchModal">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
-                    </button>
-
-                    <?php //include _source . "/module/header/language-switcher-dropdown.php" ?>
-                    
-                    <a href="yeu-thich.html" class="cart-shopping position-relative" title="Sản phẩm yêu thích">
-                        <div id="wishlist-count" class="label-quantity header-wishlist-count">0</div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-icon lucide-heart"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>
-                    </a>
-
-                    <a href="#offcanvasCart" class="cart-shopping" data-bs-toggle="offcanvas" role="button" aria-controls="offcanvasCart">
-                        <div id="header-cart-count" class="label-quantity header-cart-count"><?= count($_SESSION['cart'] ?? []) ?></div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-handbag-icon lucide-handbag"><path d="M2.048 18.566A2 2 0 0 0 4 21h16a2 2 0 0 0 1.952-2.434l-2-9A2 2 0 0 0 18 8H6a2 2 0 0 0-1.952 1.566z"/><path d="M8 11V6a4 4 0 0 1 8 0v5"/></svg>
-                    </a>
-
-                    <?php // LMS MasterStudy (D8): nút vào trang chọn vai trò LMS. Chỉ THÊM thẻ <a> + CSS scoped (btn-lms-login), không sửa code cũ. ?>
-                    <link rel="stylesheet" href="<?= URLPATH ?>lms/public/css/lms-header-button.css">
-                    <a href="<?= URLPATH ?>lms/" class="btn-lms-login" title="Đăng nhập LMS MasterStudy" aria-label="Đăng nhập LMS MasterStudy">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 3 3 7l9 4 7.5-3.333"/>
-                            <path d="M6 10.5V15c0 1.657 2.686 3 6 3s6-1.343 6-3v-4.5"/>
-                            <path d="M21 7v5"/>
-                        </svg>
-                    </a>
-
-                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
-                        aria-label="Toggle navigation">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu-icon lucide-menu"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg>
-                    </button>
-                </div>
-                <div class="col-lg-auto flex-lg-fill order-3 order-lg-2">
-                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
-                        aria-labelledby="offcanvasNavbarLabel">
-                        <div class="offcanvas-header align-items-start">
-                            <img src="<?= _logo ?>" alt="<?= $info['company'] ?>" width="100px">
-                                <button type="button" class="btn-close btn-close-dark shadow-none"
-                                    data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                        </div>
-                        <div class="offcanvas-body justify-content-center">
-                            <?php include _source . "/module/header/main-menu.php" ?>
-                        </div>
+    <div class="navbar-main">
+        <div class="block">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-auto d-flex justify-content-between align-items-center order-1">
+                        <a href="<?= URLPATH ?>" class="navbar-brand">
+                            <img src="<?= _logo ?>" alt="<?= $info['company'] ?>" class="logo">
+                        </a>
                     </div>
-                </div> 
+                    <div class="col-auto d-flex align-items-center gap-4 order-2 order-lg-3 ms-auto">
+        
+                        <?php //include _source . "/module/header/search-header.php" ?>
+                        
+                        <button type="button" class="btn-custom btn-popup-search px-0" data-bs-toggle="modal"
+                            data-bs-target="#searchModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+                        </button>
+
+                        <?php //include _source . "/module/header/language-switcher-dropdown.php" ?>
+                        
+                        <?php /* ?>
+                        <a href="yeu-thich.html" class="cart-shopping position-relative" title="Sản phẩm yêu thích">
+                            <div id="wishlist-count" class="label-quantity header-wishlist-count">0</div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-heart-icon lucide-heart"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>
+                        </a>
+                        
+                        <a href="#offcanvasCart" class="cart-shopping" data-bs-toggle="offcanvas" role="button" aria-controls="offcanvasCart">
+                            <div id="header-cart-count" class="label-quantity header-cart-count"><?= count($_SESSION['cart'] ?? []) ?></div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-handbag-icon lucide-handbag"><path d="M2.048 18.566A2 2 0 0 0 4 21h16a2 2 0 0 0 1.952-2.434l-2-9A2 2 0 0 0 18 8H6a2 2 0 0 0-1.952 1.566z"/><path d="M8 11V6a4 4 0 0 1 8 0v5"/></svg>
+                        </a>
+                        <?php */ ?>
+
+                        <?php // LMS MasterStudy (D8): nút vào trang chọn vai trò LMS. Chỉ THÊM thẻ <a> + CSS scoped (btn-lms-login), không sửa code cũ. ?>
+                        <!-- <link rel="stylesheet" href="<?= URLPATH ?>lms/public/css/lms-header-button.css"> -->
+                        <!-- <a href="<?= URLPATH ?>lms/" class="btn-lms-login" title="Đăng nhập LMS MasterStudy" aria-label="Đăng nhập LMS MasterStudy">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 3 3 7l9 4 7.5-3.333"/>
+                                <path d="M6 10.5V15c0 1.657 2.686 3 6 3s6-1.343 6-3v-4.5"/>
+                                <path d="M21 7v5"/>
+                            </svg>
+                        </a> -->
+
+                        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                            data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar"
+                            aria-label="Toggle navigation">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu-icon lucide-menu"><path d="M4 5h16"/><path d="M4 12h16"/><path d="M4 19h16"/></svg>
+                        </button>
+                    </div>
+                    <div class="col-lg-auto flex-lg-fill order-3 order-lg-2">
+                        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar"
+                            aria-labelledby="offcanvasNavbarLabel">
+                            <div class="offcanvas-header align-items-start">
+                                <img src="<?= _logo ?>" alt="<?= $info['company'] ?>" width="100px">
+                                    <button type="button" class="btn-close btn-close-dark shadow-none"
+                                        data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body justify-content-center">
+                                <?php include _source . "/module/header/main-menu.php" ?>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
             </div>
         </div>
     </div>

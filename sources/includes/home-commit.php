@@ -8,7 +8,7 @@
 		<div class="container-fluid">
 			<div class="row g-4">
 				<?php foreach ($content_commit as $key => $value): ?>
-					<div class="col-lg-3">
+					<div class="col-6 col-lg-3">
 						<div class="box-commit">
 							<h3 class="title"><?= $value['ten'] ?></h3>
 							<?= $value['noi_dung'] ?>

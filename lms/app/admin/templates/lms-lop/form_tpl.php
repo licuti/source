@@ -1,314 +1,614 @@
 <?php
 /**
- * Admin LMS — Quản lý lớp học: view form tạo/sửa (ADM-03).
+ * Admin LMS — Quản lý lớp học: Form Thêm / Sửa lớp học (ADM-03).
+ * Thiết kế đối chiếu chuẩn mockup: C:\laragon\www\source\Tai-lieu-phat-trien\admin\Quản lý lớp học - Thêm.png
+ *
  * Data do source chuẩn bị: $row, $errors, $isEditMode, $formId, $alias,
- * $programs, $subjects, $teachers, $students.
+ * $programs, $subjects, $teachers, $students, $topics.
  */
-$classTypes = \Lms\ClassService::CLASS_TYPES;
-$weekdays   = \Lms\UserService::WEEKDAYS;
+$classTypes = array(
+    'one_on_one' => '1 kèm 1',
+    'group'      => 'Đông người',
+);
 
-$schedules  = isset($row['schedules']) && is_array($row['schedules']) ? $row['schedules'] : array();
-$selStudents = lms_form_old_array($_POST, $row, 'student_ids');
+$schedules   = isset($row['schedules']) && is_array($row['schedules']) ? $row['schedules'] : array();
+$formScheduleRows = array();
+foreach ($schedules as $sch) {
+    $formScheduleRows[] = array(
+        'day'   => (int) ($sch['day'] ?? 0),
+        'start' => substr((string) ($sch['start'] ?? '17:30'), 0, 5),
+        'end'   => substr((string) ($sch['end'] ?? '19:00'), 0, 5),
+    );
+}
+if ($formScheduleRows === array()) {
+    $formScheduleRows = array(
+        array('day' => 2, 'start' => '17:30', 'end' => '19:00'),
+        array('day' => 6, 'start' => '17:30', 'end' => '19:00'),
+    );
+}
+$selStudents = array_map('intval', function_exists('lms_form_old_array') ? lms_form_old_array($_POST, $row, 'student_ids') : array());
+$selTopics   = array_map('intval', function_exists('lms_form_old_array') ? lms_form_old_array($_POST, $row, 'topic_ids') : array());
 
-// Map teacher_id → % phí mặc định (JS điền khi đổi lựa chọn)
+// Map teacher_id → % phí mặc định (JS tự điền khi đổi giáo viên)
 $teacherFee = array();
 foreach ($teachers as $t) {
     $teacherFee[(int) $t['user_id']] = isset($t['service_fee_percentage'])
         ? (float) $t['service_fee_percentage'] : 48.0;
 }
 
+// Chuẩn bị danh sách options cho các components
+$programOptions = array();
+foreach ($programs as $p) {
+    $programOptions[(int) $p['id']] = (string) $p['name'];
+}
+
+$subjectOptions = array();
+foreach ($subjects as $s) {
+    $subjectOptions[(int) $s['id']] = array(
+        'label' => (string) $s['name'],
+        'attrs' => array(
+            'data-program-id' => (int) $s['program_id'],
+        ),
+    );
+}
+
+$teacherOptions = array();
+foreach ($teachers as $t) {
+    $teacherOptions[(int) $t['user_id']] = ($t['teacher_code'] ?? '') . ' - ' . ($t['full_name'] ?? '');
+}
+
+$studentOptions = array();
+foreach ($students as $st) {
+    $studentOptions[(int) $st['user_id']] = ($st['student_code'] ?? '') . ' - ' . ($st['full_name'] ?? '');
+}
+
 $formUrl = $isEditMode
     ? lms_url($alias, 'sua', array('id' => $formId))
     : lms_url($alias, 'them');
+
+$currentClassType = lms_form_old($_POST, $row, 'class_type', 'one_on_one');
 ?>
 
-<form method="post" action="<?= e($formUrl) ?>" class="lms-form" novalidate>
+<form method="post" action="<?= e($formUrl) ?>" class="lms-form" id="lmsClassForm" novalidate>
     <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
 
-    <div class="row g-3">
-        <div class="col-lg-6">
-            <div class="lms-card">
-                <div class="lms-card-header"><i class="fa-solid fa-school me-1"></i> Thông tin lớp</div>
-                <div class="lms-card-body">
-                    <?php if ($isEditMode): ?>
-                        <div class="mb-3">
-                            <label class="lms-form-label" for="fld-code">Mã lớp</label>
-                            <input type="text" class="form-control" id="fld-code"
-                                   value="<?= e((string) ($row['class_code'] ?? '')) ?>" readonly>
-                        </div>
-                    <?php endif; ?>
-                    <div class="mb-3">
-                        <label class="lms-form-label" for="fld-name">Tên lớp</label>
-                        <input type="text" class="form-control" id="fld-name" name="name"
-                               value="<?= e(lms_form_old($_POST, $row, 'name')) ?>"
-                               placeholder="VD: Toán 1-1 - Nguyễn Văn A">
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-program">Chương trình <span class="text-danger">*</span></label>
-                            <select class="form-select" id="fld-program" name="program_id" required>
-                                <option value="">— Chọn chương trình —</option>
-                                <?php foreach ($programs as $p): ?>
-                                    <option value="<?= e((string) (int) $p['id']) ?>"<?= lms_selected(
-                                        lms_form_old($_POST, $row, 'program_id'),
-                                        (int) $p['id']
-                                    ) ?>><?= e((string) ($p['name'] ?? '')) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <?= lms_field_error($errors, 'program_id') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-subject">Chương trình học <span class="text-danger">*</span></label>
-                            <select class="form-select" id="fld-subject" name="subject_id" required>
-                                <option value="">— Chọn môn học —</option>
-                                <?php foreach ($subjects as $s): ?>
-                                    <option value="<?= e((string) (int) $s['id']) ?>"
-                                            data-program-id="<?= e((string) (int) $s['program_id']) ?>"<?= lms_selected(
-                                                lms_form_old($_POST, $row, 'subject_id'),
-                                                (int) $s['id']
-                                            ) ?>><?= e((string) ($s['name'] ?? '')) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <?= lms_field_error($errors, 'subject_id') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-class-type">Loại lớp <span class="text-danger">*</span></label>
-                            <select class="form-select" id="fld-class-type" name="class_type">
-                                <?php foreach ($classTypes as $k => $label): ?>
-                                    <option value="<?= e($k) ?>"<?= lms_selected(
-                                        lms_form_old($_POST, $row, 'class_type', 'one_on_one'),
-                                        $k
-                                    ) ?>><?= e($label) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <?= lms_field_error($errors, 'class_type') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-teacher">Giáo viên <span class="text-danger">*</span></label>
-                            <select class="form-select" id="fld-teacher" name="teacher_id" required>
-                                <option value="">— Chọn giáo viên —</option>
-                                <?php foreach ($teachers as $t): ?>
-                                    <option value="<?= e((string) (int) $t['user_id']) ?>"<?= lms_selected(
-                                        lms_form_old($_POST, $row, 'teacher_id'),
-                                        (int) $t['user_id']
-                                    ) ?>>
-                                        <?= e((string) ($t['teacher_code'] ?? '')) ?> — <?= e((string) ($t['full_name'] ?? '')) ?>
-                                        (<?= e((string) (int) ($t['active_classes'] ?? 0)) ?>/<?= e((string) (int) ($t['max_classes'] ?? 0)) ?>)
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <?= lms_field_error($errors, 'teacher_id') ?>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="lms-form-label" for="fld-students">Học viên <span class="text-danger">*</span></label>
-                        <select class="form-select" id="fld-students" name="student_ids[]" multiple size="6" required>
-                            <?php foreach ($students as $s): ?>
-                                <option value="<?= e((string) (int) $s['user_id']) ?>"<?= lms_in_selected((int) $s['user_id'], $selStudents) ?>>
-                                    <?= e((string) ($s['student_code'] ?? '')) ?> — <?= e((string) ($s['full_name'] ?? '')) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <div class="lms-text-muted-sm mt-1" id="fld-students-hint">
-                            Giữ Ctrl/Cmd để chọn nhiều học viên.
-                        </div>
-                        <?= lms_field_error($errors, 'student_ids') ?>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-11 col-lg-9 col-xl-8">
+
+            <!-- ===================== KHỐI 1: THÔNG TIN LỚP HỌC ===================== -->
+            
+            <!-- 1. Nhóm chương trình -->
+            <?php lms_component('form/select', array(
+                'name'        => 'program_id',
+                'label'       => 'Nhóm chương trình',
+                'options'     => $programOptions,
+                'empty_label' => '— Chọn nhóm chương trình —',
+                'required'    => true,
+                'id'          => 'fld-program',
+            )); ?>
+
+            <!-- 2. Danh mục chính (không dùng để giới hạn chuyên đề) -->
+            <?php lms_component('form/select', array(
+                'name'        => 'subject_id',
+                'label'       => 'Danh mục chính',
+                'options'     => $subjectOptions,
+                'empty_label' => '— Chọn danh mục chính —',
+                'required'    => true,
+                'id'          => 'fld-subject',
+            )); ?>
+
+            <!-- 3. Loại lớp -->
+            <?php lms_component('form/select', array(
+                'name'        => 'class_type',
+                'label'       => 'Loại lớp',
+                'options'     => $classTypes,
+                'default'     => 'one_on_one',
+                'required'    => true,
+                'id'          => 'fld-class-type',
+            )); ?>
+
+            <!-- 4. Mã lớp -->
+            <?php lms_component('form/input', array(
+                'name'        => 'name',
+                'label'       => 'Mã lớp',
+                'placeholder' => 'VD: Toán 227',
+                'required'    => true,
+                'id'          => 'fld-name',
+            )); ?>
+
+            <!-- 5. Chọn giáo viên -->
+            <?php lms_component('form/select', array(
+                'name'        => 'teacher_id',
+                'label'       => 'Chọn giáo viên',
+                'options'     => $teacherOptions,
+                'empty_label' => '— Chọn giáo viên —',
+                'required'    => true,
+                'id'          => 'fld-teacher',
+            )); ?>
+
+            <!-- 6. Chọn học viên (1-1 hoặc Đông người) -->
+            <?php
+            ob_start();
+            ?>
+            <!-- Dropdown chọn 1 học viên (khi là 1 kèm 1) -->
+            <div id="wrapper-student-single" style="<?= $currentClassType === 'group' ? 'display:none;' : '' ?>">
+                <select class="form-select" id="fld-student-single" name="student_ids[]" <?= $currentClassType === 'group' ? 'disabled' : 'required' ?>>
+                    <option value="">— Chọn học viên —</option>
+                    <?php foreach ($students as $st): ?>
+                        <option value="<?= (int) $st['user_id'] ?>"<?= in_array((int) $st['user_id'], $selStudents, true) ? ' selected' : '' ?>>
+                            <?= e($st['student_code']) ?> - <?= e($st['full_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <!-- Multi-select chọn nhiều học viên (khi là Đông người) -->
+            <div id="wrapper-student-multi" style="<?= $currentClassType !== 'group' ? 'display:none;' : '' ?>">
+                <select class="form-select select2-multiple" id="fld-student-multi" name="student_ids[]" multiple data-placeholder="— Chọn học viên —" style="width: 100%;" <?= $currentClassType === 'group' ? 'required' : 'disabled' ?>>
+                    <?php foreach ($students as $st): ?>
+                        <option value="<?= (int) $st['user_id'] ?>"<?= in_array((int) $st['user_id'], $selStudents, true) ? ' selected' : '' ?>>
+                            <?= e($st['student_code']) ?> - <?= e($st['full_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <div class="text-muted mt-1" style="font-size: 0.78rem;">
+                    *Cho phép tìm kiếm và chọn nhiều học viên nếu là lớp đông người.
                 </div>
             </div>
-        </div>
+            <?php
+            $studentControl = ob_get_clean();
+            lms_component('form/field_row', array(
+                'label'    => 'Chọn học viên',
+                'name'     => 'student_ids',
+                'id'       => 'fld-students',
+                'required' => true,
+                'control'  => $studentControl,
+                'errors'   => $errors,
+            ));
+            ?>
 
-        <div class="col-lg-6">
-            <div class="lms-card">
-                <div class="lms-card-header"><i class="fa-solid fa-money-bill-wave me-1"></i> Học phí &amp; cấu hình</div>
-                <div class="lms-card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-price">Học phí 1 buổi (VNĐ) <span class="text-danger">*</span></label>
-                            <input type="number" min="0" step="1000" class="form-control" id="fld-price"
-                                   name="price_per_session"
-                                   value="<?= e(lms_form_old($_POST, $row, 'price_per_session', '0')) ?>">
-                            <?= lms_field_error($errors, 'price_per_session') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-fee">Phần trăm GV nhận (%)</label>
-                            <div class="input-group">
-                                <input type="number" min="0" max="100" step="0.5" class="form-control" id="fld-fee"
-                                       name="teacher_percentage"
-                                       value="<?= e(lms_form_old($_POST, $row, 'teacher_percentage')) ?>">
-                                <span class="input-group-text">%</span>
+            <!-- 7. Lịch cố định -->
+            <?php
+            ob_start();
+            lms_component('form/class_schedule_slots', array(
+                'id'       => 'lms-schedules-container',
+                'rows'     => $formScheduleRows,
+                'can_edit' => true,
+            ));
+            $schedulesControl = ob_get_clean();
+            lms_component('form/field_row', array(
+                'label'    => 'Lịch cố định',
+                'name'     => 'schedules',
+                'align'    => 'start',
+                'required' => true,
+                'control'  => $schedulesControl,
+                'errors'   => $errors,
+            ));
+            ?>
+
+            <!-- 8. Học phí 1 buổi -->
+            <?php lms_component('form/addon_input', array(
+                'name'        => 'price_per_session',
+                'label'       => 'Học phí 1 buổi',
+                'placeholder' => 'VD: 560000',
+                'suffix'      => 'đồng',
+                'type'        => 'number',
+                'min'         => 0,
+                'step'        => 1000,
+                'required'    => true,
+                'id'          => 'fld-price',
+            )); ?>
+
+            <!-- 9. Phần trăm gv nhận -->
+            <?php
+            $feeControl = lms_component_render('form/addon_input', array(
+                'name'        => 'teacher_percentage',
+                'label'       => 'Phần trăm gv nhận',
+                'placeholder' => 'VD: 48',
+                'suffix'      => '%',
+                'type'        => 'number',
+                'min'         => 0,
+                'max'         => 100,
+                'step'        => 0.5,
+                'required'    => true,
+                'id'          => 'fld-fee',
+                'bare'        => true,
+            ));
+            $feeControl .= '<div class="lms-tf-hint">*Hiện theo số mặc định trong tài khoản gv, nhưng vẫn cho phép chỉnh ở đây (không ảnh hưởng tới tài khoản)</div>';
+            if ($isEditMode) {
+                $feeControl .= '<div class="lms-tf-hint mt-1">'
+                    . 'Mặc định GV: <strong id="fld-fee-default-value">—</strong> · '
+                    . '<a href="#" id="fld-fee-default-link" class="link-danger fw-semibold">Lấy mặc định GV</a>'
+                    . '</div>';
+            }
+            lms_component('form/field_row', array(
+                'label'    => 'Phần trăm gv nhận',
+                'name'     => 'teacher_percentage',
+                'id'       => 'fld-fee',
+                'required' => true,
+                'control'  => $feeControl,
+                'errors'   => $errors,
+            ));
+            ?>
+
+            <!-- 10. Áp dụng từ ngày -->
+            <?php lms_component('form/input', array(
+                'name'     => 'start_date',
+                'label'    => 'Áp dụng từ ngày',
+                'type'     => 'date',
+                'default'  => date('Y-m-d'),
+                'required' => true,
+                'id'       => 'fld-start-date',
+                'help'     => $isEditMode
+                    ? '*Khi điều chỉnh học phí hoặc % GV nhận, mức mới sẽ áp dụng cho các buổi học từ ngày áp dụng trở đi (các buổi đã dạy trước đó giữ nguyên mức cũ).'
+                    : null,
+            )); ?>
+
+            <!-- 11. Ghi chú -->
+            <?php lms_component('form/textarea', array(
+                'name'        => 'note',
+                'label'       => 'Ghi chú',
+                'rows'        => 3,
+                'placeholder' => 'Ghi chú về lớp học...',
+                'id'          => 'fld-note',
+            )); ?>
+
+            <!-- 12. Chọn chuyên đề -->
+            <?php
+            $topicGroups = array();
+            foreach ($topics as $t) {
+                $groupName = isset($t['subject_name']) && trim((string) $t['subject_name']) !== ''
+                    ? (string) $t['subject_name']
+                    : 'Khác';
+                $topicGroups[$groupName][] = $t;
+            }
+            ob_start();
+            ?>
+            <select class="form-select select2-multiple" id="fld-topics" name="topic_ids[]" multiple data-placeholder="— Chọn chuyên đề —" style="width: 100%;">
+                <?php foreach ($topicGroups as $groupName => $groupTopics): ?>
+                    <optgroup label="<?= e($groupName) ?>">
+                        <?php foreach ($groupTopics as $t): ?>
+                            <option value="<?= (int) $t['id'] ?>"
+                                    data-subject-id="<?= (int) $t['subject_id'] ?>"<?= in_array((int) $t['id'], $selTopics, true) ? ' selected' : '' ?>>
+                                <?= e($t['name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </optgroup>
+                <?php endforeach; ?>
+            </select>
+            <?php
+            $topicsControl = ob_get_clean();
+            lms_component('form/field_row', array(
+                'label'   => 'Chọn chuyên đề',
+                'name'    => 'topic_ids',
+                'id'      => 'fld-topics',
+                'align'   => 'start',
+                'control' => $topicsControl,
+                'hint'    => '*Cho phép chọn nhiều chuyên đề thuộc nhiều Danh mục.',
+                'errors'  => $errors,
+            ));
+            ?>
+
+            <!-- ===================== KHỐI 2: ĐĂNG KÝ KHOÁ ĐẦU ===================== -->
+            <div class="border-top pt-4 mt-4">
+                <h5 class="fw-bold text-dark mb-3">Đăng ký khoá đầu:</h5>
+
+                <!-- Số buổi: -->
+                <?php lms_component('form/addon_input', array(
+                    'name'        => 'total_sessions',
+                    'label'       => 'Số buổi:',
+                    'placeholder' => 'VD: 24',
+                    'suffix'      => 'buổi',
+                    'type'        => 'number',
+                    'min'         => 0,
+                    'default'     => '24',
+                    'id'          => 'fld-total-sessions',
+                )); ?>
+
+                <!-- Ngày bắt đầu -->
+                <?php lms_component('form/input', array(
+                    'name'    => 'cycle_start_date',
+                    'label'   => 'Ngày bắt đầu',
+                    'type'    => 'date',
+                    'default' => date('Y-m-d'),
+                    'id'      => 'fld-cycle-start-date',
+                )); ?>
+            </div>
+
+            <!-- ===================== KHỐI 3: CÀI ĐẶT ===================== -->
+            <div class="border-top pt-4 mt-4">
+                <div class="d-flex align-items-baseline justify-content-between mb-3">
+                    <h5 class="fw-bold text-dark mb-0">Cài đặt</h5>
+                    <span class="text-muted" style="font-size: 0.85rem;" id="lms-setting-note">
+                        mặc định cho lớp 1-1:
+                    </span>
+                </div>
+
+                <!-- 1. Hạn giao BTVN -->
+                <div class="row mb-3 align-items-center lms-tf-row">
+                    <label class="col-12 col-sm-4 col-form-label text-sm-end lms-tf-label" for="fld-hw-deadline">
+                        Hạn giao BTVN
+                    </label>
+                    <div class="col-12 col-sm-8 lms-tf-control">
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <!-- Toggle switch -->
+                            <div class="form-check form-switch me-1 mb-0">
+                                <input class="form-check-input" type="checkbox" id="sw-hw-deadline" checked style="cursor: pointer;">
                             </div>
-                            <div class="lms-text-muted-sm mt-1">Để trống để kế thừa mức phí mặc định của giáo viên.</div>
-                            <?= lms_field_error($errors, 'teacher_percentage') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-start-date">Áp dụng từ ngày</label>
-                            <input type="date" class="form-control" id="fld-start-date" name="start_date"
-                                   value="<?= e(lms_form_old($_POST, $row, 'start_date', date('Y-m-d'))) ?>">
-                            <?= lms_field_error($errors, 'start_date') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-total">Số buổi khoá đầu</label>
-                            <input type="number" min="0" max="999" class="form-control" id="fld-total"
-                                   name="total_sessions"
-                                   value="<?= e(lms_form_old($_POST, $row, 'total_sessions', '0')) ?>">
-                            <?= lms_field_error($errors, 'total_sessions') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-hw-deadline">Hạn giao BTVN</label>
-                            <input type="time" class="form-control" id="fld-hw-deadline" name="hw_deadline_time"
-                                   value="<?= e(lms_form_old($_POST, $row, 'hw_deadline_time', '12:00')) ?>">
-                            <?= lms_field_error($errors, 'hw_deadline_time') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-hw-check">Hạn check BTVN (giờ)</label>
-                            <input type="number" min="0" max="720" class="form-control" id="fld-hw-check"
-                                   name="hw_check_hours"
-                                   value="<?= e(lms_form_old($_POST, $row, 'hw_check_hours', '24')) ?>">
-                            <?= lms_field_error($errors, 'hw_check_hours') ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                            <!-- Input giờ -->
+                            <div style="width: 110px;">
+                                <input type="time" class="form-control text-center" id="fld-hw-deadline" name="hw_deadline_time"
+                                       value="<?= e(lms_form_old($_POST, $row, 'hw_deadline_time', '12:00')) ?>">
+                            </div>
+                            <span class="text-muted" style="font-size: 0.85rem;">của ngày hôm sau</span>
 
-        <div class="col-12">
-            <div class="lms-card">
-                <div class="lms-card-header"><i class="fa-solid fa-calendar-days me-1"></i> Lịch học cố định hàng tuần</div>
-                <div class="lms-card-body">
-                    <div id="lms-schedules">
-                        <?php if ($schedules !== array()): ?>
-                            <?php foreach ($schedules as $sch): ?>
-                                <div class="lms-slots-row">
-                                    <select class="form-select" name="sch_day[]">
-                                        <option value="">— Thứ —</option>
-                                        <?php foreach ($weekdays as $k => $label): ?>
-                                            <option value="<?= e((string) $k) ?>"<?= lms_selected(
-                                                isset($sch['day']) ? $sch['day'] : '',
-                                                $k
-                                            ) ?>><?= e($label) ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                    <input type="time" class="form-control" name="sch_start[]"
-                                           value="<?= e(isset($sch['start']) ? (string) $sch['start'] : '') ?>">
-                                    <input type="time" class="form-control" name="sch_end[]"
-                                           value="<?= e(isset($sch['end']) ? (string) $sch['end'] : '') ?>">
-                                    <button type="button" class="lms-slot-remove" aria-label="Xoá lịch học">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
+                            <!-- Phạt GV -->
+                            <div class="ms-auto d-flex align-items-center gap-2">
+                                <span class="text-dark fw-semibold" style="font-size: 0.85rem;">Phạt GV</span>
+                                <div class="input-group input-group-sm" style="width: 90px;">
+                                    <input type="number" class="form-control text-center" name="hw_penalty_ticks" value="1" min="0">
+                                    <span class="input-group-text">tick</span>
                                 </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                            </div>
+                        </div>
                     </div>
-                    <button type="button" class="btn btn-outline-lms btn-sm" id="lms-schedule-add">
-                        <i class="fa-solid fa-plus me-1"></i> Thêm lịch học
-                    </button>
-                    <div class="lms-text-muted-sm mt-1">Buổi học cho 4 tuần tiếp theo được tự động sinh từ lịch này.</div>
-                    <?= lms_field_error($errors, 'schedules') ?>
+                </div>
+
+                <!-- 2. Hạn check BTVN -->
+                <div class="row mb-3 align-items-center lms-tf-row">
+                    <label class="col-12 col-sm-4 col-form-label text-sm-end lms-tf-label" for="fld-hw-check">
+                        Hạn check BTVN
+                    </label>
+                    <div class="col-12 col-sm-8 lms-tf-control">
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <!-- Toggle switch -->
+                            <div class="form-check form-switch me-1 mb-0">
+                                <input class="form-check-input" type="checkbox" id="sw-hw-check" checked style="cursor: pointer;">
+                            </div>
+                            <!-- Input số giờ -->
+                            <div style="width: 80px;">
+                                <input type="number" min="0" max="720" class="form-control text-center" id="fld-hw-check" name="hw_check_hours"
+                                       value="<?= e(lms_form_old($_POST, $row, 'hw_check_hours', '0')) ?>">
+                            </div>
+                            <span class="text-muted" style="font-size: 0.85rem;">giờ trước buổi tiếp theo</span>
+
+                            <!-- Phạt GV -->
+                            <div class="ms-auto d-flex align-items-center gap-2">
+                                <span class="text-dark fw-semibold" style="font-size: 0.85rem;">Phạt GV</span>
+                                <div class="input-group input-group-sm" style="width: 90px;">
+                                    <input type="number" class="form-control text-center" name="hw_check_penalty_ticks" value="1" min="0">
+                                    <span class="input-group-text">tick</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-muted mt-1" style="font-size: 0.78rem;">
+                            *Chỉ áp dụng nếu học sinh có nộp BTVN trước deadline GV giao.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Hạn chấm test -->
+                <div class="row mb-3 align-items-center lms-tf-row">
+                    <label class="col-12 col-sm-4 col-form-label text-sm-end lms-tf-label" for="fld-test-grace">
+                        Hạn chấm test
+                    </label>
+                    <div class="col-12 col-sm-8 lms-tf-control">
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <!-- Toggle switch -->
+                            <div class="form-check form-switch me-1 mb-0">
+                                <input class="form-check-input" type="checkbox" id="sw-test-grace" checked style="cursor: pointer;">
+                            </div>
+                            <!-- Input số giờ -->
+                            <div style="width: 80px;">
+                                <input type="number" min="0" max="720" class="form-control text-center" id="fld-test-grace" name="test_grace_hours"
+                                       value="<?= e(lms_form_old($_POST, $row, 'test_grace_hours', '72')) ?>">
+                            </div>
+                            <span class="text-muted" style="font-size: 0.85rem;">giờ kể từ khi hs nộp bài</span>
+
+                            <!-- Phạt GV -->
+                            <div class="ms-auto d-flex align-items-center gap-2">
+                                <span class="text-dark fw-semibold" style="font-size: 0.85rem;">Phạt GV</span>
+                                <div class="input-group input-group-sm" style="width: 90px;">
+                                    <input type="number" class="form-control text-center" name="test_penalty_ticks" value="1" min="0">
+                                    <span class="input-group-text">tick</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div class="lms-form-actions">
-        <button type="submit" class="btn btn-lms px-4">
-            <i class="fa-solid fa-floppy-disk me-1"></i> <?= $isEditMode ? 'Lưu thay đổi' : 'Tạo lớp học' ?>
-        </button>
-        <a href="<?= e(lms_url($alias)) ?>" class="btn btn-outline-secondary">Huỷ</a>
+            <!-- ===================== NÚT THAO TÁC ===================== -->
+            <div class="d-flex justify-content-center gap-3 mt-4 pt-3 mb-5">
+                <?php lms_component('button', array(
+                    'label'   => $isEditMode ? 'Lưu thay đổi' : 'Thêm',
+                    'type'    => 'submit',
+                    'variant' => 'secondary',
+                    'size'    => 'md',
+                    'class'   => 'px-5 py-2 fw-bold',
+                )); ?>
+                <?php lms_component('button', array(
+                    'label'   => 'Huỷ',
+                    'href'    => lms_url($alias),
+                    'variant' => 'outline-secondary',
+                    'class'   => 'px-4 py-2',
+                )); ?>
+            </div>
+
+        </div>
     </div>
 </form>
 
 <script>
-    (function ($) {
-        'use strict';
-        var weekdayOptions = <?= json_encode($weekdays) ?>;
+    document.addEventListener('DOMContentLoaded', function () {
+        (function ($) {
+            'use strict';
         var teacherFees = <?= json_encode($teacherFee) ?>;
-        var rows = $('#lms-schedules');
 
-        // ---------- Lịch học: thêm / xoá dòng ----------
-        function newRow(day, start, end) {
-            var opts = '<option value="">— Thứ —</option>';
-            $.each(weekdayOptions, function (k, label) {
-                opts += '<option value="' + k + '"' + (String(k) === String(day) ? ' selected' : '') + '>'
-                    + label + '</option>';
-            });
-            var $row = $('<div class="lms-slots-row">' +
-                '<select class="form-select" name="sch_day[]">' + opts + '</select>' +
-                '<input type="time" class="form-control" name="sch_start[]" value="' + (start || '') + '">' +
-                '<input type="time" class="form-control" name="sch_end[]" value="' + (end || '') + '">' +
-                '<button type="button" class="lms-slot-remove" aria-label="Xoá lịch học">' +
-                '<i class="fa-solid fa-xmark"></i></button>' +
-                '</div>');
-            rows.append($row);
-        }
-
-        $('#lms-schedule-add').on('click', function () {
-            newRow('', '', '');
-        });
-
-        rows.on('click', '.lms-slot-remove', function () {
-            $(this).closest('.lms-slots-row').remove();
-        });
-
-        // ---------- Lọc môn học theo chương trình ----------
+        // ---------- 1. Lọc môn học theo nhóm chương trình ----------
         var $program = $('#fld-program');
         var $subject = $('#fld-subject');
+        var allSubjectOptions = [];
+        var initialSubjectVal = String($subject.val() || '');
+        $subject.find('option').each(function () {
+            if ($(this).attr('value') !== '') {
+                allSubjectOptions.push({
+                    value: String($(this).attr('value')),
+                    text: $(this).text().trim(),
+                    programId: String($(this).attr('data-program-id') || '')
+                });
+            }
+        });
+
+        var isSubjectInitial = true;
 
         function filterSubjects() {
             var pid = String($program.val() || '');
-            var $visible = $subject.find('option[data-program-id]').filter(function () {
-                return pid === '' || $(this).attr('data-program-id') === pid;
+            var curVal = isSubjectInitial ? initialSubjectVal : String($subject.val() || '');
+            var newHtml = '<option value="">— Chọn chương trình học —</option>';
+            var hasCurVal = false;
+
+            $.each(allSubjectOptions, function (i, opt) {
+                // Lần đầu load: nếu môn của lớp trong DB lệch nhóm chương trình thì vẫn bảo lưu để hiển thị đúng
+                var keepCur = (isSubjectInitial && initialSubjectVal !== '' && opt.value === initialSubjectVal);
+                if (pid === '' || opt.programId === '' || opt.programId === pid || keepCur) {
+                    var isSel = (opt.value === curVal);
+                    if (isSel) hasCurVal = true;
+                    newHtml += '<option value="' + opt.value + '" data-program-id="' + opt.programId + '"' + (isSel ? ' selected' : '') + '>'
+                        + opt.text + '</option>';
+                }
             });
-            $subject.find('option[data-program-id]').each(function () {
-                $(this).toggle(pid === '' || $(this).attr('data-program-id') === pid);
-            });
-            var $selected = $subject.find('option:selected');
-            if ($selected.length && $selected.attr('data-program-id') && $selected.attr('data-program-id') !== pid) {
-                $subject.val($visible.first().attr('value') || '');
+
+            isSubjectInitial = false;
+            $subject.html(newHtml);
+            if (hasCurVal) {
+                $subject.val(curVal);
+            } else {
+                var $firstValid = $subject.find('option[value!=""]').first();
+                $subject.val($firstValid.length ? $firstValid.val() : '');
             }
         }
 
-        $program.on('change', filterSubjects);
+        $program.on('change', function () {
+            filterSubjects();
+        });
         filterSubjects();
 
-        // ---------- % phí mặc định của GV ----------
+        // ---------- 3. Chọn chuyên đề (không giới hạn theo Danh mục) ----------
+        var $topics = $('#fld-topics');
+        if ($.fn.select2 && !$topics.data('select2')) {
+            $topics.select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: '— Chọn chuyên đề —'
+            });
+        }
+
+        // ---------- 4. Tự điền % phí mặc định của GV ----------
+        var isEditMode = <?= $isEditMode ? 'true' : 'false' ?>;
         var $teacher = $('#fld-teacher');
         var $fee = $('#fld-fee');
 
-        function syncTeacherFee() {
+        function updateFeeDefaultHint() {
             var tid = String($teacher.val() || '');
-            if (tid !== '' && teacherFees[tid] !== undefined && $fee.val() === '') {
-                $fee.val(teacherFees[tid]);
+            var hasDefault = tid !== '' && teacherFees[tid] !== undefined;
+            $('#fld-fee-default-value').text(hasDefault ? (teacherFees[tid] + '%') : '—');
+        }
+
+        if (!isEditMode) {
+            $teacher.on('change', function () {
+                var tid = String($(this).val() || '');
+                if (tid !== '' && teacherFees[tid] !== undefined) {
+                    $fee.val(teacherFees[tid]);
+                }
+            });
+        }
+
+        if ($fee.val() === '') {
+            var initTid = String($teacher.val() || '');
+            if (initTid !== '' && teacherFees[initTid] !== undefined) {
+                $fee.val(teacherFees[initTid]);
             }
         }
 
-        $teacher.on('change', function () {
+        $teacher.on('change', updateFeeDefaultHint);
+        updateFeeDefaultHint();
+
+        $('#fld-fee-default-link').on('click', function (event) {
+            event.preventDefault();
             var tid = String($teacher.val() || '');
             if (tid !== '' && teacherFees[tid] !== undefined) {
                 $fee.val(teacherFees[tid]);
             }
         });
-        syncTeacherFee();
 
-        // ---------- Giới hạn học viên theo loại lớp ----------
+        // ---------- 5. Logic chuyển đổi Loại lớp: 1 kèm 1 vs Đông người ----------
         var $type = $('#fld-class-type');
-        var $students = $('#fld-students');
-        var $hint = $('#fld-students-hint');
+        var $singleWrap = $('#wrapper-student-single');
+        var $multiWrap = $('#wrapper-student-multi');
+        var $singleSelect = $('#fld-student-single');
+        var $multiSelect = $('#fld-student-multi');
+        var $settingNote = $('#lms-setting-note');
+        var $hwCheckInput = $('#fld-hw-check');
 
-        function syncStudentLimit() {
-            if ($type.val() === 'one_on_one') {
-                var selected = $students.val() || [];
-                if (selected.length > 1) {
-                    $students.val([selected[0]]);
+        function onClassTypeChange() {
+            var isGroup = ($type.val() === 'group');
+
+            if (isGroup) {
+                // Lớp đông người
+                $singleWrap.hide();
+                $singleSelect.prop('disabled', true).prop('required', false);
+                $multiWrap.show();
+                $multiSelect.prop('disabled', false).prop('required', true);
+
+                if ($.fn.select2 && !$multiSelect.data('select2')) {
+                    $multiSelect.select2({
+                        theme: 'bootstrap-5',
+                        width: '100%',
+                        placeholder: '— Chọn học viên —'
+                    });
                 }
-                $hint.text('Lớp 1 kèm 1 chỉ được chọn 1 học viên.');
+
+                // Đồng bộ từ single sang multi nếu multi chưa có giá trị
+                var singleVal = $singleSelect.val();
+                var curMulti = $multiSelect.val() || [];
+                if (singleVal && curMulti.length === 0) {
+                    $multiSelect.val([singleVal]).trigger('change.select2');
+                }
+
+                $settingNote.text('mặc định cho lớp đông người:');
+                if ($hwCheckInput.val() === '0' || $hwCheckInput.val() === '') {
+                    $hwCheckInput.val('24');
+                }
             } else {
-                $hint.text('Giữ Ctrl/Cmd để chọn nhiều học viên.');
+                // Lớp 1 kèm 1
+                $multiWrap.hide();
+                $multiSelect.prop('disabled', true).prop('required', false);
+                $singleWrap.show();
+                $singleSelect.prop('disabled', false).prop('required', true);
+
+                // Đồng bộ từ multi sang single nếu single chưa có
+                var multiVals = $multiSelect.val() || [];
+                if (multiVals.length > 0 && !$singleSelect.val()) {
+                    $singleSelect.val(multiVals[0]).trigger('change');
+                }
+
+                $settingNote.text('mặc định cho lớp 1-1:');
+                if ($hwCheckInput.val() === '24') {
+                    $hwCheckInput.val('0');
+                }
             }
         }
 
-        $type.on('change', syncStudentLimit);
-        $students.on('change', syncStudentLimit);
-        syncStudentLimit();
-    })(jQuery);
+        $type.on('change', onClassTypeChange);
+        onClassTypeChange();
+
+        // Đồng bộ giá trị giữa 2 select khi người dùng chọn
+        $singleSelect.on('change', function () {
+            var val = $(this).val();
+            $multiSelect.val(val ? [val] : []).trigger('change.select2');
+        });
+
+        })(window.jQuery);
+    });
 </script>

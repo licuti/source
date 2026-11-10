@@ -258,7 +258,7 @@ if (!function_exists('lms_try_remember_me')) {
         $hash = lms_hash_remember_token((string) $_COOKIE[$name]);
 
         $user = $d->safeFetchOne(
-            'select id, username, role, status from db_lms_users'
+            'select id, username, role, status, must_change_password from db_lms_users'
             . ' where remember_token = ? and remember_token_expires_at > now() limit 1',
             array($hash)
         );

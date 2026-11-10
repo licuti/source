@@ -31,10 +31,19 @@ class SessionService extends LmsService
         $endDate = date('Y-m-d', strtotime('+' . (int) $weeks . ' weeks', strtotime($start)));
 
         $classes = $this->db->safeFetch(
-            'select id, teacher_id from db_lms_classes'
-            . ' where status = ? and deleted_at is null',
+            'select c.id, cc.teacher_id, cc.id as cycle_id'
+            . ' from db_lms_classes c'
+            . ' join db_lms_course_cycles cc on cc.class_id = c.id and cc.status = ?'
+            . ' where c.status = ? and c.deleted_at is null',
+            array('active', 'active')
+        );
+        $classIdsWithCycles = array_map('intval', array_column($classes, 'id'));
+        $legacyClasses = $this->db->safeFetch(
+            'select c.id, c.teacher_id from db_lms_classes c where c.status = ? and c.deleted_at is null'
+            . ' and not exists (select 1 from db_lms_course_cycles cc where cc.class_id = c.id)',
             array('active')
         );
+        $classes = array_merge($classes, $legacyClasses);
 
         foreach ($classes as $class) {
             $created += $this->generateForClass(
@@ -70,6 +79,21 @@ class SessionService extends LmsService
             return 0;
         }
 
+        $activeCycle = $this->db->safeFetchOne(
+            'select id, teacher_id from db_lms_course_cycles where class_id = ? and status = ? order by cycle_no desc limit 1',
+            array($classId, 'active')
+        );
+        $cycleId = empty($activeCycle) ? 0 : (int) $activeCycle['id'];
+        if ($cycleId > 0) {
+            return $this->generateForCycle($classId, $cycleId, (int) $activeCycle['teacher_id'], $startDate, $endDate, $dryRun);
+        }
+        $hasCycleHistory = $this->db->safeFetchOne(
+            'select id from db_lms_course_cycles where class_id = ? limit 1', array($classId)
+        );
+        if (!empty($hasCycleHistory)) {
+            // A completed cycle must not fall back to the legacy unlimited schedule.
+            return 0;
+        }
         $schedules = $this->db->safeFetch(
             'select day_of_week, start_time, end_time, effective_from, effective_to'
             . ' from db_lms_schedules where class_id = ? order by day_of_week, start_time',
@@ -80,6 +104,7 @@ class SessionService extends LmsService
         }
 
         // Map day_of_week -> sessions trong khoảng
+        $feeSnap = $dryRun ? array('price_per_session' => null, 'teacher_percentage' => null) : $this->resolveSessionFeeSnapshot($classId, $cycleId, $teacherId);
         $created = 0;
         $day = strtotime($startDate);
         $endTs = strtotime($endDate);
@@ -118,12 +143,15 @@ class SessionService extends LmsService
 
                 try {
                     $ok = $this->db->insert('db_lms_sessions', array(
-                        'class_id'     => $classId,
-                        'teacher_id'   => $teacherId,
-                        'session_date' => $dateStr,
-                        'start_time'   => $sch['start_time'],
-                        'end_time'     => $sch['end_time'],
-                        'status'       => 'upcoming',
+                        'class_id'           => $classId,
+                        'cycle_id'           => $cycleId > 0 ? $cycleId : null,
+                        'teacher_id'         => $teacherId,
+                        'session_date'       => $dateStr,
+                        'start_time'         => $sch['start_time'],
+                        'end_time'           => $sch['end_time'],
+                        'price_per_session'  => $feeSnap['price_per_session'],
+                        'teacher_percentage' => $feeSnap['teacher_percentage'],
+                        'status'             => 'upcoming',
                     ));
                 } catch (\PDOException $e) {
                     // Another cron process may have inserted the same fixed slot.
@@ -141,6 +169,191 @@ class SessionService extends LmsService
         }
 
         return $created;
+    }
+
+    /** Generate sessions using an explicit course-cycle snapshot. */
+    public function generateForCycle($classId, $cycleId, $teacherId, $startDate, $endDate, $dryRun = false)
+    {
+        $cycle = $this->db->safeFetchOne(
+            'select id, status, total_sessions from db_lms_course_cycles where id = ? and class_id = ? limit 1',
+            array((int) $cycleId, (int) $classId)
+        );
+        if (empty($cycle) || (string) $cycle['status'] !== 'active') {
+            return 0;
+        }
+        $alreadyScheduled = (int) $this->db->count(
+            'db_lms_sessions', 'cycle_id = ?', array((int) $cycleId)
+        );
+        // Older active classes may have total_sessions=0 to mean unspecified;
+        // newly created course cycles reject zero before reaching this method.
+        $remainingCapacity = (int) $cycle['total_sessions'] > 0
+            ? max(0, (int) $cycle['total_sessions'] - $alreadyScheduled)
+            : 10000;
+        if ($remainingCapacity === 0) {
+            return 0;
+        }
+        $schedules = $this->db->safeFetch(
+            'select day_of_week, start_time, end_time, effective_from, effective_to'
+            . ' from db_lms_cycle_schedules where cycle_id = ? order by day_of_week, start_time',
+            array((int) $cycleId)
+        );
+        if (empty($schedules)) {
+            $schedules = $this->db->safeFetch(
+                'select day_of_week, start_time, end_time, effective_from, effective_to'
+                . ' from db_lms_schedules where class_id = ? order by day_of_week, start_time',
+                array((int) $classId)
+            );
+            if (!$dryRun) {
+                foreach ($schedules as $schedule) {
+                    $this->db->insert('db_lms_cycle_schedules', array(
+                        'cycle_id' => (int) $cycleId,
+                        'day_of_week' => (int) $schedule['day_of_week'],
+                        'start_time' => $schedule['start_time'],
+                        'end_time' => $schedule['end_time'],
+                        'effective_from' => $schedule['effective_from'],
+                        'effective_to' => $schedule['effective_to'],
+                    ));
+                }
+            }
+        }
+        $feeSnap = $dryRun ? array('price_per_session' => null, 'teacher_percentage' => null) : $this->resolveSessionFeeSnapshot($classId, $cycleId, $teacherId);
+        $created = 0;
+        $day = strtotime((string) $startDate);
+        $endTs = strtotime((string) $endDate);
+        if ($day === false || $endTs === false || $endTs < $day) {
+            return 0;
+        }
+        while ($day <= $endTs) {
+            $dateStr = date('Y-m-d', $day);
+            $dow = (int) date('N', $day) + 1;
+            foreach ($schedules as $schedule) {
+                if ((int) $schedule['day_of_week'] !== $dow
+                    || strcmp($dateStr, (string) $schedule['effective_from']) < 0
+                    || (!empty($schedule['effective_to']) && strcmp($dateStr, (string) $schedule['effective_to']) > 0)) {
+                    continue;
+                }
+                $exists = $this->db->safeFetchOne(
+                    'select id from db_lms_sessions where class_id = ? and session_date = ? and start_time = ? limit 1',
+                    array((int) $classId, $dateStr, $schedule['start_time'])
+                );
+                if (!empty($exists)) {
+                    continue;
+                }
+                if ($dryRun) {
+                    if ($created >= $remainingCapacity) {
+                        return $created;
+                    }
+                    $created++;
+                    continue;
+                }
+                try {
+                    $ok = $this->db->insert('db_lms_sessions', array(
+                        'class_id'           => (int) $classId,
+                        'cycle_id'           => (int) $cycleId,
+                        'teacher_id'         => (int) $teacherId,
+                        'session_date'       => $dateStr,
+                        'start_time'         => $schedule['start_time'],
+                        'end_time'           => $schedule['end_time'],
+                        'price_per_session'  => $feeSnap['price_per_session'],
+                        'teacher_percentage' => $feeSnap['teacher_percentage'],
+                        'status'             => 'upcoming',
+                    ));
+                } catch (\PDOException $e) {
+                    if (!$this->isDuplicateKeyException($e)) {
+                        throw $e;
+                    }
+                    $ok = false;
+                }
+                if ($ok) {
+                    $created++;
+                }
+                if ($created >= $remainingCapacity) {
+                    return $created;
+                }
+            }
+            $day = strtotime('+1 day', $day);
+        }
+        return $created;
+    }
+
+    /**
+     * Giải quyết snapshot học phí 1 buổi (price_per_session) và % phí GV nhận (teacher_percentage)
+     * theo thứ tự ưu tiên: cycle -> class -> teacher.
+     *
+     * @param int $classId
+     * @param int $cycleId
+     * @param int $teacherId
+     * @return array array('price_per_session' => float|null, 'teacher_percentage' => float|null)
+     */
+    public function resolveSessionFeeSnapshot($classId, $cycleId = 0, $teacherId = 0)
+    {
+        $classId   = (int) $classId;
+        $cycleId   = (int) $cycleId;
+        $teacherId = (int) $teacherId;
+
+        $price = null;
+        $pct   = null;
+
+        if ($cycleId <= 0 && $classId > 0) {
+            $activeCyc = $this->db->safeFetchOne(
+                'select id from db_lms_course_cycles where class_id = ? and status = ? order by cycle_no desc limit 1',
+                array($classId, 'active')
+            );
+            if (!empty($activeCyc['id'])) {
+                $cycleId = (int) $activeCyc['id'];
+            }
+        }
+
+        if ($cycleId > 0) {
+            $cyc = $this->db->safeFetchOne(
+                'select price_per_session, teacher_percentage, teacher_id from db_lms_course_cycles where id = ? limit 1',
+                array($cycleId)
+            );
+            if (!empty($cyc)) {
+                if ($cyc['price_per_session'] !== null) {
+                    $price = (float) $cyc['price_per_session'];
+                }
+                if ($cyc['teacher_percentage'] !== null) {
+                    $pct = (float) $cyc['teacher_percentage'];
+                }
+                if ($teacherId <= 0 && !empty($cyc['teacher_id'])) {
+                    $teacherId = (int) $cyc['teacher_id'];
+                }
+            }
+        }
+
+        if ($classId > 0 && ($price === null || $pct === null || $teacherId <= 0)) {
+            $cls = $this->db->safeFetchOne(
+                'select price_per_session, teacher_percentage, teacher_id from db_lms_classes where id = ? limit 1',
+                array($classId)
+            );
+            if (!empty($cls)) {
+                if ($price === null && $cls['price_per_session'] !== null) {
+                    $price = (float) $cls['price_per_session'];
+                }
+                if ($pct === null && $cls['teacher_percentage'] !== null) {
+                    $pct = (float) $cls['teacher_percentage'];
+                }
+                if ($teacherId <= 0 && !empty($cls['teacher_id'])) {
+                    $teacherId = (int) $cls['teacher_id'];
+                }
+            }
+        }
+
+        if ($pct === null && $teacherId > 0) {
+            $t = $this->db->safeFetchOne(
+                'select service_fee_percentage from db_lms_teachers where user_id = ? limit 1',
+                array($teacherId)
+            );
+            if (!empty($t) && $t['service_fee_percentage'] !== null) {
+                $pct = (float) $t['service_fee_percentage'];
+            }
+        }
+
+        return array(
+            'price_per_session'  => $price,
+            'teacher_percentage' => $pct,
+        );
     }
 
     /**
@@ -162,7 +375,7 @@ class SessionService extends LmsService
         $end   = date('Y-m-d', strtotime('+' . (int) $weeks . ' weeks', strtotime($start)));
 
         $sessions = $this->db->safeFetch(
-            'select s.id, s.class_id from db_lms_sessions s'
+            'select s.id, s.class_id, s.cycle_id from db_lms_sessions s'
             . ' join db_lms_classes c on c.id = s.class_id and c.deleted_at is null'
             . ' where s.status = ? and s.session_date between ? and ?',
             array('upcoming', $start, $end)
@@ -171,11 +384,15 @@ class SessionService extends LmsService
         $created = 0;
         foreach ($sessions as $sess) {
             $sessionId = (int) $sess['id'];
-            $students  = $this->db->safeFetch(
-                'select student_id from db_lms_class_students'
-                . ' where class_id = ? and status = ?',
-                array((int) $sess['class_id'], 'active')
-            );
+            $students = !empty($sess['cycle_id'])
+                ? $this->db->safeFetch(
+                    'select student_id from db_lms_cycle_students where cycle_id = ? and status = ?',
+                    array((int) $sess['cycle_id'], 'active')
+                )
+                : $this->db->safeFetch(
+                    'select student_id from db_lms_class_students where class_id = ? and status = ?',
+                    array((int) $sess['class_id'], 'active')
+                );
             foreach ($students as $row) {
                 $studentId = (int) $row['student_id'];
                 $exists = $this->db->safeFetchOne(
@@ -224,30 +441,50 @@ class SessionService extends LmsService
         $existingRow = $this->db->safeFetchOne(
             'select count(*) as c from db_lms_sessions s'
             . ' join db_lms_classes c on c.id=s.class_id and c.deleted_at is null'
-            . ' join db_lms_class_students cs on cs.class_id=c.id and cs.status=?'
-            . ' left join db_lms_session_students ss on ss.session_id=s.id and ss.student_id=cs.student_id'
-            . ' where s.status=? and s.session_date between ? and ? and ss.id is null',
-            array('active', 'upcoming', $start, $end)
+            . ' left join db_lms_cycle_students ccs on ccs.cycle_id=s.cycle_id and ccs.status=?'
+            . ' left join db_lms_class_students cs on cs.class_id=c.id and cs.status=? and s.cycle_id is null'
+            . ' left join db_lms_session_students ss on ss.session_id=s.id'
+            . ' and ss.student_id=coalesce(ccs.student_id,cs.student_id)'
+            . ' where s.status=? and s.session_date between ? and ?'
+            . ' and coalesce(ccs.student_id,cs.student_id) is not null and ss.id is null',
+            array('active', 'active', 'upcoming', $start, $end)
         );
         $count = isset($existingRow['c']) ? (int) $existingRow['c'] : 0;
-        $classes = $this->db->safeFetch(
-            'select id from db_lms_classes where status = ? and deleted_at is null',
-            array('active')
+        $cycles = $this->db->safeFetch(
+            'select cc.id as cycle_id, cc.class_id, cc.total_sessions'
+            . ' from db_lms_course_cycles cc join db_lms_classes c on c.id = cc.class_id'
+            . ' where cc.status = ? and c.status = ? and c.deleted_at is null',
+            array('active', 'active')
         );
-        foreach ($classes as $class) {
-            $classId = (int) $class['id'];
+        foreach ($cycles as $cycle) {
+            $classId = (int) $cycle['class_id'];
+            $cycleId = (int) $cycle['cycle_id'];
             $students = $this->db->safeFetch(
-                'select student_id from db_lms_class_students where class_id = ? and status = ?',
-                array($classId, 'active')
+                'select student_id from db_lms_cycle_students where cycle_id = ? and status = ?',
+                array($cycleId, 'active')
             );
             if (empty($students)) {
                 continue;
             }
             $schedules = $this->db->safeFetch(
                 'select day_of_week, start_time, effective_from, effective_to'
-                . ' from db_lms_schedules where class_id = ?',
-                array($classId)
+                . ' from db_lms_cycle_schedules where cycle_id = ?',
+                array($cycleId)
             );
+            $scheduled = (int) $this->db->count('db_lms_sessions', 'cycle_id = ?', array($cycleId));
+            $capacity = (int) $cycle['total_sessions'] > 0
+                ? max(0, (int) $cycle['total_sessions'] - $scheduled)
+                : 10000;
+            if (empty($schedules)) {
+                // Match generateForCycle's compatibility fallback for classes
+                // whose legacy schedule was edited after cycle initialization.
+                $schedules = $this->db->safeFetch(
+                    'select day_of_week, start_time, effective_from, effective_to'
+                    . ' from db_lms_schedules where class_id = ?',
+                    array($classId)
+                );
+            }
+            $wouldCreate = 0;
             $day = strtotime($start);
             $endTs = strtotime($end);
             while ($day <= $endTs) {
@@ -267,8 +504,46 @@ class SessionService extends LmsService
                         // Existing rows were counted in the aggregate above.
                         continue;
                     }
-                    foreach ($students as $student) {
-                        $count++;
+                    $wouldCreate++;
+                }
+                $day = strtotime('+1 day', $day);
+            }
+            $count += min($wouldCreate, $capacity) * count($students);
+        }
+
+        // Legacy active classes without cycle rows remain supported during rollout.
+        $legacyClasses = $this->db->safeFetch(
+            'select c.id from db_lms_classes c where c.status = ? and c.deleted_at is null'
+            . ' and not exists (select 1 from db_lms_course_cycles cc where cc.class_id = c.id)',
+            array('active')
+        );
+        foreach ($legacyClasses as $class) {
+            $classId = (int) $class['id'];
+            $students = $this->db->safeFetch(
+                'select student_id from db_lms_class_students where class_id = ? and status = ?',
+                array($classId, 'active')
+            );
+            $schedules = $this->db->safeFetch(
+                'select day_of_week, start_time, effective_from, effective_to from db_lms_schedules where class_id = ?',
+                array($classId)
+            );
+            $day = strtotime($start);
+            $endTs = strtotime($end);
+            while ($day <= $endTs) {
+                $dateStr = date('Y-m-d', $day);
+                $dow = (int) date('N', $day) + 1;
+                foreach ($schedules as $schedule) {
+                    if ((int) $schedule['day_of_week'] !== $dow
+                        || strcmp($dateStr, (string) $schedule['effective_from']) < 0
+                        || (!empty($schedule['effective_to']) && strcmp($dateStr, (string) $schedule['effective_to']) > 0)) {
+                        continue;
+                    }
+                    $exists = $this->db->safeFetchOne(
+                        'select id from db_lms_sessions where class_id = ? and session_date = ? and start_time = ? limit 1',
+                        array($classId, $dateStr, $schedule['start_time'])
+                    );
+                    if (empty($exists)) {
+                        $count += count($students);
                     }
                 }
                 $day = strtotime('+1 day', $day);
@@ -312,18 +587,22 @@ class SessionService extends LmsService
         }
 
         $session = $this->db->safeFetchOne(
-            'select class_id from db_lms_sessions where id = ? limit 1',
+            'select class_id, cycle_id from db_lms_sessions where id = ? limit 1',
             array($sessionId)
         );
         if (empty($session)) {
             return 0;
         }
 
-        $students = $this->db->safeFetch(
-            'select student_id from db_lms_class_students'
-            . ' where class_id = ? and status = ?',
-            array((int) $session['class_id'], 'active')
-        );
+        $students = !empty($session['cycle_id'])
+            ? $this->db->safeFetch(
+                'select student_id from db_lms_cycle_students where cycle_id = ? and status = ?',
+                array((int) $session['cycle_id'], 'active')
+            )
+            : $this->db->safeFetch(
+                'select student_id from db_lms_class_students where class_id = ? and status = ?',
+                array((int) $session['class_id'], 'active')
+            );
 
         $count = 0;
         foreach ($students as $row) {
@@ -461,7 +740,7 @@ class SessionService extends LmsService
         }
 
         $row = $this->db->safeFetchOne(
-            'select s.id, s.class_id, s.session_date, s.start_time, s.end_time, s.status,'
+            'select s.id, s.class_id, s.cycle_id, s.session_date, s.start_time, s.end_time, s.status,'
             . ' s.lesson_summary, s.hw_content, s.hw_deadline, s.hw_attached_files,'
             . ' s.topic_id, s.topic_ids, s.summary_submitted_at,'
             . ' c.class_code, c.class_type, c.hw_deadline_time, c.subject_id,'
@@ -476,10 +755,29 @@ class SessionService extends LmsService
             return null;
         }
 
-        $row['topics'] = $this->db->safeFetch(
-            'select id, name from db_lms_topics where subject_id = ? order by order_index, name',
-            array((int) $row['subject_id'])
-        );
+        $cycleId = isset($row['cycle_id']) ? (int) $row['cycle_id'] : 0;
+        if ($cycleId > 0) {
+            $row['topics'] = $this->db->safeFetch(
+                'select t.id, t.name from db_lms_cycle_topics ct'
+                . ' join db_lms_topics t on t.id = ct.topic_id'
+                . ' where ct.cycle_id = ? order by ct.order_index, t.id',
+                array($cycleId)
+            );
+        } else {
+            $row['topics'] = $this->db->safeFetch(
+                'select t.id, t.name from db_lms_class_topics ct'
+                . ' join db_lms_topics t on t.id = ct.topic_id'
+                . ' where ct.class_id = ? order by ct.order_index, t.id',
+                array((int) $row['class_id'])
+            );
+            if (empty($row['topics'])) {
+                // Lớp cũ chưa được gán chuyên đề: giữ fallback theo môn học.
+                $row['topics'] = $this->db->safeFetch(
+                    'select id, name from db_lms_topics where subject_id = ? order by order_index, name',
+                    array((int) $row['subject_id'])
+                );
+            }
+        }
         $row['topic_ids'] = \Lms\UserService::decodeJsonArray(isset($row['topic_ids']) ? $row['topic_ids'] : array());
 
         return $row;
@@ -522,7 +820,7 @@ class SessionService extends LmsService
             return false;
         }
 
-        // topic_ids: phải thuộc subject của lớp
+        // topic_ids: phải thuộc lộ trình của lớp (cycle/class topics)
         $topicIds = array();
         $rawTopics = isset($in['topic_ids']) ? (array) $in['topic_ids'] : array();
         $validTopicIds = array();
@@ -535,7 +833,7 @@ class SessionService extends LmsService
                 continue;
             }
             if (!in_array($tid, $validTopicIds, true)) {
-                $this->addError('topic_ids', 'Chuyên đề được chọn không thuộc môn học của lớp.');
+                $this->addError('topic_ids', 'Chuyên đề được chọn không thuộc lộ trình của lớp.');
                 return false;
             }
             $topicIds[] = $tid;
@@ -614,6 +912,10 @@ class SessionService extends LmsService
             'select * from db_lms_sessions where id = ? limit 1',
             array($sessionId)
         );
+        if (isset($data['status']) && $data['status'] === 'finished'
+            && (string) $session['status'] !== 'finished') {
+            (new CourseCycleService($this->db))->recordFinishedSessions(array($sessionId));
+        }
         $this->audit('update_lesson_summary', 'sessions', $sessionId, $before, $after, 'teacher');
 
         return true;

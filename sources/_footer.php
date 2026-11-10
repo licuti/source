@@ -7,7 +7,7 @@
     <div class="block footer-top py-5 pb-4">
         <div class="container-fluid">
             <div class="row justify-content-between g-4 g-lg-5">
-                <div class="col-12 col-lg-auto">
+                <div class="col-12 col-md-6 col-lg-auto">
                     <img src="<?= getImageUrl($footer['hinh_anh']) ?>" class="logo-footer mb-4" alt="Logo">
                     <div class="social-contact social-contact-footer">
                         <span>Theo dõi chúng tôi tại: </span>
@@ -48,7 +48,7 @@
                         <?php endif ?>
                     </div>
                 </div>
-                <div class="col-md-auto col-lg-3">
+                <div class="col-md-6 col-lg-3">
                     <h4 class="title-footer"><?= $menu_link[0]['ten'] ?></h4>
                     <div class="list-footer"><?= $menu_link[0]['noi_dung'] ?></div>
                     <a href="tel:<?= $info['hotline'] ?>" class="box-hotline-footer mt-2">
@@ -56,11 +56,11 @@
                         <div class="label"><?= $info['hotline'] ?></div>
                     </a>
                 </div>
-                <div class="col-md-auto col-lg-auto">
+                <div class="col-md-6 col-lg-auto">
                     <h4 class="title-footer"><?= $menu_link[1]['ten'] ?></h4>
                     <div class="list-footer"><?= $menu_link[1]['noi_dung'] ?></div>
                 </div>
-                <div class="col-md-auto col-lg-auto">
+                <div class="col-md-6 col-lg-auto">
                     <h4 class="title-footer"><?= $menu_link[2]['ten'] ?></h4>
                     <div class="list-footer"><?= $menu_link[2]['noi_dung'] ?></div>
                 </div>
@@ -92,6 +92,17 @@
                     <div class="spinner-border text-primary" role="status"></div>
                     <p class="mt-2 text-muted">Đang tải...</p>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal-register-contact" tabindex="-1" aria-labelledby="modal-register-contact" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-transparent border-0">
+            <div class="modal-body p-0">
+                <button type="button" class="btn-close position-absolute start-50 bottom-0 d-flex justify-content-center align-items-center rounded-pill bg-white shadow-none" data-bs-dismiss="modal" aria-label="Close" style="width: 2.5rem; height: 2.5rem; transform: translate(-50%, 110%);"></button>
+                <?php include _source."/includes/block-register-contact.php"; ?>
             </div>
         </div>
     </div>

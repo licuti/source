@@ -4,9 +4,11 @@
  *
  * Tách code lặp lại giữa các source module:
  *  - lms_form_guard(): check quyền + flash + redirect khi thiếu quyền.
- *  - lms_pagination(): render thanh phân trang (query string giữ nguyên filter).
  *  - lms_field_error(): render thông báo lỗi 1 trường form.
  *  - lms_form_old(): lấy giá trị sticky cho form (ưu tiên input vừa submit).
+ *
+ * Phân trang: gọi thẳng component `lms_component('pagination', ...)`
+ * (component đã tự thêm class mt-4, không cần wrapper trung gian).
  *
  * KHÔNG chứa logic nghiệp vụ — phần đó nằm trong service layer.
  * PHP 7.3 compatible.
@@ -31,71 +33,6 @@ if (!function_exists('lms_form_guard')) {
         lms_flash('error', 'Bạn không có quyền ' . ($permAction === 'view' ? 'xem' : ($permAction === 'delete' ? 'xoá' : 'chỉnh sửa')) . ' mục này.');
         header('Location: ' . lms_url($alias));
         exit;
-    }
-}
-
-if (!function_exists('lms_pagination')) {
-    /**
-     * Render thanh phân trang dạng « 1 2 3 ».
-     *
-     * @param string $baseUrl  URL gốc (không chứa query page)
-     * @param int    $page     trang hiện tại
-     * @param int    $totalPages
-     * @param array  $params   query giữ nguyên khi chuyển trang (filter)
-     * @return string HTML
-     */
-    function lms_pagination($baseUrl, $page, $totalPages, array $params = array())
-    {
-        $page = max(1, (int) $page);
-        $totalPages = max(1, (int) $totalPages);
-        if ($totalPages <= 1) {
-            return '';
-        }
-
-        $url = function ($n) use ($baseUrl, $params) {
-            $q = array_merge($params, array('page' => $n));
-            return $baseUrl . '?' . http_build_query($q);
-        };
-
-        $out = '<nav class="lms-pagination" aria-label="Phân trang"><ul>';
-
-        if ($page > 1) {
-            $out .= '<li><a href="' . e($url($page - 1)) . '" rel="prev" aria-label="Trang trước">«</a></li>';
-        } else {
-            $out .= '<li class="disabled"><span aria-hidden="true">«</span></li>';
-        }
-
-        // Hiển thị tối đa 7 trang xung quanh trang hiện tại
-        $start = max(1, $page - 3);
-        $end = min($totalPages, $page + 3);
-        if ($start > 1) {
-            $out .= '<li><a href="' . e($url(1)) . '">1</a></li>';
-            if ($start > 2) {
-                $out .= '<li class="disabled"><span>…</span></li>';
-            }
-        }
-        for ($i = $start; $i <= $end; $i++) {
-            if ($i === $page) {
-                $out .= '<li class="active" aria-current="page"><span>' . $i . '</span></li>';
-            } else {
-                $out .= '<li><a href="' . e($url($i)) . '">' . $i . '</a></li>';
-            }
-        }
-        if ($end < $totalPages) {
-            if ($end < $totalPages - 1) {
-                $out .= '<li class="disabled"><span>…</span></li>';
-            }
-            $out .= '<li><a href="' . e($url($totalPages)) . '">' . $totalPages . '</a></li>';
-        }
-
-        if ($page < $totalPages) {
-            $out .= '<li><a href="' . e($url($page + 1)) . '" rel="next" aria-label="Trang sau">»</a></li>';
-        } else {
-            $out .= '<li class="disabled"><span aria-hidden="true">»</span></li>';
-        }
-
-        $out .= '</ul></nav>';
-        return $out;
     }
 }
 
@@ -205,5 +142,105 @@ if (!function_exists('lms_in_selected')) {
     function lms_in_selected($value, array $haystack)
     {
         return in_array((string) $value, array_map('strval', $haystack), true) ? ' selected' : '';
+    }
+}
+
+// ===================== LMS Form Component Infrastructure =====================
+
+if (!defined('LMS_COMPONENTS_PATH')) {
+    define('LMS_COMPONENTS_PATH', _LMS_DIR . '/app/admin/templates/components');
+}
+
+if (!function_exists('lms_component')) {
+    /**
+     * Render 1 component trong LMS.
+     * Tự động truyền context $row và $errors từ view nếu không truyền tường minh.
+     *
+     * @param string $name  Đường dẫn tương đối trong components/, không cần .php (VD 'form/input')
+     * @param array  $props Dữ liệu truyền vào component
+     * @return void
+     */
+    function lms_component($name, array $props = array())
+    {
+        $file = LMS_COMPONENTS_PATH . '/' . ltrim($name, '/') . '.php';
+        if (!is_file($file)) {
+            echo '<div class="alert alert-danger py-1 px-2 my-1">'
+                . 'LMS Component không tồn tại: <code>' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '</code>'
+                . '</div>';
+            return;
+        }
+
+        // Tự động kế thừa $row và $errors từ global scope nếu template cha có
+        global $row, $errors;
+        if (!isset($props['row']) && isset($row)) {
+            $props['row'] = $row;
+        }
+        if (!isset($props['errors']) && isset($errors)) {
+            $props['errors'] = $errors;
+        }
+
+        (static function ($__file, $__props) {
+            extract($__props, EXTR_SKIP);
+            include $__file;
+        })($file, $props);
+    }
+}
+
+if (!function_exists('lms_component_render')) {
+    /**
+     * Render 1 component và trả về chuỗi HTML.
+     *
+     * @param string $name
+     * @param array  $props
+     * @return string
+     */
+    function lms_component_render($name, array $props = array())
+    {
+        ob_start();
+        lms_component($name, $props);
+        return ob_get_clean();
+    }
+}
+
+
+
+// ===================== Helper định dạng ngày giờ chuẩn =====================
+
+if (!function_exists('lms_format_date')) {
+    /**
+     * Format ngày 'Y-m-d' → 'd/m/Y' an toàn cho view.
+     *
+     * @param mixed  $date
+     * @param string $default Mặc định khi rỗng hoặc không hợp lệ ('—')
+     * @return string
+     */
+    function lms_format_date($date, $default = '—')
+    {
+        $date = (string) $date;
+        if ($date === '' || $date === '0000-00-00') {
+            return $default;
+        }
+        $ts = strtotime($date);
+        return $ts === false ? htmlspecialchars($date, ENT_QUOTES, 'UTF-8') : date('d/m/Y', $ts);
+    }
+}
+
+if (!function_exists('lms_format_datetime')) {
+    /**
+     * Format datetime 'Y-m-d H:i:s' → 'd/m/Y H:i' an toàn cho view.
+     *
+     * @param mixed  $dt
+     * @param string $format Mặc định: 'd/m/Y H:i'
+     * @param string $default Mặc định khi rỗng hoặc không hợp lệ ('—')
+     * @return string
+     */
+    function lms_format_datetime($dt, $format = 'd/m/Y H:i', $default = '—')
+    {
+        $dt = (string) $dt;
+        if ($dt === '' || $dt === '0000-00-00 00:00:00') {
+            return $default;
+        }
+        $ts = strtotime($dt);
+        return $ts === false ? htmlspecialchars($dt, ENT_QUOTES, 'UTF-8') : date($format, $ts);
     }
 }

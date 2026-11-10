@@ -1,14 +1,10 @@
-<?php if ($row['id_code'] == 99): ?>
+<?php if ($row['id_code'] == 277): ?>
 
-    <?php include _source."/page-about.php"; ?>
+    <?php include _source."/page-course.php"; ?>
 
-<?php elseif ($row['id_code'] == 276): ?>
+<?php elseif ($row['id_code'] == 298): ?>
 
-    <?php include _source."/page-about-kimchi-production.php"; ?>
-
-<?php elseif ($row['id_code'] == 277): ?>
-
-    <?php include _source."/page-about-certificate.php"; ?>
+    <?php include _source."/page-course-program-secondary-school.php"; ?>
 
 <?php else: ?>
     <div class="block">

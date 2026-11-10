@@ -1,27 +1,52 @@
 <?php
 /**
- * Teacher LMS — Vi phạm nội quy: view tick của mình.
- * Data do source chuẩn bị: $month, $filterReason, $items, $total,
- * $tickSummary, $warnMessage, $alias.
+ * Teacher LMS — Vi phạm chất lượng dịch vụ: view tick của mình (mockup Vi phạm nội quy.png).
+ * Data do source chuẩn bị: $items, $total, $page, $totalPages, $tickSummary,
+ * $warnMessage, $alias.
  */
-?>
-<?php
 $reasonLabels = \Lms\TickService::ALL_REASONS;
-
-$reasonBadge = array(
-    'late_lesson_summary' => 'lms-badge-danger',
-    'late_hw_grading'     => 'lms-badge-danger',
-    'late_test_grading'   => 'lms-badge-danger',
-    'manual_penalty'      => 'lms-badge-warning',
-    'manual_exempt'       => 'lms-badge-success',
+$displayLabels = array(
+    'late_lesson_summary' => 'Không ghi báo cáo buổi học',
+    'late_hw_grading'     => 'Chưa chấm BTVN',
+    'late_test_grading'   => 'Chấm test trễ',
+    'manual_penalty'      => 'Phạt thủ công',
+    'manual_exempt'       => 'Miễn giảm tick',
 );
 
 $exempted = (int) $tickSummary['exempted'];
 $raw      = (int) $tickSummary['raw'];
 $real     = (int) $tickSummary['real'];
 $demoteAt = is_array($tickSummary['threshold']) ? (int) $tickSummary['threshold']['ticks_to_demote_fee'] : 0;
-?>
 
+$fmtTime = function ($row) {
+    $date = isset($row['violation_date']) ? (string) $row['violation_date'] : '';
+    $time = !empty($row['start_time'])
+        ? substr((string) $row['start_time'], 0, 5)
+        : (!empty($row['created_at']) ? substr((string) $row['created_at'], 11, 5) : '');
+    return trim($date . ' ' . $time);
+};
+
+$studentLabel = function ($row) {
+    $names = isset($row['student_names']) ? trim((string) $row['student_names']) : '';
+    if ((string) ($row['class_type'] ?? '') === 'one_on_one' && $names !== '') {
+        return $names;
+    }
+    $className = isset($row['class_name']) ? trim((string) $row['class_name']) : '';
+    return $className !== '' ? $className : '—';
+};
+
+$contentLabel = function ($row) use ($reasonLabels, $displayLabels) {
+    $reason = isset($row['reason']) ? (string) $row['reason'] : '';
+    if (isset($displayLabels[$reason])) {
+        return $displayLabels[$reason];
+    }
+    if (isset($reasonLabels[$reason])) {
+        return $reasonLabels[$reason];
+    }
+    $note = isset($row['note']) ? trim((string) $row['note']) : '';
+    return $note !== '' ? $note : $reason;
+};
+?>
 <?php if ($warnMessage !== ''): ?>
     <div class="lms-alert lms-alert-warning" role="alert">
         <i class="fa-solid fa-triangle-exclamation me-2"></i>
@@ -29,129 +54,65 @@ $demoteAt = is_array($tickSummary['threshold']) ? (int) $tickSummary['threshold'
     </div>
 <?php endif; ?>
 
-<div class="lms-card">
-    <div class="lms-card-header d-flex align-items-center gap-2 flex-wrap">
-        <i class="fa-solid fa-triangle-exclamation me-1"></i> Vi phạm nội quy tháng <?= e($month) ?>
-        <span class="ms-auto lms-text-muted-sm">Tổng: <?= e((string) number_format($total)) ?> tick</span>
+<div class="lms-vp-stats">
+    <div class="lms-vp-stat">
+        <span class="lms-vp-label">Số tick đã vi phạm:</span>
+        <span class="lms-vp-box"><?= e((string) $raw) ?></span>
     </div>
-    <div class="lms-card-body">
-        <div class="row g-3 mb-4">
-            <div class="col-6 col-md-3">
-                <div class="lms-stat-card">
-                    <div class="lms-stat-label">Tổng tick</div>
-                    <div class="lms-stat-value"><?= e((string) $raw) ?></div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="lms-stat-card">
-                    <div class="lms-stat-label">Được miễn</div>
-                    <div class="lms-stat-value text-success">−<?= e((string) $exempted) ?></div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="lms-stat-card">
-                    <div class="lms-stat-label">Tick thực tế</div>
-                    <div class="lms-stat-value <?= $demoteAt > 0 && $real >= $demoteAt ? 'text-danger' : '' ?>">
-                        <?= e((string) $real) ?>
-                    </div>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="lms-stat-card">
-                    <div class="lms-stat-label">Ngưỡng hạ phí</div>
-                    <div class="lms-stat-value"><?= e((string) $demoteAt) ?></div>
-                </div>
-            </div>
-        </div>
-
-        <form method="get" action="<?= e(lms_url($alias)) ?>" class="lms-filter-bar row g-2 mb-3">
-            <div class="col-sm-6 col-md-3">
-                <input type="month" class="form-control" name="month" value="<?= e($month) ?>"
-                       aria-label="Chọn tháng">
-            </div>
-            <div class="col-sm-6 col-md-3">
-                <select name="reason" class="form-select" aria-label="Lọc theo lý do">
-                    <option value="">Tất cả lý do</option>
-                    <?php foreach ($reasonLabels as $k => $label): ?>
-                        <option value="<?= e($k) ?>"<?= lms_selected($filterReason, $k) ?>><?= e($label) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-            <div class="col-sm-6 col-md-2 d-flex gap-2">
-                <button type="submit" class="btn btn-primary flex-grow-1">
-                    <i class="fa-solid fa-magnifying-glass me-1"></i> Lọc
-                </button>
-                <a href="<?= e(lms_url($alias)) ?>" class="btn btn-outline-secondary">
-                    <i class="fa-solid fa-rotate-left me-1"></i>
-                </a>
-            </div>
-        </form>
-
-        <?php if (empty($items)): ?>
-            <p class="text-muted mb-0 py-4 text-center">
-                <i class="fa-solid fa-circle-check d-block mb-2" style="font-size:1.6rem;"></i>
-                Không có vi phạm nào trong tháng này. Tốt lắm!
-            </p>
-        <?php else: ?>
-            <div class="table-responsive">
-                <table class="lms-table">
-                    <thead>
-                        <tr>
-                            <th>Ngày vi phạm</th>
-                            <th>Lý do</th>
-                            <th>Buổi liên quan</th>
-                            <th class="text-end">Tick</th>
-                            <th>Nguồn</th>
-                            <th>Ghi chú</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($items as $r): ?>
-                            <?php
-                            $reason = (string) ($r['reason'] ?? '');
-                            $auto   = (int) ($r['auto_generated'] ?? 1) === 1;
-                            ?>
-                            <tr>
-                                <td class="text-nowrap"><?= e((string) ($r['violation_date'] ?? '—')) ?></td>
-                                <td>
-                                    <span class="lms-badge <?= e(isset($reasonBadge[$reason]) ? $reasonBadge[$reason] : 'lms-badge-secondary') ?>">
-                                        <?= e(isset($reasonLabels[$reason]) ? $reasonLabels[$reason] : $reason) ?>
-                                    </span>
-                                </td>
-                                <td class="text-nowrap">
-                                    <?php if (!empty($r['session_date'])): ?>
-                                        <?= e(date('d/m/Y', strtotime((string) $r['session_date']))) ?>
-                                        <?php if (!empty($r['class_code'])): ?>
-                                            <div class="lms-text-muted-sm"><?= e((string) $r['class_code']) ?></div>
-                                        <?php endif; ?>
-                                    <?php else: ?>
-                                        <span class="lms-text-muted-sm">—</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td class="text-end">
-                                    <strong class="<?= (int) $r['tick_amount'] < 0 ? 'text-success' : 'text-danger' ?>">
-                                        <?= (int) $r['tick_amount'] > 0 ? '+' . (int) $r['tick_amount'] : e((string) (int) $r['tick_amount']) ?>
-                                    </strong>
-                                </td>
-                                <td class="text-nowrap">
-                                    <?php if ($auto): ?>
-                                        <span class="lms-badge lms-badge-secondary">Tự động</span>
-                                    <?php else: ?>
-                                        <span class="lms-badge lms-badge-primary">Thủ công</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php if (!empty($r['note'])): ?>
-                                        <span title="<?= e((string) $r['note']) ?>"><?= e(mb_strimwidth((string) $r['note'], 0, 40, '…')) ?></span>
-                                    <?php else: ?>
-                                        <span class="lms-text-muted-sm">—</span>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif; ?>
+    <div class="lms-vp-stat">
+        <span class="lms-vp-label">Số tick được miễn:</span>
+        <span class="lms-vp-box"><?= e((string) $exempted) ?></span>
+        <i class="fa-regular fa-circle-question lms-vp-info"
+           title="Số tick được miễn theo chính sách miễn giảm dựa trên số lớp đang dạy."></i>
+    </div>
+    <div class="lms-vp-stat">
+        <span class="lms-vp-label">Tổng tick thực tế:</span>
+        <span class="lms-vp-box lms-vp-box-real"><?= e((string) $real) ?></span>
+    </div>
+    <div class="lms-vp-stat lms-vp-threshold">
+        <span class="lms-vp-label">Ngưỡng hạ mức phí dịch vụ:</span>
+        <span class="lms-vp-box"><?= $demoteAt > 0 ? e((string) $demoteAt) : '—' ?></span>
     </div>
 </div>
+
+<div class="lms-vp-note">** Có chính sách miễn giảm tick</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered align-middle text-center lms-table mb-0">
+        <thead class="table-light">
+            <tr>
+                <th style="width: 20%;">Ngày</th>
+                <th style="width: 22%;">Học viên</th>
+                <th style="width: 18%;">Số lượng tick</th>
+                <th>Nội dung vi phạm</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (empty($items)): ?>
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-muted">
+                        Không có vi phạm nào. Tốt lắm!
+                    </td>
+                </tr>
+            <?php else: ?>
+                <?php foreach ($items as $r): ?>
+                    <?php $tick = (int) $r['tick_amount']; ?>
+                    <tr>
+                        <td class="text-nowrap"><?= e($fmtTime($r)) ?></td>
+                        <td><?= e($studentLabel($r)) ?></td>
+                        <td class="text-nowrap fw-semibold">
+                            <?= $tick > 0 ? '+' . $tick : e((string) $tick) ?>
+                        </td>
+                        <td class="text-wrap"><?= e($contentLabel($r)) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php lms_component('pagination', array(
+    'base_url'    => lms_url($alias),
+    'page'        => $page,
+    'total_pages' => $totalPages,
+)); ?>

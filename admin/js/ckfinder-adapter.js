@@ -79,14 +79,21 @@
                 card.className = 'col-4 col-md-3 mb-2 gallery-item';
                 card.id = itemId;
                 card.innerHTML =
-                    '<div class="card" data-path="' + escapeHtml(url) + '">' +
-                    '<img class="card-img-top" src="' + mediaUrl(url, preview) + '" style="height:120px;object-fit:cover;">' +
-                    '<div class="card-body p-2">' +
+                    '<div class="card h-100 shadow-sm" data-path="' + escapeHtml(url) + '">' +
+                    '<img class="card-img-top bg-light" src="' + mediaUrl(url, preview) + '" style="height:120px;object-fit:contain;">' +
+                    '<div class="card-body p-2 text-center">' +
                     '<input type="hidden" name="' + inputName + '[]" value="' + escapeHtml(url) + '">' +
-                    '<button type="button" class="btn btn-sm btn-danger btn-remove-gallery w-100" data-target="' + itemId + '">Xoá</button>' +
-                    '</div></div>';
+                    '<div class="d-flex gap-1">' +
+                    '<button type="button" class="btn btn-sm btn-outline-secondary js-copy-file-url flex-grow-1" data-copy-val="' + mediaUrl(url, preview) + '" title="Sao chép đường dẫn"><i class="fa-solid fa-copy me-1"></i>Copy</button>' +
+                    '<button type="button" class="btn btn-sm btn-danger btn-remove-gallery flex-grow-1" data-action="remove-gallery-item" data-target="' + itemId + '">' +
+                    '<i class="fa-solid fa-trash me-1"></i>Xoá</button>' +
+                    '</div></div></div>';
                 listEl.appendChild(card);
             });
+            var emptyEl = document.getElementById('empty_' + fieldId);
+            if (emptyEl) {
+                emptyEl.style.display = 'none';
+            }
             field.value = '';
             return;
         }
@@ -94,8 +101,37 @@
         var singleImage = document.getElementById('review_' + fieldId) || document.getElementById('img_' + fieldId);
         if (singleImage) {
             singleImage.src = mediaUrl(list[0], preview);
-            singleImage.style.display = 'inline-block';
+            if (singleImage.tagName === 'VIDEO') {
+                singleImage.classList.remove('d-none');
+                singleImage.style.display = 'block';
+                try { if (singleImage.load) singleImage.load(); } catch (e) {}
+                var emptyV = document.getElementById('review_' + fieldId + '_empty');
+                if (emptyV) {
+                    emptyV.classList.add('d-none');
+                    emptyV.style.display = 'none';
+                }
+            } else {
+                singleImage.classList.remove('d-none');
+                singleImage.style.display = 'inline-block';
+            }
         }
+
+        var fileWrap = document.getElementById('review_' + fieldId + '_wrap');
+        if (fileWrap) {
+            fileWrap.classList.remove('d-none');
+            fileWrap.style.display = '';
+            var fileLink = document.getElementById('review_' + fieldId + '_link');
+            if (fileLink) {
+                fileLink.href = mediaUrl(list[0], preview);
+                fileLink.textContent = list[0].split('/').pop();
+            }
+            var emptyF = document.getElementById('review_' + fieldId + '_empty');
+            if (emptyF) {
+                emptyF.classList.add('d-none');
+                emptyF.style.display = 'none';
+            }
+        }
+
         field.value = list[0];
 
         // Trigger change event
@@ -110,19 +146,25 @@
         }
 
         var deleteBtn = document.getElementById('del_' + fieldId);
-        if (!deleteBtn && field && field.closest) {
-            var picker = field.closest('.form-file-picker');
+        var copyBtn = null;
+        if (field && field.closest) {
+            var picker = field.closest('.form-file-picker') || field.closest('[data-file-picker]') || field.closest('.repeater-item');
             if (picker) {
-                deleteBtn = picker.querySelector('.js-file-picker-delete');
+                if (!deleteBtn) deleteBtn = picker.querySelector('.js-file-picker-delete');
+                copyBtn = picker.querySelector('.js-copy-file-url');
             }
         }
         if (deleteBtn) {
             deleteBtn.style.display = '';
             deleteBtn.classList.remove('d-none');
         }
+        if (copyBtn) {
+            copyBtn.style.display = '';
+            copyBtn.classList.remove('d-none');
+        }
 
         if (window.AdminUI && typeof window.AdminUI.updateImagePicker === 'function') {
-            window.AdminUI.updateImagePicker(fieldId, list[0]);
+            window.AdminUI.updateImagePicker(fieldId, list[0], preview);
         }
     }
 
@@ -235,25 +277,61 @@
         }, 120);
     });
 
+    function sanitizeGlobalScopeForCkfinder() {
+        if (typeof window === 'undefined') return;
+        try {
+            if (typeof window.module !== 'undefined' && (window.module.nodeType || window.module instanceof Element || !window.module.exports)) {
+                Object.defineProperty(window, 'module', {
+                    value: undefined,
+                    configurable: true,
+                    writable: true
+                });
+            }
+        } catch (e) {
+            try { window.module = undefined; } catch (err) {}
+        }
+        try {
+            if (typeof window.exports !== 'undefined' && (window.exports.nodeType || window.exports instanceof Element)) {
+                Object.defineProperty(window, 'exports', {
+                    value: undefined,
+                    configurable: true,
+                    writable: true
+                });
+            }
+        } catch (e) {
+            try { window.exports = undefined; } catch (err) {}
+        }
+    }
+
     function openCkfinder(opts) {
         opts = opts || {};
         var fieldId = opts.fieldId || '';
-        var resource = opts.resource || 'Images';
+        var resource = (opts.resource !== undefined && opts.resource !== null) ? opts.resource : '';
+        if (resource === 'all' || resource === '*' || opts.type === 'all' || opts.type === '*') {
+            resource = null;
+        } else if (!resource && fieldId) {
+            resource = 'Images';
+        }
         var multiple = !!opts.multiple;
         var customW = opts.width || null;
         var customH = opts.height || null;
 
+        sanitizeGlobalScopeForCkfinder();
+
         function run() {
+            sanitizeGlobalScopeForCkfinder();
             var dims = getOptimalModalDimensions(customW, customH);
             showModalBackdrop();
 
-            CKFinder.modal({
-                chooseFiles: true,
+            var modalConfig = {
+                chooseFiles: !!fieldId,
                 chooseMultiple: multiple,
-                resourceType: resource,
                 width: dims.width,
                 height: dims.height,
                 onInit: function (finder) {
+                    if (window.CKFinderCopyUrl && typeof window.CKFinderCopyUrl.init === 'function') {
+                        window.CKFinderCopyUrl.init(finder);
+                    }
                     var onChooseFile = function (evt) {
                         if (evt.data && evt.data.files) {
                             var paths = [];
@@ -276,7 +354,12 @@
                         applyToField(fieldId, [normalizePath(evt.data.resizedUrl)]);
                     });
                 }
-            });
+            };
+            if (resource) {
+                modalConfig.resourceType = resource;
+            }
+
+            CKFinder.modal(modalConfig);
         }
 
         if (typeof window.CKFinder !== 'undefined') {
@@ -290,6 +373,7 @@
                 alert('Khong the tai trinh chon file. Vui long kiem tra cai dat CKFinder.');
                 return;
             }
+            sanitizeGlobalScopeForCkfinder();
             run();
         });
     }
@@ -297,11 +381,17 @@
     function open(opts) {
         opts = opts || {};
         opts.type = opts.type || 'image';
-        var resource = opts.resource ||
-            (opts.type === 'file' ? 'Files' : (opts.type === 'video' ? 'Videos' : (opts.type === 'asset' ? 'Assets' : 'Images')));
+        var resource = (opts.resource !== undefined) ? opts.resource : '';
+        if (!resource && opts.type !== 'all' && opts.type !== '*') {
+            resource = (opts.type === 'file' ? 'Files' : (opts.type === 'video' ? 'Videos' : (opts.type === 'asset' ? 'Assets' : 'Images')));
+        }
+        if (resource === 'all' || resource === '*' || opts.type === 'all' || opts.type === '*') {
+            resource = null;
+        }
         openCkfinder({
             fieldId: opts.fieldId,
             resource: resource,
+            type: opts.type,
             multiple: !!opts.multiple,
             width: opts.width,
             height: opts.height
@@ -349,6 +439,15 @@
         });
     }, true);
 
+    document.addEventListener('click', function (e) {
+        var btn = e.target && e.target.closest && e.target.closest('.btn-remove-gallery');
+        if (!btn) return;
+        e.preventDefault();
+        var targetId = btn.getAttribute('data-target');
+        var el = (targetId && document.getElementById(targetId)) || btn.closest('.gallery-item') || btn.closest('[id^="gallery_item_"]');
+        if (el) el.remove();
+    });
+
     window.AdminFM = {
         open: open,
         applyToField: applyToField,
@@ -358,8 +457,12 @@
 
     window.adminBindFilemanager = bind;
 
+    sanitizeGlobalScopeForCkfinder();
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function () { bind(document); });
+        document.addEventListener('DOMContentLoaded', function () {
+            sanitizeGlobalScopeForCkfinder();
+            bind(document);
+        });
     } else {
         bind(document);
     }

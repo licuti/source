@@ -567,9 +567,248 @@ class PayrollServiceTest extends LmsTestCase
         $this->assertSame(0, $this->db->count('db_lms_transactions'));
     }
 
+    // ===================== Báo cáo phí DV theo khoảng ngày =====================
+
+    public function testFeeSummary_GroupsTypesAndAppliesZeroTaxUnderThreshold()
+    {
+        $summary = $this->svc->feeSummary(array(
+            array('amount' => 3000000, 'type' => 'salary_session'),
+            array('amount' => 500000, 'type' => 'bonus'),
+            array('amount' => -100000, 'type' => 'penalty'),
+            array('amount' => -200000, 'type' => 'deposit_deduct'),
+            array('amount' => 50000, 'type' => 'adjustment'),
+        ), false);
+
+        $this->assertSame(3550000.0, $summary['tong_thu']);
+        $this->assertSame(550000.0, $summary['phi_cong_them']);
+        $this->assertSame(100000.0, $summary['vi_pham']);
+        $this->assertSame(-200000.0, $summary['ky_quy']);
+        $this->assertSame(0.0, $summary['thue_rate']);
+        $this->assertSame(3250000.0, $summary['thuc_nhan']);
+    }
+
+    public function testFeeSummary_AppliesTenPercentAboveThreshold()
+    {
+        $summary = $this->svc->feeSummary(array(
+            array('amount' => 6000000, 'type' => 'salary_session'),
+            array('amount' => -100000, 'type' => 'penalty'),
+            array('amount' => -600000, 'type' => 'tax'),
+        ), false);
+
+        $this->assertSame(10.0, $summary['thue_rate']);
+        $this->assertSame(600000.0, $summary['thue']);
+        $this->assertSame(5300000.0, $summary['thuc_nhan']);
+    }
+
+    public function testFeeSummary_Commit08KeepsTaxZero()
+    {
+        $summary = $this->svc->feeSummary(array(
+            array('amount' => 6000000, 'type' => 'salary_session'),
+        ), true);
+
+        $this->assertSame(0.0, $summary['thue_rate']);
+        $this->assertSame(6000000.0, $summary['thuc_nhan']);
+    }
+
+    public function testTransactionsByRange_FiltersByDate()
+    {
+        $this->db->insert('db_lms_transactions', array(
+            'teacher_id'       => $this->teacherId,
+            'amount'           => 1000000,
+            'type'             => 'salary_session',
+            'transaction_date' => '2026-09-05',
+            'period_month'     => '2026-09',
+            'status'           => 'draft',
+        ));
+        $this->db->insert('db_lms_transactions', array(
+            'teacher_id'       => $this->teacherId,
+            'amount'           => 2000000,
+            'type'             => 'salary_session',
+            'transaction_date' => '2026-10-01',
+            'period_month'     => '2026-10',
+            'status'           => 'draft',
+        ));
+
+        $items = $this->svc->transactionsByRange($this->teacherId, '2026-09-01', '2026-09-30');
+
+        $this->assertCount(1, $items);
+        $this->assertSame('2026-09-05', $items[0]['transaction_date']);
+    }
+
+    public function testAllFeeSummaries_AggregatesEachTeacherInRange()
+    {
+        $this->db->insert('db_lms_transactions', array(
+            'teacher_id'       => $this->teacherId,
+            'amount'           => 6000000,
+            'type'             => 'salary_session',
+            'transaction_date' => '2026-09-05',
+            'period_month'     => '2026-09',
+            'status'           => 'draft',
+        ));
+        $this->db->insert('db_lms_transactions', array(
+            'teacher_id'       => $this->teacherId,
+            'amount'           => -100000,
+            'type'             => 'penalty',
+            'transaction_date' => '2026-09-06',
+            'period_month'     => '2026-09',
+            'status'           => 'draft',
+        ));
+
+        $items = $this->svc->allFeeSummaries('2026-09-01', '2026-09-30');
+
+        $this->assertCount(1, $items);
+        $this->assertSame('PY001', $items[0]['teacher_code']);
+        $this->assertSame(6000000.0, $items[0]['tong_thu']);
+        $this->assertSame(100000.0, $items[0]['vi_pham']);
+        $this->assertSame(10.0, $items[0]['thue_rate']);
+        $this->assertSame(5900000.0, $items[0]['thuc_nhan']);
+    }
+
+    public function testSessionsByRange_ExcludesCancelledSessions()
+    {
+        $this->createSession('2026-09-05', 'finished');
+        $this->createSession('2026-09-06', 'cancelled');
+        $this->createSession('2026-09-07', 'upcoming');
+
+        $items = $this->svc->sessionsByRange($this->teacherId, '2026-09-01', '2026-09-30');
+
+        $this->assertCount(2, $items);
+    }
+
     public function testPreviousMonth_WrapsYearBoundary()
     {
         $this->assertSame('2026-08', $this->svc->previousMonth('2026-09'));
         $this->assertSame('2025-12', $this->svc->previousMonth('2026-01'));
+    }
+
+    public function testCloseMonth_MidMonthFeeChangeSplits4Sessions45PercentAnd4Sessions41Percent()
+    {
+        $classSvc = new \Lms\ClassService($this->db);
+        $classId = $classSvc->createClass(array(
+            'program_id'         => 1,
+            'subject_id'         => 1,
+            'teacher_id'         => $this->teacherId,
+            'class_type'         => 'one_on_one',
+            'name'               => 'Lớp hạ phí giữa tháng',
+            'price_per_session'  => 500000,
+            'teacher_percentage' => 45.00,
+            'total_sessions'     => 8,
+            'start_date'         => '2026-11-01',
+            'student_ids'        => array($this->studentId),
+        ));
+        $this->assertGreaterThan(0, $classId);
+
+        // 4 buổi đầu tháng đã dạy với mức 45%
+        $firstFourDates = array('2026-11-02', '2026-11-05', '2026-11-09', '2026-11-12');
+        foreach ($firstFourDates as $d) {
+            $this->db->insert('db_lms_sessions', array(
+                'class_id'           => $classId,
+                'teacher_id'         => $this->teacherId,
+                'session_date'       => $d,
+                'start_time'         => '17:30',
+                'end_time'           => '19:00',
+                'price_per_session'  => 500000,
+                'teacher_percentage' => 45.00,
+                'status'             => 'finished',
+            ));
+        }
+
+        // 4 buổi nửa cuối tháng (ban đầu sinh ở mức 45%)
+        $lastFourDates = array('2026-11-16', '2026-11-19', '2026-11-23', '2026-11-26');
+        $lastFourIds = array();
+        foreach ($lastFourDates as $d) {
+            $this->db->insert('db_lms_sessions', array(
+                'class_id'           => $classId,
+                'teacher_id'         => $this->teacherId,
+                'session_date'       => $d,
+                'start_time'         => '17:30',
+                'end_time'           => '19:00',
+                'price_per_session'  => 500000,
+                'teacher_percentage' => 45.00,
+                'status'             => 'upcoming',
+            ));
+            $lastFourIds[] = (int) $this->db->insertId;
+        }
+
+        // Admin hạ mức phí dịch vụ xuống 41% áp dụng từ 2026-11-15
+        $ok = $classSvc->updateClass($classId, array(
+            'program_id'         => 1,
+            'subject_id'         => 1,
+            'teacher_id'         => $this->teacherId,
+            'class_type'         => 'one_on_one',
+            'name'               => 'Lớp hạ phí giữa tháng',
+            'price_per_session'  => 500000,
+            'teacher_percentage' => 41.00,
+            'total_sessions'     => 8,
+            'start_date'         => '2026-11-15',
+            'student_ids'        => array($this->studentId),
+        ));
+        $this->assertTrue($ok);
+
+        // Sau đó GV dạy xong 4 buổi còn lại
+        foreach ($lastFourIds as $sid) {
+            $this->db->update('db_lms_sessions', array('status' => 'finished'), 'id = ?', array($sid));
+        }
+
+        // Chốt lương tháng 11/2026: 4 buổi * (500k * 45%) + 4 buổi * (500k * 41%) = 900k + 820k = 1.720.000
+        $stats = $this->svc->closeMonth($this->teacherId, '2026-11');
+        $this->assertSame(8, $stats['sessions_payable']);
+        $this->assertSame(1720000.0, $stats['salary']);
+
+        $rows = $this->salaryRows();
+        $this->assertCount(8, $rows);
+        for ($i = 0; $i < 4; $i++) {
+            $this->assertSame('225000.00', $rows[$i]['amount']);
+        }
+        for ($i = 4; $i < 8; $i++) {
+            $this->assertSame('205000.00', $rows[$i]['amount']);
+        }
+    }
+
+    // ===================== Ví Phí Dịch Vụ & Payment Batch (§6.6) =====================
+
+    public function testPayBatchAndUnpayByDateRange_IdempotentAndSupportsPartialConfirm()
+    {
+        $this->createSession('2026-10-05', 'finished');
+        $this->createSession('2026-10-10', 'finished');
+        $this->createSession('2026-10-20', 'finished');
+        $this->createSession('2026-10-25', 'finished');
+
+        // 4 buổi * (500k * 48%) = 4 * 240k = 960,000
+        $this->assertSame(960000.0, $this->svc->unpaidBalanceForTeacher($this->teacherId, true));
+
+        // Thêm điều chỉnh +100k thưởng và -40k phạt
+        $this->svc->bulkAddAdjustment(array($this->teacherId), 'bonus', 100000, 'Thưởng', 0, '2026-10-12');
+        $this->svc->bulkAddAdjustment(array($this->teacherId), 'penalty', 40000, 'Phạt', 0, '2026-10-14');
+        $this->assertSame(1020000.0, $this->svc->unpaidBalanceForTeacher($this->teacherId, false));
+
+        // Thanh toán đợt 1 (01/10 -> 15/10): 2 buổi (480k) + 100k - 40k = 540,000
+        $pay1 = $this->svc->payBatch(array($this->teacherId), '2026-10-01', '2026-10-15', 'Đợt 1', 0);
+        $this->assertTrue($pay1['ok']);
+        $this->assertSame(1, $pay1['paid_teachers']);
+        $this->assertSame(540000.0, $pay1['total_net_amount']);
+        $this->assertSame(480000.0, $this->svc->unpaidBalanceForTeacher($this->teacherId, false));
+        $this->assertSame('mixed', $this->svc->monthStatus($this->teacherId, '2026-10'));
+
+        // Bấm Thanh toán cùng khoảng ngày lần 2 -> không tạo batch trùng, không đổi số dư
+        $pay1Dup = $this->svc->payBatch(array($this->teacherId), '2026-10-01', '2026-10-15', 'Đợt 1 dup', 0);
+        $this->assertSame(0, $pay1Dup['paid_teachers']);
+        $this->assertSame(480000.0, $this->svc->unpaidBalanceForTeacher($this->teacherId, false));
+
+        // Bấm Thêm tiền chọn lẻ ngày (01/10 -> 06/10) -> yêu cầu xác nhận hoàn tác cả batch
+        $unpayPartial = $this->svc->unpayByDateRange(array($this->teacherId), '2026-10-01', '2026-10-06', 'Hoàn tác lẻ', 0, false);
+        $this->assertFalse($unpayPartial['ok']);
+        $this->assertTrue(!empty($unpayPartial['needs_confirm']));
+
+        // Xác nhận hoàn tác toàn bộ batch -> số dư về lại 1,020,000
+        $unpayOk = $this->svc->unpayByDateRange(array($this->teacherId), '2026-10-01', '2026-10-06', 'Hoàn tác cả batch', 0, true);
+        $this->assertTrue($unpayOk['ok']);
+        $this->assertSame(540000.0, $unpayOk['reverted_amount']);
+        $this->assertSame(1020000.0, $this->svc->unpaidBalanceForTeacher($this->teacherId, false));
+
+        // Bấm Thêm tiền lần 2 cùng khoảng ngày -> không cộng trùng tiền
+        $unpayDup = $this->svc->unpayByDateRange(array($this->teacherId), '2026-10-01', '2026-10-15', 'Hoàn tác lần 2', 0, true);
+        $this->assertSame(0, $unpayDup['reverted_transactions']);
+        $this->assertSame(1020000.0, $this->svc->unpaidBalanceForTeacher($this->teacherId, false));
     }
 }

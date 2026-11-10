@@ -252,10 +252,25 @@ class LibraryServiceTest extends LmsTestCase
         $this->assertTrue($this->svc->canTeacherDownloadFile($id, $this->teacher1));
         $this->assertTrue($this->svc->updateFile($id, array(
             'title' => 'Restricted slides',
+            'file_url' => 'https://masterstudy.edu.vn/restricted-slides',
+            'file_type' => LibraryService::detectFileType('https://masterstudy.edu.vn/restricted-slides', '[Sách]'),
             'is_downloadable' => 0,
         )));
         $this->assertFalse($this->svc->canTeacherDownloadFile($id, $this->teacher1));
-        $this->assertSame(0, (int) $this->svc->getFile($id)['is_downloadable']);
+        $updated = $this->svc->getFile($id);
+        $this->assertSame(0, (int) $updated['is_downloadable']);
+        $this->assertSame('https://masterstudy.edu.vn/restricted-slides', $updated['file_url']);
+        $this->assertSame('link', $updated['file_type']);
+        $this->assertSame($this->class1, (int) $updated['class_id']);
+    }
+
+    public function testDetectFileTypeByExtensionAndCategory()
+    {
+        $this->assertSame('internal', LibraryService::detectFileType('library/handbook.pdf', '[Nội bộ]'));
+        $this->assertSame('pdf', LibraryService::detectFileType('library/review.pdf', '[Review]'));
+        $this->assertSame('doc', LibraryService::detectFileType('library/test.docx', '[Test]'));
+        $this->assertSame('xls', LibraryService::detectFileType('library/matrix.xlsx', '[Test]'));
+        $this->assertSame('link', LibraryService::detectFileType('https://example.com/book', '[Sách]'));
     }
 
     public function testFormatSize()

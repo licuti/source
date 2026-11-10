@@ -18,7 +18,8 @@ $actionUrl = admin_url(array_filter([
 ]));
 $backUrl = admin_url(array_filter([
     'p' => $MODULE, 'a' => 'man',
-    'parent' => $parent ?: null,
+    'id_loai' => $parent ?: null,
+    'scroll_item' => $isEdit ? $editId : null,
 ]));
 ?>
 

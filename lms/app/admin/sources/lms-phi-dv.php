@@ -1,15 +1,17 @@
 <?php
 /**
- * Admin LMS — Thống kê phí dịch vụ (ADM-07, Phase 2).
+ * Admin LMS — Thống kê phí dịch vụ (ADM-07).
  *
- * SRS §ADM-07: thống kê phí DV theo tháng + xuất Excel (CSV) + duyệt giao dịch.
+ * Mockup: Tai-lieu-phat-trien/admin/Thống kê phí dịch vụ*.png.
+ *  - Tra cứu theo mã GV + khoảng thời gian (mặc định tháng hiện tại).
+ *  - Hiển thị ký quỹ / vi phạm / phí cộng thêm / thuế + bảng giao dịch.
+ *  - Xuất CSV: tất cả GV, phí dịch vụ 1 GV, số buổi dạy 1 GV.
  *
  * Action:
- *  - 'man'          (GET)  → danh sách GV × tháng (tổng thu/phạt/thưởng/thuế/thực nhận + status).
- *  - 'chi-tiet'     (GET)  → 1 GV × tháng: bảng transactions + form thêm điều chỉnh + nút duyệt.
- *  - 'them-dieu-chinh' (POST) → thêm penalty/bonus/adjustment (CSRF + addAdjustment + PRG).
- *  - 'duyet'        (POST) → advances status draft→pending→paid (CSRF + setMonthStatus + PRG).
- *  - 'xuat'         (GET)  → CSV tháng (toàn bộ GV), không dùng template.
+ *  - ''             (GET)  → form tra cứu + kết quả 1 GV.
+ *  - 'xuat-tat-ca'  (GET)  → CSV tổng hợp phí DV mọi GV trong khoảng ngày.
+ *  - 'xuat-phi-dv'  (GET)  → CSV giao dịch phí DV của 1 GV.
+ *  - 'xuat-buoi-day' (GET) → CSV số buổi dạy của 1 GV.
  *
  * Router đã check auth gate + quyền view; action POST thêm guard edit (§3.4).
  * KHÔNG echo HTML (PRG). PHP 7.3 compatible.
@@ -24,56 +26,105 @@ $user    = lms_current_user();
 $alias   = 'lms-phi-dv';
 $paySvc  = new \Lms\PayrollService($d);
 
-$action = isset($a) ? (string) $a : 'man';
+$action = (isset($a) && $a !== '') ? (string) $a : (isset($_GET['a']) ? (string) $_GET['a'] : '');
 
 switch ($action) {
     case 'chi-tiet':
-        lms_form_guard($d, $user, $alias, 'view', 'admin');
-        lpd_detail($paySvc);
-        break;
-
     case 'them-dieu-chinh':
-        lms_form_guard($d, $user, $alias, 'edit', 'admin');
-        lpd_add_adjustment($paySvc);
-        break;
-
     case 'duyet':
-        lms_form_guard($d, $user, $alias, 'edit', 'admin');
-        lpd_approve($paySvc);
+        header('Location: ' . lms_url($alias));
+        exit;
+
+    case 'xuat-tat-ca':
+        lms_form_guard($d, $user, $alias, 'view', 'admin');
+        lpd_export_all($paySvc);
         break;
 
-    case 'xuat':
+    case 'xuat-phi-dv':
         lms_form_guard($d, $user, $alias, 'view', 'admin');
-        lpd_export_csv($paySvc);
+        lpd_export_teacher($paySvc);
+        break;
+
+    case 'xuat-buoi-day':
+        lms_form_guard($d, $user, $alias, 'view', 'admin');
+        lpd_export_sessions($paySvc);
         break;
 
     default:
-        lpd_list($paySvc);
+        lpd_report($paySvc);
         break;
 }
 
 // ===================== Helpers =====================
 
 /**
- * Tháng mặc định = tháng trước (ngày 1 hàng tháng chốt tháng vừa qua).
+ * Khoảng ngày mặc định = tháng hiện tại.
  *
- * @return string 'Y-m'
+ * @return array array('Y-m-01', 'Y-m-t')
  */
-function lpd_default_month()
+function lpd_default_range()
 {
-    $ts = strtotime('first day of previous month');
-    return $ts !== false ? date('Y-m', $ts) : date('Y-m');
+    return array(date('Y-m-01'), date('Y-m-t'));
 }
 
 /**
- * Tháng hợp lệ từ query, mặc định tháng trước.
+ * @param string $date
+ * @return bool
+ */
+function lpd_valid_date($date)
+{
+    $date = (string) $date;
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+        return false;
+    }
+    $parsed = DateTime::createFromFormat('!Y-m-d', $date);
+    return $parsed !== false && $parsed->format('Y-m-d') === $date;
+}
+
+/**
+ * Khoảng ngày hợp lệ từ query (tự đảo nếu nhập ngược), mặc định tháng hiện tại.
+ *
+ * @return array array($dateFrom, $dateTo)
+ */
+function lpd_range_from_query()
+{
+    list($defaultFrom, $defaultTo) = lpd_default_range();
+
+    $from = isset($_GET['date_from']) ? trim((string) $_GET['date_from']) : '';
+    $to   = isset($_GET['date_to']) ? trim((string) $_GET['date_to']) : '';
+
+    if (!lpd_valid_date($from)) {
+        $from = $defaultFrom;
+    }
+    if (!lpd_valid_date($to)) {
+        $to = $defaultTo;
+    }
+    if ($from > $to) {
+        $tmp  = $from;
+        $from = $to;
+        $to   = $tmp;
+    }
+
+    return array($from, $to);
+}
+
+/**
+ * Mã GV từ query.
  *
  * @return string
  */
-function lpd_month_from_query()
+function lpd_teacher_code_from_query()
 {
-    $month = isset($_GET['month']) ? (string) $_GET['month'] : '';
-    return preg_match('/^\d{4}-\d{2}$/', $month) ? $month : lpd_default_month();
+    return isset($_GET['teacher_code']) ? trim((string) $_GET['teacher_code']) : '';
+}
+
+/**
+ * @param float|int $value
+ * @return string 243000 → "243,000"
+ */
+function lpd_money($value)
+{
+    return number_format((float) $value, 0, ',', ',');
 }
 
 /**
@@ -91,28 +142,10 @@ function lpd_status_label($status)
             return 'Chờ duyệt';
         case 'paid':
             return 'Đã thanh toán';
+        case 'mixed':
+            return 'Thanh toán một phần';
         default:
             return '—';
-    }
-}
-
-/**
- * Badge CSS cho status.
- *
- * @param string $status
- * @return string
- */
-function lpd_status_badge($status)
-{
-    switch ((string) $status) {
-        case 'draft':
-            return 'lms-badge-secondary';
-        case 'pending':
-            return 'lms-badge-warning';
-        case 'paid':
-            return 'lms-badge-success';
-        default:
-            return 'lms-badge-secondary';
     }
 }
 
@@ -135,157 +168,68 @@ function lpd_type_label($type)
     return isset($labels[$type]) ? $labels[$type] : $type;
 }
 
-// ===================== Danh sách GV × tháng =====================
-
-function lpd_list(\Lms\PayrollService $paySvc)
+/**
+ * Thời gian giao dịch: ngày + giờ buổi học (nếu có).
+ *
+ * @param array $t
+ * @return string
+ */
+function lpd_time_label(array $t)
 {
-    global $title, $template, $items, $total, $totalPages, $page,
-           $filterMonth, $canEdit, $d, $user, $alias;
-
-    $filterMonth = lpd_month_from_query();
-    $page        = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
-    $perPage     = 20;
-
-    $res = $paySvc->monthSummaryAll($filterMonth, $page, $perPage);
-
-    $items      = $res['items'];
-    $total      = (int) $res['total'];
-    $totalPages = $perPage > 0 ? (int) ceil($total / $perPage) : 1;
-
-    $canEdit = lms_check_permission($d, $user, $alias, 'edit', 'admin');
-
-    $title    = 'Thống kê phí dịch vụ';
-    $template = 'lms-phi-dv/hienthi';
+    $date = isset($t['transaction_date']) ? (string) $t['transaction_date'] : '';
+    $time = !empty($t['start_time']) ? substr((string) $t['start_time'], 0, 5) : '';
+    return trim($date . ' ' . $time);
 }
 
-// ===================== Chi tiết 1 GV × tháng =====================
-
-function lpd_detail(\Lms\PayrollService $paySvc)
+/**
+ * Nội dung giao dịch hiển thị (khớp mockup).
+ *
+ * @param array $t
+ * @return string
+ */
+function lpd_description(array $t)
 {
-    global $title, $template, $teacherId, $teacher, $month, $summary,
-           $transactions, $errors, $canEdit, $d, $user, $alias;
+    $type = isset($t['type']) ? (string) $t['type'] : '';
+    $note = isset($t['reason']) ? trim((string) $t['reason']) : '';
 
-    $errors = array();
-
-    $teacherId = isset($_GET['teacher_id']) ? (int) $_GET['teacher_id'] : 0;
-    $month     = lpd_month_from_query();
-
-    if ($teacherId <= 0) {
-        lms_flash('error', 'Thiếu giáo viên.');
-        header('Location: ' . lms_url($alias));
-        exit;
+    if ($type === 'salary_session') {
+        $classCode = isset($t['class_code']) ? trim((string) $t['class_code']) : '';
+        if ($classCode !== '') {
+            return 'Bạn đã nhận được ' . lpd_money($t['amount']) . ' đ khi đã hoàn thành bài học cho ' . $classCode;
+        }
     }
 
-    $teacher = $d->safeFetchOne(
-        'select user_id, teacher_code, full_name from db_lms_teachers where user_id = ? limit 1',
-        array($teacherId)
-    );
-    if (empty($teacher) || !is_array($teacher)) {
-        lms_flash('error', 'Giáo viên không tồn tại.');
-        header('Location: ' . lms_url($alias));
-        exit;
+    if ($note !== '') {
+        return $note;
     }
 
-    $summary       = $paySvc->monthSummary($teacherId, $month);
-    $transactions  = $paySvc->listTransactions($teacherId, $month);
-    $canEdit       = lms_check_permission($d, $user, $alias, 'edit', 'admin');
-
-    $title    = 'Chi tiết phí dịch vụ — ' . $teacher['teacher_code'];
-    $template = 'lms-phi-dv/chitiet';
+    return lpd_type_label($type);
 }
 
-// ===================== Thêm điều chỉnh (POST → PRG) =====================
-
-function lpd_add_adjustment(\Lms\PayrollService $paySvc)
+/**
+ * Chống CSV injection cho các ô dạng chuỗi.
+ *
+ * @param array $row
+ * @return array
+ */
+function lpd_csv_row(array $row)
 {
-    global $alias, $user;
-
-    if (!lms_csrf_verify()) {
-        lms_flash('error', 'Phiên làm việc không hợp lệ. Vui lòng tải lại trang và thử lại.');
-        header('Location: ' . lms_url($alias));
-        exit;
+    foreach ($row as $i => $cell) {
+        if (is_string($cell) && preg_match('/^[\s]*[=+@-]/', $cell)) {
+            $row[$i] = "'" . $cell;
+        }
     }
-
-    $teacherId = isset($_POST['teacher_id']) ? (int) $_POST['teacher_id'] : 0;
-    $month     = isset($_POST['month']) ? (string) $_POST['month'] : '';
-    $type      = isset($_POST['type']) ? (string) $_POST['type'] : '';
-    $amount    = isset($_POST['amount']) ? (string) $_POST['amount'] : '';
-    $note      = isset($_POST['note']) ? trim((string) $_POST['note']) : '';
-    $actorId   = isset($user['id']) ? (int) $user['id'] : 0;
-
-    if ($teacherId <= 0 || !preg_match('/^\d{4}-\d{2}$/', $month)) {
-        lms_flash('error', 'Dữ liệu không hợp lệ.');
-        header('Location: ' . lms_url($alias));
-        exit;
-    }
-
-    // amount nhập dạng "500000" hoặc "-500000" (điều chỉnh giữ dấu).
-    $amountNorm = str_replace(array(',', ' '), '', $amount);
-    if (!is_numeric($amountNorm)) {
-        lms_flash('error', 'Số tiền không hợp lệ.');
-        header('Location: ' . lms_url($alias, 'chi-tiet', array('teacher_id' => $teacherId, 'month' => $month)));
-        exit;
-    }
-
-    $id = $paySvc->addAdjustment($teacherId, $month, $type, (float) $amountNorm, $note, $actorId);
-
-    if ($id !== null) {
-        lms_flash('success', 'Đã thêm điều chỉnh.');
-        header('Location: ' . lms_url($alias, 'chi-tiet', array('teacher_id' => $teacherId, 'month' => $month)));
-        exit;
-    }
-
-    $errors = $paySvc->errors();
-    lms_flash('error', !empty($errors) ? reset($errors) : 'Không thể thêm điều chỉnh.');
-    header('Location: ' . lms_url($alias, 'chi-tiet', array('teacher_id' => $teacherId, 'month' => $month)));
-    exit;
+    return $row;
 }
 
-// ===================== Duyệt (POST → PRG) =====================
-
-function lpd_approve(\Lms\PayrollService $paySvc)
+/**
+ * Mở output CSV (UTF-8 BOM) và trả về stream.
+ *
+ * @param string $filename
+ * @return resource|null
+ */
+function lpd_csv_open($filename)
 {
-    global $alias, $user;
-
-    if (!lms_csrf_verify()) {
-        lms_flash('error', 'Phiên làm việc không hợp lệ. Vui lòng tải lại trang và thử lại.');
-        header('Location: ' . lms_url($alias));
-        exit;
-    }
-
-    $teacherId = isset($_POST['teacher_id']) ? (int) $_POST['teacher_id'] : 0;
-    $month     = isset($_POST['month']) ? (string) $_POST['month'] : '';
-    $newStatus = isset($_POST['status']) ? (string) $_POST['status'] : '';
-
-    if ($teacherId <= 0 || !preg_match('/^\d{4}-\d{2}$/', $month)) {
-        lms_flash('error', 'Dữ liệu không hợp lệ.');
-        header('Location: ' . lms_url($alias));
-        exit;
-    }
-
-    if ($paySvc->setMonthStatus($teacherId, $month, $newStatus)) {
-        lms_flash('success', 'Đã chuyển sang "' . lpd_status_label($newStatus) . '".');
-    } else {
-        $errors = $paySvc->errors();
-        lms_flash('error', !empty($errors) ? reset($errors) : 'Không thể duyệt.');
-    }
-
-    header('Location: ' . lms_url($alias, 'chi-tiet', array('teacher_id' => $teacherId, 'month' => $month)));
-    exit;
-}
-
-// ===================== Xuất CSV (không template) =====================
-
-function lpd_export_csv(\Lms\PayrollService $paySvc)
-{
-    global $alias;
-
-    $month = lpd_month_from_query();
-
-    $res = $paySvc->monthSummaryAll($month, 1, 1000);
-
-    $filename = 'lms-phi-dv-' . $month . '.csv';
-
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="' . $filename . '"');
     header('Cache-Control: no-store, no-cache, must-revalidate');
@@ -294,34 +238,179 @@ function lpd_export_csv(\Lms\PayrollService $paySvc)
     echo "\xEF\xBB\xBF";
 
     $out = fopen('php://output', 'w');
-    if ($out === false) {
+    return $out === false ? null : $out;
+}
+
+/**
+ * Tên file an toàn từ mã GV.
+ *
+ * @param string $value
+ * @return string
+ */
+function lpd_file_slug($value)
+{
+    return preg_replace('/[^A-Za-z0-9_-]/', '', (string) $value);
+}
+
+// ===================== Tra cứu + kết quả =====================
+
+function lpd_report(\Lms\PayrollService $paySvc)
+{
+    global $title, $template, $teacherCode, $dateFrom, $dateTo, $teacher,
+           $transactions, $report, $canEdit, $d, $user, $alias;
+
+    list($dateFrom, $dateTo) = lpd_range_from_query();
+    $teacherCode = lpd_teacher_code_from_query();
+
+    $teacher      = $teacherCode !== '' ? $paySvc->findTeacherByCode($teacherCode) : array();
+    $transactions = array();
+    $report       = array(
+        'count'         => 0,
+        'tong_thu'      => 0.0,
+        'ky_quy'        => 0.0,
+        'vi_pham'       => 0.0,
+        'phi_cong_them' => 0.0,
+        'thue'          => 0.0,
+        'thue_rate'     => 0.0,
+        'thuc_nhan'     => 0.0,
+    );
+
+    if (!empty($teacher)) {
+        $transactions = $paySvc->transactionsByRange($teacher['user_id'], $dateFrom, $dateTo);
+        $report       = $paySvc->feeSummary(
+            $transactions,
+            (int) $teacher['is_commit_08'] === 1
+        );
+    }
+
+    $canEdit = lms_check_permission($d, $user, $alias, 'edit', 'admin');
+
+    $title    = 'Thống kê phí dịch vụ';
+    $template = 'lms-phi-dv/hienthi';
+}
+
+// ===================== Xuất CSV =====================
+
+function lpd_export_all(\Lms\PayrollService $paySvc)
+{
+    list($dateFrom, $dateTo) = lpd_range_from_query();
+    $items = $paySvc->allFeeSummaries($dateFrom, $dateTo);
+
+    $out = lpd_csv_open('phi-dich-vu-tat-ca-' . $dateFrom . '-den-' . $dateTo . '.csv');
+    if ($out === null) {
         exit;
     }
 
     fputcsv($out, array(
-        'Ma GV',
-        'Ten giao vien',
-        'Thang',
-        'Tong thu',
-        'Tong phat',
-        'Tong thuong',
-        'Thue TNCN',
-        'Thuc nhan',
-        'Trang thai',
+        'Mã GV',
+        'Tên giáo viên',
+        'Số điện thoại',
+        'Email',
+        'Tổng thu',
+        'Ký quỹ',
+        'Vi phạm',
+        'Phí DV cộng thêm',
+        'Thuế',
+        'Thực nhận',
     ));
 
-    foreach ($res['items'] as $r) {
-        fputcsv($out, array(
+    foreach ($items as $r) {
+        fputcsv($out, lpd_csv_row(array(
             $r['teacher_code'],
             $r['full_name'],
-            $month,
-            number_format((float) $r['tong_thu'], 2, '.', ''),
-            number_format((float) $r['tong_phat'], 2, '.', ''),
-            number_format((float) $r['tong_thuong'], 2, '.', ''),
-            number_format((float) $r['thue'], 2, '.', ''),
-            number_format((float) $r['thuc_nhan'], 2, '.', ''),
-            lpd_status_label($r['status']),
-        ));
+            $r['phone'],
+            $r['email'],
+            $r['tong_thu'],
+            $r['ky_quy'],
+            $r['vi_pham'],
+            $r['phi_cong_them'],
+            $r['thue'],
+            $r['thuc_nhan'],
+        )));
+    }
+
+    fclose($out);
+    exit;
+}
+
+function lpd_export_teacher(\Lms\PayrollService $paySvc)
+{
+    global $alias;
+
+    list($dateFrom, $dateTo) = lpd_range_from_query();
+    $teacherCode = lpd_teacher_code_from_query();
+
+    $teacher = $paySvc->findTeacherByCode($teacherCode);
+    if (empty($teacher)) {
+        lms_flash('error', 'Không tìm thấy giáo viên "' . $teacherCode . '".');
+        header('Location: ' . lms_url($alias, '', array(
+            'teacher_code' => $teacherCode,
+            'date_from'    => $dateFrom,
+            'date_to'      => $dateTo,
+        )));
+        exit;
+    }
+
+    $items = $paySvc->transactionsByRange($teacher['user_id'], $dateFrom, $dateTo);
+
+    $out = lpd_csv_open('phi-dich-vu-' . lpd_file_slug($teacher['teacher_code']) . '.csv');
+    if ($out === null) {
+        exit;
+    }
+
+    fputcsv($out, array('Thời gian', 'Loại', 'Số tiền', 'Nội dung', 'Trạng thái'));
+
+    foreach ($items as $t) {
+        fputcsv($out, lpd_csv_row(array(
+            lpd_time_label($t),
+            lpd_type_label($t['type']),
+            (float) $t['amount'],
+            lpd_description($t),
+            lpd_status_label($t['status']),
+        )));
+    }
+
+    fclose($out);
+    exit;
+}
+
+function lpd_export_sessions(\Lms\PayrollService $paySvc)
+{
+    global $alias;
+
+    list($dateFrom, $dateTo) = lpd_range_from_query();
+    $teacherCode = lpd_teacher_code_from_query();
+
+    $teacher = $paySvc->findTeacherByCode($teacherCode);
+    if (empty($teacher)) {
+        lms_flash('error', 'Không tìm thấy giáo viên "' . $teacherCode . '".');
+        header('Location: ' . lms_url($alias, '', array(
+            'teacher_code' => $teacherCode,
+            'date_from'    => $dateFrom,
+            'date_to'      => $dateTo,
+        )));
+        exit;
+    }
+
+    $items = $paySvc->sessionsByRange($teacher['user_id'], $dateFrom, $dateTo);
+
+    $out = lpd_csv_open('so-buoi-day-' . lpd_file_slug($teacher['teacher_code']) . '.csv');
+    if ($out === null) {
+        exit;
+    }
+
+    fputcsv($out, array('Ngày', 'Giờ bắt đầu', 'Giờ kết thúc', 'Mã lớp', 'Tên lớp', 'Trạng thái', 'Ghi chú'));
+
+    foreach ($items as $s) {
+        fputcsv($out, lpd_csv_row(array(
+            $s['session_date'],
+            substr((string) $s['start_time'], 0, 5),
+            substr((string) $s['end_time'], 0, 5),
+            $s['class_code'],
+            $s['class_name'],
+            $s['status'],
+            (string) $s['lesson_summary'],
+        )));
     }
 
     fclose($out);

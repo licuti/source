@@ -55,6 +55,22 @@ class UserServiceTest extends LmsTestCase
         $this->assertArrayHasKey('password', $this->svc->errors());
     }
 
+    public function testCreateUserGeneratesTemporaryPasswordAndRequiresChange()
+    {
+        $id = $this->svc->createUser('hv-auto', '', 'student');
+        $this->assertGreaterThan(0, $id);
+
+        $temporaryPassword = $this->svc->lastGeneratedPassword();
+        $this->assertSame(10, strlen($temporaryPassword));
+        $this->assertTrue($this->svc->authenticate('hv-auto', $temporaryPassword, 'student')['ok']);
+
+        $row = $this->db->safeFetchOne(
+            'select must_change_password from db_lms_users where id = ?',
+            array($id)
+        );
+        $this->assertSame(1, (int) $row['must_change_password']);
+    }
+
     public function testCreateUserRejectsDuplicateUsername()
     {
         $this->svc->createUser('hv03', 'matkhau123', 'student');
@@ -121,9 +137,17 @@ class UserServiceTest extends LmsTestCase
     public function testChangePassword()
     {
         $id = $this->svc->createUser('hv04', 'matkhau123', 'student');
+        $this->db->update('db_lms_users', array('must_change_password' => 1), 'id = ?', array($id));
+        $this->assertTrue($this->svc->verifyCurrentPassword($id, 'matkhau123'));
+        $this->assertFalse($this->svc->verifyCurrentPassword($id, 'wrong-password'));
         $this->assertTrue($this->svc->changePassword($id, 'matkhaumoi456'));
         $res = $this->svc->authenticate('hv04', 'matkhaumoi456', 'student');
         $this->assertTrue($res['ok']);
+        $row = $this->db->safeFetchOne(
+            'select must_change_password from db_lms_users where id = ?',
+            array($id)
+        );
+        $this->assertSame(0, (int) $row['must_change_password']);
     }
 
     public function testGeneratePasswordLengthAndUniqueness()

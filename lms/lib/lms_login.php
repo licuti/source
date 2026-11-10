@@ -2,8 +2,7 @@
 /**
  * Trang đăng nhập dùng chung cho 3 portal (T5).
  *
- * GET  → render form trang đơn (KHÔNG dùng layout chính — mockup không có login page,
- *        tự thiết kế tối giản cùng tông cam, R5).
+ * GET  → render form portal (mockup Tai-lieu-phat-trien/login/Đăng nhập admin.png)
  * POST → lms_csrf_verify() → UserService::authenticate($u, $p, _LMS_PORTAL):
  *        - ok            → set $_SESSION['lms_user'] + remember cookie (nếu check)
  *                         → flash success + redirect dashboard
@@ -26,11 +25,14 @@ $d       = lms_db();
 $userSvc = new \Lms\UserService($d);
 
 $portalLabel = lms_portal_label(_LMS_PORTAL);
-$portalIcon  = lms_portal_icon(_LMS_PORTAL);
 
-// Đã đăng nhập đúng portal → thẳng dashboard
+// Đã đăng nhập đúng portal → thẳng dashboard (hoặc trang đổi mật khẩu nếu bị ép)
 $cur = lms_current_user();
 if (is_array($cur) && !empty($cur['role']) && $cur['role'] === _LMS_PORTAL) {
+    if (!empty($cur['must_change_password'])) {
+        header('Location: ' . lms_url('', 'doi-mat-khau'));
+        exit;
+    }
     header('Location: ' . lms_url(''));
     exit;
 }
@@ -61,6 +63,13 @@ if (isset($_SERVER['REQUEST_METHOD']) && (string) $_SERVER['REQUEST_METHOD'] ===
             lms_set_remember_cookie((int) $u['id'], $d);
         }
 
+        // BR-AUTH-01: chưa đổi mật khẩu lần đầu → thẳng trang đổi mật khẩu
+        if (!empty($u['must_change_password'])) {
+            lms_flash('warning', 'Tài khoản của bạn cần đổi mật khẩu trước khi sử dụng hệ thống.');
+            header('Location: ' . lms_url('', 'doi-mat-khau'));
+            exit;
+        }
+
         lms_flash('success', 'Đăng nhập thành công. Chào mừng bạn đến với MasterStudy!');
         header('Location: ' . lms_url(''));
         exit;
@@ -82,68 +91,96 @@ if (isset($_SERVER['REQUEST_METHOD']) && (string) $_SERVER['REQUEST_METHOD'] ===
         }
     }
 }
+$loginLabel = _LMS_PORTAL === 'admin' ? 'Admin đăng nhập' : $portalLabel . ' đăng nhập';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <?php lms_head_assets('Đăng nhập — Portal ' . $portalLabel); ?>
 </head>
-<body class="lms-login-page">
+<body class="lms-login-page lms-login-page--portal">
 <?php lms_flash_data_div(); ?>
 
-<div class="lms-login-card">
-    <div class="lms-login-logo">
-        <span class="lms-login-brand"><i class="fa-solid fa-graduation-cap me-1"></i>MasterStudy</span>
-        <span class="lms-login-sub">Giáo viên riêng của bạn</span>
+<div class="lms-auth-shell lms-auth-shell--login">
+    <div class="lms-auth-logo">
+        <span class="lms-auth-brand"><i class="fa-solid fa-graduation-cap me-1"></i>MasterStudy</span>
+        <span class="lms-auth-sub">Giáo viên riêng của bạn</span>
     </div>
 
-    <div class="lms-login-portal-label">
-        <span class="lms-portal-tag"><i class="<?= e($portalIcon) ?> me-1"></i> Khu vực <?= e($portalLabel) ?></span>
-    </div>
+    <h1 class="lms-auth-title">
+        <img class="lms-auth-spark" src="<?= e(lms_asset_url('images/login/spark-left.svg')) ?>"
+             alt="" aria-hidden="true">
+        <span>Chào mừng <span class="lms-accent">bạn!</span></span>
+        <img class="lms-auth-spark" src="<?= e(lms_asset_url('images/login/spark-right.svg')) ?>"
+             alt="" aria-hidden="true">
+    </h1>
 
-    <?php if ($error !== ''): ?>
-        <div class="alert alert-danger" role="alert">
-            <i class="fa-solid fa-circle-exclamation me-1"></i>
-            <?= e($error) ?>
-            <?php if ($wrongPortal !== ''): ?>
-                <div class="mt-2">
-                    <a href="<?= e($wrongPortalUrl) ?>" class="lms-link">
-                        <i class="fa-solid fa-arrow-right-to-bracket me-1"></i>
-                        Đi tới portal <?= e($wrongPortal) ?>
-                    </a>
+    <div class="lms-login-card lms-login-card--portal">
+        <?php if ($error !== ''): ?>
+            <div class="alert alert-danger" role="alert">
+                <i class="fa-solid fa-circle-exclamation me-1"></i>
+                <?= e($error) ?>
+                <?php if ($wrongPortal !== ''): ?>
+                    <div class="mt-2">
+                        <a href="<?= e($wrongPortalUrl) ?>" class="lms-link">
+                            <i class="fa-solid fa-arrow-right-to-bracket me-1"></i>
+                            Đi tới portal <?= e($wrongPortal) ?>
+                        </a>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="post" action="<?= e(lms_url('', 'login')) ?>" autocomplete="on">
+            <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
+
+            <div class="mb-3">
+                <label for="lms-username" class="lms-auth-label"><?= e($loginLabel) ?></label>
+                <input type="text" class="form-control lms-auth-input" id="lms-username" name="username"
+                       value="<?= e($username) ?>" required autofocus>
+            </div>
+
+            <div class="mb-2">
+                <label for="lms-password" class="lms-auth-label">Password</label>
+                <div class="lms-password-wrap">
+                    <input type="password" class="form-control lms-auth-input" id="lms-password" name="password" required>
+                    <button type="button" class="lms-password-toggle" id="lms-password-toggle"
+                            aria-label="Hiện/ẩn mật khẩu">
+                        <i class="fa-regular fa-eye-slash"></i>
+                    </button>
                 </div>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
+            </div>
 
-    <form method="post" action="<?= e(lms_url('', 'login')) ?>" autocomplete="on">
-        <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
+            <div class="lms-auth-options">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="lms-remember" name="remember" value="1">
+                    <label class="form-check-label" for="lms-remember">Ghi nhớ đăng nhập</label>
+                </div>
+                <a class="lms-auth-forgot" href="<?= e(lms_url('', 'quen-mat-khau')) ?>">Quên mật khẩu?</a>
+            </div>
 
-        <div class="mb-3">
-            <label for="lms-username" class="form-label">Tên đăng nhập</label>
-            <input type="text" class="form-control" id="lms-username" name="username"
-                   value="<?= e($username) ?>" required autofocus>
-        </div>
-
-        <div class="mb-3">
-            <label for="lms-password" class="form-label">Mật khẩu</label>
-            <input type="password" class="form-control" id="lms-password" name="password" required>
-        </div>
-
-        <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="lms-remember" name="remember" value="1">
-            <label class="form-check-label" for="lms-remember">Ghi nhớ đăng nhập</label>
-        </div>
-
-        <button type="submit" class="btn btn-lms w-100 py-2">
-            <i class="fa-solid fa-right-to-bracket me-1"></i> Đăng nhập
-        </button>
-
-        <div class="lms-login-footer-note">
-            Quên mật khẩu? Liên hệ trung tâm: <strong>0903861248</strong>
-        </div>
-    </form>
+            <button type="submit" class="btn btn-lms w-100 lms-auth-submit">Đăng nhập</button>
+        </form>
+    </div>
 </div>
+
+<script>
+(function () {
+    var input = document.getElementById('lms-password');
+    var toggle = document.getElementById('lms-password-toggle');
+    if (!input || !toggle) {
+        return;
+    }
+    toggle.addEventListener('click', function () {
+        var show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        var icon = toggle.querySelector('i');
+        if (icon) {
+            icon.className = show ? 'fa-regular fa-eye' : 'fa-regular fa-eye-slash';
+        }
+    });
+})();
+</script>
 
 <?php lms_footer_assets(); ?>
 </body>

@@ -16,12 +16,14 @@ if (!defined('_source')) {
     die('Error');
 }
 
-$d       = lms_db();
-$user    = lms_current_user();
-$alias   = 'lms-giao-vien';
-$userSvc = new \Lms\UserService($d);
-
-$action = isset($a) ? (string) $a : 'man';
+// Redirect module cũ sang module gộp Quản lý tài khoản
+$tabAction = (isset($a) && $a === 'them') ? 'them-giao-vien' : ((isset($a) && $a === 'sua') ? 'sua-giao-vien' : 'man');
+$redirectParams = array('tab' => 'giao-vien');
+if (isset($_GET['id'])) {
+    $redirectParams['id'] = (int) $_GET['id'];
+}
+header('Location: ' . lms_url('lms-tai-khoan', $tabAction, $redirectParams));
+exit;
 
 switch ($action) {
     case 'them':
@@ -159,7 +161,13 @@ function lms_giao_vien_form(\Lms\UserService $userSvc, $isEdit)
         }
 
         if ($ok) {
-            lms_flash('success', $isEdit ? 'Đã cập nhật hồ sơ giáo viên.' : 'Đã tạo tài khoản giáo viên mới.');
+            $message = $isEdit ? 'Đã cập nhật hồ sơ giáo viên.' : 'Đã tạo tài khoản giáo viên mới.';
+            $generatedPassword = $isEdit ? '' : $userSvc->lastGeneratedPassword();
+            if ($generatedPassword !== '') {
+                $message .= ' Mật khẩu tạm: ' . $generatedPassword
+                    . '. Giáo viên cần đổi mật khẩu ở lần đăng nhập đầu tiên.';
+            }
+            lms_flash('success', $message);
             header('Location: ' . lms_url($alias));
             exit;
         }

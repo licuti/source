@@ -7,6 +7,7 @@
 	define("_coppy_right", $info['coppy_right']);
 
 	define("_website",  $info['website']);
+	define("_web_page",  $info['website'] ?? URLPATH);
 	define("_ten_cong_ty",  $info['company']);
 	define("_dia_chi",  $info['address']);
 	define("_email",  $info['email']);

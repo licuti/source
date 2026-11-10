@@ -4,11 +4,18 @@
     if (!function_exists('renderMenuItem')) {
         function renderMenuItem($item, $com, $level = 1) {
             
-            $label = $item['label'] ?? $item['ten'] ?? ''; // Ưu tiên label mới, fallback về tên cũ
-            $url   = $item['url'] ?? '';
+            $label     = $item['label'] ?? $item['ten'] ?? ''; // Ưu tiên label mới, fallback về tên cũ
             $sub_label = $item['sub_label'] ?? '';
+            $url       = $item['url'] ?? '';
+            $object_type      = $item['object_type'] ?? '';
             
-            $href = $url.'.html'; 
+            if (!empty($url) && $object_type != 'custom') {
+                $href = $url.'.html'; 
+            } elseif ($url == '' || $url == '/' || $url == 'trang-chu' || $url == 'home') {
+                $href = URLPATH;
+            }else{
+                $href = $url;
+            }
             
             $has_children = !empty($item['children']);
             

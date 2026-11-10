@@ -41,6 +41,14 @@ class RouterTest extends LmsTestCase
         }
     }
 
+    public function testPasswordResetEntryUrlIsPortalScopedForAllPortals()
+    {
+        foreach (array('admin', 'teacher', 'student') as $portal) {
+            $url = lms_url_to($portal, '', 'quen-mat-khau');
+            $this->assertSame(lms_base_url() . '/' . $portal . '/quen-mat-khau', $url);
+        }
+    }
+
     public function testModuleAliasDefaultsToManAction()
     {
         $r = lms_parse_route('lms-hoc-vien', array());
@@ -124,9 +132,17 @@ class RouterTest extends LmsTestCase
     public function testAssetUrl()
     {
         $base = lms_base_url();
-        $this->assertSame($base . '/public/css/lms.css', lms_asset_url('css/lms.css'));
+        $root = dirname(__DIR__);
+        // URL kèm ?v=filemtime để cache-busting (xem lms_asset_url)
+        $this->assertSame(
+            $base . '/public/css/lms.css?v=' . filemtime($root . '/lms/public/css/lms.css'),
+            lms_asset_url('css/lms.css')
+        );
         // slash đầu phải được strip
-        $this->assertSame($base . '/public/js/lms.js', lms_asset_url('/js/lms.js'));
+        $this->assertSame(
+            $base . '/public/js/lms.js?v=' . filemtime($root . '/lms/public/js/lms.js'),
+            lms_asset_url('/js/lms.js')
+        );
     }
 
     public function testPortalLabels()

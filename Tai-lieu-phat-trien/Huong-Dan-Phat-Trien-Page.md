@@ -496,9 +496,9 @@ Giống hệt §2 (6 bước), thay:
 | `db_user_permission_group` | `db_lms_role_permissions` (theo role) |
 | `checkPermission*()` | `lms_checkPermission($alias, $action)` |
 | `admin/index.php?p=&a=` | `lms/<portal>.php?p=&a=` (URL mặt ngoài: `/lms/<portal>/<alias>/<action>` — §3.3.1, D10) |
-| `admin/sources/<alias>.php` | `lms/<portal>/sources/<alias>.php` |
-| `admin/templates/<alias>/x_tpl.php` | `lms/<portal>/templates/<alias>/x_tpl.php` |
-| `templates/components/*` | `lms/lib/lms_components/*` (copy/component dùng chung) |
+| `admin/sources/<alias>.php` | `lms/app/<portal>/sources/<alias>.php` |
+| `admin/templates/<alias>/x_tpl.php` | `lms/app/<portal>/templates/<alias>/x_tpl.php` |
+| `templates/components/*` | `lms/app/admin/templates/components/*` — gọi qua `lms_component('ten', [...])` hoặc `lms_component_render()` (`lms/lib/lms_admin_forms.php`) |
 | `admin_csrf_*()` | `lms_csrf_*()` (đặt trong `lms/lib/lms_auth.php`, cùng pattern) |
 
 **Ví dụ cụ thể** — ADM-01 quản lý học viên:
@@ -506,6 +506,93 @@ Giống hệt §2 (6 bước), thay:
 2. `INSERT INTO db_lms_role_permissions (id_module, role, can_view, can_edit, can_delete) VALUES (<id>, 'admin', 1, 1, 1);`
 3. `lms/app/admin/sources/lms-hoc-vien.php` (source: `man`/`add`/`edit`/`delete`, mỗi action check `lms_checkPermission('lms-hoc-vien', 'edit'|'delete', 'admin')`).
 4. `lms/app/admin/templates/lms-hoc-vien/hienthi_tpl.php` + `form_tpl.php`.
+
+**Component LMS dùng chung** (`lms/app/admin/templates/components/`):
+`button`, `badge`, `file_grid`, `pagination`, `tabs`, `calendar_week`, `calendar_week_event`,
+`form/input`, `form/select`,
+`form/textarea`, `form/date_picker`, `form/addon_input`, `form/field_row`,
+`form/actions_bar`, `form/submit_bar`, `form/button`, `form/file_picker`, `form/file_upload`,
+`form/multi_select_tags`, `form/avatar_picker`.
+
+- `tabs` — thanh tab điều hướng (CSS `.lms-tabs-nav`), nhận `items`:
+  ```php
+  $items = array();
+  foreach (array('group' => 'Lớp đông người', 'one_on_one' => 'Lớp 1 kèm 1') as $type => $label) {
+      $items[] = array(
+          'label'  => $label,
+          'href'   => lms_url($alias, 'man', array('type' => $type)),
+          'active' => $filterClassType === $type,
+      );
+  }
+  lms_component('tabs', array('aria_label' => 'Loại lớp học', 'items' => $items));
+  ```
+- `pagination` — **kiểu gọi duy nhất** là `lms_component('pagination', array(...))`; wrapper `lms_pagination()` trong `lms/lib/lms_admin_forms.php` đã xoá (nó chỉ forward lại component và không truyền được `size`/`align`/`window`). Component tự `return` khi `total_pages <= 1`, tự lọc param rỗng, và **tự thêm class `mt-4` cho `<nav>`** để tách khỏi bảng — chỉ truyền `class` khi muốn khác (VD `'mt-0'` khi phân trang nằm trong toolbar):
+  ```php
+  <?php lms_component('pagination', array(
+      'base_url'    => lms_url($alias),
+      'page'        => $page,
+      'total_pages' => $totalPages,
+      'params'      => array_filter(array('q' => $filterQ, 'tab' => $tab)),
+  )); ?>
+  ```
+  Props: `page`, `total_pages`, `base_url`, `params` (KHÔNG dùng key `query`), `size` (`sm` mặc định), `align` (`center` mặc định), `window`, `class`.
+- `form/*` — component form 2 cột (label `col-sm-4` + control `col-sm-8`), tự kế thừa `$row`/`$errors` từ template cha.
+  `class` ở `form/input`, `form/textarea`, `form/select`, `form/date_picker`, `form/addon_input` là class **NỐI THÊM**, không thay class gốc: element luôn mang `lms-tf-input` / `lms-tf-select` / `lms-tf-addon-input` nên ô lọc (`class => 'form-control'`) và ô trong form có cùng một kiểu (cao 42px, bo 8px, viền `#ccd5de` — `lms.css` nạp sau Bootstrap nên thắng `.form-control`). Muốn bỏ hẳn style LMS (chỉ dùng cho control nội bộ, VD toolbar rich editor) truyền `'base_class' => false`.
+- `calendar_week` — khung lưới lịch tuần dùng chung (Admin "Lịch học" + Teacher "Quản lý lịch" + Student "Lịch học"). Component chỉ render thead 7 ngày + tbody các hàng giờ; nội dung/class từng ô do template truyền callback:
+  ```php
+  lms_component('calendar_week', array(
+      'monday'        => $weekMonday,
+      'days'          => $daysOfWeek,   // hoặc 'weekdays' => array(2=>'Thứ 2', ...)
+      'rows'          => $calRows,      // [['label','hour','cells'=>...]]
+      'cell_class'    => function ($cell, $row) { return '...'; },
+      'cell_attrs'    => function ($cell, $row) { return array('data-date' => $cell['date']); },
+      'cell_renderer' => function ($cell, $row) { return '<div>...</div>'; },
+  ));
+  ```
+- `calendar_week_event` — thẻ một buổi học / khung lịch trống đặt trong ô của `calendar_week`. Không template nào tự viết `<a class="lms-cal-link">` hay `<div class="lms-session-card">` nữa; mọi trang lịch gọi component này cùng helper trong `lms/lib/lms_calendar.php` (`lms_cal_variant`, `lms_cal_variant_label`, `lms_cal_missing_hw`, `lms_cal_offset_px`, `lms_cal_span_px`, `lms_cal_lanes_for_rows` + `lms_cal_lane_of`, `lms_cal_time_text`):
+  ```php
+  // Lane CHỈ tính cho thẻ buổi học; lịch trống là dải nền full ngang, z-index thấp hơn
+  $calLanes = lms_cal_lanes_for_rows($calRows);
+  $lane = lms_cal_lane_of($calLanes, (string) $ses['session_date'], 's' . (int) $ses['id']);
+
+  $html .= lms_component_render('calendar_week_event', array(
+      'variant' => lms_cal_variant($ses['status'], lms_cal_missing_hw($ses)), // upcoming|missing|finished|cancelled|free
+      'title'   => $ses['class_name'],
+      'start'   => $ses['start_time'],   // --lms-cal-top = phút lẻ/60 × LMS_CAL_HOUR_H (72px)
+      'end'     => $ses['end_time'],     // --lms-cal-height = thời lượng/60 × 72px (1,5 giờ → 108px)
+      'lane'    => $lane['lane'],        // chia ngang khi 2 thẻ chồng giờ trong cùng cột ngày
+      'lanes'   => $lane['lanes'],
+      'href'    => lms_url($alias, 'buoi', array('id' => $ses['id'])), // title = stretched link phủ cả thẻ
+      'attrs'   => array('data-session-id' => $ses['id']),             // data-* cho modal (admin dùng div + JS click)
+      'flag'    => '✗',                  // góc trên phải
+      'footer'  => $nutChinhLich,        // 'Xem chi tiết' / nút — z-index cao hơn stretched link
+  ));
+  ```
+  Thẻ `position: absolute` trong `<td>` (hàng giờ cố định 72px, `z-index: 2` nên thẻ dài ghi đè lên các ô phía dưới), ô có vạch đứt nửa giờ `.lms-cal-cell::before`. Class: `.lms-cal-event` + `.lms-cal-event--{variant}`, con `__title` (`__title--link` khi có href), `__time`, `__footer`, `__flag`; nền ô nhạt theo trạng thái qua `.lms-cal-cell--{variant}`. Riêng `--free` là dải nền: `z-index: 1`, full chiều ngang, viền đứt nét, không có `.lms-cal-cell--free` tương ứng.
+- `form/file_upload` — vùng tải nhiều tệp dùng chung cho Student/Teacher (kéo thả, danh sách tệp đã chọn, giới hạn số lượng/dung lượng, hiển thị tệp đã nộp). JS khởi tạo trong `lms/public/js/lms.js` (`LMS.initFileUploads`), không viết script inline trong template:
+  ```php
+  lms_component('form/file_upload', array(
+      'name'          => 'test_files[]',
+      'existing'      => $submittedFiles,  // tệp đã nộp (mảng path)
+      'max_files'     => 5,
+      'required'      => true,
+      'replace_hint'  => 'Nộp lại sẽ thay thế toàn bộ tệp đã nộp.',
+      'browse_text'   => 'chọn tệp bài làm',
+  ));
+  ```
+- `file_grid` — lưới chip tệp đã lưu (icon theo định dạng + link tải), dùng khi chỉ xem hoặc khi không cần vùng upload.
+- **Ghim cột bảng khi cuộn ngang** — dùng `.lms-table-pin` (CSS trong `lms/public/css/lms.css`, mục "Ghim cột bảng khi cuộn ngang") + attribute `data-pin-left` / `data-pin-right` đặt trên **cả `<th>` lẫn `<td>`** của cột cần ghim. Toạ độ `left`/`right` do `LMS.initPinnedColumns()` (`lms/public/js/lms.js`) đọc bề rộng thật của cột (kèm `min-width` khai báo) rồi ghi, nên **không có số đo hardcode trong CSS/template** và không cần class thứ tự (`l1/l2/...`).
+  ```php
+  <table class="table table-bordered ... lms-table lms-table-pin">
+      <th style="min-width: 150px;" data-pin-left>Họ và tên</th>
+      <th style="width: 130px;" data-pin-right>Hành động</th>
+      ...
+      <td data-pin-left>…</td>
+      <td class="text-center text-nowrap" data-pin-right>…</td>
+  ```
+  Quy tắc bắt buộc: (1) cột ghim trái phải liền mạch từ mép trái, cột ghim phải liền mạch từ mép phải (không cần là cột cuối); (2) **tổng bề rộng cụm ghim phải ≤ bề ngang container** — vượt là cột ghim thứ hai biến mất khỏi màn hình; (3) muốn cột có bề rộng cố định thì khai `min-width` trên `<th>` (đã đo: ở `table-layout:auto` chỉ `min-width` có hiệu lực, `width`/`max-width` bị bỏ qua), **không đặt width qua JS** vì ghi thuộc tính layout sau first paint sẽ làm layout giật; (4) bảng nằm trong tab/section ẩn phải gọi `LMS.refreshPinnedColumns()` khi hiện ra. Bảng `lms-tai-khoan` 2 tab đang áp dụng: tab học viên ghim "Số ưu tiên" + "Username" + "Hành động", tab giáo viên ghim "Họ và tên" + "Hành động".
+- Layout chi tiết dùng chung (Student-ver2/Teacher-ver2): `.lms-page-head` + `.lms-page-title`, `.lms-panel` + `.lms-panel-head`/`.lms-panel-body`, `.lms-form-footer`, `.lms-file-grid`, `.lms-upload-*`. Các phần còn lại ưu tiên utility Bootstrap: breadcrumb (`nav > ol.breadcrumb`), tiêu đề phụ (`h6.fw-bold.fs-5`), chia cột (`row`/`col-md-6`), box (`border rounded-3 p-2`). Không tạo class riêng cho từng trang khi cùng một bố cục (trước đây là `lms-course-title`, `lms-topic-breadcrumb`, `lms-topic-info-card`, `lms-test-detail-card`).
+- Trang Teacher "Chi tiết khóa học" (cá nhân + lớp nhóm) dùng lại `.lms-section-accordion` + `.lms-section-header`, `.lms-category-*`, `.lms-topic-card-v2`, `.lms-session-card-v2`, `.lms-hw-card`, `.lms-panel`; không dùng Bootstrap `.accordion`/`.lms-card` riêng. JS xoay chevron dùng chung nằm ở `LMS.initCollapseArrows` (`lms/public/js/lms.js`), không viết script inline trong template.
 
 ### 3.5. Phân quyền cấp dòng (row-level) — KHÔNG làm trong router
 

@@ -50,12 +50,12 @@ function noi_dung_back($parent = '', $editGroupId = 0)
 {
     global $d;
     if ((int) $editGroupId > 0) {
-        $d->redirect('index.php?p=noi-dung&a=man&id_loai=' . (int) $editGroupId);
+        $d->redirect('index.php?p=noi-dung&a=man&id_loai=' . (int) $editGroupId . '&scroll_group=' . (int) $editGroupId);
         return;
     }
     $url = 'index.php?p=noi-dung&a=man';
     if ($parent !== '' && $parent !== null) {
-        $url .= '&parent=' . urlencode($parent);
+        $url .= '&id_loai=' . urlencode($parent);
     }
     $d->redirect($url);
 }
@@ -70,17 +70,24 @@ function noi_dung_back($parent = '', $editGroupId = 0)
 function noi_dung_redirect_after_save($cap, $parent, $savedId = 0)
 {
     global $d;
-    $parent = (string) $parent;
+    $parent = (int) $parent;
     $savedId = (int) $savedId;
     if ($cap === 'capnhat_sua' && $savedId > 0) {
-        $d->redirect('index.php?p=noi-dung&a=edit&id=' . $savedId . '&parent=' . urlencode($parent));
+        $d->redirect('index.php?p=noi-dung&a=edit&id=' . $savedId . '&parent=' . $parent);
         return;
     }
     if ($cap === 'capnhat_them') {
-        $d->redirect('index.php?p=noi-dung&a=add&parent=' . urlencode($parent));
+        $d->redirect('index.php?p=noi-dung&a=add&parent=' . $parent);
         return;
     }
-    noi_dung_back($parent);
+    $url = 'index.php?p=noi-dung&a=man';
+    if ($parent > 0) {
+        $url .= '&id_loai=' . $parent;
+    }
+    if ($savedId > 0) {
+        $url .= '&scroll_item=' . $savedId;
+    }
+    $d->redirect($url);
 }
 
 function showdulieu()
@@ -287,22 +294,23 @@ function xoanhom($id_module)
 }
 
 /** Payload 1 ngon ngu cho #_content (khong gom id_code/lang — them o insert). */
-function noi_dung_content_row($key, $id_loai, $hinh_anh, $hien_thi, $so_thu_tu)
+function noi_dung_content_row($key, $id_loai, $hinh_anh, $background, $hien_thi, $so_thu_tu)
 {
     global $d;
     return array(
-        'id_loai'   => $id_loai,
-        'hinh_anh'  => $hinh_anh,
-        'ten'       => $d->clear(addslashes($_POST['ten'][$key] ?? '')),
-        'ten_phu'   => $d->clear(addslashes($_POST['ten_phu'][$key] ?? '')),
-        'noi_dung'  => $d->clear(addslashes($_POST['noi_dung'][$key] ?? '')),
-        'link'      => $d->clear(addslashes($_POST['link'][$key] ?? '')),
-        'hien_thi'  => $hien_thi,
-        'so_thu_tu' => $so_thu_tu,
-        'nofollow'  => isset($_POST['nofollow']) ? 1 : 0,
-        'target'    => isset($_POST['target']) ? 1 : 0,
+        'id_loai'    => $id_loai,
+        'hinh_anh'   => $hinh_anh,
+        'background' => $background,
+        'ten'        => $d->clear(addslashes($_POST['ten'][$key] ?? '')),
+        'ten_phu'    => $d->clear(addslashes($_POST['ten_phu'][$key] ?? '')),
+        'noi_dung'   => $d->clear(addslashes($_POST['noi_dung'][$key] ?? '')),
+        'link'       => $d->clear(addslashes($_POST['link'][$key] ?? '')),
+        'hien_thi'   => $hien_thi,
+        'so_thu_tu'  => $so_thu_tu,
+        'nofollow'   => isset($_POST['nofollow']) ? 1 : 0,
+        'target'     => isset($_POST['target']) ? 1 : 0,
         // NOT NULL, không default — phải khai báo tường minh
-        'ma_video'  => '',
+        'ma_video'   => '',
     );
 }
 
@@ -317,9 +325,10 @@ function luudulieu($id_module)
         return;
     }
 
-    $id        = isset($_REQUEST['id']) ? addslashes($_REQUEST['id']) : '';
-    $hinh_anh  = addslashes($_POST['hinh_anh'] ?? '');
-    $id_loai   = (int) ($_POST['id_loai'] ?? 0);
+    $id         = isset($_REQUEST['id']) ? addslashes($_REQUEST['id']) : '';
+    $hinh_anh   = addslashes($_POST['hinh_anh'] ?? '');
+    $background = addslashes($_POST['background'] ?? '');
+    $id_loai    = (int) ($_POST['id_loai'] ?? 0);
     if ($id_loai <= 0) {
         $id_loai = (int) ($_GET['parent'] ?? 0);
     }
@@ -351,7 +360,7 @@ function luudulieu($id_module)
             $d->reset();
             $d->setTable('#_content');
             $d->setWhere('id', $rid);
-            $d->update(noi_dung_content_row($key, $id_loai, $hinh_anh, $hien_thi, $so_thu_tu));
+            $d->update(noi_dung_content_row($key, $id_loai, $hinh_anh, $background, $hien_thi, $so_thu_tu));
         }
         noi_dung_flash('success', 'Đã cập nhật nội dung.');
         noi_dung_redirect_after_save($cap, $backParent, (int) $id);
@@ -367,7 +376,7 @@ function luudulieu($id_module)
         return;
     }
     foreach (get_json('lang') as $key => $value) {
-        $data = noi_dung_content_row($key, $id_loai, $hinh_anh, $hien_thi, $so_thu_tu);
+        $data = noi_dung_content_row($key, $id_loai, $hinh_anh, $background, $hien_thi, $so_thu_tu);
         $data['id_code']  = $id_code;
         $data['lang']     = $value['code'];
         $data['ngay_tao'] = time();
@@ -383,8 +392,14 @@ function xoadulieu($id_module)
 {
     global $d;
     $parent = isset($_GET['parent']) ? $_GET['parent'] : '';
+    $isAjax = !empty($_REQUEST['ajax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
 
     if ($d->checkPermission_dele($id_module) != 1 || empty($_GET['id'])) {
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(array('ok' => false, 'message' => 'Bạn không có quyền xóa hoặc thiếu dữ liệu.'));
+            exit;
+        }
         noi_dung_flash('error', 'Không xóa được.');
         noi_dung_back($parent);
         return;
@@ -396,8 +411,18 @@ function xoadulieu($id_module)
     $d->setWhere('id_code', $id);
     if ($d->delete()) {
         $d->o_que('delete from cf_parent where id=' . $id);
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(array('ok' => true, 'message' => 'Đã xóa nội dung.', 'id' => $id));
+            exit;
+        }
         noi_dung_flash('success', 'Đã xóa nội dung.');
     } else {
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(array('ok' => false, 'message' => 'Xóa thất bại.'));
+            exit;
+        }
         noi_dung_flash('error', 'Xóa thất bại.');
     }
     noi_dung_back($parent);
@@ -407,8 +432,14 @@ function xoadulieu_mang($id_module)
 {
     global $d;
     $parent = isset($_GET['parent']) ? $_GET['parent'] : '';
+    $isAjax = !empty($_REQUEST['ajax']) || (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
 
     if ($d->checkPermission_dele($id_module) != 1 || empty($_POST['chk_child'])) {
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(array('ok' => false, 'message' => 'Không có quyền xóa hoặc chưa chọn mục nào.'));
+            exit;
+        }
         noi_dung_back($parent);
         return;
     }
@@ -421,6 +452,11 @@ function xoadulieu_mang($id_module)
         }
     }
     if (!$ids) {
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(array('ok' => false, 'message' => 'Chưa chọn mục hợp lệ nào.'));
+            exit;
+        }
         noi_dung_back($parent);
         return;
     }
@@ -428,8 +464,18 @@ function xoadulieu_mang($id_module)
     $chuoi = implode(',', $ids);
     if ($d->o_que('delete from #_content where id_code in (' . $chuoi . ')')) {
         $d->o_que('delete from cf_parent where id in (' . $chuoi . ')');
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(array('ok' => true, 'message' => 'Đã xóa ' . count($ids) . ' nội dung.', 'ids' => $ids));
+            exit;
+        }
         noi_dung_flash('success', 'Đã xóa ' . count($ids) . ' nội dung.');
     } else {
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(array('ok' => false, 'message' => 'Xóa hàng loạt thất bại.'));
+            exit;
+        }
         noi_dung_flash('error', 'Xóa hàng loạt thất bại.');
     }
     noi_dung_back($parent);

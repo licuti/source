@@ -361,3 +361,4 @@ Thứ tự đề xuất cho các module còn lại (từ nhỏ đến lớn, the
 - JS: `admin/js/ckfinder-adapter.js` (`AdminFM.open`)
 - Driver duy nhất: **CKFinder** (`admin/ckfinder/`)
 - `admin/filemanager/` (Responsive File Manager) đã được loai bo
+- Tính năng **Sao chép đường dẫn Media (URL & Path)**: Xem chi tiết vị trí sửa và cách gỡ bỏ tại [`admin/HUONG-DAN-TINH-NANG-COPY-MEDIA.md`](../HUONG-DAN-TINH-NANG-COPY-MEDIA.md)

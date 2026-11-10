@@ -135,11 +135,6 @@ function luudulieu($id_module) {
             foreach (explode(',', $tags) as $vt) {
                 $vt = trim($vt);
                 if ($vt === '') continue;
-
-                /*
-                 * Bản cũ: $vt nội suy thẳng vào SQL. Sau addslashes vẫn có rủi ro
-                 * nếu chuỗi có ký tự đa-byte bị cắt. Nay tham số hoá.
-                 */
                 $kt = $d->safeFetchOne(
                     'select id, ten from #_tags where ten = ? and lang = ?',
                     [$vt, $langCode]
@@ -155,12 +150,6 @@ function luudulieu($id_module) {
                     $id_tag .= $kt['id'] . ',';
                 }
             }
-
-            /*
-             * Cấu hình cấu hình: chỉ các cột còn dùng.
-             *  - Bỏ: tuyen_dung_*, sanpham_kem
-             *  - Thêm: id_user (lưu cả khi sửa), ngay_dang (cho sửa)
-             */
             $data = [
                 'id_loai'       => (int)addslashes($_POST['id_loai']),
                 'hinh_anh'      => addslashes($_POST['hinh_anh']),
@@ -181,7 +170,6 @@ function luudulieu($id_module) {
                 'hien_thi'      => isset($_POST['hien_thi']) ? 1 : 0,
                 'so_thu_tu'     => $_POST['so_thu_tu'] ?: 0,
                 'cap_nhat'      => time(),
-                // Cập nhật user phụ trách: sửa cũng lưu, không reset thành người hiện tại
                 'id_user'       => (int)($_POST['id_user'] ?? ($_SESSION['id_user'] ?? 0)),
             ];
 

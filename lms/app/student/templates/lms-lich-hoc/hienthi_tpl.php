@@ -17,47 +17,39 @@
         </div>
     </div>
     <div class="lms-card-body">
-        <div class="lms-cal-scroll">
-            <table class="lms-cal">
-                <thead>
-                    <tr>
-                        <th class="lms-cal-th lms-cal-th-hour">Giờ</th>
-                        <?php for ($i = 0; $i < 7; $i++): ?>
-                            <?php
-                            $ts = strtotime('+' . $i . ' days', strtotime($weekMonday));
-                            $dow = (int) date('N', $ts) + 1;
-                            ?>
-                            <th class="lms-cal-th">
-                                <?= e(isset(\Lms\UserService::WEEKDAYS[$dow]) ? \Lms\UserService::WEEKDAYS[$dow] : '') ?>
-                                <small><?= e((int) date('j', $ts) . '/' . (int) date('n', $ts)) ?></small>
-                            </th>
-                        <?php endfor; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($calRows as $row): ?>
-                        <tr>
-                            <th class="lms-cal-th lms-cal-th-hour" scope="row"><?= e($row['label']) ?></th>
-                            <?php foreach ($row['cells'] as $cell): ?>
-                                <td class="lms-cal-cell<?php
-                                    if (!empty($cell['sessions'])) {
-                                        echo ' ' . lmlh_cell_class((string) $cell['sessions'][0]['status']);
-                                    }
-                                ?>">
-                                    <?php foreach ($cell['sessions'] as $ses): ?>
-                                        <a class="lms-cal-link" href="<?= e(lms_url($alias, 'buoi', array('id' => (int) $ses['id'], 'week' => $weekMonday))) ?>">
-                                            <span class="lms-cal-code"><?= e((string) $ses['class_name']) ?></span>
-                                            <span class="lms-cal-time"><?= e(substr((string) $ses['start_time'], 0, 5)) ?>–<?= e(substr((string) $ses['end_time'], 0, 5)) ?></span>
-                                            <span class="lms-cal-view">Xem chi tiết</span>
-                                        </a>
-                                    <?php endforeach; ?>
-                                </td>
-                            <?php endforeach; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+        <?php
+        $calLanes = lms_cal_lanes_for_rows($calRows);
+        lms_component('calendar_week', array(
+            'monday'     => $weekMonday,
+            'weekdays'   => \Lms\UserService::WEEKDAYS,
+            'rows'       => $calRows,
+            'hour_label' => 'Giờ',
+            'cell_class' => function (array $cell) {
+                if (empty($cell['sessions'])) {
+                    return '';
+                }
+                $first = $cell['sessions'][0];
+                return 'lms-cal-cell--' . lms_cal_variant((string) $first['status']);
+            },
+            'cell_renderer' => function (array $cell) use ($alias, $weekMonday, $calLanes) {
+                $html = '';
+                foreach ($cell['sessions'] as $ses) {
+                    $lane = lms_cal_lane_of($calLanes, (string) $cell['date'], 's' . (int) $ses['id']);
+                    $html .= lms_component_render('calendar_week_event', array(
+                        'variant' => lms_cal_variant((string) $ses['status']),
+                        'title'   => (string) $ses['class_name'],
+                        'start'   => (string) $ses['start_time'],
+                        'end'     => (string) $ses['end_time'],
+                        'lane'    => $lane['lane'],
+                        'lanes'   => $lane['lanes'],
+                        'href'    => lms_url($alias, 'buoi', array('id' => (int) $ses['id'], 'week' => $weekMonday)),
+                        'footer'  => 'Xem chi tiết',
+                    ));
+                }
+                return $html;
+            },
+        ));
+        ?>
 
         <!-- Chú thích (§9 L201-204) -->
         <ul class="lms-cal-legend">

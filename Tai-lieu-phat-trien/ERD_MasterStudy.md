@@ -195,7 +195,7 @@ erDiagram
 - `remaining_sessions` (INT - Số buổi còn lại, tự động trừ khi tạo session hoàn thành)
 - `hw_deadline_time` (TIME, VD: "12:00" - Hạn giao BTVN sau buổi học)
 - `hw_check_hours` (INT, VD: 24 - Hạn chấm BTVN trước buổi tiếp theo)
-- `status` (ENUM('active', 'paused', 'finished', 'cancelled') DEFAULT 'active')
+- `status` (ENUM('arranging', 'active', 'paused', 'finished', 'cancelled') DEFAULT 'active' — `arranging` = lớp tạo từ ghép lớp, chưa xếp lịch/chưa kích hoạt)
 - `start_date` (DATE), `expected_end_date` (DATE)
 - `created_at`, `updated_at`, `deleted_at`
 - **Index:** INDEX(`teacher_id`, `status`), INDEX(`subject_id`), INDEX(`class_type`, `status`)
@@ -206,6 +206,7 @@ erDiagram
 - `student_id` (FK -> students.user_id NOT NULL)
 - `enrolled_at` (DATETIME DEFAULT NOW())
 - `status` (ENUM('active', 'transferred_out', 'completed') DEFAULT 'active')
+- **Ràng buộc nghiệp vụ:** lớp `one_on_one` chỉ được có tối đa 1 dòng `active` (service chặn khi thêm HV); chuyển lớp giữ dòng cũ ở trạng thái `transferred_out` để bảo toàn lịch sử buổi học.
 - `created_at`, `updated_at`
 - **Index:** UNIQUE(`class_id`, `student_id`), INDEX(`student_id`, `status`)
 

@@ -48,9 +48,9 @@ Mô hình áp dụng cho MasterStudy: **Hybrid (Agile Scrum + Waterfall cho phas
     | Thành phần | Công nghệ áp dụng |
     |---|---|
     | Ngôn ngữ / Backend | PHP (server-rendered), class `func_index` (PDO, bind tham số) |
-    | Portal Admin LMS | `lms/admin.php` + `lms/admin/` (AdminLTE 4 + Bootstrap 5 + jQuery + DataTables + Select2) |
-    | Portal GV | `lms/teacher.php` + `lms/teacher/` (layout riêng, header cam + sidebar) |
-    | Portal HV | `lms/student.php` + `lms/student/` (layout riêng, header cam + sidebar) |
+    | Portal Admin LMS | `lms/admin.php` + `lms/app/admin/` (layout LMS tự dựng trên Bootstrap 5 + FontAwesome 6 + jQuery + Select2 + Toastify) |
+    | Portal GV | `lms/teacher.php` + `lms/app/teacher/` (dùng chung `lms/lib/lms_layout.php`: header cam + sidebar) |
+    | Portal HV | `lms/student.php` + `lms/app/student/` (dùng chung `lms/lib/lms_layout.php`: header cam + sidebar) |
     | Lib chung 3 portal | `lms/lib/`: `lms_auth.php` (bcrypt + rate-limit + remember-me), `lms_router.php`, `lms_layout.php` |
     | Database | MySQL (`phuongnamv_db`), schema LMS riêng prefix `db_lms_`, 3 portal dùng chung `db_lms_users` (role ENUM admin/teacher/student) |
     | Storage file | Upload local qua CKFinder (chưa cần S3) |
@@ -73,8 +73,8 @@ Mô hình áp dụng cho MasterStudy: **Hybrid (Agile Scrum + Waterfall cho phas
 
 - PHP + MySQL (PDO qua class `func_index`: `safeFetch` / `safeExec` bind tham số).
 - 3 portal LMS đối xứng trong `lms/` (admin / teacher / student), chia sẻ `lms/lib/` (auth, router, layout).
-- Admin LMS: AdminLTE 4 + Bootstrap 5 + jQuery + DataTables + Select2.
-- Portal GV/HV: PHP server-rendered, layout riêng theo mockup (header cam + sidebar).
+- Admin LMS: layout LMS tự dựng (header cam + sidebar) trên Bootstrap 5 + FontAwesome 6 + jQuery + Select2 + Toastify; form/danh sách dùng component PHP dùng chung trong `lms/app/admin/templates/components/` (không dùng AdminLTE/DataTables).
+- Portal GV/HV: dùng chung `lms/lib/lms_layout.php` (header cam + sidebar theo mockup), server-rendered.
 - Cron: PHP CLI chạy bằng crontab / Task Scheduler.
 - Test: PHPUnit cho logic tiền bạc (tick / lương / thuế); UI test thủ công theo mockup.
 - Quản lý phiên bản: git.

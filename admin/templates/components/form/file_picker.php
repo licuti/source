@@ -55,18 +55,29 @@ elseif (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'], true)) { $extIcon 
             <img src="<?= e($hasFile ? $fileUrl : 'img/no-image.png') ?>"
                  id="review_<?= e($name) ?>"
                  alt="<?= e($label) ?>"
-                 class="w-100 h-100 object-fit-contain">
-            <?php if ($canDelete): ?>
-                <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                 class="w-100 h-100 object-fit-contain"
+                 data-fallback="img/no-image.png"
+                 onerror="this.onerror=null;this.src='img/no-image.png';">
+            <div class="position-absolute top-0 end-0 m-1 d-flex gap-1">
+                <button type="button"
+                        class="btn btn-sm btn-light border shadow-sm js-copy-file-url <?= $hasFile ? '' : 'd-none' ?>"
+                        title="Sao chép đường dẫn hình ảnh"
+                        data-target="<?= e($name) ?>"
+                        data-preview="image">
+                    <i class="fa-solid fa-copy"></i>
+                </button>
+                <button type="button"
+                        class="btn btn-sm btn-danger js-file-picker-delete <?= $hasFile ? '' : 'd-none' ?>"
                         title="Xóa"
-                        data-action="xoa-img"
+                        <?= $canDelete ? 'data-action="xoa-img"' : 'data-action="clear-image"' ?>
+                        data-target="<?= e($name) ?>"
                         data-bang="<?= e($table) ?>"
                         data-cot="<?= e($name) ?>"
                         data-id-code="<?= e($row_id) ?>"
                         data-folder="">
                     <i class="fa-solid fa-trash"></i>
                 </button>
-            <?php endif; ?>
+            </div>
         </div>
 
     <?php elseif ($preview === 'video'): ?>
@@ -84,18 +95,26 @@ elseif (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'], true)) { $extIcon 
                 <span class="small"><i class="fa-solid fa-film me-1"></i>Chưa chọn video</span>
             </div>
 
-            <?php if ($canDelete): ?>
+            <div class="position-absolute top-0 end-0 m-1 d-flex gap-1 z-1">
                 <button type="button"
-                        class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
-                        title="Xóa"
-                        data-action="xoa-img"
+                        class="btn btn-sm btn-light border shadow-sm js-copy-file-url <?= $hasFile ? '' : 'd-none' ?>"
+                        title="Sao chép đường dẫn video"
+                        data-target="<?= e($name) ?>"
+                        data-preview="video">
+                    <i class="fa-solid fa-copy"></i>
+                </button>
+                <button type="button"
+                        class="btn btn-sm btn-danger js-file-picker-delete <?= $hasFile ? '' : 'd-none' ?>"
+                        title="Xóa video"
+                        <?= $canDelete ? 'data-action="xoa-img"' : 'data-action="clear-image"' ?>
+                        data-target="<?= e($name) ?>"
                         data-bang="<?= e($table) ?>"
                         data-cot="<?= e($name) ?>"
                         data-id-code="<?= e($row_id) ?>"
                         data-folder="">
                     <i class="fa-solid fa-trash"></i>
                 </button>
-            <?php endif; ?>
+            </div>
         </div>
 
     <?php elseif ($preview === 'file'): ?>
@@ -109,16 +128,24 @@ elseif (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'], true)) { $extIcon 
                     <?= e($hasFile ? basename($value) : '') ?>
                 </a>
             </div>
-            <?php if ($canDelete): ?>
-                <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa"
-                        data-action="xoa-img"
-                        data-bang="<?= e($table) ?>"
-                        data-cot="<?= e($name) ?>"
-                        data-id-code="<?= e($row_id) ?>"
-                        data-folder="">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-            <?php endif; ?>
+            <button type="button"
+                    class="btn btn-sm btn-outline-secondary js-copy-file-url <?= $hasFile ? '' : 'd-none' ?>"
+                    title="Sao chép đường dẫn tệp"
+                    data-target="<?= e($name) ?>"
+                    data-preview="file">
+                <i class="fa-solid fa-copy"></i>
+            </button>
+            <button type="button"
+                    class="btn btn-sm btn-outline-danger js-file-picker-delete <?= $hasFile ? '' : 'd-none' ?>"
+                    title="Xóa"
+                    <?= $canDelete ? 'data-action="xoa-img"' : 'data-action="clear-image"' ?>
+                    data-target="<?= e($name) ?>"
+                    data-bang="<?= e($table) ?>"
+                    data-cot="<?= e($name) ?>"
+                    data-id-code="<?= e($row_id) ?>"
+                    data-folder="">
+                <i class="fa-solid fa-trash"></i>
+            </button>
         </div>
         <div id="review_<?= e($name) ?>_empty"
              class="border rounded p-3 text-center text-secondary small mb-2 <?= $hasFile ? 'd-none' : '' ?>">

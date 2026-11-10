@@ -1,14 +1,14 @@
 <?php
     if(!empty($_POST['xac_nhan'])){
         $ma = addslashes($_POST['xac_nhan']);
-        if($ma == '000000'){
-            setcookie('code', '000000', time() + (86400 * 30 *365), "/"); // 86400 = 1 day
+        if($ma == '606060'){
+            setcookie('code', '606060', time() + (86400 * 30 *365), "/"); // 86400 = 1 day
             $d->redirect(URLPATH);
         }
     }
 ?>
 
-<?php if(!isset($_COOKIE['code']) || $_COOKIE['code'] != 000000){ ?>
+<?php if(!isset($_COOKIE['code']) || $_COOKIE['code'] != 606060){ ?>
 	<div class="wp-fix">
 		<ul class="bg-bubbles">
             <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> <li></li> </ul>

@@ -125,6 +125,12 @@ if (!class_exists('LmsDb', false)) {
             return $ok;
         }
 
+        /** @return int affected rows from the last statement */
+        public function affectedRows()
+        {
+            return $this->db ? (int) $this->db->query('select row_count()')->fetchColumn() : 0;
+        }
+
         /**
          * Helper INSERT.
          *

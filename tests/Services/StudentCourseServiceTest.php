@@ -33,6 +33,9 @@ class StudentCourseServiceTest extends LmsTestCase
     /** @var int */
     private $topicId;
 
+    /** @var int chuyên đề cùng môn nhưng không được gán cho lớp */
+    private $unassignedTopicId;
+
     /** @var int session hôm nay (hw_deadline tương lai → on_time) */
     private $sessionTodayId;
 
@@ -67,6 +70,14 @@ class StudentCourseServiceTest extends LmsTestCase
             'order_index'  => 1,
         ));
         $this->topicId = (int) $this->db->insertId;
+        $this->db->insert('db_lms_topics', array(
+            'subject_id'   => $subjectId,
+            'name'         => 'Chuyên đề ngoài lớp',
+            'has_test'     => 1,
+            'max_sessions' => 2,
+            'order_index'  => 2,
+        ));
+        $this->unassignedTopicId = (int) $this->db->insertId;
 
         $userSvc = new \Lms\UserService($this->db);
         $this->teacherId = $userSvc->createUser('gv_stu', 'matkhau123', 'teacher');
@@ -105,6 +116,7 @@ class StudentCourseServiceTest extends LmsTestCase
             'price_per_session' => 500000,
             'total_sessions'    => 16,
             'student_ids'       => array($this->studentId),
+            'topic_ids'         => array($this->topicId),
             'schedules'         => array(
                 array('day' => 2, 'start' => '18:00', 'end' => '19:30'),
             ),
@@ -143,12 +155,13 @@ class StudentCourseServiceTest extends LmsTestCase
         $this->sessionLateId = (int) $this->db->insertId;
 
         // Session tương lai → chưa nộp được
+        // (20:00 để không trùng lịch cố định 18:00 sinh ra từ createClass)
         $this->db->insert('db_lms_sessions', array(
             'class_id'     => $this->classId,
             'teacher_id'   => $this->teacherId,
             'session_date' => date('Y-m-d', strtotime('+3 days')),
-            'start_time'   => '18:00',
-            'end_time'     => '19:30',
+            'start_time'   => '20:00',
+            'end_time'     => '21:30',
             'status'       => 'upcoming',
             'topic_id'     => $this->topicId,
             'topic_ids'    => $topicIdsJson,
@@ -253,6 +266,15 @@ class StudentCourseServiceTest extends LmsTestCase
     {
         $data = $this->svc->listTopicsForClass($this->classId, $this->otherStudentId);
         $this->assertSame(array('topics' => array(), 'tests' => array()), $data);
+    }
+
+    public function testListTopicsForClassOnlyReturnsAssignedTopics()
+    {
+        $data = $this->svc->listTopicsForClass($this->classId, $this->studentId);
+        $ids = array_map('intval', array_column($data['topics'], 'id'));
+
+        $this->assertContains($this->topicId, $ids);
+        $this->assertNotContains($this->unassignedTopicId, $ids);
     }
 
     // ===================== listSessionsForTopic =====================
@@ -420,8 +442,26 @@ class StudentCourseServiceTest extends LmsTestCase
         return (int) $this->db->insertId;
     }
 
+    /** Add completed sessions so the topic reaches its configured threshold. */
+    private function addCompletedTopicSessions($count)
+    {
+        for ($i = 0; $i < (int) $count; $i++) {
+            $this->db->insert('db_lms_sessions', array(
+                'class_id'     => $this->classId,
+                'teacher_id'   => $this->teacherId,
+                'session_date' => date('Y-m-d'),
+                'start_time'   => sprintf('%02d:00', 10 + $i),
+                'end_time'     => sprintf('%02d:30', 10 + $i),
+                'status'       => 'finished',
+                'topic_id'     => $this->topicId,
+                'topic_ids'    => json_encode(array($this->topicId), JSON_UNESCAPED_UNICODE),
+            ));
+        }
+    }
+
     public function testSubmitTestOnTime()
     {
+        $this->addCompletedTopicSessions(2);
         $testId = $this->makeTest('test', 'published', '+3 days');
 
         $ok = $this->svc->submitTest($testId, $this->studentId, $this->filesFixture, array('cli' => true));
@@ -438,6 +478,7 @@ class StudentCourseServiceTest extends LmsTestCase
 
     public function testSubmitTestLate()
     {
+        $this->addCompletedTopicSessions(2);
         $testId = $this->makeTest('test', 'published', '-1 days');
 
         $ok = $this->svc->submitTest($testId, $this->studentId, $this->filesFixture, array('cli' => true));
@@ -468,6 +509,26 @@ class StudentCourseServiceTest extends LmsTestCase
         $errors = $this->svc->errors();
         $this->assertArrayHasKey('test_id', $errors);
         $this->assertStringContainsString('minitest', (string) $errors['test_id']);
+    }
+
+    public function testSubmitTestBeforeTopicSessionsFails()
+    {
+        $testId = $this->makeTest('test', 'published', '+3 days');
+
+        $ok = $this->svc->submitTest(
+            $testId,
+            $this->studentId,
+            $this->filesFixture,
+            array('cli' => true)
+        );
+
+        $this->assertFalse($ok);
+        $this->assertStringContainsString('đủ số buổi', (string) $this->svc->errors()['test_id']);
+        $this->assertSame(0, (int) $this->db->count(
+            'db_lms_test_submissions',
+            'test_id = ? and student_id = ?',
+            array($testId, $this->studentId)
+        ));
     }
 
     public function testSubmitTestClosedFails()

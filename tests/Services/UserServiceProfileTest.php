@@ -166,6 +166,39 @@ class UserServiceProfileTest extends LmsTestCase
         $this->assertArrayHasKey('free_time_slots', $this->svc->errors());
     }
 
+    public function testUpdateStudentStoresAndClearsFreeTimeSlots()
+    {
+        $id = $this->svc->createStudent(array(
+            'username'       => 'hv_slot_update',
+            'password'       => 'matkhau123',
+            'full_name'      => 'Slot update',
+            'free_time_slots' => array(
+                array('day' => 2, 'start' => '17:30', 'end' => '19:00'),
+            ),
+        ));
+
+        $this->assertTrue($this->svc->updateStudent($id, array(
+            'username'       => 'hv_slot_update',
+            'full_name'      => 'Slot update',
+            'free_time_slots' => array(
+                array('day' => 5, 'start' => '18:00', 'end' => '19:30'),
+            ),
+        )));
+
+        $profile = $this->db->safeFetchOne('select free_time_slots from db_lms_students where user_id = ?', array($id));
+        $slots = json_decode((string) $profile['free_time_slots'], true);
+        $this->assertSame(5, (int) $slots[0]['day']);
+        $this->assertSame('18:00', $slots[0]['start']);
+
+        $this->assertTrue($this->svc->updateStudent($id, array(
+            'username'       => 'hv_slot_update',
+            'full_name'      => 'Slot update',
+            'free_time_slots' => array(),
+        )));
+        $profile = $this->db->safeFetchOne('select free_time_slots from db_lms_students where user_id = ?', array($id));
+        $this->assertNull($profile['free_time_slots']);
+    }
+
     public function testUpdateStudentKeepsPasswordWhenBlank()
     {
         $id = $this->svc->createStudent(array('username' => 'hv_u', 'password' => 'matkhau123', 'full_name' => 'U'));

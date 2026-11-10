@@ -46,6 +46,11 @@ if ($displayName === '' && !empty($user_login['ho_ten'])) {
                     <i class="fa-solid fa-arrow-up-right-from-square me-1"></i>Xem website
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link iframe-btn js-fm-open" href="ckfinder/ckfinder.html" data-fm-type="all" data-fm-resource="" title="Mở thư viện Media (Quản lý &amp; Sao chép đường dẫn file)">
+                    <i class="fa-solid fa-photo-film me-1"></i>Thư viện Media
+                </a>
+            </li>
         </ul>
 
         <ul class="navbar-nav ms-auto">

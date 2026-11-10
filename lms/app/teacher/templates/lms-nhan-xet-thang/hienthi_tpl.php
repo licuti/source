@@ -1,14 +1,159 @@
 <?php
-/** Teacher monthly-review roster and single-item editor. */
-$ratings=\Lms\MonthlyReviewService::OVERALL_RATINGS;
-$selectedClass=isset($_GET['class_id'])?(int)$_GET['class_id']:0;
-$selectedStudent=isset($_GET['student_id'])?(int)$_GET['student_id']:0;
-$selected=null;
-foreach($items as $item){if((int)$item['class_id']===$selectedClass&&(int)$item['student_id']===$selectedStudent){$selected=$item;break;}}
+/**
+ * Teacher — Nhận xét theo tháng (mockup teacher-ver2 + Form nhận xét lớp nhóm).
+ *
+ * Data do source chuẩn bị: $classes (mỗi lớp kèm 'students' + 'schedule_rows'),
+ * $months (dropdown tháng), $month, $openClassId, $alias.
+ *
+ * Dùng chung cấu trúc card với trang Student — Nhận xét tháng
+ * (.lmnx-card / .lmnx-card-head / .lmnx-cover / .lmnx-toggle).
+ */
+
+if (!function_exists('lmnxt_avatar_url')) {
+    /**
+     * URL avatar học viên (nếu có).
+     *
+     * @param string $raw
+     * @return string
+     */
+    function lmnxt_avatar_url($raw)
+    {
+        $raw = trim((string) $raw);
+        return $raw !== '' ? lms_upload_url(str_replace('uploads/', '', $raw)) : '';
+    }
+}
 ?>
-<div class="lms-card"><div class="lms-card-header"><i class="fa-solid fa-comment-dots me-1"></i>Nhận xét theo tháng</div><div class="lms-card-body">
-<form method="get" action="<?= e(lms_url($alias)) ?>" class="row g-2 mb-3"><div class="col-md-4"><label class="form-label">Tháng nhận xét</label><input type="month" class="form-control" name="month" value="<?= e($month) ?>"></div><div class="col-md-2 align-self-end"><button class="btn btn-primary">Xem</button></div></form>
-<?php if(!$items): ?><p class="text-muted text-center py-4">Bạn chưa có học viên trong lớp đang hoạt động.</p><?php else: ?><div class="row g-3">
-<div class="col-lg-5"><div class="list-group"><?php foreach($items as $item): ?><a class="list-group-item list-group-item-action <?= $selected&&$selected['student_id']===$item['student_id']&&$selected['class_id']===$item['class_id']?'active':'' ?>" href="<?= e(lms_url($alias,'man',array('month'=>$month,'class_id'=>(int)$item['class_id'],'student_id'=>(int)$item['student_id']))) ?>"><strong><?= e((string)$item['student_name']) ?></strong><div class="small"><?= e((string)$item['student_code']) ?> · <?= e((string)$item['class_code']) ?> · <?= e((string)$item['subject_name']) ?></div><div class="small"><?php if(!empty($item['review_id'])): ?><?= !empty($item['published_at'])?'Đã đăng':'Bản nháp' ?><?= !empty($item['overall_rating'])?' · '.e(isset($ratings[$item['overall_rating']])?$ratings[$item['overall_rating']]:$item['overall_rating']):'' ?><?php else: ?>Chưa nhận xét tháng này<?php endif; ?></div></a><?php endforeach; ?></div></div>
-<div class="col-lg-7"><?php if(!$selected): ?><div class="border rounded p-4 text-muted text-center">Chọn học viên để viết nhận xét tháng <?= e($month) ?>.</div><?php else: ?><div class="lms-card"><div class="lms-card-header"><?= e((string)$selected['student_name']) ?> · <?= e((string)$selected['class_code']) ?></div><div class="lms-card-body"><form method="post" action="<?= e(lms_url($alias,'luu')) ?>"><input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>"><input type="hidden" name="class_id" value="<?= e((string)$selected['class_id']) ?>"><input type="hidden" name="student_id" value="<?= e((string)$selected['student_id']) ?>"><input type="hidden" name="review_month" value="<?= e($month) ?>"><div class="mb-3"><label class="form-label">Đánh giá tổng thể</label><select class="form-select" name="overall_rating"><option value="">Chọn mức đánh giá</option><?php foreach($ratings as $key=>$label): ?><option value="<?= e($key) ?>"<?= lms_selected((string)($selected['overall_rating']??''),$key) ?>><?= e($label) ?></option><?php endforeach; ?></select></div><div class="mb-3"><label class="form-label">Tiến bộ (%)</label><input type="number" class="form-control" name="progress_percent" min="0" max="100" step="0.01" value="<?= e((string)($selected['progress_percent']??'')) ?>"></div><div class="mb-3"><label class="form-label">Nội dung nhận xét <span class="text-danger">*</span></label><textarea class="form-control" name="content" rows="7" maxlength="10000" required><?= e((string)($selected['content']??'')) ?></textarea><small class="text-muted">Học viên chỉ thấy nội dung sau khi bạn đăng.</small></div><div class="d-flex gap-2"><button class="btn btn-outline-primary" name="submit_action" value="draft">Lưu bản nháp</button><button class="btn btn-lms" name="submit_action" value="publish" onclick="return confirm('Đăng nhận xét này cho học viên?')"><i class="fa-solid fa-paper-plane me-1"></i>Đăng</button></div></form></div></div><?php endif; ?></div></div><?php endif; ?>
-</div></div>
+<?php if (empty($classes)): ?>
+    <div class="lms-card">
+        <div class="lms-card-body text-center py-5 text-muted">
+            Bạn chưa có học viên trong lớp đang hoạt động.
+        </div>
+    </div>
+<?php else: ?>
+
+    <div class="lmnx-list">
+        <?php foreach ($classes as $class): ?>
+            <?php
+            $classId = (int) $class['class_id'];
+            $isGroup = (string) $class['class_type'] === 'group';
+            $students = isset($class['students']) ? $class['students'] : array();
+
+            $title = $isGroup
+                ? (string) $class['class_name']
+                : (!empty($students[0]['student_name']) ? (string) $students[0]['student_name'] : (string) $class['class_name']);
+
+            $grade = '';
+            if (!$isGroup && !empty($students[0]['grade'])) {
+                $grade = trim((string) $students[0]['grade']);
+            } elseif ($isGroup && !empty($students)) {
+                $grades = array();
+                foreach ($students as $student) {
+                    $g = trim((string) $student['grade']);
+                    if ($g !== '') {
+                        $grades[$g] = true;
+                    }
+                }
+                $grade = count($grades) === 1 ? (string) key($grades) : 'Lớp nhóm';
+            }
+            $gradeSubject = trim(($grade !== '' ? $grade . ' - ' : '') . (string) $class['subject_name'], ' -');
+
+            $avatarUrl = '';
+            if (!$isGroup && !empty($students[0]['avatar'])) {
+                $avatarUrl = lmnxt_avatar_url($students[0]['avatar']);
+            }
+
+            $bodyId = 'lmnxt-body-' . $classId;
+            $isOpen = $openClassId === $classId;
+            ?>
+            <div class="lms-card lmnx-card">
+                <div class="lmnx-card-head">
+                    <?php if ($avatarUrl !== ''): ?>
+                        <div class="lmnx-cover">
+                            <img src="<?= e($avatarUrl) ?>" alt="<?= e($title) ?>">
+                        </div>
+                    <?php else: ?>
+                        <div class="lmnx-cover lmnx-cover-fallback">
+                            <i class="fa-solid <?= $isGroup ? 'fa-user-group' : 'fa-user-graduate' ?>"></i>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="lmnx-summary">
+                        <div class="lmnx-class-name"><?= e($title) ?></div>
+                        <?php if ($gradeSubject !== ''): ?>
+                            <div class="lmnx-grade"><?= e($gradeSubject) ?></div>
+                        <?php endif; ?>
+                        <?php if (!empty($class['schedule_rows'])): ?>
+                            <div class="lmnx-schedules">
+                                <?php foreach ($class['schedule_rows'] as $slot): ?>
+                                    <div class="lmnx-schedule">
+                                        <i class="fa-regular fa-calendar"></i>
+                                        <span class="lmnx-schedule-day"><?= e((string) $slot['day']) ?></span>
+                                        <span class="lmnx-schedule-time"><?= e((string) $slot['time']) ?></span>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <button type="button" class="lmnx-toggle" data-bs-toggle="collapse"
+                            data-bs-target="#<?= e($bodyId) ?>" aria-expanded="<?= $isOpen ? 'true' : 'false' ?>"
+                            aria-controls="<?= e($bodyId) ?>" aria-label="Mở/đóng form nhận xét">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div class="collapse<?= $isOpen ? ' show' : '' ?>" id="<?= e($bodyId) ?>">
+                    <div class="lmnx-body">
+                        <select class="form-select lmnx-month-select js-lmnxt-month"
+                                data-class-id="<?= e((string) $classId) ?>"
+                                aria-label="Chọn tháng nhận xét">
+                            <?php foreach ($months as $m => $label): ?>
+                                <option value="<?= e((string) $m) ?>"<?= $m === $month ? ' selected' : '' ?>>
+                                    <?= e((string) $label) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <form method="post" action="<?= e(lms_url($alias, 'luu')) ?>">
+                            <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
+                            <input type="hidden" name="class_id" value="<?= e((string) $classId) ?>">
+                            <input type="hidden" name="review_month" value="<?= e($month) ?>">
+
+                            <?php foreach ($students as $student): ?>
+                                <div class="lmnx-form-row">
+                                    <label class="lmnx-form-label" for="lmnxt-review-<?= e((string) $classId) ?>-<?= e((string) $student['student_id']) ?>">
+                                        <?= e((string) $student['student_name']) ?>
+                                    </label>
+                                    <input type="text" class="form-control lmnx-field-input"
+                                           id="lmnxt-review-<?= e((string) $classId) ?>-<?= e((string) $student['student_id']) ?>"
+                                           name="reviews[<?= e((string) $student['student_id']) ?>]"
+                                           value="<?= e((string) $student['content']) ?>"
+                                           maxlength="10000"
+                                           placeholder="Nhập nhận xét tháng <?= e($month) ?>…">
+                                </div>
+                            <?php endforeach; ?>
+
+                            <div class="lmnx-form-actions">
+                                <button type="submit" class="btn btn-lms">Cập nhật</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+    <script>
+    (function () {
+        var selects = document.querySelectorAll('.js-lmnxt-month');
+        for (var i = 0; i < selects.length; i++) {
+            selects[i].addEventListener('change', function () {
+                var url = new URL(window.location.href);
+                url.searchParams.set('month', this.value);
+                url.searchParams.set('open', this.getAttribute('data-class-id'));
+                window.location.href = url.toString();
+            });
+        }
+    })();
+    </script>
+<?php endif; ?>

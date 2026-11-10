@@ -89,17 +89,25 @@ Hỗ trợ: lớp 1-1 và lớp nhóm, lịch học linh hoạt, BTVN/Test, hệ
 - **Actor:** Admin
 - **Mô tả:** Tạo lớp 1-1 hoặc lớp nhóm, gán GV/HS, cấu hình lịch + deadline.
 - **Input form:** Mã lớp (auto), Chương trình → Môn, GV (dropdown search), HS (multi-select cho lớp nhóm), Loại lớp, Học phí/buổi, % GV, Tổng buổi, Lịch cố định (chọn Thứ + khung giờ, có thể nhiều dòng), Hạn giao BTVN (TIME, default 12:00), Hạn chấm BTVN (INT giờ, default 24).
-- **Validation:** Khung giờ hợp lệ (start < end), không trùng lịch GV đã dạy lớp khác cùng Thứ-giờ, tổng `current_classes <= max_classes` của GV.
+- **Validation:** Khung giờ hợp lệ (start < end), không trùng lịch GV đã dạy lớp khác cùng Thứ-giờ, tổng `current_classes <= max_classes` của GV. Sĩ số: lớp 1 kèm 1 đúng 1 học viên active, lớp nhóm ≥ 1 học viên — chặn tại tầng service kể cả khi thêm HV từ màn "Học sinh - Lớp học".
 - **Main flow:** (1) Tạo lớp → (2) Cấu hình lịch → (3) Gán HS → (4) Hệ thống auto-generate `sessions` cho 4 tuần tới từ schedules.
 - **Alternative flow:** Tạm dừng/Tiếp tục lớp (đổi `classes.status`), Chuyển lớp (chuyển HS sang lớp khác).
 - **BR liên quan:** `BR-SCHED-01`
 
 #### ADM-04: Sắp xếp lớp (Class Matching)
 - **Actor:** Admin
-- **Mô tả:** Gợi ý GV phù hợp cho HV chưa có lớp.
-- **Thuật toán match:** Lọc GV có `subject_id` ∈ HV cần, `district` ∈ GV dạy được, lịch rảnh GV khớp ≥ 1 khung giờ rảnh của HV, giới tính khớp yêu cầu (nếu PH yêu cầu), `current_classes < max_classes`.
-- **Output:** Danh sách GV xếp hạng theo điểm match, hiển thị % khớp lịch, rank, số lớp hiện tại.
-- **Main flow:** (1) Chọn HV đang `pending_arrange` → (2) Hệ thống tính điểm → (3) Admin chọn GV → (4) Tạo lớp tự động với cấu hình mặc định.
+- **Mô tả:** Tìm và đối chiếu GV phù hợp cho học viên cần xếp lớp; tra cứu lịch tuần của GV và ghi chú điều phối.
+- **UI (theo mockup `admin/Sắp xếp lớp.png` + `Sắp xếp lớp - Chi tiêt.png`):**
+  - **Block 1 — Tìm kiếm theo tiêu chí (toggle):** username HV (auto-fill giới tính/chương trình/quận/online-offline từ hồ sơ HV nhưng admin sửa được, không ghi ngược hồ sơ), giới tính, chương trình, quận/phường (multi-tag), Online/Offline.
+  - **Block 2 — Tìm theo lịch trống (toggle):** nhiều dòng ngày (date picker → tự hiện thứ), mỗi ngày nhiều khung giờ; xoá hết khung giờ của một ngày = tìm mọi khung giờ ngày đó; điều kiện giữa các ngày là OR.
+  - **Block 3 — Các giáo viên phù hợp:** lọc theo họ tên/username, giới tính, chương trình dạy, quận/phường có thể dạy, trạng thái; sắp xếp theo hạng giảm/tăng dần hoặc cập nhật gần/xa nhất.
+  - **Bảng kết quả 10 cột:** Username, Họ tên, Giới tính, Hạng (badge Đồng/Vàng/Xanh), Chương trình dạy, Quận/Phường có thể dạy, Số lớp đang dạy, Trạng thái, Lần cuối cập nhật, Hành động.
+  - **Hành động:** **Chi tiết** mở modal lịch tuần GV; **Xoá** = ẩn GV khỏi danh sách gợi ý trong phiên làm việc (không xoá tài khoản), có nút "Hiện lại N giáo viên đã ẩn".
+  - **Modal chi tiết:** địa chỉ hiện tại, quận/phường dạy được, số lớp đang dạy, số lớp tối đa, có dạy online; timeline 7 ngày × 1:00–24:00 — ô hồng = lịch lớp đang dạy (tên HV bấm được → hồ sơ HV), ô xanh = lịch trống nhận thêm lớp; ghi chú tuần của GV + nút Cập nhật.
+- **Lọc server-side:** giới tính, chương trình (GV để trống chương trình = dạy mọi chương trình), quận (GV để trống = mọi quận), trạng thái, online, lịch trống; mỗi nhóm tiêu chí HV/GV là AND, trong một nhóm nhiều lựa chọn là OR.
+- **Ghi chú tuần:** lưu theo `teacher_id` + `week_start` (thứ 2 của tuần hiện tại) trong `db_lms_teacher_notes`, tối đa 5000 ký tự.
+- **Tạo lớp:** không thực hiện tại màn này; admin tạo lớp tại ADM-03 (Quản lý lớp học). `MatchingService::createClassFromMatch()` vẫn giữ cho luồng nghiệp vụ/tự động hoá.
+- **BR liên quan:** `BR-SCHED-01`
 
 #### ADM-05: Quản lý Yêu cầu (Requests)
 - **Actor:** Admin (duyệt), Teacher/Student (tạo)
@@ -122,24 +130,50 @@ Hỗ trợ: lớp 1-1 và lớp nhóm, lịch học linh hoạt, BTVN/Test, hệ
 
 #### ADM-07: Thống kê Tài chính
 - **Actor:** Admin
-- **Mô tả:** Tính và xuất phí dịch vụ cho GV theo tháng.
+- **Mô tả:** Tra cứu phí dịch vụ của một GV theo khoảng ngày, xuất CSV và đối soát tài chính.
 - **Công thức:** Xem `BR-PAY-01`, `BR-PAY-02`, `BR-PAY-03`.
-- **Main flow:** (1) Chọn tháng → (2) Hệ thống query `transactions WHERE period_month = ?` → (3) Hiển thị bảng: Tổng thu, Tổng phạt, Tổng thưởng, Thuế, Thực nhận → (4) Xuất Excel.
-- **Quy trình duyệt:** Nháp → Chờ duyệt → Đã thanh toán (đổi `transactions.status`).
+- **Main flow:**
+  1. Nhập `Mã GV` + khoảng ngày (mặc định tháng hiện tại) → `Tìm`.
+  2. Hệ thống query `db_lms_transactions` theo `teacher_id` và `transaction_date BETWEEN from AND to`, tổng hợp thành các nhóm: Ký quỹ (`deposit_deduct`), Vi phạm (`penalty`), Phí DV cộng thêm (`bonus` + `adjustment`), Thuế (`tax`).
+  3. Hiển thị thẻ GV (avatar, tên, mã, SĐT, email), các ô tổng hợp, `Tổng Tiền` = `Tổng thu + Ký quỹ − Vi phạm − Thuế`, và bảng 3 cột `Thời Gian | Số Tiền | Nội Dung`.
+  4. Xuất CSV: `Xuất tất cả phí dịch vụ` (toàn bộ GV trong khoảng ngày), `Xuất file phí dịch vụ` (GV đang xem), `Xuất file số buổi dạy` (các buổi dạy trong khoảng ngày).
+- **Thuế:** 0% nếu GV có cam kết 08 hoặc tổng thu < 5.000.000đ; ngược lại 10% (`TaxService`).
+- **Quy trình thanh toán:** Thực hiện tập trung tại Modal "Thanh toán phí dịch vụ" (ADM-01 / Quản lý tài khoản, đối chiếu `admin-ver2/Thanh toán phí dịch vụ.png`). Màn hình ADM-07 là màn hình báo cáo đối soát và trích xuất dữ liệu CSV theo mockup `admin-ver2/Thống kê phí DV-1.png`, không có nút duyệt riêng.
 - **BR liên quan:** `BR-PAY-01` đến `BR-PAY-04`
 
 ### 2.2. Phân hệ Teacher (Giáo viên)
 
+#### TCH-00: Tổng quan Giáo viên
+- **Actor:** Teacher
+- **Mô tả:** Dashboard theo mockup `teacher/Tổng quan.png`, `Tổng quan - Thông báo.png`, `Tổng quan - Nút chat.png` (chat chưa triển khai — TODO).
+- **Header:** tên GV + hạng hiện tại (`db_lms_teachers.rank` → Xanh/Vàng/Đồng) dưới tên.
+- **Cột giữa:**
+  - "Buổi học sắp tới": tối đa 3 buổi `upcoming` gần nhất của GV — tên lớp, ngày `d/m/Y`, giờ bắt đầu–kết thúc, trạng thái "Sắp diễn ra"; click mở chi tiết buổi.
+  - "Các học viên hiện tại": tối đa 12 HV đang học lớp active của GV, kèm các khung lịch cố định `Thứ … HH:MM - HH:MM`; HV chưa có lịch hiển thị "Chưa có lịch".
+- **Cột phải "Thông báo":**
+  - Card tác vụ "Ghi báo cáo buổi học" khi còn buổi `finished` chưa có `summary_submitted_at` (kèm tên lớp/ngày).
+  - Card tác vụ "Chấm bài" khi có bài nộp chưa chấm (`hw_submitted_at` có, `hw_graded_at` null), kèm số bài chờ chấm.
+  - Card "Bạn đã bị hạ phí dịch vụ" khi tick thực tế đạt `ticks_to_demote_fee`; thông báo gần đây (trừ `tick_warning` để tránh trùng banner).
+- **Banner cảnh báo tick (BR-TICK-03):** hiển thị khi `tick_thực_tế >= ticks_to_warn` và chưa đạt ngưỡng hạ phí — "Cảnh báo: Bạn còn N tick nữa trước khi bị hạ phí dịch vụ"; tick thực tế = tổng `violations.tick_amount` − `ticks_exempted` theo số lớp hiện tại (`TickService::teacherTickSummary()`).
+- **Chat:** FAB toàn cục + popover thông báo "tính năng đang phát triển"; chưa có logic hội thoại.
+- **BR liên quan:** `BR-TICK-03`.
+
 #### TCH-01: Quản lý Lịch dạy
 - **Actor:** Teacher
-- **Mô tả:** Xem lịch tuần, đăng ký lịch trống, gửi request.
-- **Calendar view:** Hiển thị 7 ngày × khung giờ, mỗi ô:
-  - **Đỏ** = buổi sắp tới
-  - **Hồng** = buổi đã hoàn thành
-  - **Xám** = buổi nghỉ (cancelled)
-  - **Xanh lá** = trống
-  - **Xanh dương** = Lớp 1-1, **Cam** = Lớp đông (theo legend)
-- **Main flow:** (1) Click ô trống → popup chi tiết → (2) Click `Đăng ký lịch trống` (ghi nhận admin biết) HOẶC `Xin nghỉ` (tạo `request_leave`) HOẶC `Đổi lịch cố định` (tạo `change_schedule`).
+- **Mô tả:** Xem lịch tuần, cập nhật hồ sơ dạy, đăng ký lịch trống, gửi request (mockup `teacher/Quản lý lịch - Lịch tuần.png` + 3 modal).
+- **Hồ sơ (form trên cùng):** Địa chỉ hiện tại; Các khu vực có thể dạy (chọn nhiều, nhóm "Các quận TP.HCM" + "Khu vực TP. Thủ Đức (tất cả phường)"; lưu `teachers.teachable_districts`); Có thể dạy online (Không/Có); Số lớp tối đa có thể nhận (0–50).
+- **Ghi chú tuần:** textarea riêng dưới lịch (tối đa 5000 ký tự), lưu theo `teacher_id + week_start = thứ 2 của tuần`, nút `Cập nhật` lưu riêng không ghi đè hồ sơ.
+- **Calendar view:** Lưới tuần 7 ngày × khung giờ, dùng component chung `calendar_week` + `calendar_week_event` (Admin "Lịch học", Student "Lịch học" cũng dùng; thẻ giờ lẻ thụt xuống theo tỷ lệ phút trong hàng 72px):
+  - **Đỏ** = buổi sắp tới (còn `Chỉnh lịch` nếu từ hôm nay trở đi)
+  - **Hồng đậm + ✗** = buổi đã kết thúc nhưng chưa ghi lesson summary/BTVN
+  - **Hồng nhạt** = buổi đã hoàn thành
+  - **Xám** = buổi nghỉ (cancelled/absent)
+  - **Xanh lá** = lịch trống có thể nhận thêm lớp
+- **Modal "Đăng ký thêm buổi học":** lớp (bắt buộc; lớp 1-1 tự ẩn chọn HV nhưng vẫn gửi `student_id`), ngày + giờ bắt đầu/kết thúc, ghi chú; tạo `request_type=add_session`.
+- **Modal "Chỉnh lịch" (mở từ ô đỏ):** tiêu đề kèm tên lớp; chọn hành động:
+  - `Xin nghỉ`: ngày buổi chọn (readonly) + lý do (bắt buộc) + ngày bù (không bắt buộc) → `request_leave`.
+  - `Đổi lịch cố định`: tối đa 2 dòng "Thứ … + giờ bắt đầu - kết thúc", prefill từ `db_lms_schedules` hiện tại; server quy đổi mỗi thứ thành ngày đầu tiên của tuần kế tiếp (BR-SCHED-02) rồi gửi `change_schedule`.
+- **Lịch trống:** đăng ký/xoá khung giờ rảnh của chính GV; xoá dùng quyền `edit` của module (teacher không có quyền `delete` chung).
 
 #### TCH-02: Quản lý Lớp & Buổi học
 - **Actor:** Teacher
@@ -165,9 +199,9 @@ Hỗ trợ: lớp 1-1 và lớp nhóm, lịch học linh hoạt, BTVN/Test, hệ
 #### TCH-05: Xem Phí dịch vụ & Vi phạm
 - **Actor:** Teacher
 - **Mô tả:** Xem lịch sử nhận tiền từng buổi + theo dõi tick.
-- **Phí dịch vụ:** Bảng giao dịch theo tháng, có filter theo `period_month`, `type`. Tổng cuối = Thực nhận (xem công thức BR-PAY-03).
-- **Vi phạm:** Hiển thị tổng tick thực tế (đã trừ tick miễn theo `violation_thresholds.ticks_exempted`); so sánh với ngưỡng `ticks_to_demote_fee`; nếu `tick_thực_tế >= ticks_to_demote_fee` → hiển thị banner cảnh báo cam.
-- **BR liên quan:** `BR-TICK-03`, `BR-PAY-01`
+- **Phí dịch vụ (mockup `teacher/Phí dịch vụ.png`):** Lọc theo **học viên** (các HV đang học lớp của GV; rỗng = tất cả) và **khoảng ngày** (`date_from`/`date_to`, mặc định tháng trước). Hiển thị ô **Tổng tiền (VND)** = `feeSummary()['thuc_nhan']` trên đúng tập giao dịch đã lọc, cùng công thức với Admin `lms-phi-dv` (BR-PAY-04). Bảng 4 cột: Ngày (ngày + giờ buổi học, fallback giờ tạo) · Học viên (lớp 1-1 hiện tên HV; lớp nhóm hiện tên lớp) · Số tiền (+/−) · Nội dung (câu “Bạn đã nhận được … cho <lớp>” hoặc lý do/loại giao dịch). Phân trang **20 dòng/trang**, giữ nguyên filter khi chuyển trang; tổng tiền luôn tính trên toàn bộ khoảng lọc, không chỉ trang hiện tại.
+- **Vi phạm (mockup `teacher/Vi phạm nội quy.png`):** Trang “Các vi phạm” hiển thị toàn bộ tick của GV (không lọc tháng/lý do). Panel: Số tick đã vi phạm (raw) · Số tick được miễn (`ticks_exempted`) kèm tooltip chính sách · Tổng tick thực tế (highlight vàng/đỏ) · Ngưỡng hạ mức phí dịch vụ (`ticks_to_demote_fee`). Bảng 4 cột: Ngày (ngày + giờ buổi học, fallback giờ tạo) · Học viên (lớp 1-1 hiện tên HV; lớp nhóm hiện tên lớp) · Số lượng tick (+/−) · Nội dung vi phạm. Ghi chú “** Có chính sách miễn giảm tick”; phân trang 20 dòng/trang. Nếu `tick_thực_tế >= ticks_to_warn` hiển thị banner cảnh báo (BR-TICK-03).
+- **BR liên quan:** `BR-TICK-03`, `BR-PAY-01`, `BR-PAY-04`
 
 #### TCH-06: Nhận xét theo tháng (MỚI)
 - **Actor:** Teacher
@@ -282,6 +316,7 @@ Hỗ trợ: lớp 1-1 và lớp nhóm, lịch học linh hoạt, BTVN/Test, hệ
 - Chỉ áp dụng từ tuần kế tiếp.
 - Sessions đã tạo trong tuần hiện tại giữ nguyên.
 - Cần Admin duyệt `request_type='change_schedule'`.
+- **Hiện trạng triển khai:** `RequestService::approveRequest()` đang insert các buổi mới theo `payload.slots` rồi trừ `remaining_sessions` (chưa cập nhật `db_lms_schedules`). Nếu muốn "đổi lịch cố định" đúng nghĩa cần bổ sung bước cập nhật schedule + sinh lại session tương lai ở phase sau.
 
 ### 3.4. Quy tắc Tài khoản
 

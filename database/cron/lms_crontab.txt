@@ -16,7 +16,8 @@
 #
 # Log: mỗi job ghi ra file riêng trong /var/log. Bật logrotate.
 
-# Quét vi phạm (tick) mỗi 15 phút: đóng buổi quá hạn + BR-TICK-01/02/03.
+# Tick + nhắc học viên trước buổi học (45–75 phút) mỗi 15 phút;
+# đóng buổi quá hạn + BR-TICK-01/02/03 trong cùng pipeline.
 # Tần suất theo SRS §3.1.
 */15 * * * * php /path/to/source/database/cron/lms_tick_cron.php >> /var/log/lms_tick.log 2>&1
 

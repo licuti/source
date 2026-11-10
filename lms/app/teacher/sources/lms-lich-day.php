@@ -36,13 +36,19 @@ switch ($action) {
         lmld_save_profile();
         break;
 
+    case 'luu-ghi-chu':
+        lms_form_guard($d, $user, $alias, 'edit', 'teacher');
+        lmld_save_week_note();
+        break;
+
     case 'them-slot':
         lms_form_guard($d, $user, $alias, 'edit', 'teacher');
         lmld_add_slot();
         break;
 
     case 'xoa-slot':
-        lms_form_guard($d, $user, $alias, 'delete', 'teacher');
+        // Xoá lịch trống = chỉnh sửa lịch rảnh của chính GV (teacher không có quyền delete chung).
+        lms_form_guard($d, $user, $alias, 'edit', 'teacher');
         lmld_delete_slot();
         break;
 
@@ -205,39 +211,58 @@ function lmld_teacher_classes($teacherId)
 }
 
 /**
- * Buổi sắp tới của 1 lớp (cho modal xin nghỉ).
+ * Lịch cố định hiện tại của từng lớp (prefill modal đổi lịch cố định).
  *
- * @param int $classId
- * @return array
+ * @param array $classes
+ * @param string $today
+ * @return array classId => array(array('day','start','end'))
  */
-function lmld_upcoming_sessions($classId)
+function lmld_class_schedules(array $classes, $today)
 {
+    $out = array();
+    if (empty($classes)) {
+        return $out;
+    }
+
     $d = lms_db();
-    return $d->safeFetch(
-        'select id, session_date, start_time, end_time from db_lms_sessions'
-        . ' where class_id = ? and session_date >= ? and status = ?'
-        . ' order by session_date, start_time',
-        array((int) $classId, date('Y-m-d'), 'upcoming')
+    $classIds = array();
+    foreach ($classes as $c) {
+        $classIds[] = (int) $c['id'];
+    }
+    $placeholders = implode(', ', array_fill(0, count($classIds), '?'));
+    $rows = $d->safeFetch(
+        'select class_id, day_of_week, start_time, end_time from db_lms_schedules'
+        . ' where class_id in (' . $placeholders . ')'
+        . ' and (effective_to is null or effective_to >= ?)'
+        . ' order by class_id, day_of_week, start_time',
+        array_merge($classIds, array((string) $today))
     );
+    foreach ($rows as $row) {
+        $out[(int) $row['class_id']][] = array(
+            'day'   => (int) $row['day_of_week'],
+            'start' => substr((string) $row['start_time'], 0, 5),
+            'end'   => substr((string) $row['end_time'], 0, 5),
+        );
+    }
+    return $out;
 }
 
 // ===================== Action: man (calendar) =====================
 
 function lmld_calendar()
 {
-    global $title, $template, $weekMonday, $weekLabel, $prevWeek, $nextWeek,
+    global $title, $template, $weekMonday, $prevWeek, $nextWeek,
            $profile, $weekNote, $calRows, $freeSlots, $classes, $classStudents,
-           $districts, $teacherId, $canEdit, $canDelete, $d, $user, $alias;
+           $classSchedules, $teacherId, $canEdit, $d, $user, $alias;
 
     $schedSvc  = new \Lms\ScheduleService($d);
     $profSvc   = new \Lms\TeacherProfileService($d);
     $sessionSvc = new \Lms\SessionService($d);
 
+    $today = date('Y-m-d');
     $weekMonday = lmld_week_monday($_GET);
     $prevWeek   = date('Y-m-d', strtotime('-7 days', strtotime($weekMonday)));
     $nextWeek   = date('Y-m-d', strtotime('+7 days', strtotime($weekMonday)));
-    $weekLabel  = mb_convert_case(date('F', strtotime($weekMonday)), MB_CASE_TITLE, 'UTF-8')
-        . ' / ' . date('Y', strtotime($weekMonday));
 
     $profile  = $profSvc->getProfile($teacherId);
     $weekNote = $profSvc->getWeeklyNote($teacherId, $weekMonday);
@@ -250,10 +275,9 @@ function lmld_calendar()
     $cs = lmld_teacher_classes($teacherId);
     $classes        = $cs['classes'];
     $classStudents  = $cs['students'];
-    $districts      = \Lms\UserService::HCMC_DISTRICTS;
+    $classSchedules = lmld_class_schedules($classes, $today);
 
     $canEdit   = lms_check_permission($d, $user, $alias, 'edit', 'teacher');
-    $canDelete = lms_check_permission($d, $user, $alias, 'delete', 'teacher');
 
     $title    = 'Quản lý lịch';
     $template = 'lms-lich-day/hienthi';
@@ -275,26 +299,47 @@ function lmld_save_profile()
 
     $profSvc = new \Lms\TeacherProfileService($d);
 
-    // Chú ý: mỗi lệnh clearErrors() nên đọc errors ngay sau khi gọi để gộp
     $okProfile = $profSvc->updateProfile($teacherId, $_POST);
-    $profileErrors = $profSvc->errors();
 
-    $okNote = $profSvc->upsertWeeklyNote(
-        $teacherId,
-        $weekMonday,
-        isset($_POST['week_note']) ? (string) $_POST['week_note'] : ''
-    );
-    $noteErrors = $profSvc->errors();
-
-    if ($okProfile && $okNote) {
-        lms_flash('success', 'Đã cập nhật thông tin và ghi chú tuần.');
+    if ($okProfile) {
+        lms_flash('success', 'Đã cập nhật thông tin cá nhân.');
         header('Location: ' . lms_url($alias, '', lmld_week_params($weekMonday)));
         exit;
     }
 
-    // Gộp errors của 2 service, flash thông báo đầu tiên
-    $errors = array_merge($profileErrors, $noteErrors);
+    $errors = $profSvc->errors();
     lms_flash('error', !empty($errors) ? reset($errors) : 'Không thể lưu. Vui lòng kiểm tra lại các trường.');
+    header('Location: ' . lms_url($alias, '', lmld_week_params($weekMonday)));
+    exit;
+}
+
+// ===================== Action: luu-ghi-chu =====================
+
+function lmld_save_week_note()
+{
+    global $alias, $teacherId, $d;
+
+    $weekMonday = lmld_week_monday($_GET);
+
+    if (!lms_csrf_verify()) {
+        lms_flash('error', 'Phiên làm việc không hợp lệ. Vui lòng tải lại trang và thử lại.');
+        header('Location: ' . lms_url($alias, '', lmld_week_params($weekMonday)));
+        exit;
+    }
+
+    $profSvc = new \Lms\TeacherProfileService($d);
+    $ok = $profSvc->upsertWeeklyNote(
+        $teacherId,
+        $weekMonday,
+        isset($_POST['week_note']) ? (string) $_POST['week_note'] : ''
+    );
+
+    if ($ok) {
+        lms_flash('success', 'Đã cập nhật ghi chú tuần.');
+    } else {
+        $errors = $profSvc->errors();
+        lms_flash('error', !empty($errors) ? reset($errors) : 'Không thể lưu ghi chú tuần.');
+    }
     header('Location: ' . lms_url($alias, '', lmld_week_params($weekMonday)));
     exit;
 }
@@ -365,7 +410,8 @@ function lmld_delete_slot()
 function lmld_session()
 {
     global $title, $template, $session, $students, $summaryLocked, $deadlineLabel,
-           $sessionId, $weekMonday, $teacherId, $canEdit, $d, $user, $alias;
+           $sessionId, $weekMonday, $teacherId, $canEdit, $d, $user, $alias,
+           $hidePageTitle, $headerTitle, $backUrl;
 
     $sessionId  = isset($_GET['id']) ? (int) $_GET['id'] : 0;
     $weekMonday = lmld_week_monday($_GET);
@@ -390,6 +436,9 @@ function lmld_session()
         ? date('H:i d/m/Y', strtotime($deadline))
         : '';
 
+    // Đảm bảo học viên trong lớp có bản ghi db_lms_session_students cho buổi học này
+    $sessionSvc->ensureSessionStudents($sessionId);
+
     // Học viên + trạng thái chấm BTVN
     $students = $sessionSvc->listSessionStudentsForGrading($sessionId, $teacherId);
     foreach ($students as $i => $row) {
@@ -397,13 +446,18 @@ function lmld_session()
             isset($row['hw_submission_files']) ? $row['hw_submission_files'] : array()
         );
         $students[$i]['hw_submission_files'] = $files;
+        $students[$i]['teacher_feedback_files'] = \Lms\UserService::decodeJsonArray(
+            isset($row['teacher_feedback_files']) ? $row['teacher_feedback_files'] : array()
+        );
 
         // Hạn chấm = hw_submitted_at + hw_check_hours
-        $label = 'Chưa nộp bài';
+        $label = 'Học sinh chưa nộp bài';
         $overdue = false;
         if (!empty($row['hw_submitted_at'])) {
-            $checkHours = isset($row['hw_check_hours']) ? (int) $row['hw_check_hours'] : 24;
-            $dueTs = strtotime((string) $row['hw_submitted_at'] . ' +' . max(0, $checkHours) . ' hours');
+            $checkHours = (isset($row['hw_check_hours']) && (int) $row['hw_check_hours'] > 0)
+                ? (int) $row['hw_check_hours']
+                : 24;
+            $dueTs = strtotime((string) $row['hw_submitted_at'] . ' +' . $checkHours . ' hours');
             $diff = $dueTs - time();
             if ($diff < 0) {
                 $overdue = true;
@@ -422,8 +476,23 @@ function lmld_session()
         $students[$i]['grade_overdue']   = $overdue;
     }
 
-    $title    = 'Buổi học ' . lmld_session_title($session);
-    $template = 'lms-lich-day/buoi';
+    $isOneOnOne = isset($session['class_type']) && (string) $session['class_type'] === 'one_on_one';
+    if ($isOneOnOne && !empty($students[0]['full_name'])) {
+        $headerTitle = (string) $students[0]['full_name'];
+        $backUrl = lms_url('lms-hoc-vien-cua-toi', 'chi-tiet', array(
+            'class_id'   => (int) $session['class_id'],
+            'student_id' => (int) $students[0]['student_id'],
+        ));
+    } else {
+        $headerTitle = (string) $session['class_name'];
+        $backUrl = lms_url('lms-hoc-vien-cua-toi', 'chi-tiet-lop', array(
+            'class_id' => (int) $session['class_id'],
+        ));
+    }
+
+    $title         = 'Buổi học ' . lmld_session_title($session);
+    $template      = 'lms-lich-day/buoi';
+    $hidePageTitle = true;
 }
 
 /**
@@ -541,23 +610,31 @@ function lmld_create_request()
 }
 
 /**
- * Chuyển 3 mảng song song từ form (slot_date[]/slot_start[]/slot_end[])
- * thành mảng các khung giờ.
+ * Chuyển các mảng song song từ form thành mảng khung giờ.
+ * Modal "Đổi lịch cố định" gửi slot_day[] (thứ 2..CN); ngày cụ thể được tính
+ * là buổi đầu tiên của tuần kế tiếp để khớp BR-SCHED-02.
  *
  * @param array $post
  * @return array
  */
 function lmld_slots_from_post($post)
 {
-    $days   = isset($post['slot_date']) ? (array) $post['slot_date'] : array();
+    $dates  = isset($post['slot_date']) ? (array) $post['slot_date'] : array();
+    $days   = isset($post['slot_day']) ? (array) $post['slot_day'] : array();
     $starts = isset($post['slot_start']) ? (array) $post['slot_start'] : array();
     $ends   = isset($post['slot_end']) ? (array) $post['slot_end'] : array();
 
+    $nextWeekMonday = strtotime('+7 days', strtotime('monday this week'));
     $out = array();
-    $n = max(count($days), count($starts), count($ends));
+    $n = max(count($dates), count($days), count($starts), count($ends));
     for ($i = 0; $i < $n; $i++) {
+        $date = isset($dates[$i]) ? trim((string) $dates[$i]) : '';
+        if ($date === '' && isset($days[$i]) && (int) $days[$i] >= 2 && (int) $days[$i] <= 8) {
+            $offset = (int) $days[$i] - 2;
+            $date = date('Y-m-d', strtotime('+' . $offset . ' days', $nextWeekMonday));
+        }
         $out[] = array(
-            'date'  => isset($days[$i]) ? (string) $days[$i] : '',
+            'date'  => $date,
             'start' => isset($starts[$i]) ? (string) $starts[$i] : '',
             'end'   => isset($ends[$i]) ? (string) $ends[$i] : '',
         );

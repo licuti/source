@@ -594,36 +594,102 @@
      * 11. Xử lý image picker (hiển thị nút xóa khi có ảnh)
      * -------------------------------------------------------------------- */
     function initImagePickerWatch() {
-        // Cung cấp API công khai để các thành phần bên ngoài (filemanager) gọi khi cập nhật ảnh
+        // Cung cấp API công khai để các thành phần bên ngoài (filemanager) gọi khi cập nhật file/ảnh/video
         if (typeof window.AdminUI === 'undefined') {
             window.AdminUI = {};
         }
 
-        window.AdminUI.updateImagePicker = function(inputId, imageUrl) {
+        window.AdminUI.updateImagePicker = function(inputId, filePath, previewType) {
             var input = document.getElementById(inputId);
             if (!input) return;
 
-            var url = String(imageUrl || '').trim();
-            var img = document.getElementById('review_' + inputId) || document.getElementById('img_' + inputId);
-            if (img) {
-                // Cập nhật src với đường dẫn ảnh đầy đủ
+            var url = String(filePath || '').trim();
+            var preview = (previewType || input.getAttribute('data-preview') || 'image').toLowerCase();
+            var targetEl = document.getElementById('review_' + inputId) || document.getElementById('img_' + inputId);
+
+            if (preview === 'video' || (targetEl && targetEl.tagName === 'VIDEO')) {
+                // Video handling
+                var videoEl = (targetEl && targetEl.tagName === 'VIDEO') ? targetEl : document.getElementById('review_' + inputId);
+                if (videoEl) {
+                    var fullVideoUrl = url;
+                    if (url.indexOf('../') === 0 || url.indexOf('./') === 0) {
+                        fullVideoUrl = url.replace(/^(\.\.\/|\.\/)+/, '');
+                    } else if (!/^https?:\/\//i.test(url) && url.indexOf('/') !== 0 && url.indexOf('media/videos/') !== 0) {
+                        fullVideoUrl = '../media/videos/' + url;
+                    }
+                    videoEl.src = fullVideoUrl;
+                    videoEl.classList.remove('d-none');
+                    videoEl.style.display = 'block';
+                    try { if (videoEl.load) videoEl.load(); } catch (e) {}
+
+                    var emptyV = document.getElementById('review_' + inputId + '_empty');
+                    if (emptyV) {
+                        emptyV.classList.add('d-none');
+                        emptyV.style.display = 'none';
+                    }
+                }
+            } else if (preview === 'file') {
+                // Document / file handling (PDF, Word, Excel, etc.)
+                var fileWrap = document.getElementById('review_' + inputId + '_wrap');
+                var emptyF = document.getElementById('review_' + inputId + '_empty');
+                var fileLink = document.getElementById('review_' + inputId + '_link');
+                var fileIcon = document.getElementById('review_' + inputId + '_icon');
+
+                var fullFileUrl = url;
                 if (url.indexOf('../') === 0 || url.indexOf('./') === 0) {
-                    img.src = url.replace(/^(\.\.\/|\.\/)+/, '');
-                } else if (!/^https?:\/\//i.test(url) && url.indexOf('/') !== 0 && url.indexOf('img/') !== 0) {
-                    img.src = '../media/images/' + url; // Đường dẫn tương đối
-                } else {
-                    img.src = url;
+                    fullFileUrl = url.replace(/^(\.\.\/|\.\/)+/, '');
+                } else if (!/^https?:\/\//i.test(url) && url.indexOf('/') !== 0 && url.indexOf('media/files/') !== 0) {
+                    fullFileUrl = '../media/files/' + url;
+                }
+
+                if (fileWrap) {
+                    fileWrap.classList.remove('d-none');
+                    fileWrap.style.display = '';
+                }
+                if (emptyF) {
+                    emptyF.classList.add('d-none');
+                    emptyF.style.display = 'none';
+                }
+                if (fileLink) {
+                    fileLink.href = fullFileUrl;
+                    fileLink.textContent = url.split('/').pop();
+                }
+                if (fileIcon) {
+                    var ext = (url.split('.').pop() || '').toLowerCase();
+                    var iconClass = 'fa-file';
+                    if (ext === 'pdf') iconClass = 'fa-file-pdf';
+                    else if (['doc', 'docx'].indexOf(ext) !== -1) iconClass = 'fa-file-word';
+                    else if (['xls', 'xlsx', 'csv'].indexOf(ext) !== -1) iconClass = 'fa-file-excel';
+                    else if (['zip', 'rar', '7z'].indexOf(ext) !== -1) iconClass = 'fa-file-zipper';
+                    else if (['mp4', 'webm', 'mov'].indexOf(ext) !== -1) iconClass = 'fa-file-video';
+                    else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].indexOf(ext) !== -1) iconClass = 'fa-file-image';
+                    fileIcon.className = 'fa-solid ' + iconClass + ' fa-lg text-primary';
+                }
+            } else {
+                // Image handling
+                if (targetEl && targetEl.tagName === 'IMG') {
+                    if (url.indexOf('../') === 0 || url.indexOf('./') === 0) {
+                        targetEl.src = url.replace(/^(\.\.\/|\.\/)+/, '');
+                    } else if (!/^https?:\/\//i.test(url) && url.indexOf('/') !== 0 && url.indexOf('img/') !== 0 && url.indexOf('media/images/') !== 0) {
+                        targetEl.src = '../media/images/' + url;
+                    } else {
+                        targetEl.src = url;
+                    }
+                    targetEl.classList.remove('d-none');
+                    targetEl.style.display = '';
                 }
             }
 
             // Hiển thị nút xóa
-            var picker = input.closest ? input.closest('.form-file-picker') : null;
+            var picker = input.closest ? (input.closest('.form-file-picker') || input.closest('[data-file-picker]')) : null;
             var deleteBtn = picker ? picker.querySelector('.js-file-picker-delete') : null;
             if (deleteBtn) {
                 deleteBtn.style.display = '';
                 deleteBtn.classList.remove('d-none');
             }
         };
+
+        window.AdminUI.updateFilePicker = window.AdminUI.updateImagePicker;
     }
 
     /* ----------------------------------------------------------------------
@@ -731,7 +797,44 @@
                 var input = document.getElementById(targetId);
                 var img = document.getElementById('review_' + targetId);
                 if (input) { input.value = ''; }
-                if (img) { img.src = img.getAttribute('data-fallback') || 'img/no-image.png'; }
+                if (img) {
+                    if (img.tagName === 'VIDEO') {
+                        img.removeAttribute('src');
+                        img.classList.add('d-none');
+                        img.style.display = 'none';
+                        try { if (img.load) img.load(); } catch (e) {}
+                        var emptyBox = document.getElementById('review_' + targetId + '_empty');
+                        if (emptyBox) {
+                            emptyBox.classList.remove('d-none');
+                            emptyBox.style.display = '';
+                        }
+                    } else {
+                        img.src = img.getAttribute('data-fallback') || 'img/no-image.png';
+                    }
+                }
+                var wrapBox = document.getElementById('review_' + targetId + '_wrap');
+                if (wrapBox) {
+                    wrapBox.classList.add('d-none');
+                    wrapBox.style.display = 'none';
+                }
+                var linkEl = document.getElementById('review_' + targetId + '_link');
+                if (linkEl) {
+                    linkEl.href = '#';
+                    linkEl.textContent = '';
+                }
+                var emptyFileBox = document.getElementById('review_' + targetId + '_empty');
+                if (emptyFileBox && (!img || img.tagName !== 'VIDEO')) {
+                    emptyFileBox.classList.remove('d-none');
+                    emptyFileBox.style.display = '';
+                }
+                var pickerEl = btn.closest('.form-file-picker') || btn.closest('[data-file-picker]');
+                if (pickerEl) {
+                    var copyBtnEl = pickerEl.querySelector('.js-copy-file-url');
+                    if (copyBtnEl) {
+                        copyBtnEl.style.display = '';
+                        copyBtnEl.classList.add('d-none');
+                    }
+                }
                 btn.style.display = '';
                 btn.classList.add('d-none');
                 return;
@@ -740,11 +843,10 @@
             if (action === 'remove-gallery-item') {
                 ev.preventDefault();
                 var targetId = btn.getAttribute('data-target') || '';
-                if (!targetId) { return; }
-                var item = btn.closest('[id^="gallery_item_"]') || btn.closest('.col-6');
+                var item = btn.closest('.gallery-item') || btn.closest('[id^="gallery_item_"]') || btn.closest('.col-6');
                 if (item) {
                     item.remove();
-                } else {
+                } else if (targetId) {
                     var el = document.getElementById(targetId);
                     if (el) { el.remove(); }
                 }
@@ -798,6 +900,119 @@
         }, 400));
     }
 
+    /**
+     * Sao chép đường dẫn file/ảnh/video từ component picker (image_picker, file_picker, image_repeater, gallery).
+     */
+    function initCopyFileUrlActions() {
+        function fallbackCopy(text) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.top = '0';
+            ta.style.left = '0';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try { document.execCommand('copy'); } catch (e) {}
+            document.body.removeChild(ta);
+        }
+
+        function copyToClipboard(text, btn) {
+            if (!text) {
+                if (window.AdminUI && AdminUI.notify) {
+                    AdminUI.notify.show('Chưa có đường dẫn để sao chép', 'warning');
+                }
+                return;
+            }
+
+            function onDone() {
+                if (btn) {
+                    var icon = btn.querySelector('i');
+                    var origClass = icon ? icon.className : '';
+                    if (icon) {
+                        icon.className = 'fa-solid fa-check text-success';
+                    }
+                    setTimeout(function () {
+                        if (icon) icon.className = origClass;
+                    }, 1500);
+                }
+                if (window.AdminUI && AdminUI.notify) {
+                    AdminUI.notify.show('Đã sao chép đường dẫn: ' + text, 'success');
+                } else if (window.Toastify) {
+                    window.Toastify({ text: 'Đã sao chép: ' + text, duration: 3000, gravity: 'top', position: 'right' }).showToast();
+                }
+            }
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(onDone).catch(function () {
+                    fallbackCopy(text);
+                    onDone();
+                });
+            } else {
+                fallbackCopy(text);
+                onDone();
+            }
+        }
+
+        document.addEventListener('click', function (ev) {
+            var btn = ev.target.closest && ev.target.closest('.js-copy-file-url, [data-action="copy-file-url"]');
+            if (!btn) { return; }
+            ev.preventDefault();
+            ev.stopPropagation();
+
+            var directVal = btn.getAttribute('data-copy-val');
+            if (directVal) {
+                if (/^https?:\/\//i.test(directVal)) {
+                    copyToClipboard(directVal, btn);
+                } else {
+                    var full = window.location.origin + '/' + directVal.replace(/^\//, '');
+                    copyToClipboard(full, btn);
+                }
+                return;
+            }
+
+            var targetId = btn.getAttribute('data-target') || '';
+            var input = targetId ? document.getElementById(targetId) : null;
+            var val = (input ? input.value : '') || '';
+            var preview = btn.getAttribute('data-preview') || (input ? input.getAttribute('data-preview') : 'image') || 'image';
+
+            if (!val) {
+                var reviewEl = targetId ? document.getElementById('review_' + targetId) : null;
+                if (reviewEl) {
+                    if (reviewEl.tagName === 'IMG' && reviewEl.src && reviewEl.src.indexOf('no-image') === -1) {
+                        val = reviewEl.src;
+                    } else if (reviewEl.tagName === 'VIDEO' && reviewEl.src) {
+                        val = reviewEl.src;
+                    }
+                }
+                var linkEl = targetId ? document.getElementById('review_' + targetId + '_link') : null;
+                if (!val && linkEl && linkEl.href && linkEl.href.indexOf('#') === -1) {
+                    val = linkEl.href;
+                }
+            }
+
+            if (!val) {
+                copyToClipboard('', btn);
+                return;
+            }
+
+            if (/^https?:\/\//i.test(val)) {
+                copyToClipboard(val, btn);
+                return;
+            }
+
+            var clean = val.replace(/^\.?\/?/, '');
+            if (clean.indexOf('media/') !== 0) {
+                if (preview === 'video') clean = 'media/videos/' + clean;
+                else if (preview === 'file') clean = 'media/files/' + clean;
+                else clean = 'media/images/' + clean;
+            }
+            var fullUrl = window.location.origin + '/' + clean;
+            copyToClipboard(fullUrl, btn);
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         initSelectAll();
         initTree();
@@ -815,5 +1030,6 @@
         updateBulkBar();
         initYoutubeInputs();
         initFilePickerActions();
+        initCopyFileUrlActions();
     });
 })();

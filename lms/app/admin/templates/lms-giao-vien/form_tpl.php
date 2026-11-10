@@ -1,265 +1,329 @@
 <?php
 /**
- * Admin LMS — Quản lý giáo viên: view form tạo/sửa (ADM-02).
- * Data do source chuẩn bị: $row, $errors, $isEditMode, $formId, $alias,
- * $subjectOptions (id => array('name','program')), $districts.
+ * Admin LMS — Quản lý tài khoản: Form Chỉnh sửa giáo viên / Thêm giáo viên.
+ * Dẫn chứng mockup: Tai-lieu-phat-trien/admin/Quản lý tài khoản -Giáo Viên - Sửa .png
+ *                    + Tai-lieu-phat-trien/admin-ver2/Tài khoản GV mới.png (thêm GV)
+ * SRS: Tai-lieu-phat-trien/admin/Tài liệu admin.md (§6. Quản lý tài khoản & §20).
+ *
+ * Lưu ý mockup admin-ver2: có field "OSF" (giá trị "Hạng 1") nhưng hệ thống KHÔNG
+ * có cột/enum nào cho OSF — đã chốt bỏ khỏi form, header vẫn hiển thị "Hạng: Xanh/Vàng/Đỏ".
+ *
+ * Đã chuẩn hoá theo Kiến trúc Form Component & LmsEnum tập trung.
+ * PHP 7.3 compatible.
  */
-$userStatuses   = \Lms\UserService::USER_STATUSES;
-$teacherStatuses = \Lms\UserService::TEACHER_STATUSES;
-$ranks          = \Lms\UserService::TEACHER_RANKS;
-$genders        = \Lms\UserService::GENDERS;
-$selDistricts   = isset($row['teachable_districts']) && is_array($row['teachable_districts'])
-    ? $row['teachable_districts'] : array();
-$selSubjects    = isset($row['teachable_subjects']) && is_array($row['teachable_subjects'])
-    ? $row['teachable_subjects'] : array();
+
+$formAction = ($alias === 'lms-tai-khoan')
+    ? ($isEditMode ? 'sua-giao-vien' : 'them-giao-vien')
+    : ($isEditMode ? 'sua' : 'them');
+
+$cancelUrl = ($alias === 'lms-tai-khoan')
+    ? lms_url($alias, 'man', array('tab' => 'giao-vien'))
+    : lms_url($alias);
 
 $formUrl = $isEditMode
-    ? lms_url($alias, 'sua', array('id' => $formId))
-    : lms_url($alias, 'them');
+    ? lms_url($alias, $formAction, array('id' => $formId))
+    : lms_url($alias, $formAction);
+
+$selDistricts = isset($row['teachable_districts']) && is_array($row['teachable_districts'])
+    ? $row['teachable_districts'] : array();
+
+$selSubjects = isset($row['teachable_subjects']) && is_array($row['teachable_subjects'])
+    ? $row['teachable_subjects'] : array();
+
+// Xử lý link avatar
+$avatarSrc = '';
+if (!empty($row['avatar'])) {
+    $rawAv = (string) $row['avatar'];
+    if (strpos($rawAv, 'http://') === 0 || strpos($rawAv, 'https://') === 0) {
+        $avatarSrc = $rawAv;
+    } elseif (defined('_LMS_ROOT') && file_exists(_LMS_ROOT . '/media/images/' . $rawAv)) {
+        $avatarSrc = '/media/images/' . $rawAv;
+    } elseif (defined('_LMS_ROOT') && file_exists(_LMS_ROOT . '/' . $rawAv)) {
+        $avatarSrc = '/' . ltrim($rawAv, '/');
+    } elseif (function_exists('lms_upload_url')) {
+        $avatarSrc = lms_upload_url(str_replace('uploads/', '', $rawAv));
+    } else {
+        $avatarSrc = '/' . ltrim($rawAv, '/');
+    }
+}
+
+// Phân nhóm quận TP.HCM và các phường Thủ Đức cho component multi_select_tags
+$districtGroups = array(
+    'Các quận TP.HCM' => array(
+        'Quận 1', 'Quận 3', 'Quận 4', 'Quận 5', 'Quận 6', 'Quận 7', 'Quận 8',
+        'Quận 10', 'Quận 11', 'Quận 12', 'Bình Thạnh', 'Gò Vấp', 'Phú Nhuận',
+        'Tân Bình', 'Tân Phú', 'Bình Tân', 'Bình Chánh', 'Cần Giờ', 'Củ Chi', 'Hóc Môn', 'Nhà Bè'
+    ),
+    'Khu vực TP. Thủ Đức (Tất cả phường)' => array(
+        'P. An Khánh (Thủ Đức)', 'P. An Lợi Đông (Thủ Đức)', 'P. An Phú (Thủ Đức)',
+        'P. Bình Chiểu (Thủ Đức)', 'P. Bình Thọ (Thủ Đức)', 'P. Hiệp Bình Chánh (Thủ Đức)',
+        'P. Hiệp Bình Phước (Thủ Đức)', 'P. Hiệp Phú (Thủ Đức)', 'P. Linh Chiểu (Thủ Đức)',
+        'P. Linh Đông (Thủ Đức)', 'P. Linh Tây (Thủ Đức)', 'P. Linh Trung (Thủ Đức)',
+        'P. Linh Xuân (Thủ Đức)', 'P. Long Bình (Thủ Đức)', 'P. Long Phước (Thủ Đức)',
+        'P. Long Thạnh Mỹ (Thủ Đức)', 'P. Long Trường (Thủ Đức)', 'P. Phú Hữu (Thủ Đức)',
+        'P. Phước Bình (Thủ Đức)', 'P. Phước Long A (Thủ Đức)', 'P. Phước Long B (Thủ Đức)',
+        'P. Tam Bình (Thủ Đức)', 'P. Tam Phú (Thủ Đức)', 'P. Tăng Nhơn Phú A (Thủ Đức)',
+        'P. Tăng Nhơn Phú B (Thủ Đức)', 'P. Thạnh Mỹ Lợi (Thủ Đức)', 'P. Thảo Điền (Thủ Đức)',
+        'P. Thủ Thiêm (Thủ Đức)', 'P. Trường Thạnh (Thủ Đức)', 'P. Trường Thọ (Thủ Đức)'
+    ),
+);
+
+// Mảng môn học / chương trình dạy
+$teachingProgramOptions = array();
+if (isset($subjectOptions) && is_array($subjectOptions)) {
+    foreach ($subjectOptions as $sid => $s) {
+        $teachingProgramOptions[$sid] = $s['name'];
+    }
+}
+$firstSubjectId = !empty($selSubjects) ? (string) $selSubjects[0] : '';
+
+$monthTicks = isset($row['month_ticks']) ? (int) $row['month_ticks'] : 0;
+$monthFee   = isset($row['month_fee']) ? (float) $row['month_fee'] : 0.0;
 ?>
 
-<form method="post" action="<?= e($formUrl) ?>" class="lms-form" novalidate>
+<form method="post" action="<?= e($formUrl) ?>" enctype="multipart/form-data" novalidate>
     <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
 
-    <div class="row g-3">
-        <div class="col-lg-6">
-            <div class="lms-card">
-                <div class="lms-card-header"><i class="fa-solid fa-key me-1"></i> Tài khoản đăng nhập</div>
-                <div class="lms-card-body">
-                    <div class="mb-3">
-                        <label class="lms-form-label" for="fld-username">Tên đăng nhập <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="fld-username" name="username"
-                               value="<?= e(lms_form_old($_POST, $row, 'username')) ?>" required>
-                        <?= lms_field_error($errors, 'username') ?>
-                    </div>
-                    <div class="mb-3">
-                        <label class="lms-form-label" for="fld-password">
-                            Mật khẩu <?= $isEditMode ? '<span class="lms-text-muted-sm">(để trống để giữ nguyên)</span>' : '<span class="text-danger">*</span>' ?>
-                        </label>
-                        <input type="text" class="form-control" id="fld-password" name="password"
-                               value="<?= e(lms_form_old($_POST, $row, 'password')) ?>" autocomplete="off">
-                        <?php if (!$isEditMode): ?>
-                            <div class="lms-text-muted-sm mt-1">Để trống nếu muốn hệ thống tự sinh mật khẩu (10 ký tự).</div>
-                        <?php endif; ?>
-                        <?= lms_field_error($errors, 'password') ?>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-email">Email</label>
-                            <input type="email" class="form-control" id="fld-email" name="email"
-                                   value="<?= e(lms_form_old($_POST, $row, 'email')) ?>">
-                            <?= lms_field_error($errors, 'email') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-phone">Số điện thoại</label>
-                            <input type="tel" class="form-control" id="fld-phone" name="phone"
-                                   value="<?= e(lms_form_old($_POST, $row, 'phone')) ?>" placeholder="0901xxxxxx">
-                            <?= lms_field_error($errors, 'phone') ?>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="lms-form-label" for="fld-user-status">Trạng thái tài khoản</label>
-                        <select class="form-select" id="fld-user-status" name="user_status">
-                            <?php foreach ($userStatuses as $k => $label): ?>
-                                <option value="<?= e($k) ?>"<?= lms_selected(
-                                    lms_form_old($_POST, $row, 'user_status', 'active'),
-                                    $k
-                                ) ?>><?= e($label) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- 1. Họ tên giáo viên -->
+        <?php lms_component('form/input', array(
+            'name'        => 'full_name',
+            'label'       => 'Họ tên giáo viên',
+            'placeholder' => 'VD: Thái Phụng',
+            'required'    => true,
+        )); ?>
 
-        <div class="col-lg-6">
-            <div class="lms-card">
-                <div class="lms-card-header"><i class="fa-solid fa-id-card me-1"></i> Hồ sơ giáo viên</div>
-                <div class="lms-card-body">
-                    <div class="row g-3">
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-code">Mã giáo viên</label>
-                            <?php if ($isEditMode): ?>
-                                <input type="text" class="form-control" id="fld-code"
-                                       value="<?= e((string) ($row['teacher_code'] ?? '')) ?>" readonly>
-                            <?php else: ?>
-                                <input type="text" class="form-control" id="fld-code" name="teacher_code"
-                                       value="<?= e(lms_form_old($_POST, $row, 'teacher_code')) ?>"
-                                       placeholder="Tự động sinh nếu để trống">
-                            <?php endif; ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-fullname">Họ tên giáo viên <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="fld-fullname" name="full_name"
-                                   value="<?= e(lms_form_old($_POST, $row, 'full_name')) ?>" required>
-                            <?= lms_field_error($errors, 'full_name') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-gender">Giới tính</label>
-                            <select class="form-select" id="fld-gender" name="gender">
-                                <option value="">— Chọn —</option>
-                                <?php foreach ($genders as $k => $label): ?>
-                                    <option value="<?= e($k) ?>"<?= lms_selected(
-                                        lms_form_old($_POST, $row, 'gender'),
-                                        $k
-                                    ) ?>><?= e($label) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-dob">Ngày sinh</label>
-                            <input type="date" class="form-control" id="fld-dob" name="dob"
-                                   value="<?= e(lms_form_old($_POST, $row, 'dob')) ?>">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-cccd">CCCD</label>
-                            <input type="text" class="form-control" id="fld-cccd" name="cccd"
-                                   value="<?= e(lms_form_old($_POST, $row, 'cccd')) ?>" placeholder="12 chữ số">
-                            <?= lms_field_error($errors, 'cccd') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-issue-date">Ngày cấp CCCD</label>
-                            <input type="date" class="form-control" id="fld-issue-date" name="issue_date"
-                                   value="<?= e(lms_form_old($_POST, $row, 'issue_date')) ?>">
-                        </div>
-                        <div class="col-md-12 mb-3">
-                            <label class="lms-form-label" for="fld-issue-place">Nơi cấp CCCD</label>
-                            <input type="text" class="form-control" id="fld-issue-place" name="issue_place"
-                                   value="<?= e(lms_form_old($_POST, $row, 'issue_place')) ?>"
-                                   placeholder="VD: Bộ Công An">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-tax">Mã số thuế</label>
-                            <input type="text" class="form-control" id="fld-tax" name="tax_code"
-                                   value="<?= e(lms_form_old($_POST, $row, 'tax_code')) ?>" placeholder="10 chữ số">
-                            <?= lms_field_error($errors, 'tax_code') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-max-classes">Số lớp tối đa</label>
-                            <input type="number" min="0" max="50" class="form-control" id="fld-max-classes"
-                                   name="max_classes"
-                                   value="<?= e(lms_form_old($_POST, $row, 'max_classes', '1')) ?>">
-                            <?= lms_field_error($errors, 'max_classes') ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- 2. Username -->
+        <?php lms_component('form/input', array(
+            'name'        => 'username',
+            'label'       => 'Username',
+            'placeholder' => 'VD: TE125',
+            'required'    => true,
+        )); ?>
 
-        <div class="col-lg-6">
-            <div class="lms-card">
-                <div class="lms-card-header"><i class="fa-solid fa-briefcase me-1"></i> Dạy &amp; thuế</div>
-                <div class="lms-card-body">
-                    <div class="mb-3">
-                        <label class="lms-form-label">Môn dạy được <span class="text-danger">*</span></label>
-                        <select class="form-select" name="teachable_subjects[]" multiple size="6" required>
-                            <?php foreach ($subjectOptions as $sid => $s): ?>
-                                <option value="<?= e((string) $sid) ?>"<?= lms_in_selected($sid, $selSubjects) ?>>
-                                    <?= e($s['name']) ?> — <?= e($s['program']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <div class="lms-text-muted-sm mt-1">Giữ Ctrl/Cmd để chọn nhiều môn.</div>
-                        <?= lms_field_error($errors, 'teachable_subjects') ?>
-                    </div>
-                    <div class="mb-3">
-                        <label class="lms-form-label">Quận có thể dạy</label>
-                        <select class="form-select" name="teachable_districts[]" multiple size="6">
-                            <?php foreach ($districts as $district): ?>
-                                <option value="<?= e($district) ?>"<?= lms_in_selected($district, $selDistricts) ?>>
-                                    <?= e($district) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <?= lms_field_error($errors, 'teachable_districts') ?>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-rank">Hạng giáo viên</label>
-                            <select class="form-select" id="fld-rank" name="rank">
-                                <?php foreach ($ranks as $k => $label): ?>
-                                    <option value="<?= e($k) ?>"<?= lms_selected(
-                                        lms_form_old($_POST, $row, 'rank', 'bronze'),
-                                        $k
-                                    ) ?>><?= e($label) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <?= lms_field_error($errors, 'rank') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-status">Trạng thái</label>
-                            <select class="form-select" id="fld-status" name="status">
-                                <?php foreach ($teacherStatuses as $k => $label): ?>
-                                    <option value="<?= e($k) ?>"<?= lms_selected(
-                                        lms_form_old($_POST, $row, 'status', 'active'),
-                                        $k
-                                    ) ?>><?= e($label) ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <?= lms_field_error($errors, 'status') ?>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-fee">Mức phí dịch vụ (%) <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <input type="number" min="0" max="100" step="0.5" class="form-control" id="fld-fee"
-                                       name="service_fee_percentage"
-                                       value="<?= e(lms_form_old($_POST, $row, 'service_fee_percentage', '48')) ?>">
-                                <span class="input-group-text">%</span>
-                            </div>
-                            <?= lms_field_error($errors, 'service_fee_percentage') ?>
-                        </div>
-                        <div class="col-md-6 mb-3 d-flex align-items-end pb-3">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="fld-online"
-                                       name="can_teach_online" value="1"<?= lms_checked(
-                                           lms_form_old($_POST, $row, 'can_teach_online', '1')
-                                       ) ?>>
-                                <label class="form-check-label" for="fld-online">Có thể dạy online</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mb-3 d-flex align-items-end pb-3">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="fld-commit08"
-                                       name="is_commit_08" value="1"<?= lms_checked(lms_form_old($_POST, $row, 'is_commit_08')) ?>>
-                                <label class="form-check-label" for="fld-commit08">Cam kết 08 (thuế TNCN 0%)</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <?php lms_component('form/input', array(
+            'name'        => 'password',
+            'label'       => 'Mật khẩu',
+            'type'        => 'password',
+            'value'       => '',
+            'placeholder' => $isEditMode ? 'Để trống để giữ nguyên' : 'Để trống để hệ thống tự sinh',
+            'hint'        => 'Mật khẩu tự sinh sẽ được yêu cầu đổi ở lần đăng nhập đầu tiên.',
+        )); ?>
 
-        <div class="col-lg-6">
-            <div class="lms-card">
-                <div class="lms-card-header"><i class="fa-solid fa-building-columns me-1"></i> Thông tin ngân hàng</div>
-                <div class="lms-card-body">
-                    <div class="mb-3">
-                        <label class="lms-form-label" for="fld-bank-name">Tên ngân hàng</label>
-                        <input type="text" class="form-control" id="fld-bank-name" name="bank_name"
-                               value="<?= e(lms_form_old($_POST, $row, 'bank_name')) ?>"
-                               placeholder="VD: Vietcombank">
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-bank-account">Số tài khoản</label>
-                            <input type="text" class="form-control" id="fld-bank-account" name="bank_account"
-                                   value="<?= e(lms_form_old($_POST, $row, 'bank_account')) ?>">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="lms-form-label" for="fld-bank-owner">Chủ tài khoản</label>
-                            <input type="text" class="form-control" id="fld-bank-owner" name="bank_owner"
-                                   value="<?= e(lms_form_old($_POST, $row, 'bank_owner')) ?>">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+        <!-- 3. User code -->
+        <?php lms_component('form/input', array(
+            'name'        => 'teacher_code',
+            'label'       => 'User code',
+            'placeholder' => 'VD: TE125',
+        )); ?>
 
-    <div class="lms-form-actions">
-        <button type="submit" class="btn btn-lms px-4">
-            <i class="fa-solid fa-floppy-disk me-1"></i> <?= $isEditMode ? 'Lưu thay đổi' : 'Tạo giáo viên' ?>
-        </button>
-        <a href="<?= e(lms_url($alias)) ?>" class="btn btn-outline-secondary">Huỷ</a>
+        <!-- 4. Số điện thoại -->
+        <?php lms_component('form/input', array(
+            'name'        => 'phone',
+            'label'       => 'Số điện thoại',
+            'type'        => 'tel',
+            'placeholder' => 'VD: 0707676299',
+            'required'    => true,
+        )); ?>
+
+        <!-- 5. Email -->
+        <?php lms_component('form/input', array(
+            'name'        => 'email',
+            'label'       => 'Email',
+            'type'        => 'email',
+            'placeholder' => 'VD: ngothaiphung412@gmail.com',
+            'required'    => true,
+        )); ?>
+
+        <!-- 6. CCCD -->
+        <?php lms_component('form/input', array(
+            'name'        => 'cccd',
+            'label'       => 'CCCD',
+            'placeholder' => 'VD: 0795565656',
+        )); ?>
+
+        <!-- 7. Ngày cấp -->
+        <?php lms_component('form/date_picker', array(
+            'name'        => 'issue_date',
+            'label'       => 'Ngày cấp',
+            'placeholder' => '04/12/2003',
+        )); ?>
+
+        <!-- 8. Nơi cấp -->
+        <?php lms_component('form/input', array(
+            'name'        => 'issue_place',
+            'label'       => 'Nơi cấp',
+            'placeholder' => 'VD: Bộ Công An',
+        )); ?>
+
+        <!-- 9. Mã số thuế -->
+        <?php lms_component('form/input', array(
+            'name'        => 'tax_code',
+            'label'       => 'Mã số thuế',
+            'placeholder' => 'VD: 3215484562',
+        )); ?>
+
+        <!-- 10. Địa chỉ hiện tại -->
+        <?php lms_component('form/input', array(
+            'name'        => 'current_address',
+            'label'       => 'Địa chỉ hiện tại',
+            'placeholder' => 'VD: 181 Cao Thắng, Phường Hoà Hưng, TPHCM',
+        )); ?>
+
+        <!-- 11. Quận / Phường có thể dạy -->
+        <?php lms_component('form/multi_select_tags', array(
+            'name'        => 'teachable_districts[]',
+            'label'       => 'Quận / Phường có thể dạy',
+            'selected'    => $selDistricts,
+            'groups'      => $districtGroups,
+            'placeholder' => 'VD: Quận 1, Quận 2, Quận 3, ...',
+        )); ?>
+
+        <!-- 12. Ngày sinh -->
+        <?php lms_component('form/date_picker', array(
+            'name'        => 'dob',
+            'label'       => 'Ngày sinh',
+            'placeholder' => '04/12/2003',
+        )); ?>
+
+        <!-- 13. Giới tính -->
+        <?php lms_component('form/select', array(
+            'name'  => 'gender',
+            'label' => 'Giới tính',
+            'enum'  => 'genders',
+        )); ?>
+
+        <!-- 14. Chương trình dạy -->
+        <?php lms_component('form/multi_select_tags', array(
+            'name'        => 'teachable_subjects[]',
+            'label'       => 'Chương trình dạy',
+            'options'     => $teachingProgramOptions,
+            'selected'    => $selSubjects,
+            'placeholder' => 'Chọn một hoặc nhiều môn có thể dạy',
+            'hint'        => 'Chọn được nhiều môn (Toán TĐN, Toán THCS, Tiếng Anh, Tiếng Việt, Khác…); dữ liệu dùng cho module Sắp xếp lớp.',
+        )); ?>
+
+        <!-- 15. Số lớp tối đa có thể nhận -->
+        <?php lms_component('form/input', array(
+            'name'        => 'max_classes',
+            'label'       => 'Số lớp tối đa có thể nhận',
+            'type'        => 'number',
+            'min'         => 0,
+            'max'         => 50,
+            'placeholder' => 'VD: 2',
+            'default'     => '1',
+        )); ?>
+
+        <!-- 16. Có thể dạy online -->
+        <?php lms_component('form/select', array(
+            'name'    => 'can_teach_online',
+            'label'   => 'Có thể dạy online',
+            'enum'    => 'yes_no',
+            'default' => '1',
+        )); ?>
+
+        <!-- 17. Hạng giáo viên -->
+        <?php lms_component('form/select', array(
+            'name'    => 'rank',
+            'label'   => 'Hạng giáo viên',
+            'enum'    => 'teacher_ranks',
+            'default' => 'bronze',
+        )); ?>
+
+        <!-- 18. Số tick tháng này -->
+        <?php lms_component('form/addon_input', array(
+            'name'     => 'month_ticks',
+            'label'    => 'Số tick tháng này',
+            'value'    => $monthTicks,
+            'suffix'   => 'tick',
+            'readonly' => true,
+        )); ?>
+
+        <!-- 19. Phí dịch vụ -->
+        <?php lms_component('form/addon_input', array(
+            'name'     => 'month_fee',
+            'label'    => 'Phí dịch vụ',
+            'value'    => number_format($monthFee, 0, ',', '.'),
+            'suffix'   => 'đồng',
+            'readonly' => true,
+        )); ?>
+
+        <!-- 20. Mức phí DV -->
+        <?php lms_component('form/addon_input', array(
+            'name'        => 'service_fee_percentage',
+            'label'       => 'Mức phí DV',
+            'type'        => 'number',
+            'step'        => '0.5',
+            'min'         => 0,
+            'max'         => 100,
+            'suffix'      => '%',
+            'placeholder' => 'VD: 45',
+            'default'     => '48',
+        )); ?>
+
+        <!-- 21. Tên ngân hàng -->
+        <?php lms_component('form/input', array(
+            'name'        => 'bank_name',
+            'label'       => 'Tên ngân hàng',
+            'placeholder' => 'VD: TMCP Công thương Việt Nam - Vietinbank',
+        )); ?>
+
+        <!-- 22. Số tài khoản NH -->
+        <?php lms_component('form/input', array(
+            'name'        => 'bank_account',
+            'label'       => 'Số tài khoản NH',
+            'placeholder' => 'VD: 565656565',
+        )); ?>
+
+        <!-- 23. Tên chủ tài khoản NH -->
+        <?php lms_component('form/input', array(
+            'name'        => 'bank_owner',
+            'label'       => 'Tên chủ tài khoản NH',
+            'uppercase'   => true,
+            'placeholder' => 'NGO THAI PHUNG',
+        )); ?>
+
+        <!-- 24. Cam kết 08 -->
+        <?php lms_component('form/select', array(
+            'name'    => 'is_commit_08',
+            'label'   => 'Cam kết 08',
+            'enum'    => 'yes_no',
+            'default' => '0',
+        )); ?>
+
+        <!-- 25. Trạng thái -->
+        <?php lms_component('form/select', array(
+            'name'    => 'status',
+            'label'   => 'Trạng thái',
+            'enum'    => 'teacher_statuses',
+            'default' => 'active',
+        )); ?>
+
+        <?php lms_component('form/select', array(
+            'name'    => 'user_status',
+            'label'   => 'Trạng thái tài khoản',
+            'options' => \Lms\UserService::USER_STATUSES,
+            'default' => 'active',
+        )); ?>
+
+        <!-- 26. Ảnh đại diện -->
+        <?php lms_component('form/avatar_picker', array(
+            'name'        => 'avatar_file',
+            'remove_name' => 'remove_avatar',
+            'label'       => 'Ảnh đại diện',
+            'value'       => $avatarSrc,
+        )); ?>
+
+        <!-- 27. Nút Submit -->
+        <div class="text-center mt-4 mb-5">
+            <?php lms_component('button', array(
+                'label'   => $isEditMode ? 'Lưu' : 'Thêm',
+                'type'    => 'submit',
+                'variant' => 'primary',
+                'size'    => 'lg',
+            )); ?>
+        </div>
+        </div>
     </div>
 </form>

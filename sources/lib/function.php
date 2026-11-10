@@ -88,10 +88,34 @@ function getImageUrl($filename)
         if (preg_match('#^(https?:)?//#i', $filename) || strpos($filename, 'data:') === 0) {
             return $filename;
         }
+        if (strpos($filename, 'media/images/') === 0) {
+            return URLPATH . htmlspecialchars($filename, ENT_QUOTES, 'UTF-8');
+        }
+        if (strpos($filename, '/') === 0) {
+            return URLPATH . htmlspecialchars(ltrim($filename, '/'), ENT_QUOTES, 'UTF-8');
+        }
         return URLPATH . 'media/images/' . htmlspecialchars($filename, ENT_QUOTES, 'UTF-8');
     }
 
     return URLPATH . 'media/no-image.png';
+}
+
+function getVideoUrl($filename)
+{
+    $filename = trim((string)$filename);
+    if ($filename !== '') {
+        if (preg_match('#^(https?:)?//#i', $filename) || strpos($filename, 'data:') === 0) {
+            return $filename;
+        }
+        if (strpos($filename, 'media/videos/') === 0) {
+            return URLPATH . htmlspecialchars($filename, ENT_QUOTES, 'UTF-8');
+        }
+        if (strpos($filename, '/') === 0) {
+            return URLPATH . htmlspecialchars(ltrim($filename, '/'), ENT_QUOTES, 'UTF-8');
+        }
+        return URLPATH . 'media/videos/' . htmlspecialchars($filename, ENT_QUOTES, 'UTF-8');
+    }
+    return '';
 }
 
 
@@ -179,7 +203,7 @@ function getExchangeRate($base = 'VND', $target = 'USD') {
     }
 
     // 2. Trường hợp dùng API (Auto)
-    $cacheFile = 'uploads/currency_cache.json';
+    $cacheFile = dirname(__DIR__, 2) . '/logs/currency_cache.json';
     $cacheTime = 86400; // 24 giờ
 
     if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTime)) {

@@ -29,7 +29,7 @@ $cronDir = __DIR__;
 $jobs = array(
     // task name => array(mô tả, lệnh, trigger)
     'LMS_tick_scan' => array(
-        'Quet vi pham (tick) moi 15 phut',
+        'Tick va nhac hoc vien truoc buoi hoc moi 15 phut',
         escapeshellarg($php) . ' ' . escapeshellarg($cronDir . DIRECTORY_SEPARATOR . 'lms_tick_cron.php'),
         '/SC MINUTE /MO 15',
     ),

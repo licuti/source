@@ -1,6 +1,6 @@
 <?php
 /**
- * EnrolmentService — quản lý học viên trong lớp (ADM-04, Phase 1.3).
+ * EnrolmentService — quản lý học viên trong lớp (ADM-03, Phase 1.3).
  *
  * Layer riêng cho admin UI "Học sinh - Lớp học":
  *  - listMatrix(): bảng ma trận HV × chương trình (cột động).

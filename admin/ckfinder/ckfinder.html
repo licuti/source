@@ -12,8 +12,16 @@ For licensing, see LICENSE.html or https://ckeditor.com/sales/license/ckfinder
 <body>
 
 <script src="ckfinder.js"></script>
+<script src="../js/ckfinder-copy-url.js"></script>
 <script>
-	CKFinder.start();
+	CKFinder.start({
+		onInit: function( finder ) {
+			window.finder = finder;
+			if (window.CKFinderCopyUrl) {
+				window.CKFinderCopyUrl.init(finder);
+			}
+		}
+	});
 </script>
 
 </body>

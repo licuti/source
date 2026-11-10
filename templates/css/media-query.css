@@ -16,7 +16,7 @@
 @media (max-width: 991.98px) {
 	:root{
 	    --px-content: 3%;
-	    --py-content: 28px;
+	    --py-content: 50px;
 	}
 
 	.navbar-main{
@@ -24,15 +24,16 @@
 	    padding-bottom: 0.5rem;
 	}
 
-
 	.navbar-nav{
 		gap: 0.5rem;
 		align-items: unset;
 	}
 
 	.navbar-nav .nav-item .nav-link{
-		padding: 0.2rem;
+		align-items: flex-start;
+		padding: 0.25rem;
 		color: #000;
+		font-size: 1rem;
 	}
 
 	.navbar-nav .nav-item .nav-link a{
@@ -84,16 +85,27 @@
 		background-color: #fff;
 	}
 
+
+
+	.main-slide .swiper-slide .banner-slide{
+		width: 75%;
+	}
+
+
 }
 /*`md` applies to small devices (landscape phones, less than 768px)*/
 @media (max-width: 767.98px) {
 	:root{
 	    --px-content: 1%;
-	    --py-content: 24px;
+	    --py-content: 40px;
 	}
 
 	body{
 	  	font-size: 14px;
+	}
+
+	.btn-custom{
+		padding: 0.5rem 1rem;
 	}
 
 	.logo{
@@ -101,10 +113,68 @@
 	}
 
 	.offcanvas{
-		max-width: 60%;
+		max-width: 80%;
 	}
 	
+	.main-slide{
+		height: 400px;
+	}
 
+	.main-slide .swiper-slide .banner-slide{
+		width: 70%;
+	}
+
+	.main-slide .swiper-slide .banner-slide .btn-custom{
+		font-size: 10px;
+	}
+
+
+	/*===*/
+	.box-content-about .heading-content{
+		position: unset;
+		inset: unset;
+		width: 100%;
+	}
+
+	.box-content-about img {
+	    width: 100%; 
+	    margin-top: -6rem;
+	    z-index: -1;
+	    position: relative;
+	}
+
+
+	/*===*/
+	.block-header-ratings-reviews .bg-cover{
+		background-size: 60% !important;
+	}
+
+
+	/*===*/
+	.wrapper-stick-lms{
+		gap: 0;
+	}
+	.wrapper-stick-lms .item{
+		background: transparent;
+	}
+
+	.wrapper-stick-lms .icon{
+		background: linear-gradient(to right, #1F66FF, #9F02FA 100%);
+	}
+
+	.wrapper-stick-lms .title{
+	  background: linear-gradient(to right, #1F66FF, #9F02FA 100%);	  
+	  background-clip: text;
+	  -webkit-background-clip: text;  
+	  color: transparent;
+	  -webkit-text-fill-color: transparent;
+	}
+
+
+	/*===*/
+	.block-header-page.tin-tuc-thu-vien .bg-cover{
+		background-size: 50% !important;
+	}
 
 }
 /*`sm` applies to x-small devices (portrait phones, less than 576px)*/

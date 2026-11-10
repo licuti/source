@@ -20,6 +20,7 @@ class ClassService extends LmsService
 
     /** Trạng thái lớp (db_lms_classes.status). */
     const CLASS_STATUSES = array(
+        'arranging' => 'Đang sắp xếp',
         'active'    => 'Đang hoạt động',
         'paused'    => 'Tạm dừng',
         'finished'  => 'Đã kết thúc',
@@ -130,13 +131,20 @@ class ClassService extends LmsService
                 'remaining_sessions' => $fields['total_sessions'],
                 'hw_deadline_time'   => $fields['hw_deadline_time'],
                 'hw_check_hours'     => $fields['hw_check_hours'],
-                'status'             => 'active',
+                'test_grace_hours'   => $fields['test_grace_hours'],
+                'status'             => isset($data['status']) && $data['status'] === 'arranging' ? 'arranging' : 'active',
                 'start_date'         => $fields['start_date'],
             ));
             if (!$ok) {
                 throw new \Exception('insert db_lms_classes failed');
             }
             $classId = (int) $this->db->insertId;
+
+            $this->syncClassTopics($classId, $fields['topic_ids']);
+
+            // Snapshot cycle 1 after class relations exist. The migration also
+            // backfills existing classes; this covers newly created classes.
+            $cycleSvc = new CourseCycleService($this->db);
 
             foreach ($fields['schedules'] as $sch) {
                 $sid = $this->schedules->addSchedule(
@@ -162,7 +170,14 @@ class ClassService extends LmsService
                 }
             }
 
-            if ($fields['schedules'] !== array()) {
+            if (!isset($data['status']) || $data['status'] !== 'arranging') {
+                if ($cycleSvc->initializeClassCycle($classId, false) <= 0) {
+                    throw new \Exception('initialize course cycle failed');
+                }
+            }
+
+            if ($fields['schedules'] !== array()
+                && (!isset($data['status']) || $data['status'] !== 'arranging')) {
                 $this->generateSessionsForClass($classId, (int) $data['teacher_id'], $fields['start_date']);
             }
 
@@ -214,7 +229,7 @@ class ClassService extends LmsService
 
         $teacherId = (int) $data['teacher_id'];
         $teacher = $this->db->safeFetchOne(
-            'select user_id, status, max_classes from db_lms_teachers where user_id = ? limit 1',
+            'select user_id, status, max_classes, service_fee_percentage from db_lms_teachers where user_id = ? limit 1',
             array($teacherId)
         );
         if (empty($teacher)) {
@@ -262,6 +277,14 @@ class ClassService extends LmsService
         if (!isset($data['student_ids'])) {
             $fields['student_ids'] = $before['student_ids'];
         }
+        if (!isset($data['topic_ids'])) {
+            $fields['topic_ids'] = isset($before['topic_ids']) ? $before['topic_ids'] : array();
+        }
+        if (!isset($data['test_grace_hours'])) {
+            $fields['test_grace_hours'] = isset($before['test_grace_hours'])
+                ? (int) $before['test_grace_hours']
+                : 72;
+        }
 
         // max_classes: chỉ check GV mới (không check lại GV cũ)
         if ($teacherId !== (int) $before['teacher_id']) {
@@ -288,8 +311,46 @@ class ClassService extends LmsService
 
         $today = date('Y-m-d');
 
+        $oldPrice = isset($before['price_per_session']) && $before['price_per_session'] !== null
+            ? (float) $before['price_per_session']
+            : 0.0;
+        $oldPct = $before['teacher_percentage'] !== null
+            ? (float) $before['teacher_percentage']
+            : (isset($before['service_fee_percentage']) && $before['service_fee_percentage'] !== null
+                ? (float) $before['service_fee_percentage']
+                : null);
+
+        $newPrice = (float) $fields['price_per_session'];
+        $newPct = $fields['teacher_percentage'] !== null
+            ? (float) $fields['teacher_percentage']
+            : (isset($teacher['service_fee_percentage']) && $teacher['service_fee_percentage'] !== null
+                ? (float) $teacher['service_fee_percentage']
+                : null);
+
+        $hasExplicitEffectiveDate = false;
+        $feeEffectiveFrom = $today;
+        if (isset($data['effective_date']) && preg_match('/^\d{4}-\d{2}-\d{2}$/', trim((string) $data['effective_date']))) {
+            $feeEffectiveFrom = trim((string) $data['effective_date']);
+            $hasExplicitEffectiveDate = true;
+        } elseif (isset($data['start_date']) && trim((string) $data['start_date']) !== ''
+            && trim((string) $data['start_date']) !== (string) $before['start_date']) {
+            $feeEffectiveFrom = $fields['start_date'];
+            $hasExplicitEffectiveDate = true;
+        }
+        $regenFrom = ($hasExplicitEffectiveDate && strcmp($feeEffectiveFrom, $today) > 0)
+            ? $feeEffectiveFrom
+            : $today;
+
         $this->db->beginTransaction();
         try {
+            // Khoá snapshot mức phí cũ cho mọi buổi học hiện có của lớp trước khi cập nhật mức mới
+            $this->db->safeExec(
+                'update db_lms_sessions set price_per_session = coalesce(price_per_session, ?),'
+                . ' teacher_percentage = coalesce(teacher_percentage, ?)'
+                . ' where class_id = ? and (price_per_session is null or teacher_percentage is null)',
+                array($oldPrice, $oldPct, $classId)
+            );
+
             $ok = $this->db->update('db_lms_classes', array(
                 'program_id'         => (int) $data['program_id'],
                 'subject_id'         => (int) $data['subject_id'],
@@ -302,11 +363,14 @@ class ClassService extends LmsService
                 'remaining_sessions' => $remaining,
                 'hw_deadline_time'   => $fields['hw_deadline_time'],
                 'hw_check_hours'     => $fields['hw_check_hours'],
+                'test_grace_hours'   => $fields['test_grace_hours'],
                 'start_date'         => $fields['start_date'],
             ), 'id = ?', array($classId));
             if (!$ok) {
                 throw new \Exception('update db_lms_classes failed');
             }
+
+            $this->syncClassTopics($classId, $fields['topic_ids']);
 
             // Thay lịch nguyên khối: xoá cũ, add lại (BR-SCHED-01 tự check)
             $this->db->safeExec('delete from db_lms_schedules where class_id = ?', array($classId));
@@ -343,9 +407,96 @@ class ClassService extends LmsService
                     ? array_merge(array($classId), $fields['student_ids'])
                     : array($classId)
             );
+            $cycleSvc = new CourseCycleService($this->db);
+            $activeCycleId = $cycleSvc->resolveActiveCycleId($classId);
+            if ($activeCycleId > 0) {
+                if ($fields['student_ids'] !== array()) {
+                    $this->db->safeExec(
+                        'update db_lms_cycle_students set status = ?, left_at = NOW()'
+                        . ' where cycle_id = ? and student_id not in (' . implode(', ', array_fill(0, count($fields['student_ids']), '?')) . ') and status = ?',
+                        array_merge(array('left', $activeCycleId), $fields['student_ids'], array('active'))
+                    );
+                    $this->db->safeExec(
+                        'update db_lms_cycle_student_topics set status = ?'
+                        . ' where cycle_id = ? and student_id not in (' . implode(', ', array_fill(0, count($fields['student_ids']), '?')) . ') and status = ?',
+                        array_merge(array('locked', $activeCycleId), $fields['student_ids'], array('unlocked'))
+                    );
+                } else {
+                    $this->db->safeExec(
+                        'update db_lms_cycle_students set status = ?, left_at = NOW() where cycle_id = ? and status = ?',
+                        array('left', $activeCycleId, 'active')
+                    );
+                    $this->db->safeExec(
+                        'update db_lms_cycle_student_topics set status = ? where cycle_id = ? and status = ?',
+                        array('locked', $activeCycleId, 'unlocked')
+                    );
+                }
+
+                // Keep only the active cycle snapshot in sync with the class
+                // editor. Completed cycles remain immutable history.
+                $this->db->update('db_lms_course_cycles', array(
+                    'teacher_id' => $teacherId,
+                    'price_per_session' => $fields['price_per_session'],
+                    'teacher_percentage' => $fields['teacher_percentage'],
+                    'total_sessions' => $fields['total_sessions'],
+                    'remaining_sessions' => $remaining,
+                    'hw_deadline_time' => $fields['hw_deadline_time'],
+                    'hw_check_hours' => $fields['hw_check_hours'],
+                    'test_grace_hours' => $fields['test_grace_hours'],
+                    'start_date' => $fields['start_date'],
+                ), 'id = ?', array($activeCycleId));
+
+                $this->db->safeExec('delete from db_lms_cycle_schedules where cycle_id = ?', array($activeCycleId));
+                foreach ($fields['schedules'] as $schedule) {
+                    $this->db->insert('db_lms_cycle_schedules', array(
+                        'cycle_id' => $activeCycleId,
+                        'day_of_week' => (int) $schedule['day'],
+                        'start_time' => $schedule['start'],
+                        'end_time' => $schedule['end'],
+                        'effective_from' => $fields['start_date'],
+                    ));
+                }
+
+                $existingCycleTopics = array_map('intval', array_column($this->db->safeFetch(
+                    'select topic_id from db_lms_cycle_topics where cycle_id = ?', array($activeCycleId)
+                ), 'topic_id'));
+                $newCycleTopics = array_values(array_unique(array_map('intval', $fields['topic_ids'])));
+                $removedTopics = array_diff($existingCycleTopics, $newCycleTopics);
+                if ($removedTopics !== array()) {
+                    $this->db->safeExec(
+                        'delete from db_lms_cycle_student_topics where cycle_id = ? and topic_id in ('
+                        . implode(',', array_fill(0, count($removedTopics), '?')) . ')',
+                        array_merge(array($activeCycleId), array_values($removedTopics))
+                    );
+                }
+                $this->db->safeExec('delete from db_lms_cycle_topics where cycle_id = ?', array($activeCycleId));
+                foreach ($newCycleTopics as $order => $topicId) {
+                    $topic = $this->db->safeFetchOne(
+                        'select max_sessions, has_test, has_minitest from db_lms_topics where id = ?',
+                        array($topicId)
+                    );
+                    if (empty($topic)) {
+                        throw new \RuntimeException('Invalid topic in active cycle update.');
+                    }
+                    $this->db->insert('db_lms_cycle_topics', array(
+                        'cycle_id' => $activeCycleId,
+                        'topic_id' => $topicId,
+                        'order_index' => $order,
+                        'max_sessions' => $topic['max_sessions'],
+                        'has_test' => (int) $topic['has_test'],
+                        'has_minitest' => (int) $topic['has_minitest'],
+                    ));
+                    foreach ($fields['student_ids'] as $studentId) {
+                        $this->db->safeExec(
+                            'insert ignore into db_lms_cycle_student_topics (cycle_id, student_id, topic_id, status) values (?, ?, ?, ?)',
+                            array($activeCycleId, (int) $studentId, $topicId, 'locked')
+                        );
+                    }
+                }
+            }
 
             // Regen sessions: xoá session_students của HS không còn trong lớp +
-            // xoá sessions upcoming từ hôm nay, sinh lại từ lịch mới
+            // xoá sessions upcoming từ mốc áp dụng, sinh lại từ lịch mới
             $this->db->safeExec(
                 'delete from db_lms_session_students where session_id in'
                 . ' (select id from db_lms_sessions where class_id = ? and status = ? and session_date >= ?)'
@@ -353,16 +504,49 @@ class ClassService extends LmsService
                     ? ' and student_id not in (' . implode(', ', array_fill(0, count($fields['student_ids']), '?')) . ')'
                     : ''),
                 $fields['student_ids'] !== array()
-                    ? array_merge(array($classId, 'upcoming', $today), $fields['student_ids'])
-                    : array($classId, 'upcoming', $today)
+                    ? array_merge(array($classId, 'upcoming', $regenFrom), $fields['student_ids'])
+                    : array($classId, 'upcoming', $regenFrom)
             );
             $this->db->safeExec(
-                'delete from db_lms_sessions where class_id = ? and status = ? and session_date >= ?',
-                array($classId, 'upcoming', $today)
+                'delete from db_lms_sessions where class_id = ? and status = ? and session_date >= ?'
+                . ($activeCycleId > 0 ? ' and cycle_id = ?' : ''),
+                $activeCycleId > 0
+                    ? array($classId, 'upcoming', $regenFrom, $activeCycleId)
+                    : array($classId, 'upcoming', $regenFrom)
             );
 
             if ($fields['schedules'] !== array()) {
                 $this->generateSessionsForClass($classId, $teacherId, $fields['start_date']);
+            }
+
+            // Cập nhật mức học phí & % phí dịch vụ mới cho các buổi từ ngày áp dụng trở đi
+            // (các buổi đã dạy trước ngày áp dụng hoặc đã chốt lương giữ nguyên snapshot cũ)
+            if ($hasExplicitEffectiveDate) {
+                $this->db->safeExec(
+                    'update db_lms_sessions set price_per_session = ?, teacher_percentage = ?'
+                    . ' where class_id = ? and session_date >= ?'
+                    . ($activeCycleId > 0 ? ' and (cycle_id = ? or cycle_id is null)' : '')
+                    . ' and not exists ('
+                    . '   select 1 from db_lms_transactions tr'
+                    . '   where tr.session_id = db_lms_sessions.id and tr.type = ?'
+                    . ' )',
+                    $activeCycleId > 0
+                        ? array($newPrice, $newPct, $classId, $feeEffectiveFrom, $activeCycleId, 'salary_session')
+                        : array($newPrice, $newPct, $classId, $feeEffectiveFrom, 'salary_session')
+                );
+            } else {
+                $this->db->safeExec(
+                    'update db_lms_sessions set price_per_session = ?, teacher_percentage = ?'
+                    . ' where class_id = ? and status = ?'
+                    . ($activeCycleId > 0 ? ' and (cycle_id = ? or cycle_id is null)' : '')
+                    . ' and not exists ('
+                    . '   select 1 from db_lms_transactions tr'
+                    . '   where tr.session_id = db_lms_sessions.id and tr.type = ?'
+                    . ' )',
+                    $activeCycleId > 0
+                        ? array($newPrice, $newPct, $classId, 'upcoming', $activeCycleId, 'salary_session')
+                        : array($newPrice, $newPct, $classId, 'upcoming', 'salary_session')
+                );
             }
 
             $this->db->commit();
@@ -426,7 +610,7 @@ class ClassService extends LmsService
         $row = $this->db->safeFetchOne(
             'select c.id, c.class_code, c.program_id, c.subject_id, c.teacher_id, c.class_type,'
             . ' c.name, c.price_per_session, c.teacher_percentage, c.total_sessions, c.remaining_sessions,'
-            . ' c.hw_deadline_time, c.hw_check_hours, c.status, c.start_date, c.created_at,'
+            . ' c.hw_deadline_time, c.hw_check_hours, c.test_grace_hours, c.status, c.start_date, c.created_at,'
             . ' p.name as program_name, s.name as subject_name,'
             . ' t.teacher_code, t.full_name as teacher_name, t.service_fee_percentage, t.max_classes'
             . ' from db_lms_classes c'
@@ -451,7 +635,136 @@ class ClassService extends LmsService
             $row['student_ids'][] = (int) $s['student_id'];
         }
 
+        $topics = $this->db->safeFetch(
+            'select ct.topic_id, ct.order_index, t.name from db_lms_class_topics ct'
+            . ' join db_lms_topics t on t.id = ct.topic_id'
+            . ' where ct.class_id = ? order by ct.order_index, t.order_index',
+            array($classId)
+        );
+        $row['topic_ids'] = array();
+        foreach ($topics as $t) {
+            $row['topic_ids'][] = (int) $t['topic_id'];
+        }
+
+        // Fallback: nếu lớp chưa có cấu hình trong db_lms_class_topics nhưng đã có buổi học gắn topic
+        if (empty($row['topic_ids'])) {
+            $sessionTopics = $this->db->safeFetch(
+                'select distinct topic_id from db_lms_sessions where class_id = ? and topic_id is not null order by topic_id asc',
+                array($classId)
+            );
+            foreach ($sessionTopics as $st) {
+                if (!empty($st['topic_id'])) {
+                    $row['topic_ids'][] = (int) $st['topic_id'];
+                }
+            }
+        }
+
         return $row;
+    }
+
+    /**
+     * Đồng bộ danh sách chuyên đề của lớp (xoá cũ, insert mới theo order_index).
+     *
+     * @param int   $classId
+     * @param array $topicIds
+     * @return void
+     */
+    private function syncClassTopics($classId, array $topicIds)
+    {
+        $classId = (int) $classId;
+        $this->db->safeExec('delete from db_lms_class_topics where class_id = ?', array($classId));
+
+        $order = 0;
+        foreach ($topicIds as $tid) {
+            $tid = (int) $tid;
+            if ($tid <= 0) {
+                continue;
+            }
+            $this->db->insert('db_lms_class_topics', array(
+                'class_id'    => $classId,
+                'topic_id'    => $tid,
+                'order_index' => $order,
+            ));
+            $order++;
+        }
+    }
+
+    /**
+     * Điều chỉnh số buổi khoá (total_sessions) — mockup "Điều chỉnh số buổi học".
+     * remaining_sessions cũng thay đổi cùng delta (không âm). Tạo session mới
+     * cho các buổi thêm nếu lớp đang active và có lịch cố định.
+     *
+     * @param int $classId
+     * @param int $newTotal
+     * @return bool
+     */
+    public function adjustSessions($classId, $newTotal)
+    {
+        $this->clearErrors();
+
+        $classId = (int) $classId;
+        $newTotal = (int) $newTotal;
+        if ($classId <= 0) {
+            $this->addError('system', 'ID không hợp lệ.');
+            return false;
+        }
+        if ($newTotal < 0 || $newTotal > 10000) {
+            $this->addError('total_sessions', 'Tổng số buổi phải từ 0 đến 10.000.');
+            return false;
+        }
+
+        $before = $this->getClass($classId);
+        if (empty($before)) {
+            $this->addError('system', 'Lớp học không tồn tại.');
+            return false;
+        }
+        if ($newTotal === (int) $before['total_sessions']) {
+            $this->addError('total_sessions', 'Tổng số buổi không thay đổi.');
+            return false;
+        }
+
+        $completedRow = $this->db->safeFetchOne(
+            'select count(*) as c from db_lms_sessions where class_id = ? and status = ?',
+            array($classId, 'finished')
+        );
+        $completedCount = isset($completedRow['c']) ? (int) $completedRow['c'] : 0;
+        if ($newTotal < $completedCount) {
+            $this->addError('total_sessions', 'Tổng số buổi không thể thấp hơn số buổi đã hoàn thành (' . $completedCount . ').');
+            return false;
+        }
+
+        $delta = $newTotal - (int) $before['total_sessions'];
+        $remaining = max(0, (int) $before['remaining_sessions'] + $delta);
+
+        $this->db->beginTransaction();
+        try {
+            $ok = $this->db->update(
+                'db_lms_classes',
+                array('total_sessions' => $newTotal, 'remaining_sessions' => $remaining),
+                'id = ?',
+                array($classId)
+            );
+            if (!$ok) {
+                throw new \Exception('update total_sessions failed');
+            }
+
+            // Thêm buổi → sinh session mới cho các tuần tới
+            if ($delta > 0 && (string) $before['status'] === 'active' && !empty($before['schedules'])) {
+                $this->generateSessionsForClass($classId, (int) $before['teacher_id'], date('Y-m-d'));
+            }
+
+            $this->db->commit();
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            error_log('[LMS] adjustSessions failed: ' . $e->getMessage());
+            $this->addError('system', 'Không thể điều chỉnh số buổi. Vui lòng thử lại.');
+            return false;
+        }
+
+        $after = $this->getClass($classId);
+        $this->audit('adjust_sessions', 'classes', $classId, $before, $after);
+
+        return true;
     }
 
     /**
@@ -527,11 +840,24 @@ class ClassService extends LmsService
 
         $items = $this->db->safeFetch(
             'select c.id, c.class_code, c.name, c.class_type, c.status, c.price_per_session,'
-            . ' c.total_sessions, c.remaining_sessions, c.start_date, c.created_at,'
+            . ' c.total_sessions, c.remaining_sessions, c.start_date, c.expected_end_date, c.created_at,'
             . ' p.name as program_name, s.name as subject_name,'
             . ' t.teacher_code, t.full_name as teacher_name,'
             . ' (select count(*) from db_lms_class_students cs'
-            . '   where cs.class_id = c.id and cs.status = "active") as student_count'
+            . '   where cs.class_id = c.id and cs.status = "active") as student_count,'
+            // Số buổi đã dạy xong
+            . ' (select count(*) from db_lms_sessions ses'
+            . '   where ses.class_id = c.id and ses.status = "finished") as sessions_finished,'
+            // Chuyên đề đang học: topic của buổi finished gần nhất, nếu không có
+            // thì lấy topic buổi sắp tới gần nhất
+            . ' coalesce((select t2.name from db_lms_sessions ses'
+            . '   join db_lms_topics t2 on t2.id = ses.topic_id'
+            . '   where ses.class_id = c.id and ses.status = "finished" and ses.topic_id is not null'
+            . '   order by ses.session_date desc, ses.start_time desc limit 1),'
+            . ' (select t3.name from db_lms_sessions ses2'
+            . '   join db_lms_topics t3 on t3.id = ses2.topic_id'
+            . '   where ses2.class_id = c.id and ses2.status = "upcoming" and ses2.topic_id is not null'
+            . '   order by ses2.session_date asc, ses2.start_time asc limit 1)) as current_topic'
             . ' from db_lms_classes c'
             . ' left join db_lms_programs p on p.id = c.program_id'
             . ' left join db_lms_subjects s on s.id = c.subject_id'
@@ -651,7 +977,7 @@ class ClassService extends LmsService
         $classId = (int) $classId;
         $status  = (string) $status;
 
-        if (!in_array($status, array('active', 'paused'), true)) {
+        if (!in_array($status, array('arranging', 'active', 'paused'), true)) {
             $this->addError('system', 'Trạng thái không hợp lệ.');
             return false;
         }
@@ -669,8 +995,37 @@ class ClassService extends LmsService
             return false;
         }
 
+        // New arranging drafts must pass readiness checks. Legacy paused
+        // classes may be resumed without changing historical behavior.
+        if ($status === 'active' && (string) $row['status'] === 'arranging') {
+            $ready = $this->db->safeFetchOne(
+                'select c.id'
+                . ' from db_lms_classes c'
+                . ' where c.id = ? and c.teacher_id > 0 and c.start_date is not null'
+                . ' and exists (select 1 from db_lms_class_students cs where cs.class_id = c.id and cs.status = ? and c.deleted_at is null)'
+                . ' and exists (select 1 from db_lms_schedules s where s.class_id = c.id)',
+                array($classId, 'active')
+            );
+            if (empty($ready)) {
+                $this->addError('system', 'Lớp cần có giáo viên, học viên, lịch và ngày bắt đầu trước khi hoạt động.');
+                return false;
+            }
+        }
+
         $ok = $this->db->update('db_lms_classes', array('status' => $status), 'id = ?', array($classId));
         if ($ok) {
+            if ($status === 'active' && (string) $row['status'] === 'arranging') {
+                if ((new CourseCycleService($this->db))->initializeClassCycle($classId) <= 0) {
+                    $this->addError('system', 'Đã kích hoạt lớp nhưng không khởi tạo được chu kỳ đầu tiên.');
+                    return false;
+                }
+                $class = $this->db->safeFetchOne(
+                    'select teacher_id, start_date from db_lms_classes where id = ? limit 1', array($classId)
+                );
+                if (!empty($class)) {
+                    $this->generateSessionsForClass($classId, (int) $class['teacher_id'], (string) $class['start_date']);
+                }
+            }
             $this->audit(
                 $status === 'paused' ? 'pause_class' : 'resume_class',
                 'classes',
@@ -692,7 +1047,34 @@ class ClassService extends LmsService
     public function enrollStudent($classId, $studentId)
     {
         $this->clearErrors();
-        return $this->enrollStudentInternal($classId, $studentId);
+
+        // Lớp 1 kèm 1 chỉ được có đúng 1 học viên active — chặn ngay tại
+        // service để mọi luồng (form/seed/script) không tạo được lớp 2 HV.
+        $class = $this->db->safeFetchOne(
+            'select class_type from db_lms_classes where id = ? limit 1',
+            array((int) $classId)
+        );
+        if (empty($class)) {
+            $this->addError('class_id', 'Lớp không tồn tại.');
+            return false;
+        }
+        if ((string) $class['class_type'] === 'one_on_one') {
+            $other = $this->db->safeFetchOne(
+                'select id from db_lms_class_students'
+                . ' where class_id = ? and status = ? and student_id <> ? limit 1',
+                array((int) $classId, 'active', (int) $studentId)
+            );
+            if (!empty($other)) {
+                $this->addError('class_id', 'Lớp 1 kèm 1 phải có đúng 1 học viên.');
+                return false;
+            }
+        }
+
+        $ok = $this->enrollStudentInternal($classId, $studentId);
+        if ($ok) {
+            (new CourseCycleService($this->db))->enrollStudentInActiveCycle($classId, $studentId);
+        }
+        return $ok;
     }
 
     /**
@@ -704,18 +1086,26 @@ class ClassService extends LmsService
      */
     private function enrollStudentInternal($classId, $studentId)
     {
+        $classId = (int) $classId;
+        $studentId = (int) $studentId;
         $exists = $this->db->safeFetchOne(
             'select id from db_lms_class_students where class_id = ? and student_id = ? limit 1',
             array((int) $classId, (int) $studentId)
         );
         if (!empty($exists)) {
+            $this->db->update('db_lms_class_students', array('status' => 'active'), 'id = ?', array((int) $exists['id']));
+            (new CourseCycleService($this->db))->enrollStudentInActiveCycle($classId, $studentId);
             return true;
         }
-        return $this->db->insert('db_lms_class_students', array(
+        $ok = $this->db->insert('db_lms_class_students', array(
             'class_id'   => (int) $classId,
             'student_id' => (int) $studentId,
             'status'     => 'active',
         ));
+        if ($ok) {
+            (new CourseCycleService($this->db))->enrollStudentInActiveCycle($classId, $studentId);
+        }
+        return $ok;
     }
 
     /**
@@ -815,6 +1205,43 @@ class ClassService extends LmsService
             }
         }
 
+        // Hạn chấm test/minitest (giờ)
+        $testGraceHours = 72;
+        if (isset($data['test_grace_hours']) && (string) $data['test_grace_hours'] !== '') {
+            if (!is_numeric($data['test_grace_hours'])
+                || (int) $data['test_grace_hours'] < 0
+                || (int) $data['test_grace_hours'] > 720) {
+                $this->addError('test_grace_hours', 'Hạn chấm test phải từ 0 đến 720 giờ.');
+                $hasError = true;
+            } else {
+                $testGraceHours = (int) $data['test_grace_hours'];
+            }
+        }
+
+        // Chuyên đề được chọn (không ràng buộc Danh mục/Chương trình; chỉ cần tồn tại)
+        $topicIds = array();
+        if (isset($data['topic_ids'])) {
+            $raw = is_array($data['topic_ids']) ? $data['topic_ids'] : array($data['topic_ids']);
+            foreach ($raw as $tid) {
+                $tid = (int) $tid;
+                if ($tid > 0) {
+                    $topicIds[] = $tid;
+                }
+            }
+            $topicIds = array_values(array_unique($topicIds));
+            if ($topicIds !== array()) {
+                $found = (int) $this->db->count(
+                    'db_lms_topics',
+                    'id in (' . implode(', ', array_fill(0, count($topicIds), '?')) . ')',
+                    $topicIds
+                );
+                if ($found !== count($topicIds)) {
+                    $this->addError('topic_ids', 'Một số chuyên đề được chọn không tồn tại.');
+                    $hasError = true;
+                }
+            }
+        }
+
         // Áp dụng từ ngày
         $startDate = date('Y-m-d');
         if (isset($data['start_date']) && (string) $data['start_date'] !== '') {
@@ -877,6 +1304,11 @@ class ClassService extends LmsService
             return null;
         }
 
+        if (isset($data['status']) && !in_array((string) $data['status'], array('active', 'arranging'), true)) {
+            $this->addError('status', 'Trạng thái ban đầu của lớp không hợp lệ.');
+            return null;
+        }
+
         return array(
             'name'               => isset($data['name']) ? trim((string) $data['name']) : '',
             'price_per_session'  => $pricePerSession,
@@ -884,9 +1316,12 @@ class ClassService extends LmsService
             'total_sessions'     => $totalSessions,
             'hw_deadline_time'   => $hwDeadline,
             'hw_check_hours'     => $hwCheckHours,
+            'test_grace_hours'   => $testGraceHours,
             'start_date'         => $startDate,
             'schedules'          => $schedules,
             'student_ids'        => $studentIds,
+            'topic_ids'          => $topicIds,
+            'status'             => isset($data['status']) ? (string) $data['status'] : 'active',
         );
     }
 

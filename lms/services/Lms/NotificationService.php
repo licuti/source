@@ -1,9 +1,9 @@
 <?php
 /**
- * NotificationService — hệ thống thông báo LMS (SYS-01 + mockup chuông đỏ).
+ * NotificationService — hệ thống notification trong LMS.
  *
- * Kênh chính: bảng db_lms_notifications + chuông header + panel có nút hành
- * động (link_url). PHPMailer chỉ là kênh phụ (SYS-01).
+ * In-app notifications are stored in db_lms_notifications; password-reset email
+ * is handled separately by MailService (SYS-03).
  *
  * PHP 7.3 compatible.
  */

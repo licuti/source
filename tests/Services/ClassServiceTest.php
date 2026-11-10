@@ -122,6 +122,102 @@ class ClassServiceTest extends LmsTestCase
         $this->assertSame($sessionCount, $ssCount);
     }
 
+    public function testCreateClassStoresSelectedTopicsAndTestGraceHours()
+    {
+        $this->db->insert('db_lms_topics', array(
+            'subject_id' => $this->subjectId,
+            'name' => 'Phương trình bậc nhất',
+        ));
+        $topicId = (int) $this->db->insertId;
+
+        $classId = $this->svc->createClass(array(
+            'program_id' => $this->programId,
+            'subject_id' => $this->subjectId,
+            'teacher_id' => $this->teacherId,
+            'class_type' => 'one_on_one',
+            'name' => 'Lớp có chuyên đề',
+            'price_per_session' => 500000,
+            'test_grace_hours' => 36,
+            'topic_ids' => array($topicId),
+            'student_ids' => array($this->student1),
+        ));
+
+        $this->assertGreaterThan(0, $classId);
+        $row = $this->db->safeFetchOne('select test_grace_hours from db_lms_classes where id = ?', array($classId));
+        $this->assertSame(36, (int) $row['test_grace_hours']);
+        $this->assertSame(array($topicId), $this->svc->getClass($classId)['topic_ids']);
+    }
+
+    public function testAdjustSessionsChangesTotalAndRemaining()
+    {
+        $classId = $this->svc->createClass(array(
+            'program_id' => $this->programId,
+            'subject_id' => $this->subjectId,
+            'teacher_id' => $this->teacherId,
+            'class_type' => 'one_on_one',
+            'name' => 'Lớp điều chỉnh số buổi',
+            'price_per_session' => 500000,
+            'total_sessions' => 8,
+            'student_ids' => array($this->student1),
+        ));
+        $this->assertGreaterThan(0, $classId);
+
+        $this->assertTrue($this->svc->adjustSessions($classId, 10));
+        $row = $this->db->safeFetchOne(
+            'select total_sessions, remaining_sessions from db_lms_classes where id = ?',
+            array($classId)
+        );
+        $this->assertSame(10, (int) $row['total_sessions']);
+        $this->assertSame(10, (int) $row['remaining_sessions']);
+    }
+
+    public function testAdjustSessionsRejectsTotalBelowFinishedSessions()
+    {
+        $classId = $this->svc->createClass(array(
+            'program_id'        => $this->programId,
+            'subject_id'        => $this->subjectId,
+            'teacher_id'        => $this->teacherId,
+            'class_type'        => 'one_on_one',
+            'name'              => 'Lớp điều chỉnh giới hạn',
+            'price_per_session' => 500000,
+            'total_sessions'    => 8,
+            'schedules'         => array(
+                array('day' => 2, 'start' => '19:00', 'end' => '20:30'),
+            ),
+            'student_ids'       => array($this->student1),
+        ));
+        $this->assertGreaterThan(0, $classId);
+
+        // 3 buổi đã dạy xong → total_sessions không được thấp hơn 3
+        for ($i = 0; $i < 3; $i++) {
+            $this->db->insert('db_lms_sessions', array(
+                'class_id'     => $classId,
+                'teacher_id'   => $this->teacherId,
+                'session_date' => date('Y-m-d', strtotime('-' . ($i + 1) . ' days')),
+                'start_time'   => '19:00',
+                'end_time'     => '20:30',
+                'status'       => 'finished',
+            ));
+        }
+
+        $this->assertFalse($this->svc->adjustSessions($classId, 2));
+        $errors = $this->svc->errors();
+        $this->assertArrayHasKey('total_sessions', $errors);
+        $this->assertStringContainsString('3', (string) $errors['total_sessions']);
+
+        // Giữ nguyên 8 buổi (không thay đổi) → cũng phải báo lỗi
+        $this->assertFalse($this->svc->adjustSessions($classId, 8));
+
+        // Chấp nhận đúng số buổi đã hoàn thành
+        $this->assertTrue($this->svc->adjustSessions($classId, 3));
+        $row = $this->db->safeFetchOne(
+            'select total_sessions, remaining_sessions from db_lms_classes where id = ?',
+            array($classId)
+        );
+        $this->assertSame(3, (int) $row['total_sessions']);
+        $this->assertSame(3, (int) $row['remaining_sessions']);
+    }
+
     public function testCreateGroupClassWithMultipleStudents()
     {
         $classId = $this->svc->createClass(array(
@@ -822,5 +918,65 @@ class ClassServiceTest extends LmsTestCase
 
         $res = $this->svc->listClasses(array(), 1, 20);
         $this->assertSame(0, (int) $res['total']);
+    }
+
+    public function testUpdateClassPreservesFinishedSessionFeeSnapshotsAndUpdatesUpcoming()
+    {
+        $classId = $this->svc->createClass(array(
+            'program_id'         => $this->programId,
+            'subject_id'         => $this->subjectId,
+            'teacher_id'         => $this->teacherId,
+            'class_type'         => 'one_on_one',
+            'name'               => 'Lớp snapshot phí',
+            'price_per_session'  => 500000,
+            'teacher_percentage' => 45.00,
+            'total_sessions'     => 8,
+            'start_date'         => '2026-11-01',
+            'student_ids'        => array($this->student1),
+        ));
+        $this->assertGreaterThan(0, $classId);
+
+        $this->db->insert('db_lms_sessions', array(
+            'class_id'           => $classId,
+            'teacher_id'         => $this->teacherId,
+            'session_date'       => '2026-11-02',
+            'start_time'         => '19:00',
+            'end_time'           => '20:30',
+            'price_per_session'  => 500000,
+            'teacher_percentage' => 45.00,
+            'status'             => 'finished',
+        ));
+        $finishedId = (int) $this->db->insertId;
+
+        $this->db->insert('db_lms_sessions', array(
+            'class_id'           => $classId,
+            'teacher_id'         => $this->teacherId,
+            'session_date'       => '2026-11-16',
+            'start_time'         => '19:00',
+            'end_time'           => '20:30',
+            'price_per_session'  => 500000,
+            'teacher_percentage' => 45.00,
+            'status'             => 'upcoming',
+        ));
+        $upcomingId = (int) $this->db->insertId;
+
+        $this->assertTrue($this->svc->updateClass($classId, array(
+            'program_id'         => $this->programId,
+            'subject_id'         => $this->subjectId,
+            'teacher_id'         => $this->teacherId,
+            'class_type'         => 'one_on_one',
+            'name'               => 'Lớp snapshot phí',
+            'price_per_session'  => 500000,
+            'teacher_percentage' => 41.00,
+            'total_sessions'     => 8,
+            'start_date'         => '2026-11-15',
+            'student_ids'        => array($this->student1),
+        )));
+
+        $finishedRow = $this->db->safeFetchOne('select price_per_session, teacher_percentage from db_lms_sessions where id = ?', array($finishedId));
+        $upcomingRow = $this->db->safeFetchOne('select price_per_session, teacher_percentage from db_lms_sessions where id = ?', array($upcomingId));
+
+        $this->assertSame(45.0, (float) $finishedRow['teacher_percentage']);
+        $this->assertSame(41.0, (float) $upcomingRow['teacher_percentage']);
     }
 }

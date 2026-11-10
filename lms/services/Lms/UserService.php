@@ -20,6 +20,9 @@ class UserService extends LmsService
 
     const ROLES = array(self::ROLE_ADMIN, self::ROLE_TEACHER, self::ROLE_STUDENT);
 
+    /** @var string mật khẩu tự sinh ở lần createUser gần nhất (BR-AUTH-01) */
+    private $lastGeneratedPassword = '';
+
     /**
      * Xác thực đăng nhập cho portal cụ thể.
      *
@@ -132,7 +135,8 @@ class UserService extends LmsService
      * Tạo tài khoản LMS (username unique, password bcrypt).
      *
      * @param string $username
-     * @param string $password
+     * @param string $password rỗng → tự sinh 10 ký tự ngẫu nhiên + set
+     *                          must_change_password (BR-AUTH-01)
      * @param string $role
      * @param array  $extra cột thêm (email, phone, status...)
      * @return int|null user id hoặc null nếu lỗi
@@ -140,6 +144,8 @@ class UserService extends LmsService
     public function createUser($username, $password, $role, array $extra = array())
     {
         $this->clearErrors();
+        $this->lastGeneratedPassword = '';
+
         $username = trim((string) $username);
         $role     = (string) $role;
 
@@ -147,7 +153,7 @@ class UserService extends LmsService
             $this->addError('username', 'Tên đăng nhập chỉ gồm chữ, số, dấu chấm/gạch dưới/gạch ngang (3-50 ký tự).');
             return null;
         }
-        if (strlen($password) < 6) {
+        if ($password !== '' && strlen($password) < 6) {
             $this->addError('password', 'Mật khẩu tối thiểu 6 ký tự.');
             return null;
         }
@@ -165,11 +171,20 @@ class UserService extends LmsService
             return null;
         }
 
+        // BR-AUTH-01: mật khẩu rỗng → tự sinh + buộc đổi lần đầu
+        $mustChange = 0;
+        if ($password === '') {
+            $password = $this->generatePassword(10);
+            $mustChange = 1;
+            $this->lastGeneratedPassword = $password;
+        }
+
         $data = array_merge(array(
-            'username' => $username,
-            'password' => lms_hash_password($password),
-            'role'     => $role,
-            'status'   => 'active',
+            'username'              => $username,
+            'password'              => lms_hash_password($password),
+            'role'                  => $role,
+            'status'                => 'active',
+            'must_change_password'  => $mustChange,
         ), $extra);
 
         $ok = $this->db->insert('db_lms_users', $data);
@@ -178,6 +193,16 @@ class UserService extends LmsService
             return null;
         }
         return (int) $this->db->insertId;
+    }
+
+    /**
+     * Mật khẩu tự sinh ở lần createUser gần nhất (rỗng nếu admin tự nhập).
+     *
+     * @return string
+     */
+    public function lastGeneratedPassword()
+    {
+        return $this->lastGeneratedPassword;
     }
 
     /**
@@ -197,12 +222,39 @@ class UserService extends LmsService
         return $this->db->update(
             'db_lms_users',
             array(
-                'password'          => lms_hash_password($newPassword),
-                'password_changed_at' => $this->now(),
+                'password'             => lms_hash_password($newPassword),
+                'password_changed_at'  => $this->now(),
+                'must_change_password' => 0,
             ),
             'id = ?',
             array((int) $userId)
         );
+    }
+
+    /**
+     * Xác thực mật khẩu hiện tại của user (dùng ở trang đổi mật khẩu).
+     *
+     * @param int    $userId
+     * @param string $currentPassword
+     * @return bool
+     */
+    public function verifyCurrentPassword($userId, $currentPassword)
+    {
+        $this->clearErrors();
+        $row = $this->db->safeFetchOne(
+            'select password from db_lms_users where id = ? limit 1',
+            array((int) $userId)
+        );
+        if (empty($row) || !is_array($row)) {
+            $this->addError('system', 'Tài khoản không tồn tại.');
+            return false;
+        }
+        if (!function_exists('lms_verify_password')
+            || !lms_verify_password((string) $currentPassword, (string) $row['password'])) {
+            $this->addError('current_password', 'Mật khẩu hiện tại không đúng.');
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -268,7 +320,7 @@ class UserService extends LmsService
     const TEACHER_RANKS = array(
         'green'  => 'Xanh (ưu tiên cao nhất)',
         'gold'   => 'Vàng',
-        'bronze' => 'Đồng',
+        'bronze' => 'Đỏ',
     );
 
     /** Thứ trong tuần (giống db_lms_schedules.day_of_week: 2=Thứ 2 .. 8=Chủ nhật). */
@@ -277,11 +329,22 @@ class UserService extends LmsService
         6 => 'Thứ 6', 7 => 'Thứ 7', 8 => 'Chủ nhật',
     );
 
-    /** Danh sách quận TP.HCM (mockup: dropdown quận; Thủ Đức gộp phường). */
+    /** Danh sách quận TP.HCM và các phường trực thuộc Thủ Đức. */
     const HCMC_DISTRICTS = array(
         'Quận 1', 'Quận 3', 'Quận 4', 'Quận 5', 'Quận 6', 'Quận 7', 'Quận 8',
         'Quận 10', 'Quận 11', 'Quận 12', 'Tân Bình', 'Tân Phú', 'Phú Nhuận',
-        'Bình Thạnh', 'Gò Vấp', 'Bình Tân', 'Thủ Đức',
+        'Bình Thạnh', 'Gò Vấp', 'Bình Tân', 'Bình Chánh', 'Cần Giờ', 'Củ Chi', 'Hóc Môn', 'Nhà Bè',
+        'Thủ Đức',
+        'P. An Khánh (Thủ Đức)', 'P. An Lợi Đông (Thủ Đức)', 'P. An Phú (Thủ Đức)',
+        'P. Bình Chiểu (Thủ Đức)', 'P. Bình Thọ (Thủ Đức)', 'P. Hiệp Bình Chánh (Thủ Đức)',
+        'P. Hiệp Bình Phước (Thủ Đức)', 'P. Hiệp Phú (Thủ Đức)', 'P. Linh Chiểu (Thủ Đức)',
+        'P. Linh Đông (Thủ Đức)', 'P. Linh Tây (Thủ Đức)', 'P. Linh Trung (Thủ Đức)',
+        'P. Linh Xuân (Thủ Đức)', 'P. Long Bình (Thủ Đức)', 'P. Long Phước (Thủ Đức)',
+        'P. Long Thạnh Mỹ (Thủ Đức)', 'P. Long Trường (Thủ Đức)', 'P. Phú Hữu (Thủ Đức)',
+        'P. Phước Bình (Thủ Đức)', 'P. Phước Long A (Thủ Đức)', 'P. Phước Long B (Thủ Đức)',
+        'P. Tam Bình (Thủ Đức)', 'P. Tam Phú (Thủ Đức)', 'P. Tăng Nhơn Phú A (Thủ Đức)',
+        'P. Tăng Nhơn Phú B (Thủ Đức)', 'P. Thạnh Mỹ Lợi (Thủ Đức)', 'P. Thảo Điền (Thủ Đức)',
+        'P. Thủ Thiêm (Thủ Đức)', 'P. Trường Thạnh (Thủ Đức)', 'P. Trường Thọ (Thủ Đức)',
     );
 
     // ===================== Validate helpers =====================
@@ -391,7 +454,8 @@ class UserService extends LmsService
 
         $isNew = (int) $exceptUserId <= 0;
         if ($isNew && $password === '') {
-            $this->addError('password', 'Mật khẩu là bắt buộc khi tạo tài khoản.');
+            // BR-AUTH-01: để trống khi tạo → hệ thống tự sinh mật khẩu ngẫu
+            // nhiên 10 ký tự và buộc người dùng đổi ở lần đăng nhập đầu tiên.
         } elseif ($password !== '' && strlen($password) < 6) {
             $this->addError('password', 'Mật khẩu tối thiểu 6 ký tự.');
         }
@@ -470,7 +534,7 @@ class UserService extends LmsService
      * Khóa input: username, password (rỗng → tự sinh), email, phone,
      * full_name, parent_name, parent_phone, grade, school_name, district,
      * ward, current_address, learning_type, priority_number, status, note,
-     * free_time_slots (mảng khung giờ).
+     * gender, free_time_slots (mảng khung giờ).
      *
      * @param array $in
      * @return int|null user_id
@@ -490,6 +554,9 @@ class UserService extends LmsService
         $userExtra = array();
         $email = $this->trimIn($in, 'email');
         $phone = $this->trimIn($in, 'phone');
+        if ($phone === '') {
+            $phone = $this->trimIn($in, 'parent_phone');
+        }
         if ($email !== '') {
             $userExtra['email'] = $email;
         }
@@ -547,10 +614,14 @@ class UserService extends LmsService
         if ($password !== '') {
             $userData['password'] = lms_hash_password($password);
             $userData['password_changed_at'] = $this->now();
+            $userData['must_change_password'] = 1;
         }
 
         $studentData = $this->studentRow($in, $userId, false);
         $studentData['free_time_slots'] = $slots !== array() ? json_encode($slots, JSON_UNESCAPED_UNICODE) : null;
+        if (!isset($in['avatar']) && empty($in['remove_avatar'])) {
+            $studentData['avatar'] = isset($profile['avatar']) ? $profile['avatar'] : null;
+        }
 
         $before = array(
             'user' => $existing,
@@ -591,12 +662,20 @@ class UserService extends LmsService
             $this->addError('full_name', 'Họ tên không được quá 100 ký tự.');
         }
 
-        $parentPhone = $this->trimIn($in, 'parent_phone');
-        if ($parentPhone !== '' && !self::isValidPhoneVn($parentPhone)) {
-            $this->addError('parent_phone', 'Số điện thoại phụ huynh không hợp lệ (10-11 số, bắt đầu bằng 0).');
+        $gender = $this->trimIn($in, 'gender');
+        if ($gender !== '' && !isset(self::GENDERS[$gender])) {
+            $this->addError('gender', 'Giới tính không hợp lệ.');
         }
 
-        $learningType = $this->trimIn($in, 'learning_type', 'offline');
+        $parentPhone = $this->trimIn($in, 'parent_phone');
+        if ($parentPhone === '') {
+            $parentPhone = $this->trimIn($in, 'phone');
+        }
+        if ($parentPhone !== '' && !self::isValidPhoneVn($parentPhone)) {
+            $this->addError('parent_phone', 'Số điện thoại không hợp lệ (10-11 số, bắt đầu bằng 0).');
+        }
+
+        $learningType = $this->trimIn($in, 'learning_type', 'online');
         if (!isset(self::LEARNING_TYPES[$learningType])) {
             $this->addError('learning_type', 'Hình thức học không hợp lệ.');
         }
@@ -606,20 +685,54 @@ class UserService extends LmsService
             $this->addError('status', 'Trạng thái học viên không hợp lệ.');
         }
 
-        $district = $this->trimIn($in, 'district');
-        if ($district !== '' && !in_array($district, self::HCMC_DISTRICTS, true)) {
-            $this->addError('district', 'Quận không thuộc danh sách TP.HCM.');
+        $districts = array();
+        if (isset($in['teachable_districts']) && is_array($in['teachable_districts'])) {
+            $districts = $in['teachable_districts'];
+        } elseif (isset($in['districts']) && is_array($in['districts'])) {
+            $districts = $in['districts'];
+        } elseif (isset($in['district']) && is_array($in['district'])) {
+            $districts = $in['district'];
+        } elseif ($this->trimIn($in, 'district') !== '') {
+            $districts = array_map('trim', explode(',', $this->trimIn($in, 'district')));
+        }
+        foreach ($districts as $dItem) {
+            $dItem = trim((string) $dItem);
+            if ($dItem !== '' && !in_array($dItem, self::HCMC_DISTRICTS, true)) {
+                $this->addError('district', 'Quận/Phường "' . $dItem . '" không thuộc danh sách TP.HCM.');
+                break;
+            }
         }
 
-        $subjectId = isset($in['subject_id']) ? (int) $in['subject_id'] : 0;
-        if ($subjectId > 0) {
-            $subject = $this->db->safeFetchOne(
-                'select id from db_lms_subjects where id = ? limit 1',
-                array($subjectId)
-            );
-            if (empty($subject)) {
-                $this->addError('subject_id', 'Môn học không tồn tại.');
+        $subjIds = array();
+        if (isset($in['subject_ids']) && is_array($in['subject_ids'])) {
+            $subjIds = $in['subject_ids'];
+        } elseif (isset($in['subject_id']) && is_array($in['subject_id'])) {
+            $subjIds = $in['subject_id'];
+        } elseif (isset($in['subject_id']) && (int) $in['subject_id'] > 0) {
+            $subjIds = array((int) $in['subject_id']);
+        }
+        foreach ($subjIds as $sid) {
+            $sid = (int) $sid;
+            if ($sid > 0) {
+                $subject = $this->db->safeFetchOne(
+                    'select id from db_lms_subjects where id = ? limit 1',
+                    array($sid)
+                );
+                if (empty($subject)) {
+                    $this->addError('subject_ids', 'Môn học đã chọn không tồn tại.');
+                    break;
+                }
             }
+        }
+
+        $waitingFrom = $this->trimIn($in, 'waiting_from');
+        if ($waitingFrom !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $waitingFrom)) {
+            $this->addError('waiting_from', 'Ngày chờ sắp xếp sai định dạng.');
+        }
+
+        $expectedStart = $this->trimIn($in, 'expected_start_date');
+        if ($expectedStart !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $expectedStart)) {
+            $this->addError('expected_start_date', 'Ngày dự kiến bắt đầu học sai định dạng.');
         }
 
         $preferredGender = $this->trimIn($in, 'preferred_teacher_gender');
@@ -639,24 +752,66 @@ class UserService extends LmsService
      */
     private function studentRow(array $in, $userId, $isCreate, array $slots = array())
     {
+        $distArr = array();
+        if (isset($in['teachable_districts']) && is_array($in['teachable_districts'])) {
+            $distArr = array_values(array_filter(array_map('trim', $in['teachable_districts'])));
+        } elseif (isset($in['districts']) && is_array($in['districts'])) {
+            $distArr = array_values(array_filter(array_map('trim', $in['districts'])));
+        } elseif (isset($in['district']) && is_array($in['district'])) {
+            $distArr = array_values(array_filter(array_map('trim', $in['district'])));
+        } elseif (isset($in['district'])) {
+            $dRaw = $this->trimIn($in, 'district');
+            if ($dRaw !== '') {
+                $distArr = array($dRaw);
+            }
+        }
+        $dist = !empty($distArr) ? implode(', ', $distArr) : '';
+
+        $subjIds = array();
+        if (isset($in['subject_ids']) && is_array($in['subject_ids'])) {
+            foreach ($in['subject_ids'] as $sid) {
+                $sid = (int) $sid;
+                if ($sid > 0 && !in_array($sid, $subjIds, true)) {
+                    $subjIds[] = $sid;
+                }
+            }
+        } elseif (isset($in['subject_id']) && is_array($in['subject_id'])) {
+            foreach ($in['subject_id'] as $sid) {
+                $sid = (int) $sid;
+                if ($sid > 0 && !in_array($sid, $subjIds, true)) {
+                    $subjIds[] = $sid;
+                }
+            }
+        } elseif (isset($in['subject_id']) && (int) $in['subject_id'] > 0) {
+            $subjIds[] = (int) $in['subject_id'];
+        }
+
+        $pPhone = $this->trimIn($in, 'parent_phone');
+        if ($pPhone === '') {
+            $pPhone = $this->trimIn($in, 'phone');
+        }
+
         $row = array(
             'full_name'       => $this->trimIn($in, 'full_name'),
+            'avatar'          => isset($in['avatar']) && $in['avatar'] !== '' ? (string) $in['avatar'] : (isset($in['remove_avatar']) && $in['remove_avatar'] ? null : null),
+            'gender'          => $this->trimIn($in, 'gender') !== '' ? $this->trimIn($in, 'gender') : null,
             'parent_name'     => $this->trimIn($in, 'parent_name'),
-            'parent_phone'    => $this->trimIn($in, 'parent_phone'),
+            'parent_phone'    => $pPhone,
             'grade'           => $this->trimIn($in, 'grade'),
-            'subject_id'      => isset($in['subject_id']) && (int) $in['subject_id'] > 0
-                ? (int) $in['subject_id']
-                : null,
+            'subject_id'      => !empty($subjIds) ? (int) $subjIds[0] : null,
+            'subject_ids'     => !empty($subjIds) ? json_encode($subjIds, JSON_UNESCAPED_UNICODE) : null,
             'preferred_teacher_gender' => $this->trimIn($in, 'preferred_teacher_gender') !== ''
                 ? $this->trimIn($in, 'preferred_teacher_gender')
                 : null,
             'school_name'     => $this->trimIn($in, 'school_name'),
-            'district'        => $this->trimIn($in, 'district'),
+            'district'        => $dist !== '' ? $dist : null,
             'ward'            => $this->trimIn($in, 'ward'),
             'current_address' => $this->trimIn($in, 'current_address'),
-            'learning_type'   => $this->trimIn($in, 'learning_type', 'offline'),
+            'learning_type'   => $this->trimIn($in, 'learning_type', 'online'),
             'priority_number' => isset($in['priority_number']) ? (int) $in['priority_number'] : 0,
             'status'          => $this->trimIn($in, 'status', 'pending_arrange'),
+            'waiting_from'    => $this->trimIn($in, 'waiting_from') !== '' ? $this->trimIn($in, 'waiting_from') : date('Y-m-d'),
+            'expected_start_date' => $this->trimIn($in, 'expected_start_date') !== '' ? $this->trimIn($in, 'expected_start_date') : null,
             'note'            => $this->trimIn($in, 'note'),
         );
         if ($isCreate) {
@@ -668,6 +823,8 @@ class UserService extends LmsService
             $row['free_time_slots'] = $slots !== array()
                 ? json_encode($slots, JSON_UNESCAPED_UNICODE)
                 : null;
+        } elseif (isset($in['student_code']) && $this->trimIn($in, 'student_code') !== '') {
+            $row['student_code'] = $this->trimIn($in, 'student_code');
         }
         return $row;
     }
@@ -681,10 +838,14 @@ class UserService extends LmsService
      */
     private function accountRow(array $in, array $existing)
     {
+        $phone = $this->trimIn($in, 'phone');
+        if ($phone === '') {
+            $phone = $this->trimIn($in, 'parent_phone');
+        }
         $row = array(
             'email'  => $this->trimIn($in, 'email') !== '' ? $this->trimIn($in, 'email') : null,
-            'phone'  => $this->trimIn($in, 'phone') !== '' ? $this->trimIn($in, 'phone') : null,
-            'status' => $this->trimIn($in, 'user_status', 'active'),
+            'phone'  => $phone !== '' ? $phone : null,
+            'status' => $this->trimIn($in, 'user_status', isset($existing['status']) ? (string) $existing['status'] : 'active'),
         );
         if (!isset(self::USER_STATUSES[$row['status']])) {
             $row['status'] = 'active';
@@ -708,9 +869,9 @@ class UserService extends LmsService
             'select u.id, u.username, u.email, u.phone, u.status as user_status,'
             . ' u.last_login_at, u.created_at,'
             . ' s.user_id, s.student_code, s.full_name, s.parent_name, s.parent_phone,'
-            . ' s.grade, s.school_name, s.district, s.ward, s.current_address,'
-            . ' s.learning_type, s.priority_number, s.status as student_status, s.note,'
-            . ' s.subject_id, s.preferred_teacher_gender, subj.name as subject_name,'
+            . ' s.grade, s.gender, s.school_name, s.avatar, s.waiting_from, s.expected_start_date, s.district, s.ward, s.current_address,'
+            . ' s.learning_type, s.priority_number, s.status, s.status as student_status, s.note,'
+            . ' s.subject_id, s.subject_ids, s.preferred_teacher_gender, subj.name as subject_name,'
             . ' s.free_time_slots'
             . ' from db_lms_users u'
             . ' join db_lms_students s on s.user_id = u.id'
@@ -750,6 +911,13 @@ class UserService extends LmsService
             $params[] = $status;
         }
 
+        $filterSubj = isset($filters['subject_id']) ? (int) $filters['subject_id'] : 0;
+        if ($filterSubj > 0) {
+            $where[] = '(s.subject_id = ? or s.subject_ids like ?)';
+            $params[] = $filterSubj;
+            $params[] = '%' . $filterSubj . '%';
+        }
+
         $whereSql = implode(' and ', $where);
 
         $countRow = $this->db->safeFetchOne(
@@ -761,9 +929,9 @@ class UserService extends LmsService
 
         $items = $this->db->safeFetch(
             'select u.id, u.username, u.email, u.phone, u.status as user_status, u.created_at,'
-            . ' s.student_code, s.full_name, s.parent_name, s.parent_phone, s.grade, s.school_name,'
-            . ' s.district, s.ward, s.current_address, s.learning_type, s.priority_number,'
-            . ' s.status as student_status, s.note, s.subject_id, subj.name as subject_name,'
+            . ' s.student_code, s.full_name, s.parent_name, s.parent_phone, s.grade, s.gender, s.school_name,'
+            . ' s.avatar, s.waiting_from, s.expected_start_date, s.district, s.ward, s.current_address, s.learning_type, s.priority_number,'
+            . ' s.status, s.status as student_status, s.note, s.subject_id, s.subject_ids, subj.name as subject_name,'
             . ' (select group_concat(distinct c.name order by c.name separator "; ")'
             . '    from db_lms_class_students cs'
             . '    join db_lms_classes c on c.id = cs.class_id and c.deleted_at is null'
@@ -897,6 +1065,9 @@ class UserService extends LmsService
         $userExtra = array();
         $email = $this->trimIn($in, 'email');
         $phone = $this->trimIn($in, 'phone');
+        if ($phone === '') {
+            $phone = $this->trimIn($in, 'parent_phone');
+        }
         if ($email !== '') {
             $userExtra['email'] = $email;
         }
@@ -955,6 +1126,7 @@ class UserService extends LmsService
         if ($password !== '') {
             $userData['password'] = lms_hash_password($password);
             $userData['password_changed_at'] = $this->now();
+            $userData['must_change_password'] = 1;
         }
 
         $teacherData = $this->teacherRow($in, false);
@@ -963,10 +1135,46 @@ class UserService extends LmsService
 
         $this->db->beginTransaction();
         try {
+            $oldTeacherFee = isset($profile['service_fee_percentage']) && $profile['service_fee_percentage'] !== null
+                ? (float) $profile['service_fee_percentage']
+                : null;
+            $newTeacherFee = isset($teacherData['service_fee_percentage'])
+                ? (float) $teacherData['service_fee_percentage']
+                : $oldTeacherFee;
+
+            if ($oldTeacherFee !== null) {
+                $this->db->safeExec(
+                    'update db_lms_sessions s'
+                    . ' join db_lms_classes c on c.id = s.class_id'
+                    . ' left join db_lms_course_cycles cc on cc.id = s.cycle_id'
+                    . ' set s.price_per_session = coalesce(s.price_per_session, cc.price_per_session, c.price_per_session),'
+                    . '     s.teacher_percentage = coalesce(s.teacher_percentage, cc.teacher_percentage, c.teacher_percentage, ?)'
+                    . ' where s.teacher_id = ? and (s.price_per_session is null or s.teacher_percentage is null)',
+                    array($oldTeacherFee, $userId)
+                );
+            }
+
             if (!empty($userData)) {
                 $this->db->update('db_lms_users', $userData, 'id = ?', array($userId));
             }
             $this->db->update('db_lms_teachers', $teacherData, 'user_id = ?', array($userId));
+
+            if ($newTeacherFee !== null && $oldTeacherFee !== $newTeacherFee) {
+                $this->db->safeExec(
+                    'update db_lms_sessions s'
+                    . ' join db_lms_classes c on c.id = s.class_id'
+                    . ' left join db_lms_course_cycles cc on cc.id = s.cycle_id'
+                    . ' set s.teacher_percentage = ?'
+                    . ' where s.teacher_id = ? and s.status = ?'
+                    . ' and c.teacher_percentage is null and (cc.id is null or cc.teacher_percentage is null)'
+                    . ' and not exists ('
+                    . '   select 1 from db_lms_transactions tr'
+                    . '   where tr.session_id = s.id and tr.type = ?'
+                    . ' )',
+                    array($newTeacherFee, $userId, 'upcoming', 'salary_session')
+                );
+            }
+
             $this->db->commit();
         } catch (Exception $e) {
             $this->db->rollBack();
@@ -976,6 +1184,148 @@ class UserService extends LmsService
         }
 
         $this->audit('update_teacher', 'teachers', $userId, $before, array('user' => $userData, 'profile' => $teacherData));
+        return true;
+    }
+
+    /**
+     * Giáo viên tự cập nhật hồ sơ cá nhân (Tài khoản giáo viên).
+     *
+     * Chỉ whitelist các trường được phép sửa; các trường nghiệp vụ nhạy cảm
+     * (username, status, rank, phí dịch vụ, cam kết 08, mã số thuế) giữ nguyên.
+     *
+     * @param int   $userId
+     * @param array $in
+     * @return bool
+     */
+    public function updateTeacherSelf($userId, array $in)
+    {
+        $this->clearErrors();
+        $userId = (int) $userId;
+
+        $existing = $this->db->safeFetchOne('select * from db_lms_users where id = ? limit 1', array($userId));
+        $profile = $this->db->safeFetchOne('select * from db_lms_teachers where user_id = ? limit 1', array($userId));
+        if (empty($existing) || empty($profile) || (string) $existing['role'] !== self::ROLE_TEACHER) {
+            $this->addError('system', 'Giáo viên không tồn tại.');
+            return false;
+        }
+
+        $fullName = $this->trimIn($in, 'full_name');
+        $email = $this->trimIn($in, 'email');
+        $phone = $this->trimIn($in, 'phone');
+        $gender = $this->trimIn($in, 'gender');
+        $cccd = $this->trimIn($in, 'cccd');
+        $dob = $this->trimIn($in, 'dob');
+        $issueDate = $this->trimIn($in, 'issue_date');
+        $maxClasses = $this->trimIn($in, 'max_classes', (string) $profile['max_classes']);
+
+        if ($fullName === '') {
+            $this->addError('full_name', 'Họ tên giáo viên là bắt buộc.');
+        } elseif (mb_strlen($fullName, 'UTF-8') > 100) {
+            $this->addError('full_name', 'Họ tên không được quá 100 ký tự.');
+        }
+        if ($email === '') {
+            $this->addError('email', 'Email là bắt buộc.');
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->addError('email', 'Email không đúng định dạng.');
+        } elseif ($this->isEmailTaken($email, $userId)) {
+            $this->addError('email', 'Email đã được sử dụng.');
+        }
+        if ($phone === '') {
+            $this->addError('phone', 'Số điện thoại là bắt buộc.');
+        } elseif (!self::isValidPhoneVn($phone)) {
+            $this->addError('phone', 'Số điện thoại không hợp lệ (10-11 số, bắt đầu bằng 0).');
+        }
+        if ($gender !== '' && !isset(self::GENDERS[$gender])) {
+            $this->addError('gender', 'Giới tính không hợp lệ.');
+        }
+        if ($cccd !== '' && !self::isValidCccd($cccd)) {
+            $this->addError('cccd', 'CCCD phải gồm đúng 12 chữ số.');
+        } elseif ($cccd !== '') {
+            $dup = $this->db->safeFetchOne(
+                'select user_id from db_lms_teachers where cccd = ? and user_id <> ? limit 1',
+                array($cccd, $userId)
+            );
+            if (!empty($dup)) {
+                $this->addError('cccd', 'CCCD đã được sử dụng bởi giáo viên khác.');
+            }
+        }
+        if ($dob !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $dob)) {
+            $this->addError('dob', 'Ngày sinh sai định dạng.');
+        }
+        if ($issueDate !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $issueDate)) {
+            $this->addError('issue_date', 'Ngày cấp CCCD sai định dạng.');
+        }
+        if (!is_numeric($maxClasses) || (int) $maxClasses < 0 || (int) $maxClasses > 50) {
+            $this->addError('max_classes', 'Số lớp tối đa phải từ 0 đến 50.');
+        }
+
+        $districts = isset($in['teachable_districts']) ? (array) $in['teachable_districts'] : array();
+        $districts = array_values(array_filter(array_map('trim', $districts), function ($v) {
+            return $v !== '';
+        }));
+        foreach ($districts as $district) {
+            if (!in_array($district, self::HCMC_DISTRICTS, true)) {
+                $this->addError('teachable_districts', 'Quận "' . $district . '" không thuộc danh sách TP.HCM.');
+                break;
+            }
+        }
+
+        $subjectIds = isset($in['teachable_subjects']) ? (array) $in['teachable_subjects'] : array();
+        $subjectIds = array_values(array_filter(array_map('intval', $subjectIds), function ($v) {
+            return $v > 0;
+        }));
+        if ($subjectIds !== array()) {
+            $placeholders = implode(', ', array_fill(0, count($subjectIds), '?'));
+            $found = (int) $this->db->count('db_lms_subjects', 'id in (' . $placeholders . ')', $subjectIds);
+            if ($found !== count($subjectIds)) {
+                $this->addError('teachable_subjects', 'Một số môn học được chọn không tồn tại.');
+            }
+        }
+
+        if ($this->hasErrors()) {
+            return false;
+        }
+
+        $userData = array('email' => $email, 'phone' => $phone);
+        $teacherData = array(
+            'full_name'            => $fullName,
+            'gender'               => $gender !== '' ? $gender : null,
+            'dob'                  => $dob !== '' ? $dob : null,
+            'cccd'                 => $cccd !== '' ? $cccd : null,
+            'issue_date'           => $issueDate !== '' ? $issueDate : null,
+            'issue_place'          => $this->trimIn($in, 'issue_place'),
+            'current_address'      => $this->trimIn($in, 'current_address') !== '' ? $this->trimIn($in, 'current_address') : null,
+            'teachable_districts'  => $districts !== array() ? json_encode($districts, JSON_UNESCAPED_UNICODE) : null,
+            'teachable_subjects'   => $subjectIds !== array() ? json_encode($subjectIds) : null,
+            'can_teach_online'     => empty($in['can_teach_online']) ? 0 : 1,
+            'max_classes'          => (int) $maxClasses,
+            'bank_name'            => $this->trimIn($in, 'bank_name'),
+            'bank_account'         => $this->trimIn($in, 'bank_account'),
+            'bank_owner'           => $this->trimIn($in, 'bank_owner'),
+        );
+
+        try {
+            $this->db->beginTransaction();
+            $this->db->update('db_lms_users', $userData, 'id = ?', array($userId));
+            $this->db->update('db_lms_teachers', $teacherData, 'user_id = ?', array($userId));
+            $this->db->commit();
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            error_log('[LMS] updateTeacherSelf failed: ' . $e->getMessage());
+            $this->addError('system', 'Không thể cập nhật hồ sơ. Vui lòng thử lại.');
+            return false;
+        }
+
+        $auditBefore = $existing;
+        unset($auditBefore['password']);
+        $this->audit(
+            'update_teacher_profile',
+            'teachers',
+            $userId,
+            array('user' => $auditBefore, 'profile' => $profile),
+            array('user' => $userData, 'profile' => $teacherData),
+            'teacher'
+        );
         return true;
     }
 
@@ -1104,6 +1454,7 @@ class UserService extends LmsService
             'issue_date'            => $this->trimIn($in, 'issue_date') !== '' ? $this->trimIn($in, 'issue_date') : null,
             'issue_place'           => $this->trimIn($in, 'issue_place'),
             'tax_code'              => $this->trimIn($in, 'tax_code') !== '' ? $this->trimIn($in, 'tax_code') : null,
+            'current_address'       => $this->trimIn($in, 'current_address') !== '' ? $this->trimIn($in, 'current_address') : null,
             'teachable_districts'   => $districts !== array() ? json_encode($districts, JSON_UNESCAPED_UNICODE) : null,
             'teachable_subjects'    => $subjects !== array() ? json_encode($subjects) : null,
             'can_teach_online'      => empty($in['can_teach_online']) ? 0 : 1,
@@ -1121,31 +1472,60 @@ class UserService extends LmsService
             if ($row['teacher_code'] === '') {
                 $row['teacher_code'] = $this->nextTeacherCode();
             }
+        } elseif (isset($in['teacher_code']) && $this->trimIn($in, 'teacher_code') !== '') {
+            $row['teacher_code'] = $this->trimIn($in, 'teacher_code');
         }
         return $row;
     }
 
     /**
-     * Chi tiết 1 giáo viên (join users + teachers).
+     * Chi tiết 1 giáo viên (join users + teachers + teacher_profiles).
      *
      * @param int $userId
      * @return array
      */
     public function getTeacher($userId)
     {
-        return $this->db->safeFetchOne(
+        $t = $this->db->safeFetchOne(
             'select u.id, u.username, u.email, u.phone, u.status as user_status,'
             . ' u.last_login_at, u.created_at,'
             . ' t.user_id, t.teacher_code, t.full_name, t.gender, t.dob, t.cccd,'
-            . ' t.issue_date, t.issue_place, t.tax_code, t.teachable_districts,'
+            . ' t.issue_date, t.issue_place, t.tax_code, t.current_address, t.teachable_districts,'
             . ' t.teachable_subjects, t.can_teach_online, t.rank, t.max_classes,'
             . ' t.status as teacher_status, t.service_fee_percentage, t.is_commit_08,'
-            . ' t.bank_name, t.bank_account, t.bank_owner'
+            . ' t.bank_name, t.bank_account, t.bank_owner, tp.avatar'
             . ' from db_lms_users u'
             . ' join db_lms_teachers t on t.user_id = u.id'
+            . ' left join db_lms_teacher_profiles tp on tp.teacher_id = t.user_id'
             . ' where u.id = ? and u.role = ? limit 1',
             array((int) $userId, self::ROLE_TEACHER)
         );
+
+        if (!empty($t)) {
+            // Số tick tháng này
+            $ticksRow = $this->db->safeFetchOne(
+                'select coalesce(sum(tick_amount), 0) as c from db_lms_violations'
+                . ' where teacher_id = ?'
+                . ' and violation_date >= date_format(curdate(), "%Y-%m-01")'
+                . ' and violation_date <= last_day(curdate())',
+                array((int) $userId)
+            );
+            $t['month_ticks'] = isset($ticksRow['c']) ? max(0, (int) $ticksRow['c']) : 0;
+
+            // Phí dịch vụ tháng này
+            $feeRow = $this->db->safeFetchOne(
+                'select coalesce(sum(amount), 0) as s from db_lms_transactions'
+                . ' where teacher_id = ? and period_month = date_format(curdate(), "%Y-%m")',
+                array((int) $userId)
+            );
+            $t['month_fee'] = isset($feeRow['s']) ? (float) $feeRow['s'] : 0.0;
+
+            // Phí dịch vụ chờ thanh toán (status != 'paid', mọi tháng)
+            $paySvc = new PayrollService($this->db);
+            $t['unpaid_fee'] = $paySvc->unpaidBalanceForTeacher((int) $userId, true);
+        }
+
+        return $t;
     }
 
     /**
@@ -1212,6 +1592,19 @@ class UserService extends LmsService
             . ' limit ' . $offset . ', ' . $perPage,
             array_merge(array($monthStart, $monthEnd), $params)
         );
+
+        if (!empty($items)) {
+            $teacherIds = array();
+            foreach ($items as $it) {
+                $teacherIds[] = (int) $it['id'];
+            }
+            $paySvc    = new PayrollService($this->db);
+            $unpaidMap = $paySvc->unpaidBalancesForTeachers($teacherIds, true);
+            foreach ($items as $idx => $it) {
+                $tid = (int) $it['id'];
+                $items[$idx]['unpaid_fee'] = isset($unpaidMap[$tid]) ? (float) $unpaidMap[$tid] : 0.0;
+            }
+        }
 
         return array('items' => $items, 'total' => $total);
     }

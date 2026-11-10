@@ -42,3 +42,5 @@ media/.ckfinder/cache/
 Thumbs.db
 tests/.phpunit.result.cache
 cache
+
+cookies.txt

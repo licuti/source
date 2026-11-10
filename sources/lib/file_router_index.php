@@ -106,6 +106,52 @@ elseif (($row = $findByAlias('video', $com)) && $com !== '') {
         $type   = 'article';
     }
 }
+elseif ($com === 'giao-vien') {
+    $source = 'giao-vien';
+    $type   = 'page';
+    $row    = array(
+        'title'   => 'Đội ngũ giáo viên - Master Chuyên Anh',
+        'ten'     => 'Đội ngũ giáo viên',
+        'des'     => 'Đội ngũ giáo viên chuyên nghiệp, tận tâm và giàu kinh nghiệm tại Master Chuyên Anh.',
+        'keyword' => 'giáo viên, master chuyên anh, ielts, tesol'
+    );
+}
+elseif (!empty($com) && (
+    (isset($_REQUEST['alias']) && $_REQUEST['alias'] === 'giao-vien') ||
+    ($teacher_profile = $d->safeFetchOne(
+        "SELECT p.*, t.full_name, t.teacher_code, t.gender 
+         FROM #_lms_teacher_profiles p 
+         JOIN #_lms_teachers t ON t.user_id = p.teacher_id 
+         WHERE p.slug = ? AND p.show_on_website = 1 LIMIT 1",
+        array($com)
+    ))
+)) {
+    if (empty($teacher_profile)) {
+        $teacher_profile = $d->safeFetchOne(
+            "SELECT p.*, t.full_name, t.teacher_code, t.gender 
+             FROM #_lms_teacher_profiles p 
+             JOIN #_lms_teachers t ON t.user_id = p.teacher_id 
+             WHERE p.slug = ? AND p.show_on_website = 1 LIMIT 1",
+            array($com)
+        );
+    }
+    if (!empty($teacher_profile)) {
+        $source = 'giao-vien-detail';
+        $type   = 'single-post';
+        $row    = array(
+            'title'   => (!empty($teacher_profile['seo_title']) ? $teacher_profile['seo_title'] : $teacher_profile['full_name']) . ' - Master Chuyên Anh',
+            'ten'     => $teacher_profile['full_name'],
+            'des'     => !empty($teacher_profile['seo_des']) ? $teacher_profile['seo_des'] : $teacher_profile['quote'],
+            'keyword' => $teacher_profile['seo_keyword']
+        );
+    } else {
+        $row = array(
+            'title'   => '404 - Không tìm thấy giáo viên',
+            'des'     => 'Thông tin giáo viên bạn yêu cầu không tồn tại.',
+            'noindex' => 1,
+        );
+    }
+}
 else {
     // Định tuyến tĩnh
     $staticRoutes = array(

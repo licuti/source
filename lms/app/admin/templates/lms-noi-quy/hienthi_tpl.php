@@ -1,2 +1,44 @@
-<?php /** Admin class rules view/editor. */ ?>
-<div class="lms-card"><div class="lms-card-header"><i class="fa-solid fa-scroll me-1"></i>Quản lý nội quy lớp học</div><div class="lms-card-body"><p class="text-muted">Nội dung được hiển thị read-only ở portal học viên.</p><?php if($errors): ?><div class="alert alert-danger"><?php foreach($errors as $message): ?><div><?= e($message) ?></div><?php endforeach; ?></div><?php endif; ?><form method="post" action="<?= e(lms_url($alias)) ?>"><input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>"><label class="form-label" for="class-rules">Nội quy lớp học</label><textarea class="form-control" id="class-rules" name="content" rows="18" maxlength="50000" required><?= e((string)$rules['content']) ?></textarea><div class="d-flex justify-content-between mt-2"><small class="text-muted">Văn bản thuần, tối đa 50.000 ký tự.</small><button class="btn btn-lms" type="submit"><i class="fa-solid fa-floppy-disk me-1"></i>Lưu nội quy</button></div></form><?php if(!empty($rules['updated_at'])): ?><small class="text-muted d-block mt-3">Cập nhật <?= e((string)$rules['updated_at']) ?></small><?php endif; ?></div></div>
+<?php
+/**
+ * Admin LMS — Quản lý nội quy: Trình soạn thảo Rich Text nội quy trung tâm (ADM-11).
+ *
+ * Đối chiếu chuẩn mockup:
+ *  - Tai-lieu-phat-trien/admin/nội quy.png
+ *  - Tai-lieu-phat-trien/admin/Tài liệu admin.md (§11. Quản lý nội quy)
+ *
+ * Đã chuẩn hoá 100% theo hệ thống LMS UI/Form Components:
+ *  - form/rich_editor, form/actions_bar
+ *
+ * Data từ source lms-noi-quy.php:
+ *  $rules, $row, $errors, $canEdit, $alias.
+ */
+
+$contentVal = isset($rules['content']) ? (string) $rules['content'] : '';
+?>
+
+<form method="post" action="<?= e(lms_url($alias)) ?>" id="lmsClassRulesForm" novalidate>
+    <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
+
+    <?php lms_component('form/rich_editor', array(
+        'name'        => 'content',
+        'id'          => 'fld-class-rules',
+        'value'       => $contentVal,
+        'placeholder' => 'Chỉnh sửa nội quy tại đây ...',
+        'min_height'  => 420,
+        'required'    => true,
+        'readonly'    => empty($canEdit),
+        'bare'        => true,
+        'row'         => isset($row) ? $row : array(),
+        'errors'      => isset($errors) ? $errors : array(),
+    )); ?>
+
+    <?php if (!empty($canEdit)): ?>
+        <?php lms_component('form/actions_bar', array(
+            'align'   => 'end',
+            'label'   => 'Lưu',
+            'variant' => 'secondary',
+            'size'    => 'md',
+            'class'   => 'mt-3 mb-2',
+        )); ?>
+    <?php endif; ?>
+</form>

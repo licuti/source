@@ -107,8 +107,21 @@ if (!function_exists('lms_head_assets')) {
         <meta name="lms-csrf-token" content="<?= e($csrf) ?>">
         <link rel="stylesheet" href="<?= e(lms_asset_url('vendor/fontawesome6/css/all.min.css')) ?>">
         <link rel="stylesheet" href="<?= e(lms_asset_url('vendor/bootstrap/css/bootstrap.min.css')) ?>">
+        <link rel="stylesheet" href="<?= e(lms_asset_url('vendor/select2/css/select2.min.css')) ?>">
+        <link rel="stylesheet" href="<?= e(lms_asset_url('vendor/select2-bs5/css/select2-bootstrap-5-theme.min.css')) ?>">
         <link rel="stylesheet" href="<?= e(lms_asset_url('vendor/toastify/toastify.css')) ?>">
         <link rel="stylesheet" href="<?= e(lms_asset_url('css/lms.css')) ?>">
+        <script src="<?= e(lms_asset_url('vendor/jquery/jquery.min.js')) ?>"></script>
+        <script>
+            if (typeof jQuery !== 'undefined') {
+                if (!jQuery.isArray) jQuery.isArray = Array.isArray;
+                if (!jQuery.isFunction) jQuery.isFunction = function (obj) { return typeof obj === 'function'; };
+                if (!jQuery.isNumeric) jQuery.isNumeric = function (obj) { return !isNaN(parseFloat(obj)) && isFinite(obj); };
+                if (!jQuery.trim) jQuery.trim = function (str) { return str == null ? '' : String(str).trim(); };
+                if (!jQuery.type) jQuery.type = function (obj) { return Object.prototype.toString.call(obj).replace(/^\[object (.+)\]$/, '$1').toLowerCase(); };
+            }
+        </script>
+        <script src="<?= e(lms_asset_url('vendor/select2/js/select2.full.min.js')) ?>"></script>
         <?php
     }
 }
@@ -122,7 +135,6 @@ if (!function_exists('lms_footer_assets')) {
     function lms_footer_assets()
     {
         ?>
-        <script src="<?= e(lms_asset_url('vendor/jquery/jquery.min.js')) ?>"></script>
         <script src="<?= e(lms_asset_url('vendor/bootstrap/js/bootstrap.bundle.min.js')) ?>"></script>
         <script src="<?= e(lms_asset_url('vendor/toastify/toastify.js')) ?>"></script>
         <script src="<?= e(lms_asset_url('js/lms.js')) ?>"></script>
@@ -158,7 +170,8 @@ if (!function_exists('lms_layout_open')) {
      * Render đầu trang (doctype + head + header cam + sidebar + mở <main>).
      * Template nội dung include NGAY SAU ở scope global để thấy biến từ source.
      *
-     * @param array $opts array('portal','title','active','fluid')
+     * @param array $opts array('portal','title','active','fluid','hide_title','alert')
+     *                    alert: array('message' => string) — banner toàn cục dưới header.
      * @return void
      */
     function lms_layout_open(array $opts)
@@ -167,12 +180,29 @@ if (!function_exists('lms_layout_open')) {
         $title = isset($opts['title']) ? (string) $opts['title'] : 'LMS MasterStudy';
         $active = isset($opts['active']) ? (string) $opts['active'] : '';
         $fluid = !empty($opts['fluid']);
+        $hideTitle = !empty($opts['hide_title']);
+        $alert = isset($opts['alert']) && is_array($opts['alert']) ? $opts['alert'] : array();
 
         $d = lms_db();
         $user = lms_current_user();
 
         $displayName = is_array($user) ? lms_display_name($d, $user) : '';
         $avatarText = lms_avatar_text($displayName);
+
+        $userMeta = '';
+        if ($portal === 'teacher' && is_array($user) && !empty($user['id'])) {
+            $teacherRow = $d->safeFetchOne(
+                'select `rank` from db_lms_teachers where user_id = ? limit 1',
+                array((int) $user['id'])
+            );
+            if (!empty($teacherRow['rank'])) {
+                $userMeta = 'Hạng: ' . lms_enum_label(
+                    'teacher_ranks',
+                    (string) $teacherRow['rank'],
+                    (string) $teacherRow['rank']
+                );
+            }
+        }
 
         $unread = 0;
         $modules = lms_sidebar_modules($d, $portal);
@@ -203,9 +233,10 @@ if (!function_exists('lms_layout_open')) {
                 </a>
 
                 <div class="lms-search d-none d-md-block">
-                    <form class="position-relative" method="get" action="<?= e(lms_url('')) ?>" onsubmit="return false;">
+                    <form class="position-relative" method="get" action="<?= e(lms_url('', 'tim-kiem')) ?>">
                         <input type="search" name="search" class="form-control form-control-sm"
-                               placeholder="Tìm kiếm trong LMS..." aria-label="Tìm kiếm" disabled>
+                               placeholder="Tìm kiếm trong LMS..." aria-label="Tìm kiếm"
+                               value="<?= e(isset($_GET['search']) && (isset($_GET['lms_route']) || isset($_GET['a'])) ? trim((string) $_GET['search']) : '') ?>">
                     </form>
                 </div>
 
@@ -245,7 +276,12 @@ if (!function_exists('lms_layout_open')) {
                         <a href="#" class="lms-user-chip lms-dropdown-toggle" id="lms-user-btn"
                            role="button" aria-haspopup="true" aria-expanded="false">
                             <span class="lms-avatar"><?= e($avatarText) ?></span>
-                            <span class="lms-user-name"><?= e($displayName) ?></span>
+                            <span class="lms-user-name">
+                                <?= e($displayName) ?>
+                                <?php if ($userMeta !== ''): ?>
+                                    <small class="lms-user-meta"><?= e($userMeta) ?></small>
+                                <?php endif; ?>
+                            </span>
                         </a>
                         <div class="lms-dropdown-menu lms-user-menu" role="menu" aria-labelledby="lms-user-btn">
                             <span class="lms-dd-item" style="cursor:default;">
@@ -255,6 +291,9 @@ if (!function_exists('lms_layout_open')) {
                             <a class="lms-dd-item" href="<?= e(lms_url('')) ?>">
                                 <i class="fa-solid fa-gauge-high me-2"></i> Tổng quan
                             </a>
+                            <a class="lms-dd-item" href="<?= e(lms_url('', 'doi-mat-khau')) ?>">
+                                <i class="fa-solid fa-key me-2"></i> Đổi mật khẩu
+                            </a>
                             <a class="lms-dd-item" href="<?= e(lms_url('', 'logout')) ?>">
                                 <i class="fa-solid fa-right-from-bracket me-2"></i> Đăng xuất
                             </a>
@@ -262,6 +301,14 @@ if (!function_exists('lms_layout_open')) {
                     </div>
                 </div>
             </header>
+
+            <?php if (!empty($alert['message'])): ?>
+                <div class="lms-alert-banner lms-alert-banner-global" role="alert">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span><?= e((string) $alert['message']) ?></span>
+                    <button type="button" class="btn-close-lms" aria-label="Đóng">&times;</button>
+                </div>
+            <?php endif; ?>
 
             <div class="lms-body">
                 <div class="lms-sidebar-backdrop"></div>
@@ -286,7 +333,7 @@ if (!function_exists('lms_layout_open')) {
 
                 <!-- ============ Main content ============ -->
                 <main class="lms-content<?= $fluid ? ' lms-fluid' : '' ?>">
-                    <?php if ($title !== ''): ?>
+                    <?php if ($title !== '' && !$hideTitle): ?>
                         <h1 class="lms-page-title"><?= e($title) ?></h1>
                     <?php endif; ?>
         <?php

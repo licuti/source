@@ -33,6 +33,8 @@ CREATE TABLE `db_lms_users` (
     `failed_login_count`    INT UNSIGNED NOT NULL DEFAULT 0,
     `locked_until`          DATETIME        NULL                 COMMENT 'rate-limit: khoá tạm khi sai liên tiếp',
     `password_changed_at`   DATETIME        NULL,
+    `must_change_password`  TINYINT(1)  NOT NULL DEFAULT 0
+                            COMMENT 'BR-AUTH-01: buộc đổi mật khẩu ở lần đăng nhập đầu tiên',
     `created_at`            DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`            DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
@@ -62,6 +64,7 @@ CREATE TABLE `db_lms_students` (
     `user_id`           BIGINT UNSIGNED NOT NULL,
     `student_code`      VARCHAR(20)  NOT NULL                COMMENT 'VD: Master227',
     `full_name`         VARCHAR(100) NOT NULL,
+    `gender`            VARCHAR(30)     NULL                 COMMENT 'male | female | other',
     `parent_name`       VARCHAR(100)     NULL,
     `parent_phone`      VARCHAR(20)      NULL,
     `grade`             VARCHAR(20)      NULL                 COMMENT 'VD: "Lớp 5"',

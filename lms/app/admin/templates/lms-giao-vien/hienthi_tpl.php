@@ -172,12 +172,12 @@ $rankBadge = array(
                 </table>
             </div>
 
-            <?= lms_pagination(
-                lms_url($alias),
-                $page,
-                $totalPages,
-                array('q' => $filterQ, 'status' => $filterStatus, 'rank' => $filterRank)
-            ) ?>
+            <?php lms_component('pagination', array(
+                'base_url'    => lms_url($alias),
+                'page'        => $page,
+                'total_pages' => $totalPages,
+                'params'      => array('q' => $filterQ, 'status' => $filterStatus, 'rank' => $filterRank),
+            )); ?>
         <?php endif; ?>
     </div>
 </div>

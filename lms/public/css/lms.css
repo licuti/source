@@ -172,6 +172,14 @@
     text-overflow: ellipsis;
 }
 
+.lms-user-chip .lms-user-meta {
+    display: block;
+    font-size: .7rem;
+    font-weight: 400;
+    line-height: 1.1;
+    opacity: .9;
+}
+
 /* Dropdown thông báo + user menu */
 
 .lms-dropdown {
@@ -393,12 +401,11 @@
 }
 
 /* -------------------- Tiêu đề trang + thẻ -------------------- */
-
 .lms-page-title {
-    font-size: 1.35rem;
+    font-size: 24px;
     font-weight: 700;
-    color: #232a35;
-    margin-bottom: 1rem;
+    color: #e5501b;
+    margin-bottom: 25px;
 }
 
 .lms-stat-card {
@@ -455,69 +462,97 @@
 }
 
 .lms-table {
-    width: 100%;
-    font-size: .88rem;
+    font-size: 0.875rem;
 }
 
 .lms-table th {
-    font-size: .78rem;
+    padding: 0.5rem 0.75rem;
     text-transform: uppercase;
-    letter-spacing: .03em;
-    color: #6c757d;
-    border-bottom: 2px solid #e8ebf0;
-    padding: .55rem .7rem;
     white-space: nowrap;
+    font-weight: 600;
 }
 
 .lms-table td {
-    padding: .6rem .7rem;
-    border-bottom: 1px solid #f0f2f5;
-    vertical-align: middle;
+    padding: 0.5rem 0.75rem;
 }
 
-.lms-table tbody tr:hover {
-    background: #fafbfc;
+/* -------------------- Ghim cột bảng khi cuộn ngang --------------------
+   Cách dùng: <table class="... lms-table-pin"> + data-pin-left / data-pin-right
+   trên <th> VÀ <td> của cột cần ghim. Toạ độ left/right do LMS.initPinnedColumns()
+   (js/lms.js) đọc bề rộng thật của cột rồi ghi, CSS không chứa số đo nào.
+   Muốn cột có bề rộng cố định: khai báo min-width trên <th> của cột đó. */
+
+.lms-table-pin {
+    border-collapse: separate; /* viền thuộc từng ô -> đi theo ô khi sticky */
+    border-spacing: 0;
 }
 
-/* -------------------- Tabs ngang (mockup §2: 2 loại lớp) -------------------- */
+/* Lưới 1px ở chế độ separate: mỗi ô giữ phải + dưới; trái chỉ ô đầu dòng; trên chỉ thead */
+.lms-table-pin > :not(caption) > * {
+    border-width: 0;
+}
+.lms-table-pin > :not(caption) > * > * {
+    border-width: 0 var(--bs-border-width) var(--bs-border-width) 0;
+    border-color: var(--bs-table-border-color);
+}
+.lms-table-pin > :not(caption) > * > :first-child {
+    border-left-width: var(--bs-border-width);
+}
+.lms-table-pin thead > tr > * {
+    border-top-width: var(--bs-border-width);
+}
 
-.lms-tabs {
+.lms-table-pin [data-pin-left],
+.lms-table-pin [data-pin-right] {
+    position: -webkit-sticky;
+    position: sticky;
+    z-index: 2;
+}
+/* Ô ghim phải tự giữ mép seam bên trái (ô kề trước bị cuộn trôi nên không dựa được) */
+.lms-table-pin [data-pin-right] {
+    border-left-width: var(--bs-border-width);
+}
+/* JS đánh dấu .lms-pin-prev cho ô kề bên trái cụm ghim phải để kẽ không thành 2px */
+.lms-table-pin .lms-pin-prev {
+    border-right-width: 0;
+}
+.lms-table-pin thead [data-pin-left],
+.lms-table-pin thead [data-pin-right] {
+    z-index: 3;
+}
+
+/* -------------------- Tabs điều hướng dùng chung (component tabs) -------------------- */
+.lms-tabs-nav {
     display: flex;
-    flex-wrap: wrap;
-    gap: .25rem .1rem;
+    gap: 1.5rem;
     list-style: none;
     padding: 0;
-    margin: 0 0 1rem;
-    border-bottom: 2px solid #e8ebf0;
+    margin: 0 0 1.25rem;
+    border-bottom: 2px solid #e2e8f0;
 }
 
-.lms-tabs li {
+.lms-tabs-nav .nav-link {
+    border: none;
+    background: transparent;
+    color: #334155;
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 0.5rem 0.25rem 0.75rem 0.25rem;
+    position: relative;
+    text-decoration: none;
+}
+
+.lms-tabs-nav .nav-link:hover {
+    color: #ea580c;
+}
+
+.lms-tabs-nav .nav-link.active {
+    color: #ea580c;
+    border-bottom: 3px solid #ea580c;
     margin-bottom: -2px;
 }
 
-.lms-tabs a {
-    display: inline-block;
-    padding: .55rem 1.1rem;
-    font-weight: 600;
-    font-size: .9rem;
-    color: #6c757d;
-    text-decoration: none;
-    border-bottom: 3px solid transparent;
-    border-radius: .5rem .5rem 0 0;
-}
-
-.lms-tabs a:hover {
-    color: var(--lms-primary-dark);
-    background: var(--lms-primary-soft);
-}
-
-.lms-tabs a.active {
-    color: var(--lms-primary-dark);
-    border-bottom-color: var(--lms-primary);
-}
-
 /* -------------------- Ma trận HV × chương trình -------------------- */
-
 .lms-matrix-scroll {
     overflow-x: auto;
 }
@@ -541,7 +576,6 @@
 }
 
 /* -------------------- Badge / chip trạng thái -------------------- */
-
 .lms-badge {
     display: inline-block;
     padding: .22em .6em;
@@ -598,7 +632,6 @@ a.lms-link:hover {
 }
 
 /* -------------------- Chat widget placeholder (Phase 3+) -------------------- */
-
 .lms-chat-fab {
     position: fixed;
     right: 20px;
@@ -638,14 +671,13 @@ a.lms-link:hover {
 .lms-chat-popover.show { display: block; }
 
 /* -------------------- Banner cảnh báo (tick / hạ phí — Phase 2) -------------------- */
-
 .lms-alert-banner {
     display: flex;
     align-items: center;
     gap: .75rem;
-    background: #fff3cd;
-    border: 1px solid #ffe69c;
-    color: #664d03;
+    background: #fdecec;
+    border: 1px solid #f5c2c7;
+    color: #b02a37;
     border-radius: .55rem;
     padding: .7rem .95rem;
     margin-bottom: 1rem;
@@ -656,10 +688,19 @@ a.lms-link:hover {
     margin-left: auto;
     background: none;
     border: 0;
-    color: #664d03;
+    color: #b02a37;
     font-size: 1rem;
     cursor: pointer;
     opacity: .65;
+}
+
+/* Banner toàn cục (dưới header, ngang hết chiều rộng như mockup) */
+.lms-alert-banner-global {
+    margin: 0;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    padding: .8rem 1.5rem;
 }
 
 /* -------------------- Flash message (toast) -------------------- */
@@ -725,8 +766,141 @@ a.lms-link:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #efeef1;
+    background: #fffaf4 url("/lms/public/images/login/background.png") center center / cover no-repeat;
     padding: 1.5rem;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.lms-auth-shell {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.lms-auth-shell--login {
+    max-width: 500px;
+}
+.lms-auth-logo {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: #fff;
+    padding: .35rem 1rem .45rem;
+    border-radius: .25rem;
+}
+.lms-auth-brand {
+    color: #E8541D;
+    font-size: 1.55rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -.3px;
+}
+.lms-auth-sub {
+    color: #232a35;
+    font-size: .72rem;
+    font-weight: 600;
+}
+.lms-auth-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    color: #232a35;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    text-align: center;
+    margin: 1.25rem 0 1rem;
+}
+.lms-auth-title > span {
+    display: inline;
+}
+.lms-auth-title .lms-accent {
+    color: #F26B2A;
+}
+.lms-auth-spark {
+    width: 16px;
+    height: 33px;
+    flex: 0 0 auto;
+}
+.lms-auth-subtitle {
+    color: #5f6672;
+    font-size: .98rem;
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+.lms-login-page .lms-login-card--portal {
+    width: 100%;
+    max-width: 460px;
+    padding: 1.5rem 1.75rem;
+    border-radius: .75rem;
+    box-shadow: 0 12px 32px rgba(84, 54, 34, .12);
+}
+.lms-auth-label {
+    display: block;
+    color: #495057;
+    font-size: .95rem;
+    font-weight: 500;
+    margin-bottom: .35rem;
+}
+.lms-auth-input {
+    height: 46px;
+    background: #f1f2f4;
+    border: 1px solid #f1f2f4;
+    border-radius: .35rem;
+    color: #232a35;
+    padding: .5rem .85rem;
+}
+.lms-auth-input:focus {
+    background: #fff;
+    border-color: #F26B2A;
+    box-shadow: 0 0 0 .2rem rgba(242, 107, 42, .14);
+}
+.lms-password-wrap {
+    position: relative;
+}
+.lms-password-wrap .lms-auth-input {
+    padding-right: 3rem;
+}
+.lms-password-toggle {
+    position: absolute;
+    right: .85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    color: #9aa1ab;
+    padding: .2rem;
+    line-height: 1;
+}
+.lms-password-toggle:hover {
+    color: #F26B2A;
+}
+.lms-auth-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    font-size: .84rem;
+    color: #6c757d;
+    margin: .25rem 0 1.25rem;
+}
+.lms-auth-forgot {
+    color: #7a8089;
+    text-decoration: none;
+}
+.lms-auth-forgot:hover {
+    color: #F26B2A;
+    text-decoration: underline;
+}
+.lms-auth-submit {
+    height: 48px;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 .lms-login-card {
@@ -788,91 +962,155 @@ a.lms-link:hover {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #efeef1;
+    background: #fffaf4 url("/lms/public/images/login/background.png") center center / cover no-repeat;
+    position: relative;
+    overflow-x: hidden;
 }
-
-.lms-role-page .lms-role-main {
+.lms-role-main {
     flex: 1 1 auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 2.5rem 1.5rem;
+    padding: 3rem 1.5rem;
+    position: relative;
+    z-index: 1;
 }
-
+.lms-role-shell {
+    width: 100%;
+    max-width: 980px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 .lms-role-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
     width: 100%;
-    max-width: 960px;
+    max-width: 880px;
 }
-
 .lms-role-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #f0dfd4;
+    border-radius: 1rem;
+    text-decoration: none;
+    color: #232a35;
+    box-shadow: 0 12px 35px rgba(84, 54, 34, .10);
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+.lms-role-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 22px 50px rgba(242, 107, 42, .22);
+    color: #232a35;
+}
+.lms-role-photo {
+    position: relative;
+    display: block;
+    height: 295px;
+    background: linear-gradient(135deg, #fde8d9, #f5c9ae);
+}
+.lms-role-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+}
+.lms-role-photo::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 35%;
+    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, .55));
+    pointer-events: none;
+}
+.lms-role-icon {
+    position: absolute;
+    left: 1.15rem;
+    top: 1.15rem;
+    z-index: 1;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffb347, #F26B2A);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    box-shadow: 0 6px 16px rgba(242, 107, 42, .35);
+}
+.lms-role-body {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: .75rem;
-    background: #fff;
-    border: 1px solid #e8ebf0;
-    border-radius: .9rem;
-    padding: 2.2rem 1.5rem;
-    text-decoration: none;
-    color: #232a35;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
-    transition: transform .16s ease-in-out, box-shadow .16s ease-in-out, border-color .16s ease-in-out;
+    padding: 1.6rem 2rem 2rem;
 }
-
-.lms-role-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 34px rgba(242, 107, 42, .22);
-    border-color: var(--lms-primary);
+.lms-role-name {
     color: #232a35;
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: .65rem;
 }
-
-.lms-role-card .lms-role-icon {
-    width: 74px;
-    height: 74px;
-    border-radius: 50%;
-    background: var(--lms-primary-soft);
-    color: var(--lms-primary);
+.lms-role-name i {
+    color: #F26B2A;
+    font-size: 1.1rem;
+    margin-right: .2rem;
+}
+.lms-role-desc {
+    color: #6c757d;
+    font-size: .95rem;
+    line-height: 1.6;
+    min-height: 3.1rem;
+}
+.lms-role-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    gap: .4rem;
+    width: 100%;
+    margin-top: 1.25rem;
+    padding: .72rem 1rem;
+    border-radius: 999px;
+    background: #F26B2A;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background .15s ease;
 }
-
-.lms-role-card .lms-role-name {
-    font-size: 1.15rem;
-    font-weight: 700;
-}
-
-.lms-role-card .lms-role-desc {
-    font-size: .85rem;
-    color: #6c757d;
-}
-
-.lms-role-card .lms-role-btn {
-    margin-top: .35rem;
-    color: var(--lms-primary-dark);
-    font-weight: 700;
-    font-size: .88rem;
+.lms-role-card:hover .lms-role-btn {
+    background: #e85f1c;
 }
 
 @media (max-width: 767.98px) {
-    .lms-role-grid { grid-template-columns: 1fr; }
+    .lms-role-grid {
+        grid-template-columns: 1fr;
+        max-width: 440px;
+    }
+    .lms-role-photo {
+        height: 230px;
+    }
+    .lms-auth-title {
+        font-size: 1.65rem;
+    }
+    .lms-login-page .lms-login-card--portal {
+        padding: 1.25rem 1rem;
+    }
+    .lms-auth-options {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: .35rem;
+    }
 }
 
 /* -------------------- Phân trang -------------------- */
 
 .lms-pagination ul {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: .3rem;
-    margin: 1.2rem 0 0;
-    padding: 0;
-    justify-content: center;
+    gap: 0.25rem;
 }
 
 .lms-pagination li a,
@@ -880,16 +1118,16 @@ a.lms-link:hover {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 34px;
-    height: 34px;
-    padding: 0 .55rem;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0.25rem;
     border: 1px solid #e0e3e9;
-    border-radius: .4rem;
+    border-radius: 0.375rem !important;
     background: #fff;
-    color: #3c4452;
-    font-size: .85rem;
+    box-shadow: none !important;
+    color: #000;
     font-weight: 600;
-    text-decoration: none;
+    line-height: 1;
 }
 
 .lms-pagination li a:hover {
@@ -897,6 +1135,7 @@ a.lms-link:hover {
     color: var(--lms-primary-dark);
 }
 
+.lms-pagination li.active a,
 .lms-pagination li.active span {
     background: var(--lms-primary);
     border-color: var(--lms-primary);
@@ -929,34 +1168,69 @@ a.lms-link:hover {
     margin-top: 1.4rem;
 }
 
-/* Khung giờ rảnh: dòng thêm/bớt động */
-.lms-slots-row {
-    display: grid;
-    grid-template-columns: 130px 1fr 1fr 38px;
+/* Lịch cố định của lớp (dùng chung Admin lịch học + form sửa lớp) */
+.lms-class-schedule-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
     gap: .5rem;
     margin-bottom: .5rem;
-    align-items: center;
+}
+.lms-class-schedule-day {
+    width: 150px;
+    flex: 0 0 150px;
+}
+.lms-class-schedule-time {
+    width: 235px;
+    flex: 0 0 235px;
+}
+.lms-class-schedule-row .btn-link {
+    text-decoration: none;
 }
 
-.lms-slots-row .lms-slot-remove {
-    border: 0;
-    background: #fdecec;
-    color: #dc3545;
-    width: 34px;
-    height: 34px;
-    border-radius: .4rem;
-    cursor: pointer;
-    font-size: .9rem;
+/* Control trong cụm lịch dùng chung token với .lms-tf-input/.lms-tf-select (42px / 14px / bo 8px / #ccd5de). */
+.lms-class-schedule .form-control,
+.lms-class-schedule .form-select,
+.lms-class-schedule .input-group-text {
+    min-height: 42px;
+    border-color: #ccd5de;
+    font-size: 14px;
+    color: #2d3748;
 }
-
-.lms-slots-row .lms-slot-remove:hover {
-    background: #f8d7da;
+.lms-class-schedule .input-group > :first-child {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+.lms-class-schedule .input-group > :last-child {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+.lms-class-schedule .form-control:focus,
+.lms-class-schedule .form-select:focus {
+    border-color: #e5501b;
+    box-shadow: 0 0 0 3px rgba(229, 80, 27, .12);
+}
+.lms-class-schedule .form-control:disabled,
+.lms-class-schedule .form-select:disabled {
+    background-color: #f1f4f7;
+    color: #6b7280;
+    opacity: 1;
+}
+/* pt-sm-2 canh nhãn cho control 31px cũ; control 42px cần bù thêm 4px để thẳng tâm. */
+.lms-tf-row:has(.lms-class-schedule) > .lms-tf-label,
+.lms-tf-row:has(.lms-schedule-slots) > .lms-tf-label {
+    padding-top: 12px !important;
 }
 
 @media (max-width: 575.98px) {
-    .lms-slots-row { grid-template-columns: 1fr 1fr; }
-    .lms-slots-row .lms-slot-remove { grid-column: 2; justify-self: end; }
+    .lms-class-schedule-day,
+    .lms-class-schedule-time {
+        width: 100%;
+        flex: 1 1 100%;
+    }
 }
+
+/* Khung giờ rảnh: dòng thêm/bớt động */
 
 /* Bộ lọc danh sách */
 .lms-filter-bar .form-control,
@@ -992,17 +1266,12 @@ a.lms-link:hover {
     font-size: 1rem;
 }
 
-.lms-cal-actions {
-    display: flex;
-    gap: .5rem;
-    flex-wrap: wrap;
-}
-
 .lms-cal-scroll {
     overflow-x: auto;
 }
 
 .lms-cal {
+    --lms-cal-hour-h: 72px;
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;
@@ -1032,106 +1301,165 @@ a.lms-link:hover {
 
 .lms-cal-cell {
     border: 1px solid #e8eaee;
-    min-height: 64px;
-    height: 64px;
+    height: var(--lms-cal-hour-h);
+    min-height: var(--lms-cal-hour-h);
     position: relative;
-    padding: .2rem;
+    padding: 0;
     vertical-align: top;
     background: #fff;
 }
 
-.lms-cal-link {
-    display: block;
-    text-decoration: none;
-    border-radius: .35rem;
-    padding: .15rem .3rem;
-    font-size: .76rem;
-    line-height: 1.25;
+/* Vạch nửa giờ — mốc nhìn cho thẻ bắt đầu giờ lẻ (17:30 nằm nửa hàng 17:00) */
+.lms-cal-cell::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    border-top: 1px dashed #e8eaee;
+    pointer-events: none;
 }
 
-.lms-cal-code {
+/* Nền ô nhạt theo trạng thái (teacher / student giữ cách tô cả ô) */
+.lms-cal-cell--upcoming  { background-color: #fff1f2; }
+.lms-cal-cell--missing   { background-color: #fef2f2; }
+.lms-cal-cell--finished  { background-color: #fff5f6; }
+.lms-cal-cell--cancelled { background-color: #f8f9fa; }
+
+/* Ô trống bấm được (admin: thêm buổi học) */
+.lms-cal-cell-empty {
+    cursor: pointer;
+    transition: background-color .15s ease;
+}
+.lms-cal-cell-empty:hover {
+    background-color: #f0f7ff;
+}
+
+/* -------------------- Thẻ buổi học trong ô lịch (calendar_week_event) -------------------- */
+
+/* Thẻ định vị theo thời gian thật: top = phút lẻ, height = thời lượng,
+   lane/lanes = chia ngang khi hai thẻ chồng giờ nhau trong cùng cột ngày. */
+.lms-cal-event {
+    position: absolute;
+    top: var(--lms-cal-top, 0px);
+    height: var(--lms-cal-height, auto);
+    min-height: 34px;
+    left: calc(var(--lms-cal-lane, 0) * 100% / var(--lms-cal-lanes, 1));
+    width: calc(100% / var(--lms-cal-lanes, 1));
+    z-index: 2;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: .2rem .35rem;
+    border-radius: .3rem;
+    font-size: .76rem;
+    line-height: 1.25;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
+    transition: box-shadow .15s ease;
+}
+.lms-cal-event:hover {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, .22);
+    text-decoration: none;
+}
+.lms-cal-event--clickable {
+    cursor: pointer;
+}
+
+.lms-cal-event__title {
     display: block;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* Tên buổi là link phủ toàn thẻ (stretched link) — nút trong footer nổi lên trên */
+.lms-cal-event__title--link {
+    color: inherit;
+    text-decoration: none;
+}
+.lms-cal-event__title--link::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.lms-cal-event__time {
+    display: block;
+    font-size: .72rem;
+    opacity: .9;
+}
+.lms-cal-event__footer {
+    display: block;
+    position: relative;
+    z-index: 1;
+    font-size: .7rem;
+    text-decoration: underline;
+}
+.lms-cal-event__flag {
+    position: absolute;
+    top: .15rem;
+    right: .35rem;
     font-weight: 700;
 }
 
-.lms-cal-time {
-    display: block;
-    color: #6b7280;
-    font-size: .72rem;
-}
-
-.lms-cal-edit {
-    display: block;
-    padding: 0;
-    font-size: .72rem;
-    color: var(--lms-primary-dark);
-    text-decoration: underline;
-}
-
-/* Buổi sắp tới: đỏ đậm */
-.lms-cal-upcoming {
+/* Sắp tới: đỏ đậm */
+.lms-cal-event--upcoming {
     background: #dc3545;
-}
-.lms-cal-upcoming .lms-cal-link {
-    color: #fff;
-}
-.lms-cal-upcoming .lms-cal-time {
-    color: #ffe3e6;
-}
-.lms-cal-upcoming .lms-cal-edit {
     color: #fff;
 }
 
 /* Thiếu BTVN: hồng đậm + ✗ */
-.lms-cal-missing {
+.lms-cal-event--missing {
     background: #f8d7da;
-}
-.lms-cal-missing .lms-cal-link {
     color: #842029;
 }
-.lms-cal-missing-x {
-    position: absolute;
-    top: .2rem;
-    right: .35rem;
+.lms-cal-event--missing .lms-cal-event__flag {
     color: #dc3545;
-    font-weight: 700;
 }
 
 /* Đã hoàn thành: hồng nhạt */
-.lms-cal-finished {
+.lms-cal-event--finished {
     background: #fdeef0;
-}
-.lms-cal-finished .lms-cal-link {
     color: #a14453;
 }
 
 /* Đã nghỉ: xám */
-.lms-cal-cancelled {
+.lms-cal-event--cancelled {
     background: #e9ecef;
-}
-.lms-cal-cancelled .lms-cal-link {
     color: #6c757d;
+}
+.lms-cal-event--cancelled .lms-cal-event__title {
     text-decoration: line-through;
 }
 
-/* Lịch trống: xanh lá */
-.lms-cal-free {
+/* Lịch trống: dải nền xanh lá, full chiều ngang và nằm SAU thẻ buổi học */
+.lms-cal-event--free {
+    z-index: 1;
     background: #d1e7dd;
+    color: #0f5132;
+    border: 1px dashed #a3cfbb;
+    box-shadow: none;
 }
-.lms-cal-free-btn {
-    width: 100%;
-    height: 100%;
-    min-height: 56px;
+.lms-cal-event--free:hover {
+    box-shadow: none;
+}
+
+/* Nút "Chỉnh lịch" nằm trong footer của thẻ (teacher) */
+.lms-cal-edit {
+    display: inline-block;
+    padding: 0;
     border: 0;
-    background: transparent;
-    color: #0a3622;
-    font-size: .76rem;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: .35rem;
+    background: none;
+    font-size: .7rem;
+    color: inherit;
+    text-decoration: underline;
 }
-.lms-cal-free-btn:hover {
-    background: rgba(10, 54, 34, .08);
+
+.badge.bg-pink-subtle {
+    background-color: #fdeef0;
+    border: 1px solid #eec3cb;
 }
 
 /* Chú thích */
@@ -1144,6 +1472,12 @@ a.lms-link:hover {
     padding: 0;
     font-size: .8rem;
     color: #3c4452;
+}
+.lms-cal-legend--stack {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .45rem;
+    margin: .35rem 0 0;
 }
 .lms-cal-dot {
     display: inline-block;
@@ -1185,13 +1519,174 @@ a.lms-link:hover {
     margin-left: .5rem;
 }
 
+/* ===================== Teacher — Quản lý lịch (mockup) ===================== */
+
+.lms-ld-profile .col-form-label {
+    font-weight: 500;
+    color: #374151;
+}
+
+.lms-ld-cal-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-bottom: .75rem;
+}
+.lms-ld-cal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.lms-ld-legend strong {
+    display: block;
+    margin-bottom: .35rem;
+}
+
+.lms-ld-datetime-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+}
+.lms-ld-datetime-row .lms-tf-date-wrap {
+    flex: 1 1 45%;
+}
+.lms-ld-datetime-row input[type="time"] {
+    flex: 1 1 22%;
+    min-width: 96px;
+}
+.lms-ld-time-range {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+.lms-ld-time-range input[type="time"] {
+    flex: 1 1 0;
+    min-width: 0;
+}
+.lms-ld-time-sep {
+    color: #6b7280;
+}
+
+/* ===================== Teacher — Phí dịch vụ (mockup) ===================== */
+
+.lms-pdv-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 1000px;
+}
+.lms-pdv-row {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 720px);
+    align-items: center;
+    gap: 1rem;
+}
+.lms-pdv-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #1f2937;
+    margin: 0;
+}
+.lms-pdv-control {
+    min-width: 0;
+}
+.lms-pdv-control .lms-tf-addon-group-readonly {
+    background: #fff;
+    border-color: #ccd5de;
+}
+.lms-pdv-dates {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+.lms-pdv-dates .lms-tf-date-wrap {
+    flex: 1 1 0;
+}
+.lms-pdv-date-sep {
+    color: #6b7280;
+}
+.lms-pdv-actions {
+    max-width: 720px;
+    margin-left: 256px;
+    text-align: right;
+}
+
+@media (max-width: 767.98px) {
+    .lms-pdv-row {
+        grid-template-columns: 1fr;
+        gap: .35rem;
+    }
+    .lms-pdv-actions {
+        max-width: none;
+        margin-left: 0;
+    }
+}
+
+/* ===================== Teacher — Vi phạm chất lượng dịch vụ (mockup) ===================== */
+
+.lms-vp-stats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.75rem;
+    margin-bottom: .75rem;
+}
+.lms-vp-stat {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+.lms-vp-label {
+    font-size: 1rem;
+    color: #1f2937;
+}
+.lms-vp-box {
+    min-width: 72px;
+    padding: .35rem .65rem;
+    background: #fff;
+    border: 1px solid #d7dce2;
+    border-radius: .35rem;
+    text-align: center;
+    font-weight: 600;
+    color: #1f2937;
+}
+.lms-vp-box-real {
+    background: #fef08a;
+    border-color: #fde047;
+    color: #dc2626;
+    font-weight: 700;
+}
+.lms-vp-threshold {
+    flex-basis: 100%;
+    justify-content: flex-end;
+    margin-left: 0;
+}
+.lms-vp-info {
+    color: #6b7280;
+    cursor: help;
+}
+.lms-vp-note {
+    font-size: .85rem;
+    color: #b45309;
+    margin: 0 0 1rem;
+}
+
+@media (max-width: 767.98px) {
+    .lms-vp-stats {
+        gap: .75rem 1rem;
+    }
+}
+
 /* Chi tiết buổi học */
-.lms-section-title {
-    font-size: 1.05rem;
-    margin: 0 0 .8rem;
-    padding-bottom: .4rem;
-    border-bottom: 2px solid var(--lms-primary);
-    color: var(--lms-primary-dark);
+.lms-block-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 1rem;
+    color: #1e293b;
 }
 .lms-readonly-block {
     background: #f7f8fa;
@@ -1215,11 +1710,6 @@ a.lms-link:hover {
     flex-direction: column;
     gap: .25rem;
     font-size: .85rem;
-}
-.lms-file-pickers {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: .5rem;
 }
 .lms-hw-card {
     border: 1px solid #e0e3e9;
@@ -1289,88 +1779,6 @@ a.lms-link:hover {
     color: #c9531d;
 }
 
-/* ---- Subject group (khoa hoc list) ---- */
-.lms-subject-group .lms-card-header {
-    cursor: pointer;
-    user-select: none;
-}
-.lms-subject-header {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    font-size: .95rem;
-}
-.lms-subject-count {
-    margin-left: auto;
-    font-size: .75rem;
-    color: #6b7280;
-    background: #f1f3f5;
-    border-radius: 999px;
-    padding: .1rem .6rem;
-}
-.lms-subject-chevron {
-    margin-left: .35rem;
-    font-size: .8rem;
-    color: #9aa3af;
-    transition: transform .2s;
-}
-.lms-subject-header[aria-expanded="false"] .lms-subject-chevron {
-    transform: rotate(-90deg);
-}
-
-/* ---- Class card (khoa hoc list) ---- */
-.lms-class-card {
-    display: block;
-    border: 1px solid #e5e7eb;
-    border-radius: .6rem;
-    padding: .9rem 1rem;
-    text-decoration: none;
-    color: #212529;
-    background: #fff;
-    transition: box-shadow .15s, border-color .15s;
-    height: 100%;
-}
-.lms-class-card:hover {
-    border-color: #F26B2A;
-    box-shadow: 0 .35rem .9rem rgba(242, 107, 42, .14);
-}
-.lms-class-card-head {
-    display: flex;
-    align-items: center;
-    gap: .5rem;
-    margin-bottom: .45rem;
-}
-.lms-class-card-name {
-    font-weight: 700;
-    font-size: .98rem;
-}
-.lms-class-card-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .35rem .9rem;
-    font-size: .82rem;
-    color: #6b7280;
-    margin-bottom: .4rem;
-}
-.lms-class-card-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: .55rem;
-}
-.lms-class-card-go {
-    font-size: .8rem;
-    font-weight: 600;
-    color: #F26B2A;
-    white-space: nowrap;
-}
-.lms-class-card:hover .lms-class-card-go i {
-    transform: translateX(2px);
-}
-.lms-class-card-go i {
-    transition: transform .15s;
-}
-
 /* ---- Progress bar ---- */
 .lms-progress {
     height: .55rem;
@@ -1386,12 +1794,6 @@ a.lms-link:hover {
     background: linear-gradient(90deg, #F26B2A, #f89a5f);
     border-radius: 999px;
     transition: width .3s;
-}
-.lms-progress-percent {
-    font-size: .78rem;
-    font-weight: 700;
-    color: #F26B2A;
-    white-space: nowrap;
 }
 
 /* ---- Class detail header ---- */
@@ -1449,6 +1851,7 @@ a.lms-link:hover {
     border-color: #F26B2A;
     color: #fff;
 }
+
 .lms-topic-card-actions .btn[disabled] {
     background: #ced4da;
     border-color: #ced4da;
@@ -1490,205 +1893,2455 @@ a.lms-link:hover {
     padding-top: .7rem;
     border-top: 1px dashed #e5e7eb;
 }
-.lms-upload-slots {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
-    gap: .45rem;
-    margin-bottom: .55rem;
-}
 
-/* ---- Test card (section test/minitest) ---- */
-.lms-test-card {
-    border: 1px solid #e5e7eb;
-    border-radius: .6rem;
-    margin-bottom: .8rem;
+/* ---- Monthly review cards (nhan xet thang) ---- */
+.lmnx-card {
+    height: 100%;
+    overflow: hidden;
 }
-.lms-test-card-head {
+.lmnx-card-head {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: .5rem;
-    padding: .65rem .9rem;
-    border-bottom: 1px solid #eef0f2;
-    font-weight: 600;
-    font-size: .92rem;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.1rem;
 }
-.lms-test-card-body {
-    padding: .8rem .9rem;
+.lmnx-cover {
+    width: 160px;
+    height: 160px;
+    flex: 0 0 160px;
+    border-radius: .35rem;
+    overflow: hidden;
+    background: #f8f9fa;
 }
-
-/* ---- Collapse card (nhan xet thang) ---- */
-.lms-collapse-card .lms-card-header {
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    gap: .7rem;
+.lmnx-cover img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
-.lms-collapse-header[aria-expanded="false"] .lms-subject-chevron {
-    transform: rotate(-90deg);
-}
-.lms-collapse-avatar {
-    width: 2.2rem;
-    height: 2.2rem;
-    border-radius: 50%;
-    background: #fdece3;
-    color: #F26B2A;
+.lmnx-cover-fallback {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
+    color: #F26B2A;
+    background: #fdece3;
+    font-size: 2.5rem;
 }
-.lms-collapse-info {
+.lmnx-summary {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+}
+.lmnx-class-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #212529;
+    margin-bottom: .3rem;
+}
+.lmnx-grade {
+    font-size: .95rem;
+    color: #495057;
+    margin-bottom: .55rem;
+}
+.lmnx-schedules {
     display: flex;
     flex-direction: column;
-    line-height: 1.3;
+    gap: .3rem;
 }
-.lms-collapse-name {
-    font-weight: 700;
+.lmnx-schedule {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    font-size: .92rem;
+    color: #495057;
+}
+.lmnx-schedule i {
+    width: 1rem;
+    color: #6b7280;
+    text-align: center;
+}
+.lmnx-schedule-day {
+    min-width: 3.5rem;
+}
+.lmnx-schedule-time {
+    white-space: nowrap;
+}
+.lmnx-schedule-empty {
+    font-size: .92rem;
+    color: #6b7280;
+}
+.lmnx-card-status {
+    margin-top: auto;
+    align-self: flex-end;
+    font-style: italic;
     font-size: .95rem;
 }
-.lms-collapse-meta {
-    font-size: .78rem;
-    color: #6b7280;
+.lmnx-page-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
 }
-.lms-collapse-count {
-    margin-left: auto;
+.lmnx-view-all {
+    color: #F26B2A;
+    font-size: .95rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.lmnx-view-all:hover {
+    color: #c9531d;
+}
+.lmnx-view-all i {
     font-size: .75rem;
-    color: #6b7280;
-    background: #f1f3f5;
-    border-radius: 999px;
-    padding: .15rem .6rem;
-    white-space: nowrap;
+    margin-left: .2rem;
 }
-
-/* ---- Review item (nhan xet thang) ---- */
-.lmnx-review {
-    border-bottom: 1px solid #eef0f2;
-    padding: .75rem 0;
+.lmnx-card-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    transition: box-shadow .18s ease, transform .18s ease;
 }
-.lmnx-review:last-child {
-    border-bottom: 0;
-    padding-bottom: 0;
+.lmnx-card-link:hover {
+    color: inherit;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .09);
+    transform: translateY(-1px);
 }
-.lmnx-review:first-child {
-    padding-top: 0;
+.lmnx-card--avatar .lmnx-card-head {
+    padding: 0;
+    align-items: stretch;
 }
-.lmnx-review-head {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: .4rem;
-    margin-bottom: .45rem;
+.lmnx-card--avatar .lmnx-cover {
+    width: 170px;
+    height: auto;
+    flex: 0 0 170px;
+    border-radius: 0;
 }
-.lmnx-review-teacher {
-    margin-left: auto;
-    font-size: .78rem;
-    color: #6b7280;
+.lmnx-card--avatar .lmnx-cover-fallback {
+    background: #d7dde5;
+    color: #fff;
+    font-size: 4.5rem;
 }
-.lmnx-review-content {
-    font-size: .9rem;
-    line-height: 1.55;
-    color: #374151;
-    white-space: pre-wrap;
+.lmnx-card--avatar .lmnx-summary {
+    padding: 1.25rem 1.5rem;
+    justify-content: center;
+    gap: .3rem;
 }
-.lmnx-review-progress {
-    display: flex;
-    align-items: center;
-    gap: .6rem;
+.lmnx-card--avatar .lmnx-class-name {
+    font-size: 1.45rem;
+    font-weight: 500;
+    line-height: 1.3;
+    margin-bottom: 0;
+    overflow-wrap: anywhere;
+}
+.lmnx-card--avatar .lmnx-grade {
+    margin-bottom: 0;
+}
+.lmnx-card--avatar .lmnx-card-status {
     margin-top: .6rem;
+    font-weight: 600;
 }
-.lmnx-review-progress-label {
-    font-size: .78rem;
+.lmnx-toggle {
+    flex: 0 0 auto;
+    border: 0;
+    background: transparent;
+    color: #212529;
+    font-size: 1.05rem;
+    line-height: 1;
+    padding: .15rem .25rem;
+}
+.lmnx-toggle i {
+    transition: transform .2s;
+}
+.lmnx-toggle[aria-expanded="false"] i {
+    transform: rotate(180deg);
+}
+.lmnx-body {
+    padding: 0 1.1rem 1.1rem;
+}
+.lmnx-month-select {
+    margin-bottom: .75rem;
+}
+.lmnx-review-box {
+    min-height: 96px;
+    border: 1px solid #e5e7eb;
+    border-radius: .35rem;
+    padding: 1rem 1.1rem;
+    font-size: .95rem;
+    line-height: 1.6;
+    color: #374151;
+}
+.lmnx-empty {
+    min-height: 96px;
+    border: 1px dashed #e5e7eb;
+    border-radius: .35rem;
+    padding: 1rem 1.1rem;
     color: #6b7280;
+    font-style: italic;
+}
+/* Teacher — danh sách card + form nhận xét tháng */
+.lmnx-list .lmnx-card {
+    height: auto;
+    margin-bottom: 1rem;
+}
+.lmnx-form-row {
+    display: grid;
+    grid-template-columns: 190px minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: .85rem;
+}
+.lmnx-form-label {
+    margin: 0;
+    font-weight: 500;
+    color: #212529;
+    overflow-wrap: anywhere;
+}
+.lmnx-field-input {
+    min-height: 46px;
+}
+.lmnx-form-actions {
+    margin-top: 1.25rem;
+    text-align: right;
+}
+.lmnx-form-actions .btn {
+    min-width: 140px;
+}
+@media (max-width: 767.98px) {
+    .lmnx-form-row {
+        grid-template-columns: 1fr;
+        gap: .35rem;
+    }
+    .lmnx-form-actions .btn {
+        width: 100%;
+    }
+}
+@media (max-width: 575.98px) {
+    .lmnx-card-head {
+        flex-wrap: wrap;
+    }
+    .lmnx-cover {
+        width: 96px;
+        height: 96px;
+        flex-basis: 96px;
+    }
+    .lmnx-class-name {
+        font-size: 1.05rem;
+    }
+    .lmnx-card--avatar .lmnx-cover {
+        width: 96px;
+        height: auto;
+        flex-basis: 96px;
+    }
+    .lmnx-card--avatar .lmnx-cover-fallback {
+        font-size: 2.5rem;
+    }
+    .lmnx-card--avatar .lmnx-summary {
+        padding: .9rem 1rem;
+    }
+    .lmnx-card--avatar .lmnx-class-name {
+        font-size: 1.1rem;
+    }
+    .lmnx-card--avatar .lmnx-card-status {
+        margin-top: .45rem;
+        font-size: .85rem;
+    }
+}
+
+/* ---- Noi quy & Rich Text Editor (form/rich_editor) ---- */
+.lms-rich-editor {
+    border-color: #ced4da !important;
+    border-radius: 6px;
+}
+.lms-re-btn {
+    border: none !important;
+    background: transparent !important;
+    color: #343a40 !important;
+    padding: 0.25rem 0.45rem !important;
+    border-radius: 4px !important;
+    font-size: 0.9rem !important;
+    line-height: 1.2 !important;
+}
+.lms-re-btn:hover,
+.lms-re-btn:focus {
+    background: #f1f3f5 !important;
+    color: #000 !important;
+}
+.lms-rich-content {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #212529;
+    word-break: break-word;
+}
+/* ---- Noi quy lop hoc (STU-12) ---- */
+.lms-rules-panel {
+    background: #fff;
+    border-radius: .25rem;
+    min-height: 520px;
+    padding: 2rem 2.25rem;
+}
+.lms-rules-empty {
+    color: #212529;
+    font-size: 1.05rem;
+}
+@media (max-width: 767.98px) {
+    .lms-rules-panel {
+        min-height: 360px;
+        padding: 1.15rem;
+    }
+}
+.lms-rich-content:empty:before {
+    content: attr(data-placeholder);
+    color: #868e96;
+    font-style: italic;
+    pointer-events: none;
+}
+.lms-rich-content blockquote {
+    border-left: 3px solid #dee2e6;
+    padding-left: 0.85rem;
+    color: #495057;
+    margin: 0.5rem 0;
+}
+.lms-rich-content pre {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 0.6rem;
+    font-size: 0.88rem;
+}
+
+/* ---- Library Card Grid & Upload Dropzone (ADM-12 / TCH-07) ---- */
+.lms-lib-search-input {
+    border-radius: 6px;
+    border: 1px solid #94a3b8;
+    font-size: 0.95rem;
+    padding: 0.5rem 0.9rem;
+}
+.lms-lib-box-wrapper {
+    border: 1px solid #475569 !important;
+    border-radius: 2px;
+    height: 185px;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.lms-lib-box-wrapper.is-readonly {
+    cursor: default;
+}
+.lms-lib-item-card:hover .lms-lib-box-wrapper {
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.12) !important;
+    transform: translateY(-2px);
+    border-color: #0b57a4 !important;
+}
+.lms-lib-hover-actions {
+    background-color: rgba(15, 23, 42, 0.45);
+    opacity: 0;
+    transition: opacity 0.18s ease;
+    border-radius: 2px;
+}
+.lms-lib-item-card:hover .lms-lib-hover-actions {
+    opacity: 1;
+}
+.lms-lib-action-btn {
+    width: 34px;
+    height: 34px;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.lms-lib-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
-.lmnx-review-progress .lms-progress {
-    flex: 1;
+.lms-upload-dropzone {
+    background-color: #cbdce2;
+    border-radius: 4px;
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.lms-upload-dropzone-inner {
+    border: 1.5px dashed #8da8b2;
+    border-radius: 2px;
+    min-height: 190px;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.lms-upload-dropzone:hover .lms-upload-dropzone-inner,
+.lms-upload-dropzone.dragover .lms-upload-dropzone-inner {
+    background-color: rgba(255, 255, 255, 0.35);
+    border-color: #0b57a4;
 }
 
-/* ---- Noi quy ---- */
-.lmnq-list {
-    margin: 0;
-    padding-left: 1.4rem;
-}
-.lmnq-list li {
-    margin-bottom: .6rem;
-    font-size: .9rem;
-    line-height: 1.5;
-}
-.lmnq-list li > div {
-    color: #495057;
-    margin-top: .15rem;
-}
+/* ===================== Teacher Tổng quan (bố cục mockup) ===================== */
 
-/* ---- Calendar view wrapper (lich hoc student) ---- */
-.lms-cal-view {
+.lms-ov-empty {
     background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: .6rem;
-    padding: .6rem;
-    overflow-x: auto;
-}
-
-/* ---- Sap xep lop: chi tich lich giao vien (ADM-04) ---- */
-.lms-schedule-block {
-    border-radius: .4rem;
-    padding: .35rem .5rem;
-    font-size: .8rem;
-    line-height: 1.35;
-}
-.lms-schedule-busy {
-    background: #fce7f1;
-    border: 1px solid #f6c6dd;
-    color: #6b2a4d;
-}
-.lms-schedule-free {
-    background: #e7f6ec;
-    border: 1px solid #bfe3cd;
-    color: #14532d;
-}
-.lms-schedule-none {
-    background: #f3f4f6;
-    border: 1px dashed #d1d5db;
-    color: #9ca3af;
+    border-radius: .65rem;
+    padding: 1.25rem 1rem;
+    color: #64748b;
     text-align: center;
 }
 
-/* ---- Library cards (TCH-07) ---- */
-.lms-library-icon {
-    width: 2.6rem;
-    height: 2.6rem;
+/* Buổi học sắp tới */
+.lms-ov-session {
+    display: block;
+    background: #fff;
+    border-radius: .65rem;
+    padding: 1rem 1.25rem 1.1rem;
+    margin-bottom: .85rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .05);
+    transition: box-shadow .15s ease;
+}
+.lms-ov-session:hover {
+    box-shadow: 0 6px 18px rgba(16, 24, 40, .09);
+    color: inherit;
+}
+.lms-ov-session-title {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: .55rem;
+}
+.lms-ov-session-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .35rem 1.6rem;
+    color: #475569;
+    font-size: .98rem;
+}
+.lms-ov-session-meta i {
+    color: #64748b;
+    margin-right: .3rem;
+}
+.lms-ov-session-status {
+    margin-left: auto;
+    color: #dc2626;
+    font-weight: 500;
+}
+
+/* Các học viên hiện tại */
+.lms-ov-student-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+.lms-ov-student {
+    display: block;
+    background: #fff;
+    border-radius: .65rem;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .05);
+    transition: box-shadow .15s ease;
+}
+.lms-ov-student:hover {
+    box-shadow: 0 6px 18px rgba(16, 24, 40, .09);
+    color: inherit;
+}
+.lms-ov-student-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 118px;
+    background: #c9d3dc;
+    color: #eef2f7;
+    font-size: 3.6rem;
+    overflow: hidden;
+}
+.lms-ov-student-avatar i {
+    transform: translateY(14px);
+}
+.lms-ov-student-body {
+    display: block;
+    padding: .8rem 1rem 1rem;
+    text-align: center;
+}
+.lms-ov-student-name {
+    display: block;
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: .3rem;
+}
+.lms-ov-student-slot {
+    display: block;
+    font-size: .85rem;
+    color: #475569;
+    line-height: 1.5;
+}
+
+/* Thông báo */
+.lms-ov-notice-list {
+    display: flex;
+    flex-direction: column;
+    gap: .85rem;
+}
+.lms-ov-notice {
+    background: #fff;
+    border-radius: .65rem;
+    padding: 1rem 1.15rem 1.05rem;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, .05);
+}
+.lms-ov-notice-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 .35rem;
+}
+.lms-ov-notice-text {
+    margin: 0 0 .75rem;
+    color: #334155;
+    font-size: .92rem;
+    line-height: 1.5;
+}
+.lms-ov-notice-text:last-child {
+    margin-bottom: 0;
+}
+.lms-ov-notice-meta {
+    display: block;
+    margin-top: .55rem;
+    font-size: .75rem;
+    color: #94a3b8;
+}
+.lms-ov-notice-meta a {
+    color: #d97706;
+    text-decoration: none;
+}
+.lms-ov-notice-meta a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 575.98px) {
+    .lms-ov-student-grid {
+        grid-template-columns: 1fr;
+    }
+    .lms-ov-session-status {
+        margin-left: 0;
+        flex-basis: 100%;
+    }
+}
+
+/* ===================== Admin Tổng quan — timeline tuần ===================== */
+
+.lms-week-timeline {
+    display: grid;
+    grid-template-columns: 48px repeat(7, minmax(0, 1fr));
+    max-height: 560px;
+    overflow-y: auto;
+    border: 1px solid #e9ecef;
+    border-radius: .5rem;
+}
+.lms-wt-corner {
+    grid-row: 1;
+    grid-column: 1;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: #fff;
+    border-bottom: 1px solid #e3e6ea;
+    border-right: 1px solid #e9ecef;
+    font-size: .75rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.lms-wt-day-head {
+    grid-row: 1;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: #fff;
+    border-bottom: 1px solid #e3e6ea;
+    border-right: 1px solid #e9ecef;
+    text-align: center;
+    font-weight: 600;
+    font-size: .85rem;
+    padding: .3rem 0;
+}
+.lms-wt-day-head.is-today {
+    background: #fff7ed;
+    color: #d97706;
+}
+.lms-wt-gutter {
+    grid-column: 1;
+    border-right: 1px solid #e9ecef;
+}
+.lms-wt-hour {
+    font-size: .7rem;
+    color: #94a3b8;
+    border-bottom: 1px dashed #eef0f2;
+    text-align: right;
+    padding-right: .3rem;
+    line-height: 1;
+    padding-top: .15rem;
+    box-sizing: border-box;
+}
+.lms-wt-day {
+    border-right: 1px solid #e9ecef;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0 43px,
+        #f0f1f3 43px 44px
+    );
+}
+.lms-wt-day.is-today {
+    background-color: #fffdf7;
+}
+.lms-wt-day-inner {
+    position: relative;
+}
+.lms-wt-event {
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    border: 0;
+    border-left: 3px solid #f59e0b;
+    border-radius: .3rem;
+    background: #fffaf0;
+    color: #475569;
+    text-align: left;
+    padding: .2rem .35rem;
+    font-size: .72rem;
+    line-height: 1.25;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .08);
+    display: flex;
+    flex-direction: column;
+}
+.lms-wt-event:hover {
+    background: #ffedd5;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, .2);
+}
+.lms-wt-event-code {
+    font-weight: 700;
+    color: #b45309;
+}
+.lms-wt-event-time {
+    font-variant-numeric: tabular-nums;
+}
+.lms-wt-event-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.lms-wt-finished { border-left-color: #16a34a; background: #f0fdf4; }
+.lms-wt-finished:hover { background: #dcfce7; }
+.lms-wt-finished .lms-wt-event-code { color: #15803d; }
+.lms-wt-cancelled,
+.lms-wt-absent_teacher,
+.lms-wt-absent_student { border-left-color: #dc2626; background: #fef2f2; }
+.lms-wt-cancelled:hover,
+.lms-wt-absent_teacher:hover,
+.lms-wt-absent_student:hover { background: #fee2e2; }
+.lms-wt-cancelled .lms-wt-event-code,
+.lms-wt-absent_teacher .lms-wt-event-code,
+.lms-wt-absent_student .lms-wt-event-code { color: #b91c1c; }
+
+/* ===================== Timeline Stacked Cards (Mockup Tổng quan 2) ===================== */
+.lms-wt-slot-wrap {
+    position: absolute;
+    left: 8px;
+    right: 4px;
+    box-sizing: border-box;
+}
+
+.lms-wt-stack-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+    border: 1px solid #000;
+    pointer-events: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    transition: transform 0.15s ease;
+}
+
+.lms-wt-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+    border: 1px solid #000;
+    color: #fff;
+    padding: 3px 6px;
+    font-size: 0.75rem;
+    line-height: 1.25;
+    text-align: left;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #1f4e8c;
+    z-index: 4;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lms-wt-card-1on1 {
+    background-color: #1f4e8c;
+    border-color: #0f2c52;
+}
+
+.lms-wt-card-group {
+    background-color: var(--lms-primary);
+    border-color: #5a2512;
+}
+
+.lms-wt-slot-wrap:hover .lms-wt-card {
+    filter: brightness(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    z-index: 10;
+}
+
+.lms-wt-slot-wrap:hover .lms-wt-stack-layer {
+    z-index: 9;
+}
+
+.lms-wt-card-code {
+    font-weight: 700;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.2px;
+}
+
+.lms-wt-card-count {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-left: auto;
+    padding-left: 4px;
+}
+
+.lms-wt-card-time {
+    font-size: 0.74rem;
+    font-weight: 700;
+    white-space: nowrap;
+    margin-top: 1px;
+}
+
+/* Legend */
+.lms-wt-legend {
+    margin-top: 1rem;
+    padding-left: 0.25rem;
+}
+.lms-wt-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+    font-size: 0.85rem;
+    color: #475569;
+    font-weight: 500;
+}
+.lms-wt-legend-box {
+    width: 34px;
+    height: 18px;
+    border-radius: 2px;
+    border: 1px solid #000;
+    display: inline-block;
+}
+.lms-wt-legend-1on1 {
+    background-color: #1f4e8c;
+    border-color: #0f2c52;
+}
+.lms-wt-legend-group {
+    background-color: var(--lms-primary);
+    border-color: #5a2512;
+}
+
+/* Modal Popup Styles */
+#lmsWtModal .modal-content {
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+#lmsWtModal .modal-header {
+    border-bottom: none;
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+}
+#lmsWtModal .modal-body {
+    padding: 0.5rem 1.5rem 1.5rem 1.5rem;
+}
+.lms-wt-modal-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+.lms-wt-modal-sub {
+    font-size: 0.95rem;
+    color: #334155;
+    margin-bottom: 0.75rem;
+}
+.lms-wt-modal-item {
+    text-align: center;
+    padding: 0.75rem 0;
+}
+.lms-wt-modal-item + .lms-wt-modal-item {
+    border-top: 1px solid #f1f5f9;
+}
+.lms-wt-modal-link {
+    font-size: 0.95rem;
+    color: #2563eb;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.15s ease;
+}
+.lms-wt-modal-link:hover {
+    color: #1d4ed8;
+}
+.lms-wt-modal-students {
+    font-size: 0.85rem;
+    color: #334155;
+    margin-top: 0.2rem;
+}
+
+@media (max-width: 767.98px) {
+    .lms-week-timeline {
+        grid-template-columns: 40px repeat(7, minmax(72px, 1fr));
+        min-width: 640px;
+    }
+    .lms-week-timeline {
+        overflow-x: auto;
+    }
+}
+
+/* ===================== Sắp xếp lớp — modal chi tiết lịch GV (ADM-04) ===================== */
+
+/* Timeline 36px/giờ trong modal chi tiết */
+.lms-wt-tall {
+    max-height: 68vh;
+}
+.lms-wt-tall .lms-wt-day {
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0 35px,
+        #f0f1f3 35px 36px
+    );
+}
+
+.lms-wt-card-abs {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    height: auto;
+}
+
+.lms-wt-card-busy {
+    background: #fce7f1;
+    border-color: #d63384;
+    color: #6b2a4d;
+}
+
+.lms-wt-card-busy .lms-wt-card-time {
+    color: #a61e5a;
+}
+
+.lms-wt-card-free {
+    background: #e7f6ec;
+    border-color: #198754;
+    color: #14532d;
+    cursor: default;
+    box-shadow: none;
+}
+
+.lms-wt-student-link {
+    display: block;
+    color: #1f2937;
+    font-weight: 600;
+    text-decoration: underline;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lms-wt-student-link:hover {
+    color: #b45309;
+}
+
+.lms-wt-legend-busy {
+    background: #fce7f1;
+    border-color: #d63384;
+}
+
+.lms-wt-legend-free {
+    background: #e7f6ec;
+    border-color: #198754;
+}
+
+/* Thanh tiến trình mini (cột "Khóa học" — ADM-03) */
+.lms-progress-mini {
+    height: 5px;
+    width: 110px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: .25rem 0 .2rem;
+}
+.lms-progress-mini > span {
+    display: block;
+    height: 100%;
+    background: #f59e0b;
+    border-radius: 3px;
+}
+
+/* SYS-02 — kết quả tìm kiếm toàn cục */
+.lms-search-results {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #e9ecef;
+}
+.lms-search-result {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem .25rem;
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid #e9ecef;
+}
+.lms-search-result:hover {
+    background: #fffaf0;
+}
+.lms-search-result-icon {
     display: grid;
     place-items: center;
-    margin-bottom: .7rem;
-    border-radius: .7rem;
-    background: var(--lms-primary-soft, #e7efff);
-    color: var(--lms-primary, #3157a4);
-    font-size: 1.2rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: #fff3dc;
+    color: #d97706;
 }
-.lms-library-card {
-    border: 1px solid #e5e7eb;
-    transition: transform .15s ease, box-shadow .15s ease;
-}
-.lms-library-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 .4rem 1rem rgba(31, 41, 55, .08);
-}
-.lms-library-card .lms-card-body + .lms-card-body {
-    border-top: 1px solid #f0f1f3;
-}
-.lms-library-card h3 {
-    overflow-wrap: anywhere;
-}
-.lms-library-grid > div {
+.lms-search-result-text {
     min-width: 0;
 }
-@media (prefers-reduced-motion: reduce) {
-    .lms-library-card {
-        transition: none;
+.lms-search-result-text strong {
+    display: block;
+    overflow-wrap: anywhere;
+}
+
+/* Audit log JSON details */
+.lms-audit-json-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    padding: .75rem;
+    background: #f8fafc;
+}
+.lms-audit-json-grid pre {
+    max-height: 260px;
+    overflow: auto;
+    margin: .35rem 0 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-size: .75rem;
+}
+.lms-audit-json-grid-single {
+    grid-template-columns: 1fr;
+}
+@media (max-width: 767.98px) {
+    .lms-audit-json-grid { grid-template-columns: 1fr; }
+}
+
+.lms-btn-fee-pay {
+    background-color: #555e68;
+    color: #fff;
+    border: none;
+    font-weight: 500;
+}
+.lms-btn-fee-pay:hover {
+    background-color: #434a52;
+    color: #fff;
+}
+.lms-btn-add-primary {
+    background-color: #195292;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+}
+.lms-btn-add-primary:hover {
+    background-color: #123e70;
+    color: #fff;
+}
+.lms-action-link {
+    color: #dc2626;
+    text-decoration: underline;
+    font-size: 0.85rem;
+    margin: 0 2px;
+}
+.lms-action-link:hover {
+    color: #b91c1c;
+}
+.lms-action-link-edit {
+    color: #2563eb;
+    text-decoration: underline;
+    font-size: 0.85rem;
+    margin: 0 2px;
+}
+.lms-action-link-edit:hover {
+    color: #1d4ed8;
+}
+.lms-action-link-success {
+    color: #16a34a;
+    text-decoration: underline;
+    font-size: 0.85rem;
+    margin: 0 2px;
+}
+.lms-action-link-success:hover {
+    color: #15803d;
+}
+/* Nút hành động dạng link (dùng trong form POST của bảng) */
+.lms-action-btn {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    line-height: inherit;
+}
+.lms-action-btn:hover {
+    background: transparent;
+}
+
+/* ==========================================================================
+   Teacher Edit / Create Form (Tai-lieu-phat-trien/admin/Quản lý tài khoản -Giáo Viên - Sửa .png)
+   ========================================================================== */
+.lms-tf-label {
+    font-size: 14.5px;
+    font-weight: 500;
+    color: #1a202c;
+    line-height: 1.3;
+}
+
+.lms-tf-label .text-danger {
+    color: #e5501b !important;
+    margin-left: 2px;
+}
+
+.lms-tf-control {
+    position: relative;
+}
+
+.lms-tf-hint {
+    font-size: 12.5px;
+    color: #64748b;
+    margin-top: 4px;
+    line-height: 1.35;
+}
+
+.lms-tf-input {
+    width: 100%;
+    height: 42px;
+    border: 1px solid #ccd5de;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 14px;
+    color: #2d3748;
+    background-color: #ffffff;
+    outline: none;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.lms-tf-input:focus {
+    border-color: #e5501b;
+    box-shadow: 0 0 0 3px rgba(229, 80, 27, 0.12);
+}
+
+.lms-tf-input::placeholder {
+    color: #9aa5b1;
+}
+
+.lms-tf-date-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.lms-tf-date-wrap .lms-tf-calendar-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 14px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.lms-tf-date-wrap .lms-tf-input {
+    padding-left: 38px;
+}
+
+.lms-tf-select {
+    width: 100%;
+    height: 42px;
+    border: 1px solid #ccd5de;
+    border-radius: 8px;
+    padding: 8px 36px 8px 14px;
+    font-size: 14px;
+    color: #2d3748;
+    background-color: #ffffff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%234a5568' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 14px 10px;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.lms-tf-select:focus {
+    border-color: #e5501b;
+    box-shadow: 0 0 0 3px rgba(229, 80, 27, 0.12);
+}
+
+.lms-tf-addon-group {
+    display: flex;
+    align-items: center;
+    height: 42px;
+    border: 1px solid #ccd5de;
+    border-radius: 8px;
+    background-color: #ffffff;
+    overflow: hidden;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.lms-tf-addon-group:focus-within {
+    border-color: #e5501b;
+    box-shadow: 0 0 0 3px rgba(229, 80, 27, 0.12);
+}
+
+.lms-tf-addon-input {
+    flex: 1;
+    height: 100%;
+    border: none;
+    padding: 8px 14px;
+    font-size: 14px;
+    color: #2d3748;
+    background-color: transparent;
+    outline: none;
+}
+
+.lms-tf-addon-input::placeholder {
+    color: #9aa5b1;
+}
+
+.lms-tf-addon-label {
+    padding: 0 16px;
+    font-size: 14px;
+    color: #4a5568;
+    background-color: transparent;
+    user-select: none;
+}
+
+.lms-tf-addon-group-readonly {
+    background-color: #c5d0d8;
+    border-color: #b0bfc9;
+}
+
+.lms-tf-addon-group-readonly .lms-tf-addon-input {
+    color: #1a202c;
+    font-weight: 500;
+    cursor: default;
+}
+
+.lms-tf-addon-group-readonly .lms-tf-addon-label {
+    color: #2d3748;
+    font-weight: 500;
+}
+
+/* Multi-select district picker */
+.lms-district-picker {
+    position: relative;
+    width: 100%;
+}
+
+.lms-district-tags-box {
+    min-height: 42px;
+    border: 1px solid #ccd5de;
+    border-radius: 8px;
+    padding: 4px 10px;
+    background-color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.lms-district-tags-box:focus,
+.lms-district-picker:focus-within .lms-district-tags-box {
+    border-color: #e5501b;
+    box-shadow: 0 0 0 3px rgba(229, 80, 27, 0.12);
+}
+
+.lms-district-tags-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+}
+
+.lms-district-placeholder {
+    color: #9aa5b1;
+    font-size: 14px;
+}
+
+.lms-district-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: #f1f5f9;
+    color: #1e293b;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+}
+
+.lms-district-tag-remove {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+}
+
+.lms-district-tag-remove:hover {
+    color: #e5501b;
+}
+
+.lms-district-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    z-index: 1050;
+    max-height: 280px;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.lms-district-dropdown.show {
+    display: flex;
+}
+
+.lms-district-search-wrap {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e2e8f0;
+    background-color: #fafbfc;
+}
+
+.lms-district-search-input {
+    width: 100%;
+    height: 34px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    outline: none;
+}
+
+.lms-district-search-input:focus {
+    border-color: #e5501b;
+}
+
+.lms-district-list {
+    overflow-y: auto;
+    max-height: 220px;
+    padding: 6px 10px;
+}
+
+.lms-district-group-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #e5501b;
+    text-transform: uppercase;
+    padding: 6px 6px 3px 6px;
+    letter-spacing: 0.5px;
+}
+
+.lms-district-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13.5px;
+    color: #334155;
+    margin-bottom: 2px;
+    user-select: none;
+}
+
+.lms-district-item:hover {
+    background-color: #f1f5f9;
+}
+
+.lms-district-item input[type="checkbox"] {
+    accent-color: #e5501b;
+    cursor: pointer;
+}
+
+/* Avatar upload & preview */
+.lms-tf-avatar-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.lms-tf-avatar-btn-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lms-tf-btn-choose-img {
+    height: 36px;
+    padding: 0 18px;
+    border: 1px solid #ccd5de;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #334155;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.lms-tf-btn-choose-img:hover {
+    background-color: #f8fafc;
+    border-color: #94a3b8;
+}
+
+.lms-tf-avatar-subtext {
+    font-size: 11.5px;
+    color: #64748b;
+    margin-top: 5px;
+}
+
+.lms-tf-avatar-preview-box {
+    position: relative;
+    width: 105px;
+    height: 105px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.lms-tf-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+}
+
+.lms-tf-avatar-remove {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #ffffff;
+    color: #e53e3e;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+    transition: transform 0.15s, color 0.15s;
+}
+
+.lms-tf-avatar-remove:hover {
+    color: #c53030;
+    transform: scale(1.15);
+}
+
+/* LMS Form Component: File picker */
+.lms-tf-file-picker {
+    width: 100%;
+}
+
+.lms-tf-file-box {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 42px;
+    border: 1px solid #ccd5de;
+    border-radius: 8px;
+    background-color: #ffffff;
+    padding: 4px 6px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.lms-tf-file-box:focus-within {
+    border-color: #e5501b;
+    box-shadow: 0 0 0 3px rgba(229, 80, 27, 0.12);
+}
+
+.lms-tf-file-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 6px;
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+
+.lms-tf-file-btn:hover {
+    background-color: #e2e8f0;
+    border-color: #94a3b8;
+    color: #0f172a;
+}
+
+.lms-tf-file-text {
+    font-size: 13.5px;
+    color: #94a3b8;
+    padding: 0 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-grow: 1;
+}
+
+.lms-tf-file-text.has-file {
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.lms-tf-file-clear {
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.lms-tf-file-clear:hover {
+    color: #e53e3e;
+}
+
+.lms-tf-file-current {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background-color: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+/* Submit button centered */
+.lms-tf-submit-row {
+    text-align: center;
+    margin-top: 36px;
+    margin-bottom: 25px;
+}
+
+/* Schedule Slots (Pill UI — ADM-01 "Thời gian rảnh" / ADM-04 "Tìm theo lịch trống") */
+.lms-slot-day-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.lms-slot-pill-box {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    border: 1px solid #ccd5de;
+    border-radius: 8px;
+    min-height: 42px;
+    padding: 8px 14px;
+    font-size: 14px;
+    color: #2d3748;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.lms-slot-pill-box:focus-within {
+    border-color: #e5501b;
+    box-shadow: 0 0 0 3px rgba(229, 80, 27, .12);
+}
+.lms-slot-pill-day {
+    min-width: 118px;
+}
+.lms-slot-pill-day select {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: #2d3748;
+    padding: 0 18px 0 2px;
+    outline: none;
+    cursor: pointer;
+    appearance: auto;
+}
+.lms-slot-pill-time input[type="time"] {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: #2d3748;
+    padding: 0;
+    width: auto;
+    outline: none;
+    cursor: text;
+}
+.lms-slot-pill-time input[type="time"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+.lms-slot-time-toggle {
+    display: inline-flex;
+    align-items: center;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    line-height: 1;
+    cursor: pointer;
+}
+.lms-slot-pill-close {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid #ccd5de;
+    background: #fff;
+    color: #212529;
+    font-size: 11px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+.lms-slot-pill-close:hover {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+.lms-slot-link-action {
+    background: none;
+    border: none;
+    color: #0d6efd;
+    text-decoration: underline;
+    font-size: 0.9rem;
+    padding: 2px 6px;
+    cursor: pointer;
+}
+.lms-slot-link-action:hover {
+    color: #0a58ca;
+}
+
+/* ==========================================================================
+   LMS Button Component Suite (Scalable UI System)
+   ========================================================================== */
+.lms-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, transform 0.1s;
+}
+.lms-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(11, 87, 164, 0.25);
+}
+.lms-btn:disabled,
+.lms-btn[aria-disabled="true"] {
+    opacity: 0.65;
+    pointer-events: none;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Kích thước */
+.lms-btn-sm {
+    padding: 5px 14px;
+    font-size: 13px;
+    border-radius: 4px;
+}
+.lms-btn-md {
+    padding: 8px 22px;
+    font-size: 14.5px;
+    border-radius: 6px;
+}
+.lms-btn-lg {
+    padding: 10px 48px;
+    font-size: 16px;
+    border-radius: 6px;
+}
+
+/* Biến thể màu sắc */
+.lms-btn-primary {
+    background-color: #e5501b;
+    border-color: #e5501b;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(229, 80, 27, 0.25);
+}
+.lms-btn-primary:hover {
+    background-color: #c94012;
+    border-color: #c94012;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(201, 64, 18, 0.35);
+    transform: translateY(-1px);
+}
+
+.lms-btn-secondary {
+    background-color: #0b57a4;
+    border-color: #0b57a4;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(11, 87, 164, 0.25);
+}
+.lms-btn-secondary:hover {
+    background-color: #084685;
+    border-color: #084685;
+    color: #ffffff !important;
+    box-shadow: 0 4px 10px rgba(8, 70, 133, 0.35);
+    transform: translateY(-1px);
+}
+
+.lms-btn-success {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: #ffffff !important;
+}
+.lms-btn-success:hover {
+    background-color: #059669;
+    border-color: #059669;
+    color: #ffffff !important;
+}
+
+.lms-btn-danger {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: #ffffff !important;
+}
+.lms-btn-danger:hover {
+    background-color: #b91c1c;
+    border-color: #b91c1c;
+    color: #ffffff !important;
+}
+
+.lms-btn-warning {
+    background-color: #f59e0b;
+    border-color: #f59e0b;
+    color: #ffffff !important;
+}
+.lms-btn-warning:hover {
+    background-color: #d97706;
+    border-color: #d97706;
+    color: #ffffff !important;
+}
+
+.lms-btn-info {
+    background-color: #0ea5e9;
+    border-color: #0ea5e9;
+    color: #ffffff !important;
+}
+.lms-btn-info:hover {
+    background-color: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff !important;
+}
+
+.lms-btn-light {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+    color: #1e293b !important;
+}
+.lms-btn-light:hover {
+    background-color: #e2e8f0;
+    border-color: #94a3b8;
+    color: #0f172a !important;
+}
+
+/* Outline variants */
+.lms-btn-outline-primary {
+    background-color: transparent;
+    border-color: #e5501b;
+    color: #e5501b !important;
+}
+.lms-btn-outline-primary:hover {
+    background-color: #e5501b;
+    color: #ffffff !important;
+}
+
+.lms-btn-outline-secondary {
+    background-color: transparent;
+    border-color: #0b57a4;
+    color: #0b57a4 !important;
+}
+.lms-btn-outline-secondary:hover {
+    background-color: #0b57a4;
+    color: #ffffff !important;
+}
+
+.lms-btn-outline-danger {
+    background-color: transparent;
+    border-color: #dc2626;
+    color: #dc2626 !important;
+}
+.lms-btn-outline-danger:hover {
+    background-color: #dc2626;
+    color: #ffffff !important;
+}
+
+.lms-btn-outline-success {
+    background-color: transparent;
+    border-color: #10b981;
+    color: #10b981 !important;
+}
+.lms-btn-outline-success:hover {
+    background-color: #10b981;
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   LMS SELECT2 STYLES (Bootstrap 5 theme integration)
+   ========================================================= */
+.select2-container {
+    width: 100% !important;
+}
+.select2-container--bootstrap-5 .select2-selection {
+    font-size: 0.92rem;
+    border-color: #dee2e6;
+    border-radius: 6px;
+    min-height: 38px;
+}
+.select2-container--bootstrap-5.select2-container--focus .select2-selection,
+.select2-container--bootstrap-5.select2-container--open .select2-selection {
+    border-color: #ff9800;
+    box-shadow: 0 0 0 0.2rem rgba(255, 102, 0, 0.15);
+}
+.select2-container--bootstrap-5 .select2-dropdown {
+    border-color: #dee2e6;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    z-index: 1060;
+}
+.select2-container--bootstrap-5 .select2-results__option--highlighted {
+    background-color: #fff3ec !important;
+    color: #e5501b !important;
+}
+.select2-container--bootstrap-5 .select2-results__option--selected,
+.select2-container--bootstrap-5 .select2-results__option[aria-selected="true"]:not(.select2-results__option--highlighted) {
+    background-color: #e5501b !important;
+    color: #ffffff !important;
+}
+.select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered .select2-selection__choice {
+    background-color: #fff1eb;
+    border: 1px solid #ffccb8;
+    color: #c94012;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+}
+.select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered .select2-selection__choice .select2-selection__choice__remove {
+    margin-right: 0.35rem;
+    color: #c94012;
+}
+.select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered .select2-selection__choice .select2-selection__choice__remove:hover {
+    color: #900;
+}
+
+
+/* ==========================================================================
+   Shared detail layouts (Student-ver2 & Teacher-ver2)
+   Dùng chung cho trang chuyên đề, chấm test, chi tiết buổi học.
+   ========================================================================== */
+
+/* ---- Page head + title ---- */
+.lms-page-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+.lms-page-head .lms-page-title {
+    margin-bottom: 0;
+    font-size: 1.65rem;
+}
+.lms-page-title a {
+    color: inherit;
+    text-decoration: none;
+}
+.lms-page-title a:hover {
+    color: #d9531e;
+}
+
+.lms-view-all-link {
+    color: #F26B2A;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: opacity 0.15s ease;
+}
+.lms-view-all-link:hover {
+    color: #d9531e;
+    opacity: 0.85;
+}
+
+/* ---- Surface card dùng chung (thông tin chuyên đề, test, buổi học) ---- */
+.lms-panel {
+    background: #ffffff;
+    border: 1px solid #ebebeb;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+}
+.lms-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.35rem;
+    border-bottom: 1px solid #f1f3f5;
+    cursor: pointer;
+    user-select: none;
+}
+.lms-panel-head.is-static {
+    cursor: default;
+}
+.lms-panel-head-main {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-width: 0;
+}
+.lms-panel-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+.lms-panel-body {
+    padding: 1.35rem;
+}
+.lms-panel-file-link {
+    font-size: 0.88rem;
+    font-style: italic;
+    color: #64748b;
+    text-decoration: none;
+}
+.lms-panel-file-link:hover span {
+    color: #F26B2A !important;
+    text-decoration: underline;
+}
+.lms-toggle-arrow,
+.lms-cat-arrow,
+.lms-test-chevron {
+    color: #1e293b;
+    font-size: 0.95rem;
+    transition: transform 0.2s ease;
+}
+
+/* ---- Accordion sections (Lộ trình, Nội dung buổi học) ---- */
+.lms-section-accordion {
+    background: transparent;
+}
+.lms-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    cursor: pointer;
+    user-select: none;
+}
+.lms-section-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: #1e293b;
+}
+
+.lms-category-group {
+    background: transparent;
+}
+.lms-category-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    cursor: pointer;
+    user-select: none;
+}
+.lms-category-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #212529;
+}
+
+/* ---- Topic Card (student-ver2 & teacher-ver2) ---- */
+.lms-topic-card-v2 {
+    background: #ffffff;
+    border: 1px solid #ebebeb;
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    gap: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    height: 100%;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.lms-topic-card-v2:hover {
+    border-color: #ffd8c4;
+    box-shadow: 0 6px 16px rgba(242, 107, 42, 0.08);
+}
+.lms-topic-card-left {
+    flex-shrink: 0;
+}
+.lms-topic-icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.45rem;
+}
+.lms-topic-icon-wrap.icon-orange {
+    background: #fff4ec;
+    color: #F26B2A;
+}
+.lms-topic-icon-wrap.icon-blue {
+    background: #eef6ff;
+    color: #2563eb;
+}
+.lms-topic-card-body {
+    flex: 1;
+    min-width: 0;
+}
+.lms-topic-name-link {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #1e293b;
+    text-decoration: none;
+    display: block;
+}
+.lms-topic-name-link:hover {
+    color: #F26B2A;
+}
+.lms-topic-meta-done {
+    color: #e11d48;
+    font-size: 0.88rem;
+    font-weight: 500;
+}
+.lms-topic-meta-scores {
+    font-size: 0.88rem;
+    color: #475569;
+    line-height: 1.4;
+}
+.lms-btn-disabled {
+    background: #b0b7c3 !important;
+    border-color: #b0b7c3 !important;
+    color: #ffffff !important;
+    cursor: not-allowed;
+    opacity: 1 !important;
+}
+.lms-btn-completed {
+    background: #22c55e !important;
+    border-color: #22c55e !important;
+    color: #ffffff !important;
+    cursor: default;
+}
+
+/* ---- Session Card V2 (Lesson Summary & BTVN) ---- */
+.lms-session-card-v2 {
+    background: #ffffff;
+    border: 1px solid #ebebeb;
+    border-radius: 14px;
+    padding: 1.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.lms-session-card-header {
+    border-bottom: 1px solid #f1f3f5;
+    padding-bottom: 0.75rem;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+.lms-session-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.lms-session-pill {
+    background: #f1f3f5;
+    border-radius: 8px;
+    padding: 0.6rem 0.85rem;
+    margin-bottom: 0.45rem;
+    display: flex;
+    align-items: flex-start;
+    font-size: 0.88rem;
+}
+.lms-session-pill i {
+    font-size: 1rem;
+    margin-top: 0.15rem;
+}
+.lms-pill-label {
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 500;
+}
+.lms-pill-value {
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.88rem;
+    word-break: break-word;
+}
+.lms-pill-input {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0.15rem 0 !important;
+    color: #1e293b;
+    font-weight: 600;
+    font-size: 0.88rem;
+    resize: vertical;
+}
+.lms-pill-input:focus {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+.lms-session-pill .select2-container--default .select2-selection--multiple,
+.lms-session-pill .select2-container--bootstrap-5 .select2-selection--multiple {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    min-height: auto;
+    padding: 0.15rem 0;
+}
+.lms-hw-compose-box {
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+/* ---- Topic Info Card ---- */
+.lms-topic-headline {
+    color: #1e293b;
+    font-size: 1.35rem;
+}
+.lms-objectives-box {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    min-height: 80px;
+    background: #fafafa;
+}
+
+/* ---- Form footer (deadline + submit) ---- */
+.lms-form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.25rem;
+}
+.lms-form-note {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* ---- File grid (tệp đã nộp / nhận xét) ---- */
+.lms-file-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.lms-file-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    max-width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+.lms-file-chip:hover {
+    border-color: #ffd8c4;
+    background: #fff7f2;
+    color: #c9531d;
+}
+.lms-file-chip-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.lms-file-chip-name {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.lms-file-chip-action {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+.lms-file-grid-empty {
+    padding: 0.5rem 0;
+}
+
+/* ---- Upload nhiều tệp (component form/file_upload) ---- */
+.lms-upload-field-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.4rem;
+}
+.lms-upload-zone {
+    border: 2px dashed #d1d5db;
+    border-radius: 10px;
+    background: #fafafa;
+    padding: 0.9rem;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+.lms-upload-zone.is-dragover {
+    border-color: #F26B2A;
+    background: #fff7f2;
+}
+.lms-upload-trigger {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 1rem 0.75rem;
+    color: #6b7280;
+    cursor: pointer;
+}
+.lms-upload-trigger-icon {
+    font-size: 1.75rem;
+    color: #9ca3af;
+}
+.lms-upload-trigger-title {
+    font-size: 0.92rem;
+    color: #374151;
+}
+.lms-upload-trigger-link {
+    color: #F26B2A;
+    font-weight: 600;
+    text-decoration: underline;
+}
+.lms-upload-trigger-hint {
+    font-size: 0.78rem;
+    color: #9ca3af;
+}
+.lms-upload-selected {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+.lms-upload-selected-item {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.6rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    font-size: 0.85rem;
+}
+.lms-upload-selected-icon {
+    width: 1.1rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+.lms-upload-selected-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #334155;
+}
+.lms-upload-selected-size {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+.lms-upload-selected-remove {
+    border: 0;
+    background: transparent;
+    color: #94a3b8;
+    padding: 0.1rem 0.25rem;
+    cursor: pointer;
+}
+.lms-upload-selected-remove:hover {
+    color: #dc2626;
+}
+.lms-upload-add {
+    margin-top: 0.5rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #ffffff;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    color: #475569;
+    cursor: pointer;
+}
+.lms-upload-add:hover {
+    border-color: #F26B2A;
+    color: #F26B2A;
+}
+.lms-upload-existing {
+    margin-top: 0.75rem;
+}
+.lms-upload-existing-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 0.4rem;
+}
+.lms-upload-existing-note {
+    font-weight: 400;
+    color: #94a3b8;
+    margin-left: 0.35rem;
+}
+.lms-upload-error {
+    font-size: 0.8rem;
+}
+
+/* ===================== Teacher — Tài khoản giáo viên ===================== */
+.lms-ta-profile-head {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.25rem 1.5rem;
+}
+.lms-ta-avatar {
+    width: 120px;
+    height: 120px;
+    flex: 0 0 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fdece3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.lms-ta-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.lms-ta-avatar-fallback {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #F26B2A;
+}
+.lms-ta-profile-info {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.lms-ta-name {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #1f2933;
+    line-height: 1.25;
+    margin-bottom: .35rem;
+    overflow-wrap: anywhere;
+}
+.lms-ta-contact {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .9rem;
+    color: #495057;
+    margin-top: .15rem;
+}
+.lms-ta-contact i {
+    width: 1rem;
+    color: #6b7280;
+    text-align: center;
+}
+.lms-ta-photo-btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    border: 1px solid #F26B2A;
+    border-radius: .4rem;
+    padding: .45rem .95rem;
+    color: #F26B2A;
+    background: #fff;
+    font-size: .9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+}
+.lms-ta-photo-btn:hover {
+    background: #F26B2A;
+    color: #fff;
+}
+.lms-ta-section-title {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1f2933;
+    margin-bottom: 1rem;
+}
+.lms-ta-section-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: #fdece3;
+    color: #F26B2A;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .9rem;
+    flex: 0 0 2rem;
+}
+.lms-ta-section-icon-warm {
+    background: #fff1e6;
+    color: #e86a1f;
+}
+.lms-ta-note {
+    margin: -.35rem 0 .9rem;
+    font-size: .82rem;
+    color: #6b7280;
+}
+.lms-ta-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+.lms-ta-actions .btn {
+    min-width: 150px;
+}
+@media (max-width: 575.98px) {
+    .lms-ta-profile-head {
+        flex-wrap: wrap;
+        padding: 1rem;
     }
-    .lms-library-card:hover {
-        transform: none;
+    .lms-ta-avatar {
+        width: 88px;
+        height: 88px;
+        flex-basis: 88px;
+    }
+    .lms-ta-name {
+        font-size: 1.25rem;
+    }
+    .lms-ta-photo-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .lms-ta-actions {
+        gap: .65rem;
+    }
+    .lms-ta-actions .btn {
+        min-width: 0;
+        flex: 1 1 0;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .lms-panel-body {
+        padding: 1rem;
+    }
+    .lms-file-chip-name {
+        max-width: 150px;
+    }
+}
+
+/* ---- Modal Thanh toán phí dịch vụ ---- */
+.lms-fee-modal .modal-dialog {
+    max-width: 880px;
+}
+.lms-fee-modal .modal-body {
+    padding: 1.25rem 1.5rem;
+}
+.lms-fee-table th {
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+.lms-fee-table td {
+    font-size: 0.9rem;
+}
+
+@media (max-width: 767.98px) {
+    .lms-fee-modal .modal-dialog {
+        max-width: calc(100% - 1rem);
     }
 }

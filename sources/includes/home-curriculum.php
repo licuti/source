@@ -30,7 +30,7 @@
 								</div>
 								<div class="d-flex gap-3 mt-4">
 									<?php foreach ($content_curriculum_1 as $key => $value): ?>
-										<a href="<?= $value['link'] ?>" class="btn-custom btn-x btn-outline bg-white w-100"><?= $value['ten'] ?></a>
+										<a href="<?= $value['link'] ?>" class="btn-custom btn-x btn-outline bg-white w-100 text-nowrap"><?= $value['ten'] ?></a>
 									<?php endforeach ?>
 								</div>
 							</div>
@@ -53,7 +53,7 @@
 								</div>
 								<div class="row g-3 mt-2">
 									<?php foreach ($content_curriculum_2 as $key => $value): ?>
-										<div class="col-lg-3">
+										<div class="col-6 col-md-3">
 											<a href="<?= $value['link'] ?>" class="box-curriculum-certificate">
 												<div class="icon">
 													<img src="<?= getImageUrl($value['hinh_anh']) ?>" alt="<?= $value['ten'] ?>" class="image-contain">

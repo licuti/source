@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin LMS — Học sinh − Lớp học (ADM-04, Phase 1.3).
+ * Admin LMS — Học sinh − Lớp học (ADM-03, Phase 1.3).
  *
  * Action:
  *   - 'man'    (GET)      → ma trận HV × chương trình + 2 tab + 2 ô tìm.

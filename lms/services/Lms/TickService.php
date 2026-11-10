@@ -79,8 +79,13 @@ class TickService extends LmsService
             return $stats;
         }
 
+        $sessions = $this->db->safeFetch(
+            'select id from db_lms_sessions where ' . $where,
+            array('upcoming')
+        );
         $ok = $this->db->update('db_lms_sessions', array('status' => 'finished'), $where, array('upcoming'));
         if ($ok) {
+            (new CourseCycleService($this->db))->recordFinishedSessions(array_column($sessions, 'id'));
             $this->audit('close_past_sessions', 'sessions', null, null, $stats, 'system_cron');
         }
         return $stats;
@@ -408,6 +413,85 @@ class TickService extends LmsService
             'late_lesson_summary'   => $this->scanLateLessonSummary($dryRun),
             'late_hw_grading'       => $this->scanLateHwGrading($dryRun),
             'tick_penalty'          => $this->evaluateTickPenalty($dryRun),
+            'session_reminders'     => $this->sendUpcomingSessionReminders($dryRun),
+        );
+    }
+
+    /**
+     * Notify active enrollments 45-75 minutes before an upcoming session.
+     * Each enrollment is claimed before its notification is inserted.
+     *
+     * @param bool $dryRun
+     * @return array
+     */
+    public function sendUpcomingSessionReminders($dryRun = false)
+    {
+        $stats = array('dry_run' => (bool) $dryRun, 'candidates' => 0, 'sent' => 0, 'errors' => 0);
+        $rows = $this->db->safeFetch(
+            'select ss.id as enrollment_id, ss.student_id, ses.id as session_id,'
+            . ' ses.session_date, ses.start_time, c.name as class_name'
+            . ' from db_lms_session_students ss'
+            . ' join db_lms_sessions ses on ses.id = ss.session_id and ses.status = ?'
+            . ' join db_lms_classes c on c.id = ses.class_id and c.status = ? and c.deleted_at is null'
+            . ' join db_lms_class_students cs on cs.class_id = c.id'
+            . ' and cs.student_id = ss.student_id and cs.status = ?'
+            . ' where ss.reminder_sent_at is null and ses.start_time is not null'
+            . ' and TIMESTAMP(ses.session_date, ses.start_time) between'
+            . ' DATE_ADD(NOW(), INTERVAL 45 MINUTE) and DATE_ADD(NOW(), INTERVAL 75 MINUTE)'
+            . ' order by ses.session_date, ses.start_time, ss.id',
+            array('upcoming', 'active', 'active')
+        );
+        $stats['candidates'] = count($rows);
+        if ($dryRun || empty($rows)) {
+            return $stats;
+        }
+
+        foreach ($rows as $row) {
+            $this->db->beginTransaction();
+            try {
+                $ok = $this->db->safeExec(
+                    'update db_lms_session_students set reminder_sent_at = NOW()'
+                    . ' where id = ? and reminder_sent_at is null',
+                    array((int) $row['enrollment_id'])
+                );
+                if (!$ok || $this->db->affectedRows() !== 1) {
+                    $this->db->rollBack();
+                    continue;
+                }
+
+                $start = date('H:i', strtotime((string) $row['start_time']));
+                $date = date('d/m/Y', strtotime((string) $row['session_date']));
+                $message = 'Buổi học lớp ' . (string) $row['class_name'] . ' sẽ bắt đầu lúc '
+                    . $start . ' ngày ' . $date . '.';
+                $link = function_exists('lms_url_to')
+                    ? lms_url_to('student', 'lms-lich-hoc', 'buoi', array('id' => (int) $row['session_id']))
+                    : 'lms/student/lms-lich-hoc/buoi?id=' . (int) $row['session_id'];
+                $notifId = $this->createSessionReminderNotification(
+                    (int) $row['student_id'], $message, $link
+                );
+                if ($notifId === null) {
+                    throw new \RuntimeException('Notification insert failed.');
+                }
+                $this->db->commit();
+                $stats['sent']++;
+            } catch (\Exception $e) {
+                $this->db->rollBack();
+                error_log('[LMS session reminder] ' . $e->getMessage());
+                $stats['errors']++;
+            }
+        }
+        return $stats;
+    }
+
+    /** @param int $studentId @param string $message @param string $link @return int|null */
+    protected function createSessionReminderNotification($studentId, $message, $link)
+    {
+        return (new NotificationService($this->db))->notify(
+            (int) $studentId,
+            'session_reminder',
+            'Nhắc lịch học sắp tới',
+            $message,
+            $link
         );
     }
 
@@ -550,29 +634,126 @@ class TickService extends LmsService
     // ===================== Admin (ADM-06) =====================
 
     /**
-     * Thêm tick thủ công (admin). session_id/class_id = NULL (MySQL 5.7 cho
+     * Format nội dung vi phạm hiển thị trên bảng quản lý / portal GV.
+     *
+     * @param array $row Bản ghi từ listViolations()
+     * @return string
+     */
+    public static function formatViolationContent(array $row)
+    {
+        $note = isset($row['note']) ? trim((string) $row['note']) : '';
+        if ($note !== '') {
+            return $note;
+        }
+
+        $reason = isset($row['reason']) ? (string) $row['reason'] : '';
+        $dateRaw = !empty($row['session_date'])
+            ? (string) $row['session_date']
+            : (isset($row['violation_date']) ? (string) $row['violation_date'] : '');
+        $dateStr = ($dateRaw !== '' && strtotime($dateRaw) !== false)
+            ? date('d/m/Y', strtotime($dateRaw))
+            : 'xx/xx/xxxx';
+
+        switch ($reason) {
+            case self::REASON_LESSON_SUMMARY:
+                return 'Bạn đã bị phạt một tick vì quên ghi Lesson summary cho buổi học ngày ' . $dateStr;
+            case self::REASON_HW_GRADING:
+                return 'Bạn đã bị phạt một tick vì quên nhận xét BTVN của học sinh cho buổi học ngày ' . $dateStr;
+            case self::REASON_TEST_GRADING:
+                return 'Bạn đã bị phạt một tick vì chấm test muộn quá 72 giờ kể từ khi học sinh nộp bài (buổi ngày ' . $dateStr . ')';
+            case self::REASON_MANUAL_PENALTY:
+                return 'Điều chỉnh cộng tick vi phạm thủ công';
+            case self::REASON_MANUAL_EXEMPT:
+                return 'Điều chỉnh miễn giảm tick vi phạm';
+            default:
+                return isset(self::ALL_REASONS[$reason]) ? self::ALL_REASONS[$reason] : $reason;
+        }
+    }
+
+    /**
+     * Hiển thị khoảng số lớp theo chuẩn mockup ("Từ 6 trở lên", "5", "1-2").
+     *
+     * @param int      $min
+     * @param int|null $max
+     * @return string
+     */
+    public static function formatClassRange($min, $max)
+    {
+        $min = (int) $min;
+        if ($max === null || (string) $max === '') {
+            return 'Từ ' . $min . ' trở lên';
+        }
+        $max = (int) $max;
+        if ($min === $max) {
+            return (string) $min;
+        }
+        return $min . '-' . $max;
+    }
+
+    /**
+     * Phân tích chuỗi khoảng số lớp ("Từ 6 trở lên", ">=6", "6+", "5", "1-2") thành min/max.
+     *
+     * @param string $rangeStr
+     * @return array|null array('min' => int, 'max' => int|null) hoặc null nếu sai định dạng
+     */
+    public static function parseClassRange($rangeStr)
+    {
+        $s = trim((string) $rangeStr);
+        if ($s === '') {
+            return null;
+        }
+        if (preg_match('/^(?:từ\s*)?(\d+)\s*(?:lớp\s*)?(?:trở\s*lên|\+)$/iu', $s, $m)
+            || preg_match('/^>=\s*(\d+)$/u', $s, $m)) {
+            $min = (int) $m[1];
+            return $min >= 1 ? array('min' => $min, 'max' => null) : null;
+        }
+        if (preg_match('/^(\d+)\s*(?:[-–~]|đến)\s*(\d+)$/iu', $s, $m)) {
+            $min = (int) $m[1];
+            $max = (int) $m[2];
+            return ($min >= 1 && $max >= $min) ? array('min' => $min, 'max' => $max) : null;
+        }
+        if (preg_match('/^(\d+)$/', $s, $m)) {
+            $val = (int) $m[1];
+            return $val >= 1 ? array('min' => $val, 'max' => $val) : null;
+        }
+        return null;
+    }
+
+    /**
+     * Thêm tick thủ công (admin). session_id = NULL (MySQL 5.7 cho
      * phép nhiều hàng NULL trong UNIQUE → cùng ngày thêm nhiều lần được).
      *
-     * @param int    $teacherId
-     * @param string $reason     'manual_penalty' | 'manual_exempt'
-     * @param int    $tickAmount +1 | -1 (phải khớp dấu của reason)
-     * @param string $note
-     * @param int    $actorId    user_id của admin (0 → NULL)
+     * @param int      $teacherId
+     * @param string   $reason     'manual_penalty' | 'manual_exempt' | '' (tự suy theo dấu tick)
+     * @param int      $tickAmount != 0 (+1, -1, +2, -2...)
+     * @param string   $note
+     * @param int      $actorId    user_id của admin (0 → NULL)
+     * @param int|null $classId    classes.id (tuỳ chọn)
      * @return bool
      */
-    public function addManualTick($teacherId, $reason, $tickAmount, $note, $actorId)
+    public function addManualTick($teacherId, $reason, $tickAmount, $note = '', $actorId = 0, $classId = null)
     {
         $this->clearErrors();
 
         $teacherId  = (int) $teacherId;
         $tickAmount = (int) $tickAmount;
-        $reason     = (string) $reason;
+        $reason     = trim((string) $reason);
         $note       = trim((string) $note);
         $actorId    = (int) $actorId;
+        $classId    = ($classId !== null && (int) $classId > 0) ? (int) $classId : null;
 
         if ($teacherId <= 0) {
             $this->addError('teacher_id', 'Giáo viên không hợp lệ.');
             return false;
+        }
+
+        if ($tickAmount === 0 || $tickAmount < -100 || $tickAmount > 100) {
+            $this->addError('tick_amount', 'Số tick điều chỉnh phải là số nguyên khác 0 (VD: +1, -1, +2, -2).');
+            return false;
+        }
+
+        if ($reason === '' || $reason === 'auto') {
+            $reason = $tickAmount > 0 ? self::REASON_MANUAL_PENALTY : self::REASON_MANUAL_EXEMPT;
         }
 
         if (!isset(self::MANUAL_REASONS[$reason])) {
@@ -580,10 +761,12 @@ class TickService extends LmsService
             return false;
         }
 
-        $expected = $reason === self::REASON_MANUAL_PENALTY ? 1 : -1;
-        if ($tickAmount !== $expected) {
-            $this->addError('tick_amount', 'Số tick phải là ' . ($expected > 0 ? '+1' : '-1')
-                . ' cho lý do đã chọn.');
+        if ($reason === self::REASON_MANUAL_PENALTY && $tickAmount <= 0) {
+            $this->addError('tick_amount', 'Số tick phải là số dương (+1, +2...) cho lý do phạt thủ công.');
+            return false;
+        }
+        if ($reason === self::REASON_MANUAL_EXEMPT && $tickAmount >= 0) {
+            $this->addError('tick_amount', 'Số tick phải là số âm (-1, -2...) cho lý do miễn giảm.');
             return false;
         }
 
@@ -594,6 +777,17 @@ class TickService extends LmsService
         if (empty($teacher) || !is_array($teacher)) {
             $this->addError('teacher_id', 'Giáo viên không tồn tại.');
             return false;
+        }
+
+        if ($classId !== null) {
+            $cls = $this->db->safeFetchOne(
+                'select id from db_lms_classes where id = ? and deleted_at is null limit 1',
+                array($classId)
+            );
+            if (empty($cls) || !is_array($cls)) {
+                $this->addError('class_id', 'Lớp học không tồn tại.');
+                return false;
+            }
         }
 
         $createdBy = null;
@@ -611,7 +805,7 @@ class TickService extends LmsService
 
         $data = array(
             'teacher_id'     => $teacherId,
-            'class_id'       => null,
+            'class_id'       => $classId,
             'session_id'     => null,
             'tick_amount'    => $tickAmount,
             'reason'         => $reason,
@@ -636,10 +830,12 @@ class TickService extends LmsService
     /**
      * Xoá 1 tick (admin).
      *
-     * @param int $violationId
+     * @param int  $violationId
+     * @param bool $allowAuto   Mặc định false (chặn tick tự sinh ở API mặc định);
+     *                          truyền true khi Admin chủ động bấm Xoá trên bảng Quản lý vi phạm.
      * @return bool
      */
-    public function deleteTick($violationId)
+    public function deleteTick($violationId, $allowAuto = false)
     {
         $this->clearErrors();
 
@@ -658,9 +854,8 @@ class TickService extends LmsService
             return false;
         }
 
-        // Tick tự sinh (cron) chỉ xoá khi admin chấp nhận rủi ro — chặn để giữ
-        // lịch sử đối soát với lương. Admin muốn huỷ phải dùng manual_exempt.
-        if ((int) $row['auto_generated'] === 1) {
+        // Tick tự sinh (cron) chỉ xoá khi admin chấp nhận rủi ro ($allowAuto = true).
+        if (!$allowAuto && (int) $row['auto_generated'] === 1) {
             $this->addError('id', 'Không thể xoá tick do cron tạo. Dùng miễn giảm thủ công (-1) để bù trừ.');
             return false;
         }
@@ -677,15 +872,16 @@ class TickService extends LmsService
     }
 
     /**
-     * Danh sách tick (admin): filter GV / lý do / tháng / nguồn + phân trang.
+     * Danh sách tick (admin): filter từ khoá (Mã lớp, GV) / GV / lý do / tháng / nguồn + phân trang.
      *
-     * @param array $filters array('teacher_id', 'reason', 'month' => 'Y-m', 'auto' => ''|'1'|'0')
+     * @param array $filters array('q', 'teacher_id', 'reason', 'month' => 'Y-m', 'auto' => ''|'1'|'0')
      * @param int   $page
      * @param int   $perPage
      * @return array array('items' => array, 'total' => int)
      */
     public function listViolations(array $filters = array(), $page = 1, $perPage = 20)
     {
+        $q         = isset($filters['q']) ? trim((string) $filters['q']) : '';
         $teacherId = isset($filters['teacher_id']) ? (int) $filters['teacher_id'] : 0;
         $reason    = isset($filters['reason']) ? (string) $filters['reason'] : '';
         $month     = isset($filters['month']) ? (string) $filters['month'] : '';
@@ -715,34 +911,326 @@ class TickService extends LmsService
         } elseif ($auto === '0') {
             $where .= ' and v.auto_generated = 0';
         }
+        if ($q !== '') {
+            $like = '%' . $q . '%';
+            $where .= ' and (c.class_code like ? or c.name like ? or t.teacher_code like ? or t.full_name like ? or v.note like ?)';
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+        }
 
-        $total = $this->db->safeFetchOne(
-            'select count(*) as c from db_lms_violations v where ' . $where,
+        $fromJoins = ' from db_lms_violations v'
+            . ' left join db_lms_teachers t on t.user_id = v.teacher_id'
+            . ' left join db_lms_sessions s on s.id = v.session_id'
+            . ' left join db_lms_classes c on c.id = coalesce(v.class_id, s.class_id)'
+            . ' left join db_lms_users creator on creator.id = v.created_by';
+
+        $totalRow = $this->db->safeFetchOne(
+            'select count(*) as c' . $fromJoins . ' where ' . $where,
             $params
         );
-        $total = isset($total['c']) ? (int) $total['c'] : 0;
+        $total = isset($totalRow['c']) ? (int) $totalRow['c'] : 0;
 
         $page    = max(1, (int) $page);
         $perPage = max(1, min(100, (int) $perPage));
         $offset  = ($page - 1) * $perPage;
 
+        $targetMonth = preg_match('/^\d{4}-\d{2}$/', $month) ? $month : date('Y-m');
+        $monthStart  = $targetMonth . '-01';
+        $monthEnd    = date('Y-m-t', strtotime($monthStart));
+
+        $selectParams = array_merge(array($monthStart, $monthEnd), $params);
+
         $items = $this->db->safeFetch(
             'select v.*, t.teacher_code, t.full_name as teacher_name,'
-            . ' c.class_code, c.name as class_name,'
+            . ' c.class_code, c.name as class_name, c.class_type,'
+            . ' (select group_concat(st.full_name order by st.full_name separator \', \')'
+            . '   from db_lms_class_students cs'
+            . '   join db_lms_students st on st.user_id = cs.student_id'
+            . '  where cs.class_id = c.id and cs.status = \'active\') as student_names,'
             . ' s.session_date, s.start_time, s.end_time,'
-            . ' creator.username as created_by_name'
-            . ' from db_lms_violations v'
-            . ' left join db_lms_teachers t on t.user_id = v.teacher_id'
-            . ' left join db_lms_classes c on c.id = v.class_id'
-            . ' left join db_lms_sessions s on s.id = v.session_id'
-            . ' left join db_lms_users creator on creator.id = v.created_by'
+            . ' creator.username as created_by_name,'
+            . ' (select coalesce(sum(v2.tick_amount), 0)'
+            . '  from db_lms_violations v2'
+            . '  where v2.teacher_id = v.teacher_id'
+            . '    and v2.violation_date between ? and ?) as month_ticks'
+            . $fromJoins
             . ' where ' . $where
             . ' order by v.violation_date desc, v.id desc'
             . ' limit ' . $offset . ', ' . $perPage,
-            $params
+            $selectParams
         );
 
         return array('items' => $items, 'total' => $total);
+    }
+
+    /**
+     * Lưu đồng loạt bảng quy chế miễn giảm + ngưỡng tick hạ phí dịch vụ (Mockup Miễn giảm.png).
+     *
+     * @param array $rows           Mảng các dòng array('class_range' => string, 'ticks_exempted' => int)
+     * @param int   $demoteTicks    Ngưỡng tick hạ phí dịch vụ (VD: 8)
+     * @param int   $actorId        ID admin thực hiện
+     * @return bool
+     */
+    public function saveRegulationThresholds(array $rows, $demoteTicks, $actorId = 0)
+    {
+        $this->clearErrors();
+
+        $demoteTicks = (int) $demoteTicks;
+        if ($demoteTicks < 1 || $demoteTicks > 100) {
+            $this->addError('ticks_to_demote_fee', 'Ngưỡng tick hạ phí dịch vụ phải từ 1 đến 100.');
+            return false;
+        }
+
+        $parsed = array();
+        foreach ($rows as $idx => $r) {
+            $rangeStr  = isset($r['class_range']) ? trim((string) $r['class_range']) : '';
+            $exemptRaw = isset($r['ticks_exempted']) ? trim((string) $r['ticks_exempted']) : '';
+            if ($rangeStr === '' && $exemptRaw === '') {
+                continue;
+            }
+            $range = self::parseClassRange($rangeStr);
+            if ($range === null) {
+                $this->addError('class_range_' . $idx, 'Khoảng số lớp "' . $rangeStr . '" không hợp lệ (VD hợp lệ: "Từ 6 trở lên", "5", "1-2").');
+                return false;
+            }
+            if (!is_numeric($exemptRaw) || (int) $exemptRaw < 0 || (int) $exemptRaw > 100) {
+                $this->addError('ticks_exempted_' . $idx, 'Số tick miễn giảm phải từ 0 đến 100.');
+                return false;
+            }
+            $parsed[] = array(
+                'min_classes'    => (int) $range['min'],
+                'max_classes'    => $range['max'],
+                'ticks_exempted' => (int) $exemptRaw,
+            );
+        }
+
+        if (empty($parsed)) {
+            $this->addError('rows', 'Vui lòng nhập ít nhất 1 dòng quy chế miễn giảm.');
+            return false;
+        }
+
+        $count = count($parsed);
+        for ($i = 0; $i < $count; $i++) {
+            $aMin = $parsed[$i]['min_classes'];
+            $aMax = $parsed[$i]['max_classes'] !== null ? $parsed[$i]['max_classes'] : 9999;
+            for ($j = $i + 1; $j < $count; $j++) {
+                $bMin = $parsed[$j]['min_classes'];
+                $bMax = $parsed[$j]['max_classes'] !== null ? $parsed[$j]['max_classes'] : 9999;
+                if ($aMin <= $bMax && $aMax >= $bMin) {
+                    $this->addError(
+                        'rows',
+                        'Khoảng lớp "' . self::formatClassRange($parsed[$i]['min_classes'], $parsed[$i]['max_classes'])
+                        . '" bị chồng lấn với "' . self::formatClassRange($parsed[$j]['min_classes'], $parsed[$j]['max_classes']) . '".'
+                    );
+                    return false;
+                }
+            }
+        }
+
+        $existing       = $this->listThresholds();
+        $feeAfterDemote = 30.00;
+        $effectiveFrom  = date('Y-m-01');
+        if (!empty($existing) && isset($existing[0]['fee_percentage_after_demote'])) {
+            $feeAfterDemote = (float) $existing[0]['fee_percentage_after_demote'];
+        }
+        if (!empty($existing) && !empty($existing[0]['effective_from'])) {
+            $effectiveFrom = (string) $existing[0]['effective_from'];
+        }
+        $ticksToWarn = min(5, $demoteTicks);
+
+        $this->db->beginTransaction();
+        try {
+            $okDel = $this->db->safeExec('delete from db_lms_violation_thresholds');
+            if (!$okDel) {
+                throw new \RuntimeException('Không thể làm mới bảng quy chế miễn giảm.');
+            }
+
+            foreach ($parsed as $item) {
+                $okIns = $this->db->insert('db_lms_violation_thresholds', array(
+                    'min_classes'                 => $item['min_classes'],
+                    'max_classes'                 => $item['max_classes'],
+                    'ticks_to_warn'               => $ticksToWarn,
+                    'ticks_to_demote_fee'         => $demoteTicks,
+                    'fee_percentage_after_demote' => $feeAfterDemote,
+                    'ticks_exempted'              => $item['ticks_exempted'],
+                    'effective_from'              => $effectiveFrom,
+                    'effective_to'                => null,
+                ));
+                if (!$okIns) {
+                    throw new \RuntimeException('Không thể lưu dòng quy chế miễn giảm.');
+                }
+            }
+
+            $this->audit('update_regulation_thresholds', 'violation_thresholds', null, $existing, array(
+                'ticks_to_demote_fee' => $demoteTicks,
+                'rows'                => $parsed,
+            ), 'admin');
+
+            $this->db->commit();
+            return true;
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            $this->addError('system', $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Lấy cấu hình quy chế quét thời hạn cho lớp 1-1 và lớp đông người (Mockup Miễn giảm.png).
+     * Lưu tại db_lms_class_rules (id = 2) dưới dạng JSON để không ảnh hưởng schema hiện hữu.
+     *
+     * @return array array('one_on_one' => array(...), 'group' => array(...))
+     */
+    public function getScanRules()
+    {
+        $defaults = array(
+            'one_on_one' => array(
+                'hw_deadline_enabled' => 1,
+                'hw_deadline_time'    => '12:00',
+                'hw_deadline_ticks'   => 1,
+                'hw_check_enabled'    => 1,
+                'hw_check_hours'      => 0,
+                'hw_check_ticks'      => 1,
+                'test_grace_enabled'  => 1,
+                'test_grace_hours'    => 72,
+                'test_grace_ticks'    => 1,
+            ),
+            'group' => array(
+                'hw_deadline_enabled' => 1,
+                'hw_deadline_time'    => '12:00',
+                'hw_deadline_ticks'   => 1,
+                'hw_check_enabled'    => 1,
+                'hw_check_hours'      => 24,
+                'hw_check_ticks'      => 1,
+                'test_grace_enabled'  => 1,
+                'test_grace_hours'    => 72,
+                'test_grace_ticks'    => 1,
+            ),
+        );
+
+        $row = $this->db->safeFetchOne(
+            'select content from db_lms_class_rules where id = 2 limit 1'
+        );
+        if (empty($row) || empty($row['content'])) {
+            return $defaults;
+        }
+
+        $decoded = json_decode((string) $row['content'], true);
+        if (!is_array($decoded)) {
+            return $defaults;
+        }
+
+        foreach (array('one_on_one', 'group') as $scope) {
+            if (isset($decoded[$scope]) && is_array($decoded[$scope])) {
+                $defaults[$scope] = array_merge($defaults[$scope], $decoded[$scope]);
+            }
+        }
+
+        return $defaults;
+    }
+
+    /**
+     * Lưu cấu hình quy chế quét thời hạn cho lớp 1-1 hoặc lớp đông người.
+     *
+     * @param string $scope   'one_on_one' | 'group'
+     * @param array  $in      Dữ liệu form
+     * @param int    $actorId ID admin
+     * @return bool
+     */
+    public function saveScanRules($scope, array $in, $actorId = 0)
+    {
+        $this->clearErrors();
+
+        $scope = trim((string) $scope);
+        if (!in_array($scope, array('one_on_one', 'group'), true)) {
+            $this->addError('scope', 'Loại lớp không hợp lệ.');
+            return false;
+        }
+
+        $current = $this->getScanRules();
+        $target  = $current[$scope];
+
+        $hwDeadlineEnabled = !empty($in['hw_deadline_enabled']) ? 1 : 0;
+        $hwDeadlineTime    = isset($in['hw_deadline_time']) ? trim((string) $in['hw_deadline_time']) : '12:00';
+        if (preg_match('/^(\d{2}:\d{2}):\d{2}$/', $hwDeadlineTime, $m)) {
+            $hwDeadlineTime = $m[1];
+        }
+        if (!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $hwDeadlineTime)) {
+            $this->addError('hw_deadline_time', 'Giờ hạn giao BTVN không hợp lệ (HH:MM).');
+            return false;
+        }
+        $hwDeadlineTicks = isset($in['hw_deadline_ticks']) ? (int) $in['hw_deadline_ticks'] : 1;
+        if ($hwDeadlineTicks < 0 || $hwDeadlineTicks > 20) {
+            $this->addError('hw_deadline_ticks', 'Số tick phạt hạn giao BTVN phải từ 0 đến 20.');
+            return false;
+        }
+
+        $hwCheckEnabled = !empty($in['hw_check_enabled']) ? 1 : 0;
+        $hwCheckHours   = isset($in['hw_check_hours']) ? (int) $in['hw_check_hours'] : ($scope === 'group' ? 24 : 0);
+        if ($hwCheckHours < 0 || $hwCheckHours > 720) {
+            $this->addError('hw_check_hours', 'Số giờ hạn check BTVN phải từ 0 đến 720.');
+            return false;
+        }
+        $hwCheckTicks = isset($in['hw_check_ticks']) ? (int) $in['hw_check_ticks'] : 1;
+        if ($hwCheckTicks < 0 || $hwCheckTicks > 20) {
+            $this->addError('hw_check_ticks', 'Số tick phạt hạn check BTVN phải từ 0 đến 20.');
+            return false;
+        }
+
+        $target['hw_deadline_enabled'] = $hwDeadlineEnabled;
+        $target['hw_deadline_time']    = $hwDeadlineTime;
+        $target['hw_deadline_ticks']   = $hwDeadlineTicks;
+        $target['hw_check_enabled']    = $hwCheckEnabled;
+        $target['hw_check_hours']      = $hwCheckHours;
+        $target['hw_check_ticks']      = $hwCheckTicks;
+
+        if ($scope === 'one_on_one' || isset($in['test_grace_hours'])) {
+            $testGraceEnabled = !empty($in['test_grace_enabled']) ? 1 : 0;
+            $testGraceHours   = isset($in['test_grace_hours']) ? (int) $in['test_grace_hours'] : 72;
+            if ($testGraceHours < 0 || $testGraceHours > 720) {
+                $this->addError('test_grace_hours', 'Số giờ hạn chấm test phải từ 0 đến 720.');
+                return false;
+            }
+            $testGraceTicks = isset($in['test_grace_ticks']) ? (int) $in['test_grace_ticks'] : 1;
+            if ($testGraceTicks < 0 || $testGraceTicks > 20) {
+                $this->addError('test_grace_ticks', 'Số tick phạt hạn chấm test phải từ 0 đến 20.');
+                return false;
+            }
+            $target['test_grace_enabled'] = $testGraceEnabled;
+            $target['test_grace_hours']   = $testGraceHours;
+            $target['test_grace_ticks']   = $testGraceTicks;
+        }
+
+        $before = $current;
+        $current[$scope] = $target;
+
+        $updatedBy = null;
+        if ((int) $actorId > 0) {
+            $adm = $this->db->safeFetchOne(
+                'select user_id from db_lms_admins where user_id = ? limit 1',
+                array((int) $actorId)
+            );
+            if (!empty($adm)) {
+                $updatedBy = (int) $actorId;
+            }
+        }
+
+        $json = json_encode($current, JSON_UNESCAPED_UNICODE);
+        $ok = $this->db->safeExec(
+            'insert into db_lms_class_rules (id, content, updated_by) values (2, ?, ?)'
+            . ' on duplicate key update content = values(content), updated_by = values(updated_by)',
+            array($json, $updatedBy)
+        );
+        if (!$ok) {
+            $this->addError('system', 'Không thể lưu quy chế quét thời hạn.');
+            return false;
+        }
+
+        $this->audit('update_scan_rules_' . $scope, 'class_rules', 2, $before, $current, 'admin');
+        return true;
     }
 
     /**

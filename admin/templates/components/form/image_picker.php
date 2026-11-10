@@ -30,19 +30,29 @@ $canDelete = $hasImage && $row_id !== '' && $table !== '';
              id="review_<?= e($id) ?>"
              alt="<?= e($label) ?>"
              class="w-100 h-100 object-fit-contain"
-             data-fallback="img/no-image.png">
+             data-fallback="img/no-image.png"
+             onerror="this.onerror=null;this.src='img/no-image.png';">
 
-        <button type="button"
-                class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1 js-file-picker-delete <?= $hasImage ? '' : 'd-none' ?>"
-                title="Xóa hình"
-                <?= $canDelete ? 'data-action="xoa-img"' : 'data-action="clear-image"' ?>
-                data-target="<?= e($id) ?>"
-                data-bang="<?= e($table) ?>"
-                data-cot="<?= e($id) ?>"
-                data-id-code="<?= e($row_id) ?>"
-                data-folder="">
-            <i class="fa-solid fa-trash"></i>
-        </button>
+        <div class="position-absolute top-0 end-0 m-1 d-flex gap-1">
+            <button type="button"
+                    class="btn btn-sm btn-light border shadow-sm js-copy-file-url <?= $hasImage ? '' : 'd-none' ?>"
+                    title="Sao chép đường dẫn hình ảnh"
+                    data-target="<?= e($id) ?>"
+                    data-preview="image">
+                <i class="fa-solid fa-copy"></i>
+            </button>
+            <button type="button"
+                    class="btn btn-sm btn-danger js-file-picker-delete <?= $hasImage ? '' : 'd-none' ?>"
+                    title="Xóa hình"
+                    <?= $canDelete ? 'data-action="xoa-img"' : 'data-action="clear-image"' ?>
+                    data-target="<?= e($id) ?>"
+                    data-bang="<?= e($table) ?>"
+                    data-cot="<?= e($id) ?>"
+                    data-id-code="<?= e($row_id) ?>"
+                    data-folder="">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
     </div>
 
     <input type="hidden"

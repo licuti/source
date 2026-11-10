@@ -158,7 +158,6 @@ $class1Id = $classSvc->createClass(array(
     'start_date'        => $today,
 ));
 $classSvc->enrollStudent($class1Id, $hvIds[0]);
-$classSvc->enrollStudent($class1Id, $hvIds[1]);
 
 $class2Id = $classSvc->createClass(array(
     'program_id'        => $programId,
@@ -171,10 +170,11 @@ $class2Id = $classSvc->createClass(array(
     'hw_deadline_time'  => '18:00',
     'start_date'        => $today,
 ));
+$classSvc->enrollStudent($class2Id, $hvIds[1]);
 $classSvc->enrollStudent($class2Id, $hvIds[2]);
 $classSvc->enrollStudent($class2Id, $hvIds[3]);
 
-echo "[OK] 2 lớp created (CLS1: 1-1 GV01+2HV, CLS2: group GV02+2HV).\n";
+echo "[OK] 2 lớp created (CLS1: 1-1 GV01+1HV, CLS2: group GV02+3HV).\n";
 
 // ===================== ADM-04: data demo sắp xếp lớp =====================
 // hv05 chuyển sang chờ xếp (tách khỏi lớp nhóm) để demo module Sắp xếp lớp.

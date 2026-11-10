@@ -25,22 +25,62 @@
 **Mục đích:** Trang chủ hiển thị tổng quan cho học sinh.
 
 ### Layout
-- Sidebar tương tự các trang khác
-- Main content hiển thị: có thể là danh sách các lớp đang học, buổi học sắp tới, thông báo
+- Sidebar: Tổng quan, Các khoá học, Lịch học, Nhận xét tháng, Nội quy lớp học.
+- Không hiển thị H1 “Tổng quan”; vào trang là 2 cột nội dung.
+- Cột trái (2/3):
+  - **Buổi học sắp tới**: card gần nhất còn hiệu lực — tên lớp, ngày, giờ, trạng thái “Sắp diễn ra”; bấm mở chi tiết buổi học.
+  - **Các khoá học của tôi**: lưới card 2 cột — avatar mặc định, tên lớp, các dòng lịch cố định (`Thứ 2 19:00 - 20:30`); bấm mở chi tiết lớp.
+- Cột phải (1/3): **Thông báo** — mỗi card gồm tiêu đề (tên lớp/ngữ cảnh), nội dung, nút **Xem chi tiết** mở link thông báo.
+- Không dùng bảng thống kê/table; dùng card/lưới giống mockup `Trang chủ Student.png`.
 
-> *Trang chủ Student hiển thị các thông tin tổng quan: lớp đang học, lịch sắp tới, trạng thái BTVN/test*
+### Nguồn dữ liệu
+- Lớp: `db_lms_class_students` + `db_lms_classes`; lịch từ `db_lms_cycle_schedules` đang hiệu lực.
+- Buổi sắp tới: `db_lms_sessions` có `status = upcoming` và thời gian >= hiện tại, thuộc lớp HV.
+- Thông báo: `db_lms_notifications` (`title`, `message`, `link_url`) — tối đa 3 thông báo mới nhất.
+- Học viên chỉ xem được buổi của lớp mình; guard chuyên đề chỉ chặn khi buổi gắn chuyên đề không thuộc lớp, không chặn buổi chưa gán chuyên đề.
+
+> *Trạng thái triển khai (03/11/2026): đã dựng lại Trang chủ theo mockup; đã test hv01–hv05.*
 
 ## 3. Các khóá học
 
 ### Layout
-- Sidebar
-- Main content có 2 phần:
+- Mockup tham chiếu: `Tai-lieu-phat-trien/student-ver2/Trang Các khóa học.png`.
+- Header gồm tiêu đề **“Các khoá học của tôi”** và link **“Xem tất cả >”** bên phải.
+- Lưới **2 cột** (`row g-3` + `col-lg-6`), dùng chung card `.lmnx-card` với trang Nhận xét tháng:
+  - Ảnh bìa minh hoạ theo môn: Toán / Tiếng Anh / Tiếng Việt; môn khác fallback icon sách.
+  - Tên lớp.
+  - Dòng phụ: **khối học viên** (VD: “Lớp 5”).
+  - Các dòng lịch có icon lịch: `Thứ 2 19:00 - 20:30`.
+  - Trạng thái BTVN in nghiêng, căn phải dưới card:
+    - **Giáo viên chưa giao BTVN** (đỏ)
+    - **Học sinh chưa nộp BTVN** (đỏ)
+    - **Học sinh đã nộp BTVN** (xanh)
+    - **Giáo viên đã chấm BTVN** (xanh)
+  - Bấm cả thẻ → trang chi tiết lớp (`lms-khoa-hoc/lop?class_id=...`).
+- Không dùng avatar icon, không hiện môn riêng dưới tên lớp, không nhóm theo môn, không thanh tiến độ, không hiện mã lớp/giáo viên trên thẻ.
 
-#### 3.1. Lộ trình (mở rộng theo danh mục)
-- Hiển thị dạng card grid, mỗi lớp là một section
-- VD: "Toán 1-1"
-- Bên trong nhóm theo **Danh mục** (VD: Math Problems, Math IQ, Giải đề thi tổng hợp các môn)
-- Mỗi danh mục có thể **mở rộng (^)** hoặc **thu gọn (v)**
+### Nguồn dữ liệu
+- Lớp: `db_lms_class_students` + `db_lms_course_cycles` + `db_lms_cycle_students` (cycle active).
+- Khối: `db_lms_students.grade`.
+- Lịch: `MonthlyReviewService::scheduleRowsMap()` — ưu tiên `db_lms_cycle_schedules` đang hiệu lực, fallback `db_lms_schedules`.
+- Trạng thái BTVN: lấy buổi gần nhất có `hw_content`, kết hợp `session_students` của HV.
+
+> *Trạng thái triển khai (06/11/2026 - student-ver2 & teacher-ver2):*
+> 1. **Chi tiết khóa học (`lms-khoa-hoc/lop?class_id=...`):**
+>    - Nhóm theo Danh mục môn học (Math Problems, Math IQ,...).
+>    - Card chuyên đề: Icon bên trái, Tên chuyên đề, Đã dạy: X/Y buổi, Điểm test: XX%, Điểm minitest: XX%.
+>    - Nút hành động: Hiển thị song song 2 nút **"Nộp test"** và **"Nộp mini test"** (sáng cam khi bài đã được Admin duyệt, xám disabled khi chưa duyệt) dẫn tới trang nộp test (`lms-khoa-hoc/chuyen-de`); hoặc huy hiệu xanh lá **"Đã hoàn thành"** khi cả 2 bài đều đã có điểm.
+>    - Accordion **Lesson Summary & BTVN**: Lưới 2 cột (`col-md-6`) các buổi học với các pill thông tin (Chuyên đề, BTVN, Hạn nộp, Nhận xét, Tệp đính kèm) + nút **Nộp BTVN** dẫn tới trang Chi tiết buổi học (`lms-lich-hoc/buoi?id=...`). Buổi tương lai hiển thị *Chưa diễn ra*.
+> 2. **Trang Chi tiết Nộp test (`lms-khoa-hoc/chuyen-de?class_id=...&topic_id=...`, đối chiếu `student-ver2/Trang Chi tiết Nộp test.png`):**
+>    - Tách riêng hoàn toàn khỏi trang nộp BTVN (không chứa danh sách buổi học).
+>    - Card 1: Tên chuyên đề, Đã dạy: X/Y buổi, Mục tiêu then chốt (nội dung tóm tắt chuyên đề).
+>    - Card 2 (Bài test chuyên đề) & Card 3 (Minitest chuyên đề): File đề bài PDF kèm link tải; vùng kéo thả/chọn tối đa 5 tệp bài làm; Hạn nộp đếm ngược / báo nộp trễ hạn; Nút cam **Nộp bài**. Khi Admin chưa duyệt hiển thị ghi chú đỏ: `*Admin không duyệt minitest thì học sinh không nộp bài được ở đây` và nút Nộp bài bị khóa. Phần Nhận xét của GV hiển thị điểm số, tỷ lệ % và file chấm đính kèm.
+> 3. **Trang Chi tiết buổi học — Nộp BTVN (`lms-lich-hoc/buoi?id=...`, đối chiếu `student-ver2/Trang Chi tiết buổi học.png`):**
+>    - Section 1 (`Lesson Summary & BTVN`): Card buổi học chỉ đọc cho học viên với 5 pill thông tin (`Chọn các chuyên đề *`, `BTVN`, `Hạn nộp`, `Nhận xét buổi học`, `Tệp đính kèm`), **không** hiển thị nút "Cập nhật" (nút "Cập nhật" chỉ dành cho giáo viên/admin).
+>    - Section 2 (`Bài tập về nhà`): Học viên tải tệp bài nộp (tối đa 5 tệp) kèm thông báo hạn nộp đếm ngược và nút cam **Nộp bài**. Phần **"Nhận xét của giáo viên"** chỉ hiển thị sau khi được **Admin duyệt Bài tập về nhà** (`db_lms_session_students.status = 'approved'` tại `lms-lop/buoi?id=...`).
+
+#### 3.1. Chi tiết lớp — Lộ trình (mở rộng theo danh mục)
+- Mỗi danh mục là một accordion, có thể **mở rộng (^)** hoặc **thu gọn (v)**.
 
 **Mỗi card chuyên đề:**
 - Tên chuyên đề (VD: "How to calculate", "Model Intermediate")
@@ -187,13 +227,17 @@ Hiển thị chi tiết của một buổi học cụ thể từ lịch:
 - Nút prev/next + "Tháng 7 / 2026"
 
 ### Calendar grid
-- Cột 1: **Khung giờ** (7-8, 8-9, ...)
+- Khung lưới dùng component chung `calendar_week` (như Admin "Lịch học" + Teacher "Quản lý lịch"); thẻ trong ô dùng `calendar_week_event`.
+- Cột 1: **Khung giờ** (7-8, 8-9, ...) — mỗi hàng cao 72px (`--lms-cal-hour-h`)
 - Cột 2-8: **Thứ 2 (20/07) → Chủ nhật (26/07)**
-- Mỗi ô có thể chứa:
+- Mỗi ô chứa thẻ buổi học:
   - Tên lớp (VD: "Toán 1-1", "Tiếng Anh 1-1", "Lớp online chung")
+  - Dòng khung giờ `HH:MM–HH:MM`
   - Link **Xem chi tiết** (gạch chân)
+- **Giờ bắt đầu lẻ → thẻ nằm so le trong hàng giờ** (`--lms-cal-top` = phút/60 × 72px: 17:30 lệch 36px) và **chiều cao thẻ = thời lượng** (`--lms-cal-height`: 17:30–19:00 cao 108px, tràn xuống ô 18:00). Hai thẻ chồng giờ nhau trong cùng cột ngày được chia lane (`lms_cal_lanes_for_rows`).
 
 ### Màu sắc ô lịch
+Thẻ mang màu đậm (`.lms-cal-event--*`), nền ô nhạt cùng tông (`.lms-cal-cell--*`):
 - **Đỏ đậm** = Buổi học sắp tới
 - **Hồng nhạt** = Buổi học đã hoàn thành
 - **Xám** = Buổi học đã nghỉ
@@ -203,39 +247,80 @@ Hiển thị chi tiết của một buổi học cụ thể từ lịch:
 - 🌸 **Buổi học đã hoàn thành**
 - ⬜ **Buổi học đã nghỉ**
 
-## 10. Nhận xét tháng (collapsed list)
+## 10. Nhận xét tháng — danh sách lớp
+
+- **Route:** `GET /lms/student/lms-nhan-xet-thang` (Source: `lms/app/student/sources/lms-nhan-xet-thang.php`, Template: `lms/app/student/templates/lms-nhan-xet-thang/hienthi_tpl.php`)
+- **Service:** `Lms\MonthlyReviewService::listForStudent()`
+- **Mockup:** `Tai-lieu-phat-trien/student-ver2/Trang Nhận xét tháng.png`, `Trang Nhận xét tháng-2.png`
 
 ### Layout
-- Sidebar
-- Tiêu đề: "Nhận xét tháng"
-- Danh sách các lớp đang học dạng card:
+- Sidebar: mục **Nhận xét tháng** đang active; tiêu đề trang **"Nhận xét tháng"** dùng `.lms-page-title`.
+- Lưới **2 cột** (`row g-3` + `col-lg-6`), mỗi lớp đang học là một card.
+- Mỗi card gồm:
+  - **Ảnh bìa môn học** bên trái (Toán / Tiếng Anh / Tiếng Việt); môn không khớp dùng icon sách trên nền cam nhạt.
+  - Tên lớp (đậm), khối của học viên (`db_lms_students.grade`, VD "Lớp 11").
+  - Các dòng lịch cố định kèm icon lịch: `Thứ 3 17:30 - 19:00`, `Thứ 5 17:30 - 19:00`.
+  - Nút mũi tên phải để thu gọn/mở rộng phần nhận xét.
+- Không dùng avatar tròn, không hiện số lượng nhận xét hay tên giáo viên trên card.
 
-**Mỗi card:**
-- Icon avatar (hình tốt nghiệp)
-- Tên lớp (VD: "Lớp online chung - Tiếng Việt", "Toán 1-1", "Tiếng Anh 1-1")
-- Tên lớp con: "Lớp 5 - Tiếng Việt", "Lớp 5 - Toán"
-- Thời gian: "Thứ 2 19:00 - 20:30" (có thể nhiều dòng: "Thứ 2 19:00 - 20:30", "Thứ 4 19:00 - 20:30")
-- Icon mũi tên xuống (collapse/expand)
+### Nguồn dữ liệu
+- Lớp: `db_lms_class_students` + `db_lms_classes` (enrolment và lớp đang active).
+- Khối: `db_lms_students.grade` theo học viên đang đăng nhập.
+- Lịch: `db_lms_cycle_schedules` của cycle active (ưu tiên), fallback `db_lms_schedules`.
+- Nhận xét: `db_lms_monthly_reviews` chỉ lấy bản ghi `published_at IS NOT NULL` của đúng học viên + lớp.
 
-## 11. Nhận xét tháng (expanded)
+## 11. Nhận xét tháng — nội dung từng lớp
 
-Khi mở rộng một card lớp:
-- Tên lớp + mũi tên lên
-- Dropdown chọn tháng: "Tháng 7 / 2026" + icon mũi tên xuống
-- Khung nội dung: "Hiện text do giáo viên nhập ....." (placeholder)
+- Mỗi card có **dropdown tháng riêng** (`Tháng 10 / 2026`, `Tháng 9 / 2026`, …) lấy từ chính các nhận xét đã công bố của lớp đó, mới nhất trước.
+- Khung nội dung bên dưới là text giáo viên nhập cho tháng đang chọn; đổi dropdown chỉ đổi nội dung của card đó (JS thuần, không reload).
+- Lớp chưa có nhận xét: hiển thị khung viền nét đứt "Giáo viên chưa nhập nhận xét tháng cho lớp này."
+- Học viên chưa thuộc lớp nào: card thông báo "Bạn chưa được xếp vào lớp nào…".
 
-> *GV nhập nội dung nhận xét cho từng tháng, HS chỉ xem*
+> *GV nhập nội dung nhận xét cho từng tháng tại `/lms/teacher/lms-nhan-xet-thang`; HS chỉ xem bản đã công bố.*
+
+> *Trạng thái triển khai (06/11/2026 - student-ver2 & teacher-ver2):*
+> 1. **Chi tiết khóa học (`lms-khoa-hoc/lop?class_id=...`):**
+>    - Nhóm theo Danh mục môn học (Math Problems, Math IQ,...).
+>    - Card chuyên đề: Icon bên trái, Tên chuyên đề, Đã dạy: X/Y buổi, Điểm test: XX%, Điểm minitest: XX%.
+>    - Nút hành động: Hiển thị song song 2 nút **"Nộp test"** và **"Nộp mini test"** (sáng cam khi bài đã được Admin duyệt, xám disabled khi chưa duyệt) dẫn tới trang nộp test (`lms-khoa-hoc/chuyen-de`); hoặc huy hiệu xanh lá **"Đã hoàn thành"** khi cả 2 bài đều đã có điểm.
+>    - Accordion **Lesson Summary & BTVN**: Lưới 2 cột (`col-md-6`) các buổi học với các pill thông tin (Chuyên đề, BTVN, Hạn nộp, Nhận xét, Tệp đính kèm) + nút **Nộp BTVN** dẫn tới trang Chi tiết buổi học (`lms-lich-hoc/buoi?id=...`). Buổi tương lai hiển thị *Chưa diễn ra*.
+> 2. **Trang Chi tiết Nộp test (`lms-khoa-hoc/chuyen-de?class_id=...&topic_id=...`, đối chiếu `student-ver2/Trang Chi tiết Nộp test.png`):**
+>    - Tách riêng hoàn toàn khỏi trang nộp BTVN (không chứa danh sách buổi học).
+>    - Card 1: Tên chuyên đề, Đã dạy: X/Y buổi, Mục tiêu then chốt (nội dung tóm tắt chuyên đề).
+>    - Card 2 (Bài test chuyên đề) & Card 3 (Minitest chuyên đề): File đề bài PDF kèm link tải; vùng kéo thả/chọn tối đa 5 tệp bài làm; Hạn nộp đếm ngược / báo nộp trễ hạn; Nút cam **Nộp bài**. Khi Admin chưa duyệt hiển thị ghi chú đỏ: `*Admin không duyệt minitest thì học sinh không nộp bài được ở đây` và nút Nộp bài bị khóa. Phần Nhận xét của GV hiển thị điểm số, tỷ lệ % và file chấm đính kèm.
+> 3. **Trang Chi tiết buổi học — Nộp BTVN (`lms-lich-hoc/buoi?id=...`, đối chiếu `student-ver2/Trang Chi tiết buổi học.png`):**
+>    - Section 1 (`Lesson Summary & BTVN`): Card buổi học chỉ đọc cho học viên với 5 pill thông tin (`Chọn các chuyên đề *`, `BTVN`, `Hạn nộp`, `Nhận xét buổi học`, `Tệp đính kèm`), **không** hiển thị nút "Cập nhật" (nút "Cập nhật" chỉ dành cho giáo viên/admin).
+>    - Section 2 (`Bài tập về nhà`): Học viên tải tệp bài nộp (tối đa 5 tệp) kèm thông báo hạn nộp đếm ngược và nút cam **Nộp bài**. Phần **"Nhận xét của giáo viên"** chỉ hiển thị sau khi được **Admin duyệt Bài tập về nhà** (`db_lms_session_students.status = 'approved'` tại `lms-lop/buoi?id=...`).
 
 ## 12. Nội quy lớp học
 
-### Layout
-- Sidebar
-- Tiêu đề: "Nội quy lớp học"
-- Khung hiển thị nội dung (read-only):
-  - Placeholder: "Hiện text nội quy admin nhập ....."
-  - Nội dung từ admin (rich text)
+- **Route:** `GET /lms/student/lms-noi-quy` (Source: `lms/app/student/sources/lms-noi-quy.php`, Template: `lms/app/student/templates/lms-noi-quy/hienthi_tpl.php`)
+- **Service:** `Lms\ClassRulesService::getRules()`, `ClassRulesService::isEmptyContent()`, `ClassRulesService::formatForDisplay()`
 
-> *Nội quy được admin nhập ở module "Quản lý nội quy" trong admin panel, hiển thị read-only cho học sinh*
+### Layout
+- Sidebar: mục **Nội quy lớp học** đang active.
+- Tiêu đề trang: **"Nội quy lớp học"** dùng `.lms-page-title`.
+- Khung nội dung: panel trắng `.lms-rules-panel` (không viền, không toolbar, không textarea) rộng theo vùng nội dung, tối thiểu 520px.
+  - Có dữ liệu: render HTML đã sanitize hoặc text thuần đã escape + `nl2br` qua `formatForDisplay()`.
+  - Chưa có dữ liệu: hiển thị `"Hiện text nội quy admin nhập ...."` trong `.lms-rules-empty`.
+
+### Nguồn dữ liệu
+- Bảng `db_lms_class_rules`, bản ghi `id = 1`; nội dung do Admin biên soạn tại `/lms/admin/lms-noi-quy`.
+- Học viên chỉ đọc, không có action POST trên trang này.
+
+> *Trạng thái triển khai (06/11/2026 - student-ver2 & teacher-ver2):*
+> 1. **Chi tiết khóa học (`lms-khoa-hoc/lop?class_id=...`):**
+>    - Nhóm theo Danh mục môn học (Math Problems, Math IQ,...).
+>    - Card chuyên đề: Icon bên trái, Tên chuyên đề, Đã dạy: X/Y buổi, Điểm test: XX%, Điểm minitest: XX%.
+>    - Nút hành động: Hiển thị song song 2 nút **"Nộp test"** và **"Nộp mini test"** (sáng cam khi bài đã được Admin duyệt, xám disabled khi chưa duyệt) dẫn tới trang nộp test (`lms-khoa-hoc/chuyen-de`); hoặc huy hiệu xanh lá **"Đã hoàn thành"** khi cả 2 bài đều đã có điểm.
+>    - Accordion **Lesson Summary & BTVN**: Lưới 2 cột (`col-md-6`) các buổi học với các pill thông tin (Chuyên đề, BTVN, Hạn nộp, Nhận xét, Tệp đính kèm) + nút **Nộp BTVN** dẫn tới trang Chi tiết buổi học (`lms-lich-hoc/buoi?id=...`). Buổi tương lai hiển thị *Chưa diễn ra*.
+> 2. **Trang Chi tiết Nộp test (`lms-khoa-hoc/chuyen-de?class_id=...&topic_id=...`, đối chiếu `student-ver2/Trang Chi tiết Nộp test.png`):**
+>    - Tách riêng hoàn toàn khỏi trang nộp BTVN (không chứa danh sách buổi học).
+>    - Card 1: Tên chuyên đề, Đã dạy: X/Y buổi, Mục tiêu then chốt (nội dung tóm tắt chuyên đề).
+>    - Card 2 (Bài test chuyên đề) & Card 3 (Minitest chuyên đề): File đề bài PDF kèm link tải; vùng kéo thả/chọn tối đa 5 tệp bài làm; Hạn nộp đếm ngược / báo nộp trễ hạn; Nút cam **Nộp bài**. Khi Admin chưa duyệt hiển thị ghi chú đỏ: `*Admin không duyệt minitest thì học sinh không nộp bài được ở đây` và nút Nộp bài bị khóa. Phần Nhận xét của GV hiển thị điểm số, tỷ lệ % và file chấm đính kèm.
+> 3. **Trang Chi tiết buổi học — Nộp BTVN (`lms-lich-hoc/buoi?id=...`, đối chiếu `student-ver2/Trang Chi tiết buổi học.png`):**
+>    - Section 1 (`Lesson Summary & BTVN`): Card buổi học chỉ đọc cho học viên với 5 pill thông tin (`Chọn các chuyên đề *`, `BTVN`, `Hạn nộp`, `Nhận xét buổi học`, `Tệp đính kèm`), **không** hiển thị nút "Cập nhật" (nút "Cập nhật" chỉ dành cho giáo viên/admin).
+>    - Section 2 (`Bài tập về nhà`): Học viên tải tệp bài nộp (tối đa 5 tệp) kèm thông báo hạn nộp đếm ngược và nút cam **Nộp bài**. Phần **"Nhận xét của giáo viên"** chỉ hiển thị sau khi được **Admin duyệt Bài tập về nhà** (`db_lms_session_students.status = 'approved'` tại `lms-lop/buoi?id=...`).
 
 ## 13. Tương tác & quy tắc chung
 

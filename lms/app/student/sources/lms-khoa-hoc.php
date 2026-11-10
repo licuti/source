@@ -104,31 +104,12 @@ function lmkh_hw_redirect($session)
 {
     global $alias;
 
-    if (!is_array($session)) {
+    if (!is_array($session) || empty($session['id'])) {
         header('Location: ' . lms_url($alias));
         return;
     }
     $sessionId = (int) $session['id'];
-
-    if (isset($_POST['back']) && (string) $_POST['back'] === 'buoi') {
-        header('Location: ' . lms_url('lms-lich-hoc', 'buoi', array('id' => $sessionId)));
-        return;
-    }
-
-    $classId = (int) $session['class_id'];
-    $topicId = 0;
-    $topicIds = isset($session['topic_ids']) ? $session['topic_ids'] : array();
-    if (!empty($topicIds)) {
-        $topicId = (int) $topicIds[0];
-    } elseif (!empty($session['topic_id'])) {
-        $topicId = (int) $session['topic_id'];
-    }
-
-    if ($topicId > 0) {
-        header('Location: ' . lms_url($alias, 'chuyen-de', array('class_id' => $classId, 'topic_id' => $topicId)));
-        return;
-    }
-    header('Location: ' . lms_url($alias, 'lop', array('class_id' => $classId)));
+    header('Location: ' . lms_url('lms-lich-hoc', 'buoi', array('id' => $sessionId)));
 }
 
 /**
@@ -165,33 +146,70 @@ function lmkh_prepare_sessions(\Lms\StudentCourseService $svc, array &$sessions)
 
 function lmkh_list()
 {
-    global $title, $template, $groups, $studentId, $d;
+    global $title, $template, $classes, $studentId, $d, $hidePageTitle;
 
     $svc = new \Lms\StudentCourseService($d);
     $classes = $svc->listMyClasses($studentId);
 
-    // Group theo môn (danh mục, §3.1)
-    $groups = array();
-    foreach ($classes as $c) {
-        $subject = (string) $c['subject_name'];
-        if ($subject === '') {
-            $subject = 'Khác';
-        }
-        if (!isset($groups[$subject])) {
-            $groups[$subject] = array();
-        }
-        $groups[$subject][] = $c;
+    $classIds = array();
+    foreach ($classes as $class) {
+        $classIds[] = (int) $class['id'];
+    }
+    $scheduleMap = array();
+    if ($classIds !== array()) {
+        $reviewSvc = new \Lms\MonthlyReviewService($d);
+        $scheduleMap = $reviewSvc->scheduleRowsMap($classIds);
     }
 
-    $title    = 'Các khoá học';
-    $template = 'lms-khoa-hoc/hienthi';
+    $studentRow = $d->safeFetchOne(
+        'select grade from db_lms_students where user_id = ? limit 1',
+        array($studentId)
+    );
+    $studentGrade = isset($studentRow['grade']) ? trim((string) $studentRow['grade']) : '';
+
+    foreach ($classes as $i => $class) {
+        $classId = (int) $class['id'];
+        $cycleId = isset($class['cycle_id']) ? (int) $class['cycle_id'] : 0;
+
+        $classes[$i]['schedule_rows'] = isset($scheduleMap[$classId]) ? $scheduleMap[$classId] : array();
+        $classes[$i]['grade'] = $studentGrade;
+
+        $hwRow = $d->safeFetchOne(
+            'select s.session_date, s.hw_content, ss.hw_submitted_at, ss.hw_graded_at'
+            . ' from db_lms_sessions s'
+            . ' left join db_lms_session_students ss'
+            . '   on ss.session_id = s.id and ss.student_id = ?'
+            . ' where s.class_id = ? and (s.cycle_id = ? or ? = 0)'
+            . '   and s.hw_content is not null and s.hw_content <> \'\''
+            . ' order by s.session_date desc, s.start_time desc limit 1',
+            array($studentId, $classId, $cycleId, $cycleId)
+        );
+
+        if (empty($hwRow)) {
+            $classes[$i]['hw_label'] = 'Giáo viên chưa giao BTVN';
+            $classes[$i]['hw_class'] = 'text-danger';
+        } elseif (!empty($hwRow['hw_graded_at'])) {
+            $classes[$i]['hw_label'] = 'Giáo viên đã chấm BTVN';
+            $classes[$i]['hw_class'] = 'text-success';
+        } elseif (!empty($hwRow['hw_submitted_at'])) {
+            $classes[$i]['hw_label'] = 'Học sinh đã nộp BTVN';
+            $classes[$i]['hw_class'] = 'text-success';
+        } else {
+            $classes[$i]['hw_label'] = 'Học sinh chưa nộp BTVN';
+            $classes[$i]['hw_class'] = 'text-danger';
+        }
+    }
+
+    $title         = 'Các khoá học của tôi';
+    $template      = 'lms-khoa-hoc/hienthi';
+    $hidePageTitle = true;
 }
 
 // ===================== Action: lop (chi tiết lớp + chuyên đề) =====================
 
 function lmkh_class()
 {
-    global $title, $template, $class, $topics, $tests, $studentId, $d, $alias;
+    global $title, $template, $class, $topics, $topicGroups, $sessions, $tests, $studentId, $d, $alias, $hidePageTitle;
 
     $classId = isset($_GET['class_id']) ? (int) $_GET['class_id'] : 0;
 
@@ -207,34 +225,29 @@ function lmkh_class()
     $topics = $data['topics'];
     $tests = $data['tests'];
 
-    // Điểm test/minitest gần nhất theo topic (cho badge §5)
-    $scoreMap = array();
-    foreach ($tests as $t) {
-        if (empty($t['submitted_at']) || $t['score_y_percent'] === null) {
-            continue;
-        }
-        $tid = (int) $t['topic_id'];
-        $type = (string) $t['test_type'];
-        $score = (float) $t['score_y_percent'];
-        if (!isset($scoreMap[$tid][$type]) || $score > $scoreMap[$tid][$type]) {
-            $scoreMap[$tid][$type] = $score;
-        }
-    }
-    foreach ($topics as $i => $topic) {
-        $tid = (int) $topic['id'];
-        $topics[$i]['best_test_score'] = isset($scoreMap[$tid]['test']) ? $scoreMap[$tid]['test'] : null;
-        $topics[$i]['best_minitest_score'] = isset($scoreMap[$tid]['minitest']) ? $scoreMap[$tid]['minitest'] : null;
+    // Nhóm chuyên đề theo Danh mục môn học (Math Problems, Math IQ, ...)
+    $topicGroups = array();
+    foreach ($topics as $topic) {
+        $groupName = isset($topic['subject_name']) && trim((string) $topic['subject_name']) !== ''
+            ? (string) $topic['subject_name']
+            : 'Chuyên đề';
+        $topicGroups[$groupName][] = $topic;
     }
 
-    $title    = 'Lớp ' . (string) $class['name'];
+    // Danh sách buổi học kèm nội dung BTVN & nhận xét
+    $sessions = $svc->listSessionsForClass($classId, $studentId);
+    lmkh_prepare_sessions($svc, $sessions);
+
+    $title    = (string) $class['name'];
     $template = 'lms-khoa-hoc/lop';
+    $hidePageTitle = true;
 }
 
 // ===================== Action: chuyen-de (buổi học + nộp bài) =====================
 
 function lmkh_topic()
 {
-    global $title, $template, $class, $topic, $sessions, $tests, $studentId, $d, $alias;
+    global $title, $template, $class, $topic, $tests, $studentId, $d, $alias, $hidePageTitle;
 
     $classId = isset($_GET['class_id']) ? (int) $_GET['class_id'] : 0;
     $topicId = isset($_GET['topic_id']) ? (int) $_GET['topic_id'] : 0;
@@ -262,9 +275,6 @@ function lmkh_topic()
         exit;
     }
 
-    $sessions = $svc->listSessionsForTopic($classId, $topicId, $studentId);
-    lmkh_prepare_sessions($svc, $sessions);
-
     $tests = $svc->listTestsForTopic($classId, $topicId, $studentId);
     foreach ($tests as $i => $t) {
         $cd = $svc->deadlineCountdown(isset($t['deadline']) ? (string) $t['deadline'] : null);
@@ -278,8 +288,9 @@ function lmkh_topic()
         );
     }
 
-    $title    = 'Chuyên đề: ' . (string) $topic['name'];
-    $template = 'lms-khoa-hoc/chuyen-de';
+    $title         = 'Chuyên đề: ' . (string) $topic['name'];
+    $template      = 'lms-khoa-hoc/chuyen-de';
+    $hidePageTitle = true;
 }
 
 // ===================== Action: nop-btvn (POST) =====================

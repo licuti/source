@@ -18,8 +18,8 @@
 ?>
 
 
-<?php if ($row['id_code'] == 278): ?>
-    <?php include _source."tin-tuc-tuyen-dung.php"; ?>
+<?php if ($row['id_code'] == 195): ?>
+    <?php include _source."tin-tuc-thu-vien.php"; ?>
 <?php else: ?>
     <?php include _source."tin-tuc-simple.php"; ?>
 <?php endif ?>

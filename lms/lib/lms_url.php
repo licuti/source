@@ -43,7 +43,9 @@ if (!function_exists('lms_asset_url')) {
     function lms_asset_url($relative)
     {
         $relative = ltrim((string) $relative, '/');
-        return lms_base_url() . '/public/' . $relative;
+        $fullPath = dirname(__DIR__) . '/public/' . $relative;
+        $ver = file_exists($fullPath) ? filemtime($fullPath) : 1;
+        return lms_base_url() . '/public/' . $relative . '?v=' . $ver;
     }
 }
 
@@ -58,6 +60,29 @@ if (!function_exists('lms_upload_url')) {
     {
         $relative = ltrim((string) $relative, '/');
         return lms_asset_url('uploads/' . $relative);
+    }
+}
+
+if (!function_exists('lms_subject_cover_url')) {
+    /**
+     * URL ảnh bìa minh hoạ cho môn học trong các card Student/Teacher.
+     *
+     * @param string $subjectName
+     * @return string '' nếu không có ảnh phù hợp
+     */
+    function lms_subject_cover_url($subjectName)
+    {
+        $name = mb_strtolower((string) $subjectName, 'UTF-8');
+        if (preg_match('/văn|việt|vietnamese/u', $name)) {
+            return lms_asset_url('images/monthly-review/vietnamese.png');
+        }
+        if (preg_match('/anh|english|reading|ielts|ket|pet/u', $name)) {
+            return lms_asset_url('images/monthly-review/english.png');
+        }
+        if (preg_match('/toán|math/u', $name)) {
+            return lms_asset_url('images/monthly-review/math.png');
+        }
+        return '';
     }
 }
 

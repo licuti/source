@@ -174,7 +174,7 @@ if (empty($current_menu_items_json)) {
 <template id="menu-item-template">
     <li class="dd-item">
         <div class="dd-item-bar">
-            <div class="dd-tree-btns dd-nodrag">
+            <div class="dd-tree-btns dd-nodrag d-none">
                 <button type="button" class="dd-expand hidden" title="Mở">+</button>
                 <button type="button" class="dd-collapse hidden" title="Thu">−</button>
             </div>

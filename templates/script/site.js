@@ -158,12 +158,16 @@ var teaching_staff_slide = new Swiper(".teaching-staff-slide", {
     speed: 1000,
     breakpoints: {
         320: {
-            spaceBetween: 8,
-            slidesPerView: 2,
+            spaceBetween: 16,
+            slidesPerView: 1.2,
+            centerInsufficientSlides: true,
+            centeredSlides: true,
+            centeredSlidesBounds: true,
+            initialSlide: 1,
         },
         768: {
             spaceBetween: 16,
-            slidesPerView: 3,
+            slidesPerView: 2,
         },
         1024: {
             spaceBetween: 24,
@@ -188,12 +192,16 @@ var review_slide = new Swiper(".review-slide", {
     },
     breakpoints: {
         320: {
-            slidesPerView: 2,
-            spaceBetween: 8,
+            slidesPerView: 1,
+            spaceBetween: 40,
+            centerInsufficientSlides: true,
+            centeredSlides: true,
+            centeredSlidesBounds: true,
+            initialSlide: 1,
         },
         768: {
             slidesPerView: 2,
-            spaceBetween: 16,
+            spaceBetween: 40,
         },
         1024: {
             slidesPerView: 2,
@@ -202,18 +210,58 @@ var review_slide = new Swiper(".review-slide", {
     },
 });
 
-var product = new Swiper(".product-slide", {
+var course_slide = new Swiper(".course-slide", {
     // loop: true,
     autoplay: {
-        delay: 3000,
+        delay: 6000,
         disableOnInteraction: false,
     },
     speed: 1000,
     navigation: {
-        nextEl: ".product-next",
-        prevEl: ".product-prev",
+        nextEl: ".course-next",
+        prevEl: ".course-prev",
     },
-    
+    pagination: {
+        el: ".pagination-course",
+        clickable: true,
+    },
+    breakpoints: {
+        320: {
+            slidesPerView: 2,
+            spaceBetween: 16,
+        },
+        768: {
+            slidesPerView: 3,
+            spaceBetween: 20,
+        },
+        1024: {
+            slidesPerView: 2,
+            spaceBetween: 16,
+            grid: {
+                fill: 'row',
+                rows: 2
+            },
+        },
+    },
+});
+
+
+
+var program_slide = new Swiper(".program-slide", {
+    loop: true,
+    autoplay: {
+        delay: 6000,
+        disableOnInteraction: false,
+    },
+    speed: 1000,
+    navigation: {
+        nextEl: ".program-next",
+        prevEl: ".program-prev",
+    },
+    pagination: {
+        el: ".program-pagination",
+        clickable: true,
+    },
     breakpoints: {
         320: {
             slidesPerView: 2,
@@ -225,15 +273,141 @@ var product = new Swiper(".product-slide", {
         },
         1024: {
             slidesPerView: 5,
-            spaceBetween: 24,
-            grid: {
-                fill: 'row',
-                rows: 2
-            },
+            spaceBetween: 20,
         },
     },
 });
 
+
+
+var honor_roll_slide = new Swiper(".honor-roll-slide", {
+    autoplay: {
+        delay: 6000,
+        disableOnInteraction: false,
+    },
+    speed: 1000,
+    loop: true,
+    effect: 'coverflow',
+    grabCursor: true,
+    centeredSlides: true,
+    coverflowEffect: {
+        rotate: 0,
+        stretch: -10,
+        depth: 50,
+        modifier: 2,
+        slideShadows: false,
+    },
+    breakpoints: {
+        320: {
+            slidesPerView: 2,
+            spaceBetween: 8,
+        },
+        768: {
+            slidesPerView: 2,
+            spaceBetween: 16,
+        },
+        1024: {
+            slidesPerView: 4,
+            spaceBetween: 24,
+        },
+    },
+    navigation: {
+        nextEl: ".honor-roll-next",
+        prevEl: ".honor-roll-prev",
+    },
+});
+
+
+var teachers_slide = new Swiper(".teachers-slide", {
+    loop: true,
+    autoplay: {
+        delay: 6000,
+        disableOnInteraction: false,
+    },
+    speed: 1000,
+    navigation: {
+        nextEl: ".teachers-next",
+        prevEl: ".teachers-prev",
+    },
+    pagination: {
+        el: ".teachers-pagination",
+        clickable: true,
+    },
+    breakpoints: {
+        320: {
+            slidesPerView: 1.2,
+            spaceBetween: 16,
+            centerInsufficientSlides: true,
+            centeredSlides: true,
+            centeredSlidesBounds: true,
+            initialSlide: 1,
+        },
+        768: {
+            slidesPerView: 3,
+            spaceBetween: 20,
+        },
+        1024: {
+            slidesPerView: 4,
+            spaceBetween: 25,
+        },
+    },
+});
+
+
+var certificate_slide = new Swiper(".certificate-slide", {
+    loop: true,
+    autoplay: {
+        delay: 6000,
+        disableOnInteraction: false,
+    },
+    speed: 1000,
+    pagination: {
+        el: ".certificate-pagination",
+        clickable: true,
+    },
+    breakpoints: {
+        320: {
+            slidesPerView: 2,
+            spaceBetween: 16,
+        },
+        768: {
+            slidesPerView: 3,
+            spaceBetween: 16,
+        },
+        1024: {
+            slidesPerView: 3,
+            spaceBetween: 16,
+        },
+    },
+});
+
+
+var teacher_course_slide = new Swiper(".teacher-course-slide", {
+    loop: true,
+    autoplay: {
+        delay: 6000,
+        disableOnInteraction: false,
+    },
+    speed: 1000,
+    breakpoints: {
+        320: {
+            slidesPerView: 2,
+            spaceBetween: 16,
+        },
+        768: {
+            slidesPerView: 3,
+            spaceBetween: 16,
+        },
+        1024: {
+            slidesPerView: 3,
+            spaceBetween: 24,
+        },
+    },
+});
+
+
+
+// =================================================================================
 const index_slideProduct = document.querySelectorAll(".slideProduct");
 for (i = 0; i < index_slideProduct.length; i++) {
     index_slideProduct[i].classList.add("slideProduct-" + i);
@@ -302,6 +476,7 @@ var related_news = new Swiper(".related-news", {
         delay: 6000,
         disableOnInteraction: false,
     },
+    speed: 1000,
     pagination: {
         el: ".related-news .swiper-pagination",
         clickable: true,
@@ -320,8 +495,8 @@ var related_news = new Swiper(".related-news", {
             spaceBetween: 16,
         },
         1024: {
-            slidesPerView: 4,
-            spaceBetween: 24,
+            slidesPerView: 3,
+            spaceBetween: 16,
         },
     },
 });

@@ -14,18 +14,14 @@
 
 <div class="block page single-post-page">
     <div class="container-fluid">
-        <div class="row g-3 content-post <?= empty($is_sidebar) ? 'justify-content-center' : '' ?>">
+        <div class="row g-4 content-post <?= empty($is_sidebar) ? 'justify-content-center' : '' ?>">
             <div class="col-lg-9">
-                <div class="box-title">
-                    <h2 class="title-single"><?= $row['ten'] ?></h2>
-                    <div class="meta-post">
-                        <div class="meta-post-item"><i class="fa-solid fa-eye"></i> <?= $d->getTxt(152) ?>: <?= $row['view'] ?></div>
-                        <div class="meta-post-item"><i class="fa-regular fa-calendar-days"></i> <?= $d->getTxt(118) ?>: <?= date('d-m-Y',$row['ngay_dang']) ?></div>
-                        <div class="meta-post-item"><i class="fa-solid fa-user"></i> <?= $d->getTxt(153) ?>: <?= $author['ho_ten'] ?></div>
-                    </div>
+                <h2 class="title-single text-gradient d-inline-block"><?= $row['ten'] ?></h2>
+                <div class="meta-post mb-3">
+                    <div class="meta-post-item"><i class="fa-solid fa-eye"></i> <?= $d->getTxt(152) ?>: <?= $row['view'] ?></div>
+                    <div class="meta-post-item"><i class="fa-regular fa-calendar-days"></i> <?= $d->getTxt(118) ?>: <?= date('d-m-Y',$row['ngay_dang']) ?></div>
+                    <div class="meta-post-item"><i class="fa-solid fa-user"></i> <?= $d->getTxt(153) ?>: <?= $author['ho_ten'] ?></div>
                 </div>
-            </div>
-            <div class="col-lg-9">
                 <?php if ($row['mo_ta']): ?>
                     <div class="single-post-description"><?= $row['mo_ta'] ?></div>
                 <?php endif ?>
@@ -61,31 +57,35 @@
                         <?php include 'module/share.php'; ?>
                     </div>
                 <?php endif ?>
-            </div>
-            <?php if ($is_sidebar): ?>
-                <div class="col-lg-3">
-                    <?php include 'module/sidebar.php'; ?>
-                </div>
-            <?php endif ?>
-        </div>
 
-        <?php if ($related): ?>
-            <div class="row related-post mt-4">
-                <div class="col-12">
-                    <h2 class="main-title mb-3"><?= $d->getTxt(120) ?></h2>
-                    <div class="wrapper-slide">
-                        <div class="swiper related-news">
-                            <div class="swiper-wrapper">
-                                <?php foreach ($related as $key => $value): ?>
-                                    <div class="swiper-slide">
-                                        <?php include _source."module/card-post.php"; ?>
+                <?php if ($related): ?>
+                    <div class="row related-post mt-4">
+                        <div class="col-12">
+                            <h2 class="heading-title mb-3 text-gradient d-inline-block text-uppercase"><?= $d->getTxt(120) ?></h2>
+                            <div class="wrapper-slide">
+                                <div class="swiper related-news p-2">
+                                    <div class="swiper-wrapper">
+                                        <?php foreach ($related as $key => $value): ?>
+                                            <div class="swiper-slide">
+                                                <?php include _source."module/card-post.php"; ?>
+                                            </div>
+                                        <?php endforeach ?>
                                     </div>
-                                <?php endforeach ?>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                <?php endif ?>
+
+
             </div>
-        <?php endif ?>
+            <?php if ($is_sidebar): ?>
+                <div class="col-lg-3 d-flex flex-column gap-4">
+                    <?php include _source."/includes/block-course-list.php"; ?>
+                    <?php include _source."/includes/block-roadmap-consultation.php"; ?>
+                    <?php include _source."/includes/block-featured-post.php"; ?>
+                </div>
+            <?php endif ?>
+        </div>
     </div>
 </div>

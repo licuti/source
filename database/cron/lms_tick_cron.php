@@ -88,6 +88,9 @@ foreach ($stats as $step) {
     if (isset($step['ticked'])) {
         $rowsAffected += (int) $step['ticked'];
     }
+    if (isset($step['sent'])) {
+        $rowsAffected += (int) $step['sent'];
+    }
 }
 
 if ($runId !== null) {

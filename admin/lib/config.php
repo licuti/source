@@ -77,7 +77,13 @@
 
     // Base URL tuyệt đối, lấy từ .env (APP_URL). Không tự suy luận để tránh sai
     // khi deploy ở subfolder (vd /source/) — HTTP_HOST không chứa path con.
-    $__baseUrl = rtrim($__env['APP_URL'], '/');
+        if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+        $__fwdProto = !empty($_SERVER['HTTP_X_FORWARDED_PROTO']) ? $_SERVER['HTTP_X_FORWARDED_PROTO'] : 'https';
+        $__basePath = !empty($__env['APP_URL']) ? (parse_url($__env['APP_URL'], PHP_URL_PATH) ?: '') : '';
+        $__baseUrl  = $__fwdProto . '://' . $_SERVER['HTTP_X_FORWARDED_HOST'] . rtrim($__basePath, '/');
+    } else {
+        $__baseUrl = rtrim($__env['APP_URL'], '/');
+    }
 
     define('URLPATH',  $__baseUrl . '/');
     define('urladmin', $__baseUrl . '/admin/');

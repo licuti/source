@@ -1,36 +1,28 @@
 <?php
 /**
- * Student — Nội quy lớp học (view, mockup §12).
- * Data do source chuẩn bị: $rules (mảng nội quy; Phase 3 admin mới nhập → placeholder).
+ * Student LMS — Nội quy lớp học: khung nội dung chỉ đọc (STU-12).
+ *
+ * Đối chiếu chuẩn mockup:
+ *  - Tai-lieu-phat-trien/student/Trang Nội quy lớp học.png
+ *  - Tai-lieu-phat-trien/student/Tài liệu student.md (§12. Nội quy lớp học)
+ *
+ * Nội dung do Admin nhập tại /lms/admin/lms-noi-quy; học sinh chỉ đọc.
+ * Dùng ClassRulesService::formatForDisplay() để escape văn bản thuần hoặc
+ * sanitize HTML trước khi render.
+ *
+ * Data từ source lms-noi-quy.php: $rules.
  */
+
+$rawContent = isset($rules['content']) ? (string) $rules['content'] : '';
+$hasContent = !\Lms\ClassRulesService::isEmptyContent($rawContent);
 ?>
-<div class="lms-card">
-    <div class="lms-card-header">
-        <i class="fa-solid fa-scroll me-1"></i> Nội quy lớp học
-    </div>
-    <div class="lms-card-body">
-        <?php if (empty($rules)): ?>
-            <div class="lmnq-placeholder text-center py-4">
-                <i class="fa-solid fa-scroll" style="font-size:2.4rem;color:#F26B2A;"></i>
-                <p class="mt-3 mb-1"><strong>Nội quy đang được cập nhật</strong></p>
-                <p class="text-muted mb-0" style="font-size:.9rem;">
-                    Trung tâm đang soạn nội quy lớp học. Nội quy sẽ được hiển thị tại đây
-                    ngay khi ban quản trị hoàn tất.
-                </p>
-            </div>
-        <?php else: ?>
-            <ol class="lmnq-list">
-                <?php foreach ($rules as $rule): ?>
-                    <li>
-                        <?php if (!empty($rule['title'])): ?>
-                            <strong><?= e((string) $rule['title']) ?></strong>
-                        <?php endif; ?>
-                        <?php if (!empty($rule['content'])): ?>
-                            <div><?= nl2br(e((string) $rule['content'])) ?></div>
-                        <?php endif; ?>
-                    </li>
-                <?php endforeach; ?>
-            </ol>
-        <?php endif; ?>
-    </div>
+
+<div class="lms-rules-panel">
+    <?php if ($hasContent): ?>
+        <div class="lms-rich-content lms-rules-content">
+            <?= \Lms\ClassRulesService::formatForDisplay($rawContent) ?>
+        </div>
+    <?php else: ?>
+        <p class="lms-rules-empty mb-0">Hiện text nội quy admin nhập ....</p>
+    <?php endif; ?>
 </div>

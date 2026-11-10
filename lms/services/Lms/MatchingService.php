@@ -33,7 +33,7 @@ class MatchingService extends LmsService
     const SCORE_LOCATION = 15;
     const SCORE_CAPACITY = 15;
 
-    /** Điểm thưởng theo hạng GV (mockup: Xanh > Vàng > Đồng). */
+    /** Điểm thưởng theo hạng GV (mockup: Xanh > Vàng > Đỏ). */
     const RANK_SCORES = array(
         'green'  => 20,
         'gold'   => 12,
@@ -68,7 +68,7 @@ class MatchingService extends LmsService
      * Danh sách học viên chờ xếp lớp: status pending_arrange VÀ chưa thuộc
      * lớp active nào.
      *
-     * @param array $filters q, subject_id, district
+     * @param array $filters q, subject_id, district, gender, learning_type, day, time_from, time_to, sort
      * @param int   $page
      * @param int   $perPage
      * @return array array('items' => array, 'total' => int)
@@ -91,14 +91,27 @@ class MatchingService extends LmsService
 
         $subjectId = isset($filters['subject_id']) ? (int) $filters['subject_id'] : 0;
         if ($subjectId > 0) {
-            $where[] = 's.subject_id = ?';
+            $where[] = '(s.subject_id = ? or s.subject_ids like ?)';
             $params[] = $subjectId;
+            $params[] = '%' . $subjectId . '%';
         }
 
         $district = isset($filters['district']) ? (string) $filters['district'] : '';
         if ($district !== '') {
-            $where[] = 's.district = ?';
+            $where[] = '(s.district = ? or find_in_set(?, replace(s.district, ", ", ",")) > 0)';
             $params[] = $district;
+            $params[] = $district;
+        }
+
+        $gender = isset($filters['gender']) ? trim((string) $filters['gender']) : '';
+        if ($gender !== '' && in_array($gender, array('male', 'female', 'other'), true)) {
+            $where[] = 's.gender = ?';
+            $params[] = $gender;
+        }
+        $learningType = isset($filters['learning_type']) ? trim((string) $filters['learning_type']) : '';
+        if ($learningType !== '' && in_array($learningType, array('online', 'offline'), true)) {
+            $where[] = 's.learning_type = ?';
+            $params[] = $learningType;
         }
 
         // Chưa thuộc lớp active nào (tránh xếp trùng)
@@ -116,15 +129,19 @@ class MatchingService extends LmsService
         );
         $total = isset($countRow['c']) ? (int) $countRow['c'] : 0;
 
+        $sort = isset($filters['sort']) ? (string) $filters['sort'] : 'priority';
+        $orderSql = $sort === 'recent'
+            ? 's.created_at desc, s.user_id asc'
+            : 's.priority_number desc, s.user_id asc';
         $items = $this->db->safeFetch(
-            'select s.user_id, s.student_code, s.full_name, s.grade, s.district, s.ward,'
+            'select s.user_id, s.student_code, s.full_name, s.grade, s.gender, s.district, s.ward,'
             . ' s.learning_type, s.priority_number, s.subject_id, subj.name as subject_name,'
             . ' s.preferred_teacher_gender, s.free_time_slots, s.created_at, u.username'
             . ' from db_lms_students s'
             . ' join db_lms_users u on u.id = s.user_id'
             . ' left join db_lms_subjects subj on subj.id = s.subject_id'
             . ' where ' . $whereSql
-            . ' order by s.priority_number desc, s.user_id asc'
+            . ' order by ' . $orderSql
             . ' limit ' . $offset . ', ' . $perPage,
             $params
         );
@@ -136,7 +153,48 @@ class MatchingService extends LmsService
             $items[$i]['slot_count'] = count($items[$i]['free_time_slots']);
         }
 
+        // JSON free-time slots are filtered after the DB query. Fetch all
+        // candidates for time/day filters to avoid paginating before filtering.
+        $day = isset($filters['day']) ? (int) $filters['day'] : 0;
+        $timeFrom = isset($filters['time_from']) ? substr(trim((string) $filters['time_from']), 0, 5) : '';
+        $timeTo = isset($filters['time_to']) ? substr(trim((string) $filters['time_to']), 0, 5) : '';
+        if ($day > 0 || $timeFrom !== '' || $timeTo !== '') {
+            $baseFilters = array_merge($filters, array('day' => 0, 'time_from' => '', 'time_to' => ''));
+            $filtered = array();
+            $scanPage = 1;
+            do {
+                $all = $this->listPendingStudents($baseFilters, $scanPage, 100);
+                foreach ($all['items'] as $candidate) {
+                    if ($this->studentMatchesTimeFilter($candidate['free_time_slots'], $day, $timeFrom, $timeTo)) {
+                        $filtered[] = $candidate;
+                    }
+                }
+                $scanPage++;
+            } while ($all['items'] !== array() && $scanPage <= (int) ceil($all['total'] / 100));
+            $total = count($filtered);
+            $items = array_slice($filtered, $offset, $perPage);
+        }
+
         return array('items' => $items, 'total' => $total);
+    }
+
+    private function studentMatchesTimeFilter(array $slots, $day, $from, $to)
+    {
+        foreach ($slots as $slot) {
+            if ($day > 0 && (int) (isset($slot['day']) ? $slot['day'] : 0) !== $day) {
+                continue;
+            }
+            $start = substr((string) (isset($slot['start']) ? $slot['start'] : ''), 0, 5);
+            $end = substr((string) (isset($slot['end']) ? $slot['end'] : ''), 0, 5);
+            if ($from !== '' && $end < $from) {
+                continue;
+            }
+            if ($to !== '' && $start > $to) {
+                continue;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -156,7 +214,7 @@ class MatchingService extends LmsService
             'select s.user_id, s.student_code, s.full_name, s.parent_name, s.parent_phone,'
             . ' s.grade, s.school_name, s.district, s.ward, s.current_address,'
             . ' s.learning_type, s.priority_number, s.status, s.note,'
-            . ' s.subject_id, subj.name as subject_name, subj.program_id,'
+            . ' s.subject_id, s.gender, subj.name as subject_name, subj.program_id,'
             . ' s.preferred_teacher_gender, s.free_time_slots, u.username, u.phone'
             . ' from db_lms_students s'
             . ' join db_lms_users u on u.id = s.user_id'
@@ -218,7 +276,7 @@ class MatchingService extends LmsService
 
         $teachers = $this->db->safeFetch(
             'select user_id, teacher_code, full_name, gender, current_address,'
-            . ' teachable_districts, teachable_subjects, can_teach_online, rank, max_classes, status'
+            . ' teachable_districts, teachable_subjects, can_teach_online, `rank`, max_classes, status'
             . ' from db_lms_teachers where status = ? order by teacher_code',
             array('active')
         );
@@ -291,6 +349,267 @@ class MatchingService extends LmsService
     }
 
     /**
+     * Tìm giáo viên theo tiêu chí (mockup §5 — Quản lý sắp xếp lớp).
+     *
+     * Bộ lọc (tất cả tuỳ chọn, kết hợp AND giữa các nhóm):
+     *  - q              : username / họ tên / mã GV
+     *  - genders        : mảng giới tính GV (OR)
+     *  - subject_ids    : mảng subject_id — GV dạy ≥ 1 môn (GV không giới hạn môn => khớp)
+     *  - district_groups: mảng các nhóm quận; mỗi nhóm GV phải dạy ≥ 1 quận
+     *  - status         : active | paused | quit
+     *  - online         : chỉ GV có thể dạy online
+     *  - schedule       : mảng array('day' => 2..8, 'ranges' => array(array('start','end')))
+     *                     — GV phải trống ≥ 1 khung giờ của ≥ 1 dòng (OR); ranges rỗng
+     *                     nghĩa là mọi khung giờ của ngày đó.
+     *  - sort           : rank_desc | rank_asc | updated_desc | updated_asc
+     *
+     * @param array $filters
+     * @return array array('items' => array, 'total' => int)
+     */
+    public function searchTeachers(array $filters = array())
+    {
+        $q = isset($filters['q']) ? trim((string) $filters['q']) : '';
+        $genders = isset($filters['genders']) && is_array($filters['genders'])
+            ? array_values(array_unique(array_filter(array_map('strval', $filters['genders']))))
+            : array();
+
+        $subjectIds = array();
+        if (isset($filters['subject_ids']) && is_array($filters['subject_ids'])) {
+            foreach ($filters['subject_ids'] as $sid) {
+                $sid = (int) $sid;
+                if ($sid > 0) {
+                    $subjectIds[$sid] = $sid;
+                }
+            }
+        }
+        $subjectIds = array_values($subjectIds);
+
+        $districtGroups = array();
+        if (isset($filters['district_groups']) && is_array($filters['district_groups'])) {
+            foreach ($filters['district_groups'] as $group) {
+                if (!is_array($group)) {
+                    continue;
+                }
+                $clean = array();
+                foreach ($group as $district) {
+                    $district = trim((string) $district);
+                    if ($district !== '') {
+                        $clean[] = $district;
+                    }
+                }
+                if ($clean !== array()) {
+                    $districtGroups[] = array_values(array_unique($clean));
+                }
+            }
+        }
+
+        $status = isset($filters['status']) ? trim((string) $filters['status']) : '';
+        $onlineOnly = !empty($filters['online']);
+
+        $schedCriteria = array();
+        if (isset($filters['schedule']) && is_array($filters['schedule'])) {
+            foreach ($filters['schedule'] as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $day = isset($row['day']) ? (int) $row['day'] : 0;
+                if (!isset(\Lms\UserService::WEEKDAYS[$day])) {
+                    continue;
+                }
+                $ranges = array();
+                if (isset($row['ranges']) && is_array($row['ranges'])) {
+                    foreach ($row['ranges'] as $range) {
+                        if (!is_array($range)) {
+                            continue;
+                        }
+                        $start = isset($range['start']) ? substr(trim((string) $range['start']), 0, 5) : '';
+                        $end   = isset($range['end']) ? substr(trim((string) $range['end']), 0, 5) : '';
+                        if (\Lms\UserService::isValidTime($start) && \Lms\UserService::isValidTime($end)
+                            && strcmp($start, $end) < 0
+                        ) {
+                            $ranges[] = array('start' => $start, 'end' => $end);
+                        }
+                    }
+                }
+                $schedCriteria[] = array('day' => $day, 'ranges' => $ranges);
+            }
+        }
+
+        $teachers = $this->db->safeFetch(
+            'select t.user_id, t.teacher_code, u.username, t.full_name, t.gender,'
+            . ' t.teachable_subjects, t.teachable_districts, t.can_teach_online,'
+            . ' t.`rank`, t.max_classes, t.status, t.current_address,'
+            . ' greatest(t.updated_at, u.updated_at) as updated_at'
+            . ' from db_lms_teachers t'
+            . ' join db_lms_users u on u.id = t.user_id'
+            . ' order by t.teacher_code'
+        );
+
+        $classCounts = array();
+        $rows = $this->db->safeFetch(
+            'select teacher_id, count(*) as cnt from db_lms_classes'
+            . ' where status = ? and deleted_at is null group by teacher_id',
+            array('active')
+        );
+        foreach ($rows as $r) {
+            $classCounts[(int) $r['teacher_id']] = (int) $r['cnt'];
+        }
+
+        $today = date('Y-m-d');
+        $freeSlotMap = array();
+        $slotRows = $this->db->safeFetch(
+            'select teacher_id, day_of_week, start_time, end_time'
+            . ' from db_lms_teacher_free_slots'
+            . ' where effective_from <= ? and (effective_to is null or effective_to >= ?)'
+            . ' order by day_of_week, start_time',
+            array($today, $today)
+        );
+        foreach ($slotRows as $r) {
+            $freeSlotMap[(int) $r['teacher_id']][] = $r;
+        }
+
+        $subjectMap = array();
+        foreach ($this->db->safeFetch('select id, name from db_lms_subjects order by name') as $s) {
+            $subjectMap[(int) $s['id']] = (string) $s['name'];
+        }
+
+        $needle = $q !== '' ? mb_strtolower($q, 'UTF-8') : '';
+        $out = array();
+
+        foreach ($teachers as $t) {
+            if ($needle !== '') {
+                $haystack = mb_strtolower(
+                    (string) $t['username'] . ' ' . (string) $t['full_name'] . ' ' . (string) $t['teacher_code'],
+                    'UTF-8'
+                );
+                if (mb_strpos($haystack, $needle) === false) {
+                    continue;
+                }
+            }
+
+            $teacherId = (int) $t['user_id'];
+            $gender = isset($t['gender']) ? (string) $t['gender'] : '';
+            if ($genders !== array() && !in_array($gender, $genders, true)) {
+                continue;
+            }
+            if ($status !== '' && (string) $t['status'] !== $status) {
+                continue;
+            }
+            if ($onlineOnly && (int) $t['can_teach_online'] !== 1) {
+                continue;
+            }
+
+            $teacherSubjects = \Lms\UserService::decodeJsonArray(
+                isset($t['teachable_subjects']) ? $t['teachable_subjects'] : array()
+            );
+            $teacherSubjectIds = array();
+            foreach ($teacherSubjects as $sid) {
+                $teacherSubjectIds[] = (int) $sid;
+            }
+            if ($subjectIds !== array() && $teacherSubjectIds !== array()
+                && array_intersect($subjectIds, $teacherSubjectIds) === array()
+            ) {
+                continue;
+            }
+
+            $districts = \Lms\UserService::decodeJsonArray(
+                isset($t['teachable_districts']) ? $t['teachable_districts'] : array()
+            );
+            $districts = array_values(array_map('strval', $districts));
+            $districtMismatch = false;
+            foreach ($districtGroups as $group) {
+                if ($districts !== array() && array_intersect($group, $districts) === array()) {
+                    $districtMismatch = true;
+                    break;
+                }
+            }
+            if ($districtMismatch) {
+                continue;
+            }
+
+            if ($schedCriteria !== array()) {
+                $slots = isset($freeSlotMap[$teacherId]) ? $freeSlotMap[$teacherId] : array();
+                $available = false;
+                foreach ($schedCriteria as $crit) {
+                    foreach ($slots as $slot) {
+                        if ((int) $slot['day_of_week'] !== (int) $crit['day']) {
+                            continue;
+                        }
+                        if ($crit['ranges'] === array()) {
+                            $available = true;
+                            break 2;
+                        }
+                        $slotStart = substr((string) $slot['start_time'], 0, 5);
+                        $slotEnd   = substr((string) $slot['end_time'], 0, 5);
+                        foreach ($crit['ranges'] as $range) {
+                            if (strcmp($slotStart, $range['end']) < 0 && strcmp($range['start'], $slotEnd) < 0) {
+                                $available = true;
+                                break 3;
+                            }
+                        }
+                    }
+                }
+                if (!$available) {
+                    continue;
+                }
+            }
+
+            $subjectNames = array();
+            foreach ($teacherSubjectIds as $sid) {
+                if (isset($subjectMap[$sid])) {
+                    $subjectNames[] = $subjectMap[$sid];
+                }
+            }
+
+            $out[] = array(
+                'teacher_id'      => $teacherId,
+                'teacher_code'    => (string) $t['teacher_code'],
+                'username'        => (string) $t['username'],
+                'full_name'       => (string) $t['full_name'],
+                'gender'          => $gender,
+                'rank'            => isset($t['rank']) ? (string) $t['rank'] : 'bronze',
+                'status'          => (string) $t['status'],
+                'current_classes' => isset($classCounts[$teacherId]) ? $classCounts[$teacherId] : 0,
+                'max_classes'     => isset($t['max_classes']) ? (int) $t['max_classes'] : 0,
+                'can_teach_online' => (int) $t['can_teach_online'] === 1,
+                'current_address' => isset($t['current_address']) ? (string) $t['current_address'] : '',
+                'subjects'        => $subjectNames,
+                'districts'       => $districts,
+                'updated_at'      => (string) $t['updated_at'],
+            );
+        }
+
+        $sort = isset($filters['sort']) ? (string) $filters['sort'] : 'rank_desc';
+        usort($out, function (array $a, array $b) use ($sort) {
+            $ra = isset(self::RANK_SCORES[$a['rank']]) ? self::RANK_SCORES[$a['rank']] : 0;
+            $rb = isset(self::RANK_SCORES[$b['rank']]) ? self::RANK_SCORES[$b['rank']] : 0;
+
+            if ($sort === 'rank_asc') {
+                if ($ra !== $rb) {
+                    return $ra - $rb;
+                }
+            } elseif ($sort === 'updated_desc' || $sort === 'updated_asc') {
+                $ta = strtotime((string) $a['updated_at']);
+                $tb = strtotime((string) $b['updated_at']);
+                if ($ta !== $tb) {
+                    return $sort === 'updated_desc' ? $tb - $ta : $ta - $tb;
+                }
+                if ($ra !== $rb) {
+                    return $rb - $ra;
+                }
+            } else {
+                if ($ra !== $rb) {
+                    return $rb - $ra;
+                }
+            }
+
+            return strcmp((string) $a['full_name'], (string) $b['full_name']);
+        });
+
+        return array('items' => $out, 'total' => count($out));
+    }
+
+    /**
      * Chi tiết lịch tuần của 1 GV cho modal "Chi tiết lịch giáo viên" (mockup §4):
      * lịch cố định các lớp đang dạy (kèm tên HV) + lịch trống còn nhận thêm.
      *
@@ -309,7 +628,7 @@ class MatchingService extends LmsService
 
         $teacher = $this->db->safeFetchOne(
             'select user_id, teacher_code, full_name, gender, current_address,'
-            . ' teachable_districts, can_teach_online, rank, max_classes, status'
+            . ' teachable_districts, can_teach_online, `rank`, max_classes, status'
             . ' from db_lms_teachers where user_id = ? limit 1',
             array($teacherId)
         );
@@ -342,10 +661,35 @@ class MatchingService extends LmsService
             . ' from db_lms_schedules s'
             . ' join db_lms_classes c on c.id = s.class_id and c.deleted_at is null'
             . ' where c.teacher_id = ? and c.status = ?'
+            . ' and s.effective_from <= ?'
             . ' and (s.effective_to is null or s.effective_to >= ?)'
             . ' order by s.day_of_week, s.start_time',
-            array($teacherId, 'active', $today)
+            array($teacherId, 'active', $today, $today)
         );
+
+        $studentsByClass = array();
+        $studentRows = $this->db->safeFetch(
+            'select cs.class_id, st.user_id, st.student_code, st.full_name'
+            . ' from db_lms_class_students cs'
+            . ' join db_lms_students st on st.user_id = cs.student_id'
+            . ' join db_lms_classes c on c.id = cs.class_id and c.deleted_at is null'
+            . ' where c.teacher_id = ? and c.status = ? and cs.status = ?'
+            . ' order by st.full_name',
+            array($teacherId, 'active', 'active')
+        );
+        foreach ($studentRows as $row) {
+            $studentsByClass[(int) $row['class_id']][] = array(
+                'user_id'      => (int) $row['user_id'],
+                'student_code' => (string) $row['student_code'],
+                'full_name'    => (string) $row['full_name'],
+            );
+        }
+        foreach ($schedules as $i => $schedule) {
+            $classId = (int) $schedule['class_id'];
+            $schedules[$i]['students'] = isset($studentsByClass[$classId])
+                ? $studentsByClass[$classId]
+                : array();
+        }
 
         return array(
             'teacher'     => $teacher,
@@ -557,8 +901,18 @@ class MatchingService extends LmsService
             if ($canOnline !== 1) {
                 return null;
             }
-        } elseif ($district !== '' && $districts !== array() && !in_array($district, $districts, true)) {
-            return null;
+        } elseif ($district !== '' && $districts !== array()) {
+            $studentDistricts = \Lms\UserService::decodeJsonArray($district);
+            if (empty($studentDistricts)) {
+                $studentDistricts = array_values(array_filter(array_map('trim', explode(',', $district))));
+            }
+            if (!empty($studentDistricts)) {
+                if (empty(array_intersect($studentDistricts, $districts))) {
+                    return null;
+                }
+            } elseif (!in_array($district, $districts, true)) {
+                return null;
+            }
         }
 
         // Lịch: khớp ≥ 1 khung giờ (sau khi trừ lịch cố định lớp đang dạy)

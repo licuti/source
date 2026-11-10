@@ -19,12 +19,14 @@ if (!defined('_source')) {
     die('Error');
 }
 
-$d        = lms_db();
-$user     = lms_current_user();
-$alias    = 'lms-hoc-vien';
-$userSvc  = new \Lms\UserService($d);
-
-$action = isset($a) ? (string) $a : 'man';
+// Redirect module cũ sang module gộp Quản lý tài khoản
+$tabAction = (isset($a) && $a === 'them') ? 'them-hoc-vien' : ((isset($a) && $a === 'sua') ? 'sua-hoc-vien' : 'man');
+$redirectParams = array('tab' => 'hoc-vien');
+if (isset($_GET['id'])) {
+    $redirectParams['id'] = (int) $_GET['id'];
+}
+header('Location: ' . lms_url('lms-tai-khoan', $tabAction, $redirectParams));
+exit;
 
 switch ($action) {
     case 'them':
@@ -117,23 +119,48 @@ function lms_hoc_vien_form(\Lms\UserService $userSvc, $isEdit)
         $in = $_POST;
         $in['free_time_slots'] = lms_hoc_vien_slots_from_post($_POST);
 
-        if ($isEdit) {
-            $ok = $userSvc->updateStudent($formId, $in);
-        } else {
-            $newId = $userSvc->createStudent($in);
-            $ok = $newId !== null;
-            if ($ok) {
-                $formId = (int) $newId;
+        // Upload ảnh đại diện nếu có
+        if (!empty($_FILES['avatar_file']['name'])) {
+            $uploadRes = lms_save_files($_FILES['avatar_file'], 'avatars', array(
+                'maxFiles' => 1,
+                'mimeWhitelist' => array('jpg', 'jpeg', 'png', 'webp')
+            ));
+            if ($uploadRes['ok'] && !empty($uploadRes['paths'][0])) {
+                $in['avatar'] = 'uploads/' . (string) $uploadRes['paths'][0];
+            } else {
+                $errors = array('avatar_file' => !empty($uploadRes['error'])
+                    ? $uploadRes['error'] : 'Không thể tải ảnh đại diện lên.');
             }
         }
-
-        if ($ok) {
-            lms_flash('success', $isEdit ? 'Đã cập nhật hồ sơ học viên.' : 'Đã tạo tài khoản học viên mới.');
-            header('Location: ' . lms_url($alias));
-            exit;
+        if (!empty($in['remove_avatar'])) {
+            $in['avatar'] = null;
         }
 
-        $errors = $userSvc->errors();
+        if (empty($errors)) {
+            if ($isEdit) {
+                $ok = $userSvc->updateStudent($formId, $in);
+            } else {
+                $newId = $userSvc->createStudent($in);
+                $ok = $newId !== null;
+                if ($ok) {
+                    $formId = (int) $newId;
+                }
+            }
+
+            if ($ok) {
+                $message = $isEdit ? 'Đã cập nhật hồ sơ học viên.' : 'Đã tạo tài khoản học viên mới.';
+                $generatedPassword = $isEdit ? '' : $userSvc->lastGeneratedPassword();
+                if ($generatedPassword !== '') {
+                    $message .= ' Mật khẩu tạm: ' . $generatedPassword
+                        . '. Học viên cần đổi mật khẩu ở lần đăng nhập đầu tiên.';
+                }
+                lms_flash('success', $message);
+                header('Location: ' . lms_url($alias));
+                exit;
+            }
+
+            $errors = $userSvc->errors();
+        }
         $row = array_merge($row, $in);
     }
 
@@ -144,7 +171,7 @@ function lms_hoc_vien_form(\Lms\UserService $userSvc, $isEdit)
 
     $subjectOptions = lms_hoc_vien_subject_map(lms_db());
 
-    $title    = $isEdit ? 'Sửa học viên' : 'Thêm học viên';
+    $title    = $isEdit ? 'Chỉnh sửa học viên' : 'Tài khoản học viên mới';
     $template = 'lms-hoc-vien/form';
 }
 
@@ -173,7 +200,7 @@ function lms_hoc_vien_subject_map(LmsDb $d)
 }
 
 /**
- * Chuyển 3 mảng song song từ form (slot_day[]/slot_start[]/slot_end[])
+ * Chuyển các mảng slot_day[i] / slot_start[i][] / slot_end[i][] từ form
  * thành mảng các khung giờ để service validate.
  *
  * @param array $post
@@ -186,13 +213,18 @@ function lms_hoc_vien_slots_from_post($post)
     $ends   = isset($post['slot_end']) ? (array) $post['slot_end'] : array();
 
     $out = array();
-    $n = max(count($days), count($starts), count($ends));
-    for ($i = 0; $i < $n; $i++) {
-        $out[] = array(
-            'day'   => isset($days[$i]) ? $days[$i] : '',
-            'start' => isset($starts[$i]) ? $starts[$i] : '',
-            'end'   => isset($ends[$i]) ? $ends[$i] : '',
-        );
+    foreach ($days as $i => $day) {
+        $rowStarts = isset($starts[$i]) && is_array($starts[$i]) ? $starts[$i] : array();
+        $rowEnds   = isset($ends[$i]) && is_array($ends[$i]) ? $ends[$i] : array();
+
+        $n = max(count($rowStarts), count($rowEnds));
+        for ($j = 0; $j < $n; $j++) {
+            $out[] = array(
+                'day'   => $day,
+                'start' => isset($rowStarts[$j]) ? $rowStarts[$j] : '',
+                'end'   => isset($rowEnds[$j]) ? $rowEnds[$j] : '',
+            );
+        }
     }
     return $out;
 }

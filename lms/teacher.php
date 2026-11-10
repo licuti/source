@@ -27,10 +27,22 @@ switch ($act) {
         require __DIR__ . '/lib/lms_login.php';
         break;
 
+    case 'quen-mat-khau':
+        require __DIR__ . '/lib/lms_password_reset.php';
+        break;
+
     case 'logout':
         lms_logout(lms_db());
         header('Location: ' . lms_url('', 'login'));
         exit;
+
+    case 'doi-mat-khau':
+        require __DIR__ . '/lib/lms_change_password.php';
+        break;
+
+    case 'tim-kiem':
+        require __DIR__ . '/lib/lms_search.php';
+        break;
 
     default:
         require __DIR__ . '/lib/lms_router.php';

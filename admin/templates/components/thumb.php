@@ -21,7 +21,7 @@ $hasImage = trim((string) $file) !== '';
         <img src="<?= e(img_url($file)) ?>"
              alt="<?= e($alt) ?>"
              loading="lazy"
-             class="rounded border object-fit-cover"
+             class="rounded border object-fit-contain"
              style="width:<?= $size ?>px;height:<?= $size ?>px">
     <?php if ($url !== ''): ?></a><?php endif; ?>
 <?php else: ?>

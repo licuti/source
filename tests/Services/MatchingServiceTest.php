@@ -229,6 +229,19 @@ class MatchingServiceTest extends LmsTestCase
         $this->assertEquals(1, $res['total']);
     }
 
+    public function testListPendingStudentsSupportsOperationalFilters()
+    {
+        $this->db->update('db_lms_students', array('gender' => 'female'), 'user_id = ?', array($this->sMain));
+        $this->db->update('db_lms_students', array('gender' => 'male'), 'user_id = ?', array($this->sOnline));
+        $res = $this->svc->listPendingStudents(array('gender' => 'female', 'district' => 'Quận 1'));
+        $this->assertGreaterThanOrEqual(1, $res['total']);
+        foreach ($res['items'] as $item) {
+            $this->assertSame('female', (string) $item['gender']);
+        }
+        $res = $this->svc->listPendingStudents(array('day' => 2, 'time_from' => '18:00', 'time_to' => '20:00'));
+        $this->assertGreaterThanOrEqual(1, $res['total']);
+    }
+
     public function testListPendingStudentsExcludesStudentWithActiveClass()
     {
         // HV đang pending_arrange nhưng đã thuộc 1 lớp active → không hiện
@@ -384,6 +397,77 @@ class MatchingServiceTest extends LmsTestCase
     {
         $this->assertSame(array(), $this->svc->teacherWeekDetail(0));
         $this->assertTrue($this->svc->hasErrors());
+    }
+
+    // ===================== searchTeachers (bộ lọc ADM-04) =====================
+
+    private function teacherIds(array $items)
+    {
+        $ids = array();
+        foreach ($items as $it) {
+            $ids[] = (int) $it['teacher_id'];
+        }
+        return $ids;
+    }
+
+    public function testSearchTeachersSortByRank()
+    {
+        $res = $this->svc->searchTeachers();
+        $this->assertSame(6, (int) $res['total']);
+        // rank_desc: green (20) > gold (12) > bronze (5)
+        $this->assertSame($this->tGreen, (int) $res['items'][0]['teacher_id']);
+        $this->assertSame('green', (string) $res['items'][0]['rank']);
+        $this->assertSame($this->tGold, (int) $res['items'][1]['teacher_id']);
+
+        $asc = $this->svc->searchTeachers(array('sort' => 'rank_asc'));
+        $this->assertSame($this->tBronze, (int) $asc['items'][0]['teacher_id']);
+    }
+
+    public function testSearchTeachersFilters()
+    {
+        $res = $this->svc->searchTeachers(array('genders' => array('female')));
+        $this->assertEqualsCanonicalizing(
+            array($this->tGreen, $this->tGoldF, $this->tBronze, $this->tFull),
+            $this->teacherIds($res['items'])
+        );
+
+        $res = $this->svc->searchTeachers(array('subject_ids' => array($this->subjectEnglish)));
+        $this->assertEqualsCanonicalizing(
+            array($this->tGold, $this->tBronze),
+            $this->teacherIds($res['items'])
+        );
+
+        $res = $this->svc->searchTeachers(array('district_groups' => array(array('Quận 10'))));
+        $this->assertSame(array($this->tBronze), $this->teacherIds($res['items']));
+
+        $res = $this->svc->searchTeachers(array('online' => true));
+        $this->assertSame(array($this->tGreen), $this->teacherIds($res['items']));
+
+        $res = $this->svc->searchTeachers(array('q' => 'TE003'));
+        $this->assertSame(array($this->tGoldF), $this->teacherIds($res['items']));
+    }
+
+    public function testSearchTeachersScheduleFilter()
+    {
+        // T2 18:00-19:00: mọi GV trống T2 18:00-19:30 trừ tGold (20:00-21:00)
+        $res = $this->svc->searchTeachers(array('schedule' => array(
+            array('day' => 2, 'ranges' => array(array('start' => '18:00', 'end' => '19:00'))),
+        )));
+        $this->assertSame(5, (int) $res['total']);
+        $this->assertNotContains($this->tGold, $this->teacherIds($res['items']));
+
+        // Nhiều dòng ngày = OR: T3 sáng không ai trống nhưng T2 vẫn khớp
+        $res = $this->svc->searchTeachers(array('schedule' => array(
+            array('day' => 3, 'ranges' => array(array('start' => '08:00', 'end' => '09:00'))),
+            array('day' => 2, 'ranges' => array(array('start' => '18:00', 'end' => '19:00'))),
+        )));
+        $this->assertSame(5, (int) $res['total']);
+
+        // ranges rỗng = cả ngày
+        $res = $this->svc->searchTeachers(array('schedule' => array(
+            array('day' => 2, 'ranges' => array()),
+        )));
+        $this->assertSame(6, (int) $res['total']);
     }
 
     public function testMatchedSlotsSubtractFixedSchedule()
