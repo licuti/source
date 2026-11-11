@@ -78,6 +78,11 @@ switch ($action) {
         lmyc_save_test_result($adminSvc, $action === 'xac-nhan-kq');
         break;
 
+    case 'bat-tat-minitest':
+        lms_form_guard($d, $user, $alias, 'edit', 'admin');
+        lmyc_toggle_minitest($adminSvc);
+        break;
+
     case 'xoa-kq':
         lms_form_guard($d, $user, $alias, 'delete', 'admin');
         lmyc_delete_submission($adminSvc);
@@ -438,4 +443,31 @@ function lmyc_delete_submission(\Lms\AdminRequestService $adminSvc)
         lms_flash('error', !empty($errors) ? reset($errors) : 'Không thể xoá bài nộp.');
     }
     lmyc_back('duyet-kq');
+}
+
+function lmyc_toggle_minitest(\Lms\AdminRequestService $adminSvc)
+{
+    global $user;
+
+    $ctx = array(
+        'class_id'   => isset($_POST['class_id']) ? (int) $_POST['class_id'] : 0,
+        'student_id' => isset($_POST['student_id']) ? (int) $_POST['student_id'] : 0,
+        'topic_id'   => isset($_POST['topic_id']) ? (int) $_POST['topic_id'] : 0,
+    );
+
+    if (!lms_csrf_verify()) {
+        lms_flash('error', 'Phiên làm việc không hợp lệ. Vui lòng tải lại trang và thử lại.');
+        lmyc_back_result($ctx);
+    }
+
+    $adminId = isset($user['id']) ? (int) $user['id'] : 0;
+    $enabled = !empty($_POST['enable']) && (string) $_POST['enable'] === '1';
+
+    if ($adminSvc->toggleMinitest($ctx['class_id'], $ctx['topic_id'], $enabled, $adminId)) {
+        lms_flash('success', $enabled ? 'Đã bật bài Minitest cho học sinh.' : 'Đã tắt bài Minitest.');
+    } else {
+        $errors = $adminSvc->errors();
+        lms_flash('error', !empty($errors) ? reset($errors) : 'Không thể thay đổi trạng thái Minitest.');
+    }
+    lmyc_back_result($ctx);
 }

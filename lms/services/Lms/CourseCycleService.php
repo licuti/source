@@ -36,13 +36,292 @@ class CourseCycleService extends LmsService
 
     public function listCyclesForClass($classId)
     {
-        return $this->db->safeFetch(
+        $classId = (int) $classId;
+        $rows = $this->db->safeFetch(
             'select cc.*,'
             . ' (select count(*) from db_lms_sessions s where s.cycle_id = cc.id and s.status = ?) as finished_sessions'
             . ' from db_lms_course_cycles cc where cc.class_id = ?'
             . ' order by cc.cycle_no desc limit 2',
-            array('finished', (int) $classId)
+            array('finished', $classId)
         );
+        if (!empty($rows)) {
+            $schedules = null;
+            foreach ($rows as $i => $r) {
+                if (empty($r['expected_end_date']) && !empty($r['start_date']) && (int) $r['total_sessions'] > 0) {
+                    if ($schedules === null) {
+                        $schedules = $this->db->safeFetch(
+                            'select day_of_week, start_time, end_time from db_lms_schedules where class_id = ? order by day_of_week, start_time',
+                            array($classId)
+                        );
+                    }
+                    if (!empty($schedules)) {
+                        $span = self::calculateScheduleDates($schedules, (string) $r['start_date'], (int) $r['total_sessions']);
+                        if (!empty($span['end_date'])) {
+                            $rows[$i]['expected_end_date'] = $span['end_date'];
+                            $this->db->update(
+                                'db_lms_course_cycles',
+                                array('expected_end_date' => $span['end_date']),
+                                'id = ?',
+                                array((int) $r['id'])
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        return $rows;
+    }
+
+    /**
+     * Tính ngày buổi đầu tiên và buổi thứ $sessionCount theo lịch cố định kể từ $fromDate.
+     *
+     * @param array  $schedules    Danh sách lịch (mỗi phần tử có 'day_of_week' hoặc 'day' 2..8)
+     * @param string $fromDate     'Y-m-d'
+     * @param int    $sessionCount Số buổi (>= 1)
+     * @return array array('first_date' => string|null, 'end_date' => string|null)
+     */
+    public static function calculateScheduleDates(array $schedules, $fromDate, $sessionCount)
+    {
+        $fromDate = trim((string) $fromDate);
+        $ts = strtotime($fromDate);
+        if ($ts === false) {
+            return array('first_date' => null, 'end_date' => null);
+        }
+        $sessionCount = max(1, (int) $sessionCount);
+
+        $slotsPerDow = array();
+        foreach ($schedules as $sch) {
+            $dow = isset($sch['day_of_week'])
+                ? (int) $sch['day_of_week']
+                : (isset($sch['day']) ? (int) $sch['day'] : 0);
+            if ($dow >= 2 && $dow <= 8) {
+                if (!isset($slotsPerDow[$dow])) {
+                    $slotsPerDow[$dow] = 0;
+                }
+                $slotsPerDow[$dow]++;
+            }
+        }
+
+        if (empty($slotsPerDow)) {
+            $d = date('Y-m-d', $ts);
+            return array('first_date' => $d, 'end_date' => $d);
+        }
+
+        $firstDate = null;
+        $endDate   = null;
+        $count     = 0;
+        $maxDays   = max(3660, $sessionCount * 8);
+        for ($i = 0; $i < $maxDays; $i++) {
+            $curTs = strtotime('+' . $i . ' days', $ts);
+            $dow = (int) date('N', $curTs) + 1; // 2..8
+            if (!empty($slotsPerDow[$dow])) {
+                $curDate = date('Y-m-d', $curTs);
+                if ($firstDate === null) {
+                    $firstDate = $curDate;
+                }
+                $count += $slotsPerDow[$dow];
+                if ($count >= $sessionCount) {
+                    $endDate = $curDate;
+                    break;
+                }
+            }
+        }
+
+        return array(
+            'first_date' => $firstDate !== null ? $firstDate : date('Y-m-d', $ts),
+            'end_date'   => $endDate !== null ? $endDate : date('Y-m-d', $ts),
+        );
+    }
+
+    /**
+     * Thêm khóa học mới từ popup "Thêm khóa học" (mockup Thêm khóa học.png & Lớp học.png).
+     * - Cập nhật số buổi còn lại của khóa hiện tại + tính lại ngày kết thúc khóa hiện tại.
+     * - Tự động tính ngày bắt đầu và ngày kết thúc của khóa mới dựa theo lịch học cố định.
+     *
+     * @param int $classId
+     * @param int $currentRemaining Số buổi còn lại của khóa học hiện tại (>= 0)
+     * @param int $newTotalSessions Số buổi của khóa mới (>= 1)
+     * @return int ID của khóa học mới (0 nếu lỗi)
+     */
+    public function addCourseCycleFromPopup($classId, $currentRemaining, $newTotalSessions)
+    {
+        $this->clearErrors();
+        $classId = (int) $classId;
+        if ($classId <= 0) {
+            $this->addError('class_id', 'Lớp học không hợp lệ.');
+            return 0;
+        }
+        if (!is_numeric($currentRemaining) || (int) $currentRemaining < 0 || (int) $currentRemaining > 10000) {
+            $this->addError('current_remaining_sessions', 'Số buổi còn lại của khóa hiện tại phải từ 0 đến 10.000.');
+            return 0;
+        }
+        if (!is_numeric($newTotalSessions) || (int) $newTotalSessions <= 0 || (int) $newTotalSessions > 10000) {
+            $this->addError('new_total_sessions', 'Số buổi của khóa mới phải từ 1 đến 10.000.');
+            return 0;
+        }
+
+        $currentRemaining = (int) $currentRemaining;
+        $newTotalSessions = (int) $newTotalSessions;
+
+        $class = $this->db->safeFetchOne(
+            'select * from db_lms_classes where id = ? and deleted_at is null limit 1',
+            array($classId)
+        );
+        if (empty($class)) {
+            $this->addError('class_id', 'Lớp học không tồn tại.');
+            return 0;
+        }
+
+        $currentCycle = $this->db->safeFetchOne(
+            'select * from db_lms_course_cycles where class_id = ? order by cycle_no desc limit 1',
+            array($classId)
+        );
+        if (empty($currentCycle)) {
+            $this->initializeClassCycle($classId);
+            $currentCycle = $this->db->safeFetchOne(
+                'select * from db_lms_course_cycles where class_id = ? order by cycle_no desc limit 1',
+                array($classId)
+            );
+        }
+        if (empty($currentCycle)) {
+            $this->addError('cycle', 'Không thể khởi tạo khóa học đầu tiên cho lớp.');
+            return 0;
+        }
+
+        $schedules = $this->db->safeFetch(
+            'select day_of_week, start_time, end_time, effective_from, effective_to'
+            . ' from db_lms_schedules where class_id = ? order by day_of_week, start_time',
+            array($classId)
+        );
+
+        $currentCycleId = (int) $currentCycle['id'];
+        $finishedInCurrent = (int) $this->db->count(
+            'db_lms_sessions',
+            'cycle_id = ? and status = ?',
+            array($currentCycleId, 'finished')
+        );
+        $currentTotal = $finishedInCurrent + $currentRemaining;
+        $currentStartDate = !empty($currentCycle['start_date'])
+            ? (string) $currentCycle['start_date']
+            : (!empty($class['start_date']) ? (string) $class['start_date'] : date('Y-m-d'));
+
+        if ($currentTotal > 0) {
+            $curSpan = self::calculateScheduleDates($schedules, $currentStartDate, $currentTotal);
+            $currentEndDate = !empty($curSpan['end_date']) ? $curSpan['end_date'] : $currentStartDate;
+        } else {
+            $currentEndDate = $currentStartDate;
+        }
+
+        $searchNextFrom = date('Y-m-d', strtotime('+1 day', strtotime($currentEndDate)));
+        $newSpan = self::calculateScheduleDates($schedules, $searchNextFrom, $newTotalSessions);
+        $newStartDate = !empty($newSpan['first_date']) ? $newSpan['first_date'] : $searchNextFrom;
+        $newEndDate   = !empty($newSpan['end_date']) ? $newSpan['end_date'] : $newStartDate;
+
+        $this->db->beginTransaction();
+        try {
+            $this->db->update('db_lms_course_cycles', array(
+                'status'             => 'completed',
+                'closed_at'          => $this->now(),
+                'start_date'         => $currentStartDate,
+                'expected_end_date'  => $currentEndDate,
+                'total_sessions'     => $currentTotal,
+                'remaining_sessions' => $currentRemaining,
+            ), 'id = ?', array($currentCycleId));
+
+            $newCycleNo = (int) $currentCycle['cycle_no'] + 1;
+            $newCycle = array(
+                'class_id'           => $classId,
+                'cycle_no'           => $newCycleNo,
+                'name'               => 'Khóa ' . $newCycleNo,
+                'status'             => 'active',
+                'teacher_id'         => (int) $class['teacher_id'],
+                'price_per_session'  => $class['price_per_session'],
+                'teacher_percentage' => $class['teacher_percentage'],
+                'hw_deadline_time'   => $class['hw_deadline_time'],
+                'hw_check_hours'     => (int) $class['hw_check_hours'],
+                'test_grace_hours'   => isset($class['test_grace_hours']) ? (int) $class['test_grace_hours'] : 72,
+                'start_date'         => $newStartDate,
+                'expected_end_date'  => $newEndDate,
+                'total_sessions'     => $newTotalSessions,
+                'remaining_sessions' => $newTotalSessions,
+            );
+            if (!$this->db->insert('db_lms_course_cycles', $newCycle)) {
+                throw new \RuntimeException('Could not insert new course cycle.');
+            }
+            $newCycleId = (int) $this->db->insertId;
+
+            $this->copyCycleRelations($newCycleId, $classId, array('start_date' => $newStartDate));
+            $this->seedFirstTopicUnlocks($newCycleId);
+
+            // Kế thừa trạng thái mở khóa chuyên đề của học viên từ khóa trước
+            $prevUnlocked = $this->db->safeFetch(
+                'select student_id, topic_id, unlocked_at, unlocked_by, unlock_reason'
+                . ' from db_lms_cycle_student_topics where cycle_id = ? and status = ?',
+                array($currentCycleId, 'unlocked')
+            );
+            foreach ($prevUnlocked as $pu) {
+                $this->db->update(
+                    'db_lms_cycle_student_topics',
+                    array(
+                        'status'        => 'unlocked',
+                        'unlocked_at'   => !empty($pu['unlocked_at']) ? $pu['unlocked_at'] : $this->now(),
+                        'unlocked_by'   => $pu['unlocked_by'],
+                        'unlock_reason' => !empty($pu['unlock_reason']) ? $pu['unlock_reason'] : 'carried over from previous cycle',
+                    ),
+                    'cycle_id = ? and student_id = ? and topic_id = ?',
+                    array($newCycleId, (int) $pu['student_id'], (int) $pu['topic_id'])
+                );
+            }
+
+            // Giữ lại tối đa $currentRemaining buổi upcoming cho khóa cũ, các buổi sau chuyển sang khóa mới
+            $upcomingInOld = $this->db->safeFetch(
+                'select id from db_lms_sessions where class_id = ? and cycle_id = ? and status = ?'
+                . ' order by session_date asc, start_time asc, id asc',
+                array($classId, $currentCycleId, 'upcoming')
+            );
+            $reassignIds = array();
+            foreach ($upcomingInOld as $idx => $uRow) {
+                if ($idx >= $currentRemaining) {
+                    $reassignIds[] = (int) $uRow['id'];
+                }
+            }
+            if (!empty($reassignIds)) {
+                $ph = implode(',', array_fill(0, count($reassignIds), '?'));
+                $this->db->safeExec(
+                    "update db_lms_sessions set cycle_id = ? where id in ($ph)",
+                    array_merge(array($newCycleId), $reassignIds)
+                );
+            }
+
+            $totalFinishedClass = (int) $this->db->count(
+                'db_lms_sessions',
+                'class_id = ? and status = ?',
+                array($classId, 'finished')
+            );
+            $classRemaining = $currentRemaining + $newTotalSessions;
+            $classTotal     = $totalFinishedClass + $classRemaining;
+            $this->db->update('db_lms_classes', array(
+                'total_sessions'     => $classTotal,
+                'remaining_sessions' => $classRemaining,
+                'expected_end_date'  => $newEndDate,
+            ), 'id = ?', array($classId));
+
+            if ((string) $class['status'] === 'active' && !empty($schedules)) {
+                $from = strcmp($newStartDate, date('Y-m-d')) < 0 ? date('Y-m-d') : $newStartDate;
+                $to   = date('Y-m-d', strtotime('+4 weeks', strtotime($from)));
+                $sessionsSvc = new SessionService($this->db);
+                $sessionsSvc->generateForCycle($classId, $newCycleId, (int) $class['teacher_id'], $from, $to);
+            }
+
+            $this->audit('add_course_cycle', 'course_cycles', $newCycleId, $currentCycle, $newCycle, 'admin');
+            $this->db->commit();
+            return $newCycleId;
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            error_log('[LMS] addCourseCycleFromPopup failed: ' . $e->getMessage());
+            $this->addError('cycle', 'Không thể thêm khóa học mới. Vui lòng thử lại.');
+            return 0;
+        }
     }
 
     /** Create the initial immutable snapshot after a class is created. */
@@ -317,7 +596,7 @@ class CourseCycleService extends LmsService
             $sessionIds
         );
         $sessions = $this->db->safeFetch(
-            'select id, cycle_id from db_lms_sessions where id in (' . $placeholders . ')'
+            'select id, cycle_id, class_id from db_lms_sessions where id in (' . $placeholders . ')'
             . ' and cycle_id is not null and status = ?',
             array_merge($sessionIds, array('finished'))
         );
@@ -338,6 +617,13 @@ class CourseCycleService extends LmsService
                     . ' where id = ? and remaining_sessions = 0 and status = ?',
                     array('completed', (int) $session['cycle_id'], 'active')
                 );
+                if (!empty($session['class_id'])) {
+                    $this->db->safeExec(
+                        'update db_lms_classes set remaining_sessions = GREATEST(0, remaining_sessions - 1)'
+                        . ' where id = ?',
+                        array((int) $session['class_id'])
+                    );
+                }
                 $decremented++;
             }
         }
@@ -824,6 +1110,25 @@ class CourseCycleService extends LmsService
 
     private function cycleSnapshot(array $class, $cycleNo)
     {
+        $expectedEndDate = isset($class['expected_end_date']) ? $class['expected_end_date'] : null;
+        if (empty($expectedEndDate) && !empty($class['start_date']) && (int) $class['total_sessions'] > 0) {
+            $schedules = $this->db->safeFetch(
+                'select day_of_week, start_time, end_time from db_lms_schedules where class_id = ? order by day_of_week, start_time',
+                array((int) $class['id'])
+            );
+            if (!empty($schedules)) {
+                $span = self::calculateScheduleDates($schedules, (string) $class['start_date'], (int) $class['total_sessions']);
+                if (!empty($span['end_date'])) {
+                    $expectedEndDate = $span['end_date'];
+                    $this->db->update(
+                        'db_lms_classes',
+                        array('expected_end_date' => $expectedEndDate),
+                        'id = ?',
+                        array((int) $class['id'])
+                    );
+                }
+            }
+        }
         return array(
             'class_id' => (int) $class['id'],
             'cycle_no' => (int) $cycleNo,
@@ -836,7 +1141,7 @@ class CourseCycleService extends LmsService
             'hw_check_hours' => (int) $class['hw_check_hours'],
             'test_grace_hours' => (int) $class['test_grace_hours'],
             'start_date' => $class['start_date'],
-            'expected_end_date' => $class['expected_end_date'],
+            'expected_end_date' => $expectedEndDate,
             'total_sessions' => (int) $class['total_sessions'],
             'remaining_sessions' => (int) $class['remaining_sessions'],
         );

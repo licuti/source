@@ -47,7 +47,7 @@ if (!isset($value)) {
 } else {
     if ($enum !== '' && class_exists('LmsEnum')) {
         $value = LmsEnum::normalize($enum, $value);
-    } else {
+    } elseif (!is_array($value)) {
         $value = (string) $value;
     }
 }
@@ -95,7 +95,12 @@ foreach ($opts as $optVal => $optInfo) {
     foreach ($optAttrs as $ak => $av) {
         $attrStr .= ' ' . htmlspecialchars($ak, ENT_QUOTES, 'UTF-8') . '="' . htmlspecialchars((string) $av, ENT_QUOTES, 'UTF-8') . '"';
     }
-    $isSel = ((string) $optVal === (string) $value);
+    if (is_array($value)) {
+        $isSel = in_array((int) $optVal, array_map('intval', $value), true)
+            || in_array((string) $optVal, array_map('strval', $value), true);
+    } else {
+        $isSel = ((string) $optVal === (string) $value);
+    }
     $controlHtml .= '<option value="' . htmlspecialchars((string) $optVal, ENT_QUOTES, 'UTF-8') . '"'
         . $attrStr
         . ($isSel ? ' selected' : '') . '>'
@@ -111,11 +116,15 @@ if (!empty($bare) || !empty($no_wrap) || !empty($no_row)) {
 }
 
 lms_component('form/field_row', array(
-    'label'    => $label,
-    'name'     => $name,
-    'id'       => $id,
-    'required' => $required,
-    'control'  => $controlHtml,
-    'hint'     => $hint,
-    'errors'   => isset($errors) ? $errors : array(),
+    'label'       => $label,
+    'name'        => $name,
+    'id'          => $id,
+    'required'    => $required,
+    'control'     => $controlHtml,
+    'hint'        => $hint,
+    'errors'      => isset($errors) ? $errors : array(),
+    'label_col'   => isset($label_col) ? $label_col : null,
+    'control_col' => isset($control_col) ? $control_col : null,
+    'label_align' => isset($label_align) ? $label_align : null,
+    'align'       => isset($align) ? $align : null,
 ));

@@ -92,9 +92,11 @@
     ?>
 
     <!-- ===================== Card 3: Accordion Minitest chuyên đề ===================== -->
-    <?php
-    $t = $minitestItem;
-    $type = 'minitest';
-    include __DIR__ . '/_test_section_tpl.php';
-    ?>
+    <?php if (!empty($topic['has_minitest']) && ((isset($minitestItem['status']) && $minitestItem['status'] === 'published') || !empty($minitestItem['submitted_at']))): ?>
+        <?php
+        $t = $minitestItem;
+        $type = 'minitest';
+        include __DIR__ . '/_test_section_tpl.php';
+        ?>
+    <?php endif; ?>
 </div>

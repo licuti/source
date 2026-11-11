@@ -114,8 +114,8 @@ class AdminRequestService extends LmsService
         $perPage = max(1, min(100, (int) $perPage));
         $offset  = ($page - 1) * $perPage;
 
-        $where  = array("te.status = ?");
-        $params = array('draft');
+        $where  = array("te.status = ?", "te.test_type = ?");
+        $params = array('draft', 'test');
 
         $this->applyClassTeacherFilter($where, $params, isset($filters['q']) ? $filters['q'] : '');
         $whereSql = implode(' and ', $where);
@@ -407,6 +407,99 @@ class AdminRequestService extends LmsService
         }
     }
 
+    /**
+     * Bật / Tắt bài Minitest cho học sinh trong chuyên đề của lớp.
+     *
+     * @param int  $classId
+     * @param int  $topicId
+     * @param bool $enabled
+     * @param int  $adminId
+     * @return bool
+     */
+    public function toggleMinitest($classId, $topicId, $enabled, $adminId)
+    {
+        $this->clearErrors();
+        $classId = (int) $classId;
+        $topicId = (int) $topicId;
+        $adminId = (int) $adminId;
+
+        if ($classId <= 0 || $topicId <= 0) {
+            $this->addError('system', 'Thông tin lớp hoặc chuyên đề không hợp lệ.');
+            return false;
+        }
+
+        $newStatus = $enabled ? 'published' : 'draft';
+
+        $mini = $this->db->safeFetchOne(
+            "select * from db_lms_tests where class_id = ? and topic_id = ? and test_type = 'minitest' order by id desc limit 1",
+            array($classId, $topicId)
+        );
+
+        if (!empty($mini)) {
+            $updateData = array('status' => $newStatus);
+            if ($enabled && empty($mini['test_file_url'])) {
+                $topic = $this->db->safeFetchOne('select minitest_file_url from db_lms_topics where id = ? limit 1', array($topicId));
+                if (!empty($topic['minitest_file_url'])) {
+                    $updateData['test_file_url'] = $topic['minitest_file_url'];
+                }
+            }
+            $ok = $this->db->update('db_lms_tests', $updateData, 'id = ?', array((int) $mini['id']));
+            if (!$ok) {
+                $this->addError('system', 'Không thể cập nhật trạng thái bài Minitest.');
+                return false;
+            }
+            $after = $this->db->safeFetchOne('select * from db_lms_tests where id = ? limit 1', array((int) $mini['id']));
+            $this->audit($enabled ? 'enable_minitest' : 'disable_minitest', 'tests', (int) $mini['id'], $mini, $after, 'admin');
+            return true;
+        }
+
+        // Nếu chưa có row minitest trong db_lms_tests
+        $topic = $this->db->safeFetchOne(
+            'select * from db_lms_topics where id = ? limit 1',
+            array($topicId)
+        );
+        if (empty($topic) || empty($topic['has_minitest'])) {
+            $this->addError('topic', 'Chuyên đề này không có cấu hình bài Minitest.');
+            return false;
+        }
+
+        $mainTest = $this->db->safeFetchOne(
+            "select cycle_id, deadline from db_lms_tests where class_id = ? and topic_id = ? and test_type = 'test' order by id desc limit 1",
+            array($classId, $topicId)
+        );
+        $cycleId = !empty($mainTest['cycle_id']) ? (int) $mainTest['cycle_id'] : null;
+        if ($cycleId === null) {
+            $cycle = $this->db->safeFetchOne(
+                "select id from db_lms_course_cycles where class_id = ? and status = 'active' limit 1",
+                array($classId)
+            );
+            $cycleId = !empty($cycle['id']) ? (int) $cycle['id'] : null;
+        }
+
+        $deadline = date('Y-m-d 23:59:59', strtotime('+7 days'));
+        $insData = array(
+            'class_id'      => $classId,
+            'cycle_id'      => $cycleId,
+            'topic_id'      => $topicId,
+            'test_type'     => 'minitest',
+            'title'         => (string) $topic['name'] . ' - Minitest',
+            'test_file_url' => !empty($topic['minitest_file_url']) ? $topic['minitest_file_url'] : null,
+            'deadline'      => $deadline,
+            'max_score'     => 20.0,
+            'status'        => $newStatus,
+            'created_by'    => $adminId,
+        );
+        $ok = $this->db->insert('db_lms_tests', $insData);
+        if (!$ok) {
+            $this->addError('system', 'Không thể tạo bài Minitest.');
+            return false;
+        }
+        $insId = (int) $this->db->insertId;
+        $after = $this->db->safeFetchOne('select * from db_lms_tests where id = ? limit 1', array($insId));
+        $this->audit($enabled ? 'enable_minitest' : 'disable_minitest', 'tests', $insId, null, $after, 'admin');
+        return true;
+    }
+
     // ===================== Chi tiết + chấm kết quả test =====================
 
     /**
@@ -430,7 +523,8 @@ class AdminRequestService extends LmsService
             'select c.id as class_id, c.class_code, c.total_sessions, c.remaining_sessions,'
             . ' t.teacher_code, t.full_name as teacher_name,'
             . ' s.student_code, s.full_name as student_name,'
-            . ' top.name as topic_name, top.max_sessions as topic_max_sessions'
+            . ' top.name as topic_name, top.max_sessions as topic_max_sessions,'
+            . ' top.has_minitest, top.minitest_file_url'
             . ' from db_lms_classes c'
             . ' join db_lms_students s on s.user_id = ?'
             . ' join db_lms_topics top on top.id = ?'
@@ -453,7 +547,6 @@ class AdminRequestService extends LmsService
             . ' left join db_lms_test_submissions ts'
             . ' on ts.test_id = te.id and ts.student_id = ?'
             . ' where te.class_id = ? and te.topic_id = ?'
-            . " and (te.status <> 'draft' or ts.id is not null)"
             . ' order by te.test_type, te.deadline, te.id',
             array($studentId, $classId, $topicId)
         );
@@ -478,6 +571,29 @@ class AdminRequestService extends LmsService
                 $dedup[$type] = $t;
             }
         }
+
+        // Nếu chuyên đề có cấu hình Minitest mà chưa có bản ghi trong tests, bổ sung placeholder draft
+        if (!empty($head['has_minitest']) && !isset($dedup['minitest'])) {
+            $dedup['minitest'] = array(
+                'id'                     => 0,
+                'test_type'              => 'minitest',
+                'title'                  => (string) $head['topic_name'] . ' - Minitest',
+                'test_file_url'          => !empty($head['minitest_file_url']) ? $head['minitest_file_url'] : null,
+                'max_score'              => 20.0,
+                'lesson_summary_url'     => null,
+                'status'                 => 'draft',
+                'deadline'               => null,
+                'submission_id'          => null,
+                'submission_files'       => array(),
+                'submitted_at'           => null,
+                'submission_status'      => null,
+                'score_x'                => null,
+                'score_y_percent'        => null,
+                'graded_at'              => null,
+                'teacher_feedback_files' => array(),
+            );
+        }
+
         $tests = array_values($dedup);
 
         $head['done_sessions'] = $this->countTopicSessions($classId, $topicId);

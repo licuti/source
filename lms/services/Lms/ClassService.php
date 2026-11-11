@@ -116,6 +116,12 @@ class ClassService extends LmsService
 
         $code = $this->generateClassCode($classType);
 
+        $expectedEndDate = null;
+        if (!empty($fields['schedules']) && !empty($fields['start_date']) && (int) $fields['total_sessions'] > 0) {
+            $span = CourseCycleService::calculateScheduleDates($fields['schedules'], $fields['start_date'], (int) $fields['total_sessions']);
+            $expectedEndDate = !empty($span['end_date']) ? $span['end_date'] : null;
+        }
+
         $this->db->beginTransaction();
         try {
             $ok = $this->db->insert('db_lms_classes', array(
@@ -134,6 +140,7 @@ class ClassService extends LmsService
                 'test_grace_hours'   => $fields['test_grace_hours'],
                 'status'             => isset($data['status']) && $data['status'] === 'arranging' ? 'arranging' : 'active',
                 'start_date'         => $fields['start_date'],
+                'expected_end_date'  => $expectedEndDate,
             ));
             if (!$ok) {
                 throw new \Exception('insert db_lms_classes failed');
@@ -351,6 +358,12 @@ class ClassService extends LmsService
                 array($oldPrice, $oldPct, $classId)
             );
 
+            $classEndDate = null;
+            if (!empty($fields['schedules']) && !empty($fields['start_date']) && (int) $fields['total_sessions'] > 0) {
+                $cSpan = CourseCycleService::calculateScheduleDates($fields['schedules'], $fields['start_date'], (int) $fields['total_sessions']);
+                $classEndDate = !empty($cSpan['end_date']) ? $cSpan['end_date'] : null;
+            }
+
             $ok = $this->db->update('db_lms_classes', array(
                 'program_id'         => (int) $data['program_id'],
                 'subject_id'         => (int) $data['subject_id'],
@@ -365,6 +378,7 @@ class ClassService extends LmsService
                 'hw_check_hours'     => $fields['hw_check_hours'],
                 'test_grace_hours'   => $fields['test_grace_hours'],
                 'start_date'         => $fields['start_date'],
+                'expected_end_date'  => $classEndDate,
             ), 'id = ?', array($classId));
             if (!$ok) {
                 throw new \Exception('update db_lms_classes failed');
@@ -434,16 +448,30 @@ class ClassService extends LmsService
 
                 // Keep only the active cycle snapshot in sync with the class
                 // editor. Completed cycles remain immutable history.
+                $activeCycleRow = $this->db->safeFetchOne(
+                    'select cycle_no, start_date, total_sessions, remaining_sessions from db_lms_course_cycles where id = ? limit 1',
+                    array($activeCycleId)
+                );
+                $isFirstCycle = empty($activeCycleRow) || (int) $activeCycleRow['cycle_no'] <= 1;
+                $cycStartDate = $isFirstCycle ? $fields['start_date'] : (string) $activeCycleRow['start_date'];
+                $cycTotal     = $isFirstCycle ? $fields['total_sessions'] : (int) $activeCycleRow['total_sessions'];
+                $cycRemaining = $isFirstCycle ? $remaining : (int) $activeCycleRow['remaining_sessions'];
+                $cycEndDate   = null;
+                if (!empty($fields['schedules']) && !empty($cycStartDate) && $cycTotal > 0) {
+                    $cycSpan = CourseCycleService::calculateScheduleDates($fields['schedules'], $cycStartDate, $cycTotal);
+                    $cycEndDate = !empty($cycSpan['end_date']) ? $cycSpan['end_date'] : null;
+                }
                 $this->db->update('db_lms_course_cycles', array(
                     'teacher_id' => $teacherId,
                     'price_per_session' => $fields['price_per_session'],
                     'teacher_percentage' => $fields['teacher_percentage'],
-                    'total_sessions' => $fields['total_sessions'],
-                    'remaining_sessions' => $remaining,
+                    'total_sessions' => $cycTotal,
+                    'remaining_sessions' => $cycRemaining,
                     'hw_deadline_time' => $fields['hw_deadline_time'],
                     'hw_check_hours' => $fields['hw_check_hours'],
                     'test_grace_hours' => $fields['test_grace_hours'],
-                    'start_date' => $fields['start_date'],
+                    'start_date' => $cycStartDate,
+                    'expected_end_date' => $cycEndDate,
                 ), 'id = ?', array($activeCycleId));
 
                 $this->db->safeExec('delete from db_lms_cycle_schedules where cycle_id = ?', array($activeCycleId));

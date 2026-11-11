@@ -378,7 +378,7 @@ if (!function_exists('lvp_render_scan_rule_row')) {
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title fw-bold text-dark fs-5" id="lmsRegulationLabel">
+                    <h5 class="modal-title fw-bold fs-5" id="lmsRegulationLabel">
                         Chỉnh sửa quy chế miễn giảm và ngưỡng hạ phí dịch vụ
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>

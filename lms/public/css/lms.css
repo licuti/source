@@ -1481,8 +1481,8 @@ a.lms-link:hover {
 }
 .lms-cal-dot {
     display: inline-block;
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
     border-radius: 3px;
     margin-right: .35rem;
     vertical-align: -1px;
@@ -2991,6 +2991,14 @@ a.lms-link:hover {
 
 .lms-tf-date-wrap .lms-tf-input {
     padding-left: 38px;
+}
+
+.lms-input-static,
+.lms-tf-input.lms-input-static {
+    background-color: #cbd5e1 !important;
+    border-color: #cbd5e1 !important;
+    color: #1e293b !important;
+    font-weight: 500;
 }
 
 .lms-tf-select {

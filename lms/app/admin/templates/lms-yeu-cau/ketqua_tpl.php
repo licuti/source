@@ -68,7 +68,9 @@ if (!empty($tests) && is_array($tests)) {
 <?php foreach ($tests as $t): ?>
     <?php
     $typeLabel    = isset($testLabels[$t['test_type']]) ? $testLabels[$t['test_type']] : (string) $t['test_type'];
-    $secTitle     = ($t['test_type'] === 'minitest') ? 'Minitest chuyên đề' : 'Bài test chuyên đề';
+    $isMini       = ($t['test_type'] === 'minitest');
+    $isMiniOpen   = ($isMini && isset($t['status']) && (string) $t['status'] === 'published');
+    $secTitle     = $isMini ? 'Minitest chuyên đề' : 'Bài test chuyên đề';
     $hasSub       = !empty($t['submission_id']);
     $graded       = !empty($t['graded_at']);
     $maxScore     = !empty($t['max_score']) ? (float) $t['max_score'] : 20.0;
@@ -115,7 +117,34 @@ if (!empty($tests) && is_array($tests)) {
                     </a>
                 <?php endif; ?>
             </div>
-            <div>
+            <div class="d-flex align-items-center gap-2">
+                <?php if ($isMini): ?>
+                    <?php lms_component('badge', array(
+                        'label'   => $isMiniOpen ? 'Minitest đang MỞ' : 'Minitest đang TẮT',
+                        'variant' => $isMiniOpen ? 'success' : 'secondary',
+                        'icon'    => $isMiniOpen ? 'fa-solid fa-check' : 'fa-solid fa-lock',
+                    )); ?>
+
+                    <?php if ($canEdit): ?>
+                        <form method="post" action="<?= e(lms_url($alias, 'bat-tat-minitest')) ?>" class="d-inline-block"
+                              onclick="event.stopPropagation();"
+                              onsubmit="return confirm('<?= $isMiniOpen ? 'Tắt chức năng nộp bài Minitest của học sinh?' : 'Mở bài Minitest cho học sinh nộp bài gỡ điểm?' ?>');">
+                            <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
+                            <input type="hidden" name="class_id" value="<?= e((string) $ctxParams['class_id']) ?>">
+                            <input type="hidden" name="student_id" value="<?= e((string) $ctxParams['student_id']) ?>">
+                            <input type="hidden" name="topic_id" value="<?= e((string) $ctxParams['topic_id']) ?>">
+                            <input type="hidden" name="enable" value="<?= $isMiniOpen ? '0' : '1' ?>">
+                            <?php lms_component('button', array(
+                                'type'    => 'submit',
+                                'label'   => $isMiniOpen ? 'Tắt Minitest' : 'Bật Minitest',
+                                'variant' => $isMiniOpen ? 'outline-danger' : 'primary',
+                                'size'    => '',
+                                'icon'    => $isMiniOpen ? 'fa-solid fa-lock' : 'fa-solid fa-unlock',
+                            )); ?>
+                        </form>
+                    <?php endif; ?>
+                <?php endif; ?>
+
                 <?php if ($hasSub && $canEdit && !$graded): ?>
                     <?php lms_component('button', array(
                         'label'   => 'Xác nhận',
@@ -143,6 +172,20 @@ if (!empty($tests) && is_array($tests)) {
         <!-- Card Body -->
         <div id="<?= e($collapseId) ?>" class="collapse show">
             <div class="lms-panel-body">
+                <?php if ($isMini): ?>
+                    <?php if (!$isMiniOpen): ?>
+                        <div class="alert alert-warning mb-3 py-2 small">
+                            <i class="fa-solid fa-circle-info me-1"></i>
+                            <strong>Minitest đang TẮT.</strong> Học sinh hiện chưa thấy và chưa thể nộp bài Minitest này. Khi bài Test chính không đạt yêu cầu, Admin nhấn <strong>"Bật Minitest"</strong> ở phía trên để mở quyền nộp bài cho học sinh.
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-success mb-3 py-2">
+                            <i class="fa-solid fa-circle-check me-1"></i>
+                            <strong>Minitest đang MỞ.</strong> Học sinh đã có thể nhìn thấy và nộp bài Minitest ở trang lớp học.
+                        </div>
+                    <?php endif; ?>
+                <?php endif; ?>
+
                 <!-- Phần 1: Bài nộp của học sinh (tham khảo buoi_tpl.php dùng file_grid) -->
                 <h6 class="fw-bold fs-5 mb-3">Bài nộp của học sinh</h6>
 

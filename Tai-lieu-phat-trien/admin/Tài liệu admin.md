@@ -94,6 +94,7 @@
 - **Route:**
   - Danh sách lớp: `GET /lms/admin/lms-lop`
   - Thêm / Sửa lớp: `GET|POST /lms/admin/lms-lop/them`, `GET|POST /lms/admin/lms-lop/sua?id={id}`
+  - Thêm khoá học mới (Popup): `POST /lms/admin/lms-lop/them-khoa-hoc`
   - Lịch học của lớp: `GET /lms/admin/lms-lop/lich-hoc?id={id}&week=YYYY-MM-DD`
   - Chi tiết buổi học & chấm BTVN: `GET /lms/admin/lms-lop/buoi?id={session_id}`, `POST /lms/admin/lms-lop/cap-nhat-buoi`, `POST /lms/admin/lms-lop/cham-btvn`
   - Điều chỉnh số buổi hàng loạt (AJAX + POST): `GET /lms/admin/lms-lop/ajax-danh-sach-lop`, `POST /lms/admin/lms-lop/dieu-chinh-xoa-buoi`, `POST /lms/admin/lms-lop/dieu-chinh-them-buoi`
@@ -102,7 +103,7 @@
   - `lms/app/admin/sources/lms-lop.php`
   - `lms/app/admin/templates/lms-lop/hienthi_tpl.php`, `form_tpl.php`, `lich-hoc_tpl.php`, `buoi_tpl.php`
 - **Services:** `Lms\ClassService`, `Lms\CourseCycleService`, `Lms\AdminReportService`
-- **Dẫn chứng Mockup:** `Tai-lieu-phat-trien/admin/Lớp học.png`, `Tai-lieu-phat-trien/admin/Quản lý lớp học - Thêm.png`, `Tai-lieu-phat-trien/admin/Quản lý lớp học - Điều chỉnh số buổi học.png`
+- **Dẫn chứng Mockup:** `Tai-lieu-phat-trien/admin-ver2/Lớp học.png`, `Tai-lieu-phat-trien/admin-ver2/Thêm khóa học.png`, `Tai-lieu-phat-trien/admin/Quản lý lớp học - Thêm.png`, `Tai-lieu-phat-trien/admin/Quản lý lớp học - Điều chỉnh số buổi học.png`
 
 ### 3.1. Bộ lọc tìm kiếm & Thanh công cụ (`hienthi_tpl.php`)
 - **Form bộ lọc** (sử dụng `form/input`, `form/select`, `button`):
@@ -116,17 +117,17 @@
   - Nút **Thêm** (`button`, `variant="primary"`, `icon="fa-solid fa-plus"`, dẫn tới `/lms/admin/lms-lop/them`).
 - **Dòng tổng kết:** `Tổng: N lớp` + phân trang component `pagination`.
 
-### 3.2. Cột bảng danh sách lớp học
+### 3.2. Cột bảng danh sách lớp học & Popup "Thêm khóa học"
 | Cột | Mô tả thực tế |
 |---|---|
-| **Mã lớp** | Tên lớp (`name` in đậm) + Mã lớp (`class_code`) kèm `badge` loại lớp (`1 kèm 1` hoặc `Đông người`). |
+| **Mã lớp** | Tên lớp (`name` in đậm) + Mã lớp (`class_code`) kèm `badge` loại lớp (`1 kèm 1` hoặc `Nhóm`). |
 | **Chương trình học** | Tên nhóm chương trình (`program_name`) + tên môn/danh mục (`subject_name` chữ nhỏ bên dưới). |
 | **Sĩ số** | Tổng số học viên đang active trong lớp (`student_count`). |
 | **Thời gian** | Lịch cố định trong tuần ghép bằng dấu ` / ` (VD: `Thứ 2 17:30 - 19:00 / Thứ 6 17:30 - 19:00`). |
 | **Giáo viên** | Mã GV (`teacher_code` in đậm) + `[Tên giáo viên]` ở dòng dưới. |
-| **Khoá học** | Hiển thị tối đa **2 khoá học gần nhất** (`array_slice($cycles, 0, 2)` từ `db_lms_course_cycles`) xếp cạnh nhau. Mỗi khoá hiển thị: Tên khoá (`Khóa 1`, `Khóa 2`... kèm badge `Đóng` nếu `status = 'closed'`), `Bắt đầu`, `Kết thúc`, `Đã học`, `Còn lại`. |
+| **Khoá học** | Hiển thị tối đa **2 khoá học gần nhất** (`array_slice($cycles, 0, 2)` từ `db_lms_course_cycles`) xếp cạnh nhau. Mỗi khoá hiển thị: Tên khoá (`Khóa 1`, `Khóa 2`...), `Bắt đầu`, `Kết thúc`, `Đã học`, `Còn lại`. Các ngày bắt đầu và kết thúc tự động tính theo số buổi học và lịch cố định của từng khoá (`CourseCycleService::calculateScheduleDates()`). |
 | **Chuyên đề đang học** | Tên chuyên đề hiện tại của lớp (`current_topic`). |
-| **Hành động** | 2 dòng thao tác: `Sửa | Lịch học` và `Xoá` (có confirm). |
+| **Hành động** | 2 dòng thao tác: `Sửa \| Lịch học` và `Thêm khoá học \| Xoá`. Nhấn **Thêm khoá học** mở popup `#lmsAddCourseCycleModal` (`CourseCycleService::addCourseCycleFromPopup()`): gồm 2 trường `form/input` (**Số buổi còn lại của khóa học hiện tại**, **Số buổi của khóa mới**) và nút `button` **Cập nhật** (`variant="primary"`). |
 
 ### 3.3. Form "Thêm / Sửa lớp học" (`form_tpl.php`)
 Sử dụng các shared form components (`form/select`, `form/input`, `form/field_row`, `form/addon_input`, `form/textarea`, `button`):
@@ -139,24 +140,25 @@ Sử dụng các shared form components (`form/select`, `form/input`, `form/fiel
 | Loại lớp | * | `form/select` (`#fld-class-type`, `name="class_type"`) | `1 kèm 1` (`one_on_one`) / `Đông người` (`group`). Tự động chuyển đổi chế độ chọn học viên (1 HV vs nhiều HV) và đổi giá trị mặc định Hạn check BTVN (`0` giờ cho 1-1, `24` giờ cho đông người). |
 | Mã lớp | * | `form/input` (`#fld-name`, `name="name"`) | Nhập mã/tên hiển thị lớp (VD: `Toán 227`). |
 | Chọn giáo viên | * | `form/select` (`#fld-teacher`, `name="teacher_id"`) | Danh sách GV active (`Mã GV - Họ tên`). Khi chọn GV sẽ tự động điền `% GV nhận` theo `service_fee_percentage` mặc định của GV đó. |
-| Chọn học viên | * | `form/field_row` (`name="student_ids[]"`) | Nếu `1 kèm 1`: hiển thị dropdown đơn (`#fld-student-single`). Nếu `Đông người`: hiển thị Select2 multi-select (`#fld-student-multi`) cho phép tìm và chọn nhiều học viên. |
+| Chọn học viên | * | `form/field_row` (`name="student_ids[]"`) | Sử dụng component `form/select`: Nếu `1 kèm 1` hiển thị dropdown đơn (`#fld-student-single`). Nếu `Đông người` hiển thị Select2 multi-select (`#fld-student-multi`) cho phép tìm và chọn nhiều học viên. |
 | Lịch cố định | * | `form/class_schedule_slots` (`#lms-schedules-container`) | Component dùng chung với trang Lịch học: mỗi dòng gồm Thứ (`sch_day[]`) + Giờ bắt đầu (`sch_start[]`) - Giờ kết thúc (`sch_end[]`), nút `Xoá` / `Thêm`. Bắt buộc tối thiểu 1 dòng. |
 | Học phí 1 buổi | * | `form/addon_input` (`name="price_per_session"`) | Nhập số tiền + hậu tố `đồng` (VD: `560000`). |
 | Phần trăm gv nhận | * | `form/addon_input` (`name="teacher_percentage"`) | Nhập số `%` (0–100, bước 0.5) + hậu tố `%`. Cho phép chỉnh riêng cho lớp mà không ghi đè hồ sơ gốc của GV. |
-| Áp dụng từ ngày | * | `form/input` (`type="date"`, `name="start_date"`) | Ngày bắt đầu áp dụng lịch cố định. |
+| Áp dụng từ ngày | * | `form/date_picker` (`name="start_date"`) | Ngày bắt đầu áp dụng lịch cố định (kèm icon lịch chuẩn `📅`). |
 | Ghi chú | | `form/textarea` (`name="note"`) | Ghi chú nội bộ của lớp học. |
 | Chọn chuyên đề | | `form/field_row` (`#fld-topics`, `name="topic_ids[]"`) | Select2 multi-select, cho phép chọn nhiều chuyên đề thuộc nhiều Danh mục; options được nhóm theo Danh mục. |
 
 **Khối 2 — Đăng ký khoá đầu:**
 - `Số buổi:` (`form/addon_input`, `name="total_sessions"`, hậu tố `buổi`, mặc định `24`).
-- `Ngày bắt đầu` (`form/input`, `type="date"`, `name="cycle_start_date"`, mặc định ngày hiện tại).
+- `Ngày bắt đầu` (`form/date_picker`, `name="cycle_start_date"`, mặc định ngày hiện tại, kèm icon lịch chuẩn `📅`).
 
 **Khối 3 — Cài đặt (quy chế quét thời hạn cấp lớp):**
-| Mục | Toggle | Giá trị | Phạt GV | Ghi chú |
+Chuẩn hoá 100% bằng form component LMS (mỗi dòng dùng `form/field_row`, ô nhập thời gian dùng `form/input`, ô phạt dùng `form/addon_input` suffix `tick`):
+| Mục | Toggle | Giá trị (`form/input`) | Phạt GV (`form/addon_input`) | Ghi chú |
 |---|---|---|---|---|
-| **Hạn giao BTVN** | `#sw-hw-deadline` | `hw_deadline_time` (mặc định `12:00`) — *của ngày hôm sau* | `hw_penalty_ticks` (`1` tick) | |
-| **Hạn check BTVN** | `#sw-hw-check` | `hw_check_hours` (mặc định `0` giờ với lớp 1-1, `24` giờ với lớp đông người) — *giờ trước buổi tiếp theo* | `hw_check_penalty_ticks` (`1` tick) | *Chỉ áp dụng nếu học sinh có nộp BTVN trước deadline GV giao.* |
-| **Hạn chấm test** | `#sw-test-grace` | `test_grace_hours` (mặc định `72`) — *giờ kể từ khi hs nộp bài* | `test_penalty_ticks` (`1` tick) | |
+| **Hạn giao BTVN** | `#sw-hw-deadline` | `hw_deadline_time` (`type="time"`, mặc định `12:00`) — *của ngày hôm sau* | `hw_penalty_ticks` (`1` tick) | |
+| **Hạn check BTVN** | `#sw-hw-check` | `hw_check_hours` (`type="number"`, mặc định `0` giờ với lớp 1-1, `24` giờ với lớp đông người) — *giờ trước buổi tiếp theo* | `hw_check_penalty_ticks` (`1` tick) | *Chỉ áp dụng nếu học sinh có nộp BTVN trước deadline GV giao.* |
+| **Hạn chấm test** | `#sw-test-grace` | `test_grace_hours` (`type="number"`, mặc định `72`) — *giờ kể từ khi hs nộp bài* | `test_penalty_ticks` (`1` tick) | |
 
 **Khối 4 — Nút thao tác:** `Lưu thay đổi` / `Huỷ`. Không còn bảng "Khóa học của lớp" ở cuối form (đã bỏ theo thiết kế thực tế).
 
@@ -677,12 +679,14 @@ Tất cả CSV có UTF-8 BOM và chống CSV injection.
   - Đánh dấu buổi nghỉ: `POST /lms/admin/lms-lop/danh-dau-nghi`
 - **Template:** `lms/app/admin/templates/lms-lop/lich-hoc_tpl.php`
 - **Dẫn chứng Mockup:** `Tai-lieu-phat-trien/admin-ver2/Lịch học.png`
+- **Header trang:** Tiêu đề cam chuẩn `Lịch học` (`.lms-page-title`). Theo đúng mockup, không có thanh `.lms-page-header` breadcrumb/action box.
 
 ### 16.1. Khối 1 — Thông tin lớp & Cấu hình lịch cố định
-- **Cột trái (Read-only):** Hiển thị `Loại lớp` (`1 kèm 1` / `Đông người`), `Giáo viên` (`Mã GV - Họ tên`), `Học viên` (`Mã HV - Họ tên`).
-- **Cột phải (`POST /lms/admin/lms-lop/cap-nhat-lich-co-dinh`):**
-  - Component dùng chung `form/class_schedule_slots` (`#lms-fixed-schedules-container`): mỗi dòng gồm Thứ (`sch_day[]`) + Giờ bắt đầu (`sch_start[]`) - Giờ kết thúc (`sch_end[]`) + nút `Xoá` / `Thêm`.
-  - `Ngày áp dụng lịch` (`effective_from`, date picker) + nút **Lưu**.
+- Hiển thị trực tiếp trên nền trang (không bọc trong `.lms-card` / `.lms-card-body`), chuẩn hoá 100% bằng form component LMS:
+  - **Cột trái (Read-only):** Sử dụng `form/input` (kèm class `.lms-input-static` nền xám nhạt bo góc chuẩn) hiển thị `Loại lớp` (`1 kèm 1` / `Đông người`), `Giáo viên` (`Mã GV - Họ tên`), `Học viên` (`Mã HV - Họ tên`).
+  - **Cột phải (`POST /lms/admin/lms-lop/cap-nhat-lich-co-dinh`):**
+    - Sử dụng `form/field_row` bọc component `form/class_schedule_slots` (`#lms-fixed-schedules-container`): mỗi dòng gồm Thứ (`sch_day[]`) + Giờ bắt đầu (`sch_start[]`) - Giờ kết thúc (`sch_end[]`) + nút `Xoá` / `Thêm`.
+    - `Ngày áp dụng lịch` (`effective_from`): sử dụng `form/date_picker` kết hợp nút **Lưu** (`button` cam `variant="primary"`).
 
 ### 16.2. Khối 2 — Thanh điều hướng tuần/tháng
 - Nút lùi/tiến tuần (`week=YYYY-MM-DD`), tiêu đề `Tháng M / YYYY`, nút **Hôm nay** (nếu đang xem tuần khác).
@@ -705,9 +709,25 @@ Tất cả CSV có UTF-8 BOM và chống CSV injection.
   - **Xám (`.lms-cal-event--cancelled`):** Buổi đã nghỉ / huỷ (`cancelled`, `absent_teacher`, `absent_student`).
 - Trang **Tổng quan** (`lms-tong-quan`) dùng lưới `lms-week-timeline` riêng nhưng đã chuyển sang cùng helper `lms_cal_offset_px`/`lms_cal_span_px`: buổi 90 phút giờ cao 60px (trước đây `ceil()` thành 82px).
 
-### 16.4. Tương tác Popup Chi tiết buổi học & Thêm buổi học
-- **Click vào thẻ buổi học (`.lms-cal-event`):** Mở Modal chi tiết buổi học hiển thị: Thời lượng (`duration` giờ), Học phí buổi (`price`), Phần trăm GV nhận (`percent`%), Số tiền GV nhận (`teacher-amount`), Chuyên đề, Nội dung báo cáo, BTVN, cùng các nút **Báo cáo buổi học** (`/lms/admin/lms-lop/buoi?id={id}`), **Đánh dấu buổi nghỉ** (`POST /lms/admin/lms-lop/danh-dau-nghi`) và **Xoá buổi** (`POST /lms/admin/lms-lop/xoa-buoi-hoc`). Badge popup lấy từ `data-variant` + `data-status-label`.
-- **Click vào ô trống trên lưới lịch:** Mở Modal `#modal-add-session` (`POST /lms/admin/lms-lop/them-buoi-hoc`) tự động điền ngày và khung giờ vừa chọn, cho phép nhập số giờ học, học phí buổi, % giáo viên nhận và chuyên đề.
+### 16.4. Khối 4 — Chú thích (Legend)
+- Hiển thị danh sách 4 trạng thái chuẩn dưới dạng danh sách stack thẳng hàng, gọn gàng sát mockup:
+  - Ô vuông đỏ: Buổi học sắp tới
+  - Ô vuông đỏ có dấu ✕: Buổi học thiếu BTVN
+  - Ô vuông hồng nhạt: Buổi học đã hoàn thành
+  - Ô vuông xám: Buổi học đã nghỉ
+- Loại bỏ hoàn toàn các khung text hướng dẫn tạm thời không có trong bản thiết kế thực tế.
+
+### 16.5. Tương tác Popup Chi tiết buổi học & Thêm buổi học
+- **Click vào thẻ buổi học (`.lms-cal-event`):** Mở Modal chi tiết buổi học (`#modal-session-detail`) hiển thị: Thời gian kèm component `badge` trạng thái, các ô summary tile: Thời lượng (`duration` giờ), Học phí buổi (`price`), Phần trăm GV nhận (`percent`%), Số tiền GV nhận (`teacher-amount`), Chuyên đề, Nội dung báo cáo, BTVN, cùng các nút component `button`: **Báo cáo buổi học** (`/lms/admin/lms-lop/buoi?id={id}`, `primary`), **Đánh dấu buổi nghỉ** (`POST /lms/admin/lms-lop/danh-dau-nghi`, `warning`) và **Xoá buổi** (`POST /lms/admin/lms-lop/xoa-buoi-hoc`, `outline-danger`), **Đóng** (`secondary`).
+- **Click vào ô trống trên lưới lịch:** Mở Modal `#modal-add-session` (`POST /lms/admin/lms-lop/them-buoi-hoc`) được chuẩn hoá 100% bằng form component LMS:
+  - `Ngày học`: Component `form/date_picker` (`bare => true`).
+  - `Giờ bắt đầu`, `Giờ kết thúc`: Component `form/input` (`type => 'time'`, `bare => true`).
+  - `Số giờ học`, `Số tiền GV nhận`: Component `form/input` (`readonly => true`, `class => 'lms-input-static'`, `bare => true`).
+  - `Học phí 1 buổi`, `% GV nhận`: Component `form/input` (`type => 'number'`, `bare => true`).
+  - `Chuyên đề học`: Component `form/select` (`bare => true`).
+  - `Trạng thái buổi học`: Component `form/select` (`bare => true`).
+  - Nút **Huỷ** (`button`, `secondary`) & **Lưu buổi học** (`button`, `primary`).
+  - Tự động điền ngày và khung giờ vừa chọn, tính toán động thời lượng giờ học và tiền GV nhận, tự động gợi ý trạng thái theo thời gian quá khứ/tương lai.
 
 ## 17. Quản lý yêu cầu (chi tiết các tab)
 
@@ -738,9 +758,12 @@ Tất cả CSV có UTF-8 BOM và chống CSV injection.
 ### Tab "Kiểm tra số buổi"
 > *\*\* ở đây chỉ hiện các lớp còn ít hơn 5 buổi*
 
-- Bộ lọc: Mã lớp, GV + nút Tìm
+- Bộ lọc: Mã lớp, GV + nút Tìm (`form/input`, `button`)
 - Cột: Mã lớp, Mã GV, **Số buổi đã học** (VD: 23/24, 22/24, 21/24, 20/24), **Số buổi còn lại** (VD: 1, 2, 3, 4)
-- Hành động: **Thêm khoá học** / **Xoá**
+- Hành động: **Thêm khoá học** / **Xoá**:
+  - Nhấn **Thêm khoá học**: Mở popup `#lmsAddCourseCycleModal` trực tiếp trên trang (chuẩn mockup `admin-ver2/Thêm khóa học.png`, đồng bộ với trang Quản lý lớp học), điền sẵn số buổi còn lại của khoá hiện tại (`current_remaining_sessions`), cho phép Admin nhập số buổi khoá mới (`new_total_sessions`) và bấm **Cập nhật** (`variant="primary"`).
+  - Tự động gọi `CourseCycleService::addCourseCycleFromPopup()`: chốt khoá cũ, tạo khoá mới kế thừa lộ trình/học viên và cộng dồn số buổi còn lại của lớp học (`c.remaining_sessions >= 5`). Sau khi cập nhật thành công, trang tự động tải lại và lớp học rời khỏi danh sách cảnh báo thiếu buổi.
+  - Nhấn **Xoá**: Xoá lớp học (có hộp thoại xác nhận).
 
 ### Trang "Chi tiết kết quả test" (mở từ "Chi tiết" ở Duyệt KQ test)
 
@@ -760,19 +783,23 @@ Tất cả CSV có UTF-8 BOM và chống CSV injection.
 
 #### Section 2: Minitest chuyên đề
 - File: `mini-test-how-to-calculate.pdf`
-- (Cấu trúc giống Section 1 với file `minitest-...`)
+- **Công tắc Bật / Tắt Minitest:**
+  - Mặc định Minitest ở trạng thái **TẮT** (`db_lms_tests.status = 'draft'`), ẩn hoàn toàn trên trang lớp học của học sinh.
+  - Khi bài Test chính không đạt yêu cầu, Admin nhấn nút **"Bật Minitest"** (`POST /lms/admin/lms-yeu-cau/bat-tat-minitest?enable=1`) $\rightarrow$ Minitest chuyển sang `published`, nút **"Nộp mini test"** xuất hiện trên trang lớp học để học sinh nộp bài cứu cánh.
+  - Admin có thể nhấn **"Tắt Minitest"** (`POST /lms/admin/lms-yeu-cau/bat-tat-minitest?enable=0`) để thu hồi quyền nộp bài nếu không cần thiết.
+- (Cấu trúc chấm điểm & xác nhận kết quả tương tự Section 1)
 
 ### Modal "Điều chỉnh số buổi" (`#lmsAdjustSessionsModal` — mở từ nút "Điều chỉnh số buổi học" ở Quản lý lớp học)
-- **Template:** Nằm trong `lms/app/admin/templates/lms-lop/hienthi_tpl.php` (Mockup: `Quản lý lớp học - Điều chỉnh số buổi học.png`).
+- **Template:** Nằm trong `lms/app/admin/templates/lms-lop/hienthi_tpl.php` (Mockup: `Quản lý lớp học - Điều chỉnh số buổi học.png`), đã được chuẩn hoá 100% bằng LMS Component (`form/input`, `form/date_picker`, `button`).
 - **Tải dữ liệu AJAX:** Gọi `GET /lms/admin/lms-lop/ajax-danh-sach-lop?q=...&page=...` để nạp danh sách lớp có phân trang ngay trong modal.
-- **Thanh tìm kiếm:** Ô `#lms-adjust-search` (`"Tìm nội dung trong bảng"`, debounce tự động lọc theo mã lớp, học viên, giáo viên).
+- **Thanh tìm kiếm:** Ô `#lms-adjust-search` (dùng component `form/input` với `bare => true`, `"Tìm nội dung trong bảng"`, debounce tự động lọc theo mã lớp, học viên, giáo viên).
 - **Bảng chọn lớp (`#lms-adjust-tbody`):**
-  - Cột: **Mã lớp** | **Mã học viên** (`Mã HV [Tên học sinh]`) | **Mã giáo viên** (`Mã GV [Tên giáo viên]`) | **Chọn** (checkbox `.lms-adjust-chk`).
-  - Chân bảng: Phân trang AJAX (`#lms-adjust-pagination`) + bộ đếm `Đã chọn: N lớp` + nút **Chọn tất cả** (`#lms-adjust-btn-toggle-all`).
+  - Cột: **Mã lớp** | **Mã học viên** (`Mã HV [Tên học sinh]`) | **Mã giáo viên** (`Mã GV [Tên giáo viên]`) | **Chọn** (checkbox `.lms-adjust-chk-class` sinh động qua JS).
+  - Chân bảng: Phân trang AJAX (`#lms-adjust-pagination`) + bộ đếm `Đã chọn: N lớp` + nút **Chọn tất cả** (dùng component `button`, `variant => 'link'`, `#lms-adjust-btn-toggle-all`).
 - **Form 1 — Xoá buổi học hàng loạt (`POST /lms/admin/lms-lop/dieu-chinh-xoa-buoi`):**
-  - Chọn khoảng ngày `from_date` → `to_date` + nút **Xoá** (màu đen `#0f172a`): xoá toàn bộ các buổi học `upcoming` trong khoảng ngày của các lớp đã chọn.
+  - Chọn khoảng ngày `from_date` → `to_date` (dùng 2 component `form/date_picker` với `bare => true`) + nút **Xoá** (dùng component `button`, `variant => 'secondary'`, nền đen `#0f172a` theo mockup): xoá toàn bộ các buổi học `upcoming` trong khoảng ngày của các lớp đã chọn.
 - **Form 2 — Thêm buổi học hàng loạt (`POST /lms/admin/lms-lop/dieu-chinh-them-buoi`):**
-  - Chọn khoảng ngày `from_date` → `to_date` + nút **Thêm** (màu cam `#ea580c`): tự động sinh các buổi học `upcoming` theo lịch cố định (`db_lms_schedules`) trong khoảng ngày cho các lớp đã chọn.
+  - Chọn khoảng ngày `from_date` → `to_date` (dùng 2 component `form/date_picker` với `bare => true`) + nút **Thêm** (dùng component `button`, `variant => 'primary'`, nền cam `#ea580c` theo mockup): tự động sinh các buổi học `upcoming` theo lịch cố định (`db_lms_schedules`) trong khoảng ngày cho các lớp đã chọn.
 
 ## 18. Quản lý lộ trình (Form thêm/sửa)
 

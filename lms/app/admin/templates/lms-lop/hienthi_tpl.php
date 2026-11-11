@@ -7,20 +7,12 @@
  * $filterQ, $filterTeacherId, $filterProgramIds, $filterProgramId, $filterDayOfWeek,
  * $filterStatus, $filterClassType, $teachers, $programs, $canEdit, $canDelete.
  */
-$classTypes    = \Lms\ClassService::CLASS_TYPES;
-$classStatuses = \Lms\ClassService::CLASS_STATUSES;
-$weekdays      = \Lms\UserService::WEEKDAYS;
+$classTypes = \Lms\ClassService::CLASS_TYPES;
+$weekdays   = \Lms\UserService::WEEKDAYS;
 
 $typeBadge = array(
     'one_on_one' => 'info',
     'group'      => 'warning',
-);
-$statusBadge = array(
-    'arranging' => 'warning',
-    'active'    => 'success',
-    'paused'    => 'secondary',
-    'finished'  => 'info',
-    'cancelled' => 'danger',
 );
 
 // Chuẩn bị options cho các components select
@@ -155,7 +147,6 @@ foreach ($weekdays as $dw => $lbl) {
             <tbody>
                 <?php foreach ($items as $r): ?>
                     <?php
-                    $stt = isset($r['status']) ? (string) $r['status'] : '';
                     $ctype = isset($r['class_type']) ? (string) $r['class_type'] : '';
                     $times = array();
                     foreach ((isset($r['schedules']) ? $r['schedules'] : array()) as $sch) {
@@ -165,8 +156,7 @@ foreach ($weekdays as $dw => $lbl) {
                             . ' - ' . substr((string) $sch['end_time'], 0, 5);
                     }
                     $finished = (int) ($r['sessions_finished'] ?? 0);
-                    $totalSess = (int) ($r['total_sessions'] ?? 0);
-                    $cycles = !empty($r['cycles']) ? $r['cycles'] : array();
+                    $cycles   = !empty($r['cycles']) ? $r['cycles'] : array();
                     ?>
                     <tr>
                         <!-- Mã lớp & Tên lớp -->
@@ -215,15 +205,26 @@ foreach ($weekdays as $dw => $lbl) {
                         </td>
 
                         <!-- Khoá học: hiển thị 2 khoá gần nhất theo mockup -->
+                        <?php
+                        $displayCycles = !empty($cycles) ? array_slice($cycles, 0, 2) : array();
+                        $curCycleRemaining = !empty($displayCycles[0])
+                            ? (int) max(0, $displayCycles[0]['remaining_sessions'] ?? 0)
+                            : (int) max(0, $r['remaining_sessions'] ?? 0);
+                        ?>
                         <td>
                             <div class="d-flex gap-3 text-start" style="font-size: 0.8rem;">
-                                <?php if (!empty($cycles)): ?>
-                                    <?php foreach (array_slice($cycles, 0, 2) as $c): ?>
-                                        <div class="border-end pe-2" style="min-width: 110px;">
+                                <?php if (!empty($displayCycles)): ?>
+                                    <?php foreach ($displayCycles as $cIdx => $c): ?>
+                                        <div class="<?= $cIdx < count($displayCycles) - 1 ? 'border-end pe-3' : '' ?>" style="min-width: 110px;">
                                             <div class="fw-bold text-dark mb-1">
                                                 <?= e($c['name'] ?: 'Khóa ' . $c['cycle_no']) ?>
                                                 <?php if (($c['status'] ?? '') === 'closed'): ?>
-                                                    <span class="badge bg-secondary ms-1" style="font-size: 0.65rem;">Đóng</span>
+                                                    <?php lms_component('badge', array(
+                                                        'label'   => 'Đóng',
+                                                        'variant' => 'secondary',
+                                                        'class'   => 'ms-1',
+                                                        'style'   => 'font-size: 0.65rem;',
+                                                    )); ?>
                                                 <?php endif; ?>
                                             </div>
                                             <div><span class="text-muted">Bắt đầu:</span> <?= !empty($c['start_date']) ? date('d/m/Y', strtotime($c['start_date'])) : '—' ?></div>
@@ -261,9 +262,16 @@ foreach ($weekdays as $dw => $lbl) {
                                 <a href="<?= e(lms_url($alias, 'lich-hoc', array('id' => (int) $r['id']))) ?>" class="lms-action-link">Lịch học</a>
                             </div>
                             <div>
-                                <a href="<?= e(lms_url($alias, 'sua', array('id' => (int) $r['id']))) ?>#khoa-hoc" class="lms-action-link text-primary">Thêm khoá học</a>
+                                <?php if ($canEdit): ?>
+                                    <a href="#"
+                                       class="lms-action-link text-primary js-open-add-course-cycle"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#lmsAddCourseCycleModal"
+                                       data-class-id="<?= (int) $r['id'] ?>"
+                                       data-remaining="<?= $curCycleRemaining ?>">Thêm khoá học</a>
+                                <?php endif; ?>
                                 <?php if ($canDelete): ?>
-                                    <span class="text-muted mx-1">|</span>
+                                    <?php if ($canEdit): ?><span class="text-muted mx-1">|</span><?php endif; ?>
                                     <a href="<?= e(lms_url($alias, 'xoa', array('id' => (int) $r['id']))) ?>"
                                        class="text-danger lms-confirm-delete"
                                        title="Xoá lớp học">Xoá</a>
@@ -294,10 +302,10 @@ foreach ($weekdays as $dw => $lbl) {
 
 <!-- ===================== MODAL ĐIỀU CHỈNH SỐ BUỔI HỌC HÀNG LOẠT (Quản lý lớp học - Điều chỉnh số buổi học.png) ===================== -->
 <div class="modal fade" id="lmsAdjustSessionsModal" tabindex="-1" aria-labelledby="lmsAdjustSessionsLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" style="max-width: 820px;">
-        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
-            <div class="modal-header bg-white py-3 px-4 border-bottom">
-                <h5 class="modal-title fw-bold text-dark fs-5" id="lmsAdjustSessionsLabel">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold fs-5" id="lmsAdjustSessionsLabel">
                     Điều chỉnh số buổi
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
@@ -306,14 +314,20 @@ foreach ($weekdays as $dw => $lbl) {
             <div class="modal-body p-4">
                 <!-- 1. Thanh tìm kiếm -->
                 <div class="position-relative mb-3">
-                    <i class="fa-solid fa-magnifying-glass text-muted position-absolute" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.95rem;"></i>
-                    <input type="text" id="lms-adjust-search" class="form-control ps-5 py-2" placeholder="Tìm nội dung trong bảng" style="border-radius: 8px; border: 1px solid #d1d5db; font-size: 0.9rem;">
+                    <i class="fa-solid fa-magnifying-glass text-muted position-absolute" style="left: 14px; top: 50%; transform: translateY(-50%); font-size: 0.95rem; z-index: 2;"></i>
+                    <?php lms_component('form/input', array(
+                        'id'          => 'lms-adjust-search',
+                        'name'        => 'lms_adjust_search',
+                        'placeholder' => 'Tìm nội dung trong bảng',
+                        'bare'        => true,
+                        'class'       => 'ps-5',
+                    )); ?>
                 </div>
 
                 <!-- 2. Bảng danh sách lớp (Load qua AJAX) -->
                 <div class="table-responsive border rounded" style="min-height: 250px;">
-                    <table class="table table-hover align-middle mb-0 text-dark" style="font-size: 0.88rem;">
-                        <thead style="background-color: #f3f4f6; border-bottom: 2px solid #e5e7eb;">
+                    <table class="table table-hover align-middle mb-0 text-dark lms-table">
+                        <thead class="bg-light">
                             <tr>
                                 <th style="width: 25%;" class="ps-3 py-2">Mã lớp</th>
                                 <th style="width: 35%;" class="py-2">Mã học viên</th>
@@ -334,16 +348,23 @@ foreach ($weekdays as $dw => $lbl) {
 
                 <!-- 3. Phân trang AJAX & Chọn tất cả -->
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3 pt-1">
-                    <nav aria-label="Pagination">
+                    <nav aria-label="Pagination" class="lms-pagination">
                         <ul class="pagination pagination-sm mb-0" id="lms-adjust-pagination">
                             <!-- Rendered by JS -->
                         </ul>
                     </nav>
                     <div class="d-flex align-items-center gap-3">
-                        <span class="text-muted small" id="lms-adjust-selected-count">Đã chọn: <strong>0</strong> lớp</span>
-                        <button type="button" class="btn btn-link p-0 text-decoration-none fw-bold" id="lms-adjust-btn-toggle-all" style="color: #ea580c; font-size: 0.88rem;">
-                            Chọn tất cả
-                        </button>
+                        <span class="text-muted" id="lms-adjust-selected-count">Đã chọn: <strong>0</strong> lớp</span>
+                        <?php lms_component('button', array(
+                            'label'   => 'Chọn tất cả',
+                            'type'    => 'button',
+                            'id'      => 'lms-adjust-btn-toggle-all',
+                            'variant' => 'link',
+                            'class'   => 'bg-transparent p-0 text-decoration-none fw-bold',
+                            'attrs'   => array(
+                                'style' => 'color: #ea580c;',
+                            ),
+                        )); ?>
                     </div>
                 </div>
 
@@ -353,19 +374,33 @@ foreach ($weekdays as $dw => $lbl) {
                 <form method="post" action="<?= e(lms_url($alias, 'dieu-chinh-xoa-buoi')) ?>" id="form-bulk-delete" class="mb-3">
                     <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
                     <div class="bulk-classes-hidden-container"></div>
-                    <div class="fw-bold text-dark mb-2" style="font-size: 0.95rem;">Xoá buổi học</div>
+                    <div class="fw-bold text-dark mb-2">Xoá buổi học</div>
                     <div class="d-flex align-items-center flex-wrap gap-2">
-                        <div class="input-group input-group-sm" style="max-width: 200px;">
-                            <span class="input-group-text bg-white text-muted"><i class="fa-regular fa-calendar"></i></span>
-                            <input type="date" name="from_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <div style="width: 175px;">
+                            <?php lms_component('form/date_picker', array(
+                                'id'       => 'bulk-delete-from-date',
+                                'name'     => 'from_date',
+                                'value'    => date('Y-m-d'),
+                                'required' => true,
+                                'bare'     => true,
+                            )); ?>
                         </div>
-                        <div class="input-group input-group-sm" style="max-width: 200px;">
-                            <span class="input-group-text bg-white text-muted"><i class="fa-regular fa-calendar"></i></span>
-                            <input type="date" name="to_date" class="form-control" value="<?= date('Y-m-d', strtotime('+1 month')) ?>" required>
+                        <div style="width: 175px;">
+                            <?php lms_component('form/date_picker', array(
+                                'id'       => 'bulk-delete-to-date',
+                                'name'     => 'to_date',
+                                'value'    => date('Y-m-d', strtotime('+1 month')),
+                                'required' => true,
+                                'bare'     => true,
+                            )); ?>
                         </div>
-                        <button type="submit" class="btn btn-sm text-white px-4 fw-medium" style="background-color: #0f172a; border-color: #0f172a; min-width: 90px; border-radius: 6px;">
-                            Xoá
-                        </button>
+                        <?php lms_component('button', array(
+                            'label'   => 'Xoá',
+                            'type'    => 'submit',
+                            'variant' => 'secondary',
+                            'size'    => '',
+                            'class'   => '',
+                        )); ?>
                     </div>
                 </form>
 
@@ -373,25 +408,87 @@ foreach ($weekdays as $dw => $lbl) {
                 <form method="post" action="<?= e(lms_url($alias, 'dieu-chinh-them-buoi')) ?>" id="form-bulk-add">
                     <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
                     <div class="bulk-classes-hidden-container"></div>
-                    <div class="fw-bold text-dark mb-2" style="font-size: 0.95rem;">Thêm buổi học</div>
+                    <div class="fw-bold text-dark mb-2">Thêm buổi học</div>
                     <div class="d-flex align-items-center flex-wrap gap-2">
-                        <div class="input-group input-group-sm" style="max-width: 200px;">
-                            <span class="input-group-text bg-white text-muted"><i class="fa-regular fa-calendar"></i></span>
-                            <input type="date" name="from_date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+                        <div style="width: 175px;">
+                            <?php lms_component('form/date_picker', array(
+                                'id'       => 'bulk-add-from-date',
+                                'name'     => 'from_date',
+                                'value'    => date('Y-m-d'),
+                                'required' => true,
+                                'bare'     => true,
+                            )); ?>
                         </div>
-                        <div class="input-group input-group-sm" style="max-width: 200px;">
-                            <span class="input-group-text bg-white text-muted"><i class="fa-regular fa-calendar"></i></span>
-                            <input type="date" name="to_date" class="form-control" value="<?= date('Y-m-d', strtotime('+1 month')) ?>" required>
+                        <div style="width: 175px;">
+                            <?php lms_component('form/date_picker', array(
+                                'id'       => 'bulk-add-to-date',
+                                'name'     => 'to_date',
+                                'value'    => date('Y-m-d', strtotime('+1 month')),
+                                'required' => true,
+                                'bare'     => true,
+                            )); ?>
                         </div>
-                        <button type="submit" class="btn btn-sm text-white px-4 fw-medium" style="background-color: #ea580c; border-color: #ea580c; min-width: 90px; border-radius: 6px;">
-                            Thêm
-                        </button>
+                        <?php lms_component('button', array(
+                            'label'   => 'Thêm',
+                            'type'    => 'submit',
+                            'variant' => 'primary',
+                            'size'    => '',
+                            'class'   => '',
+                        )); ?>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<!-- ===================== MODAL THÊM KHÓA HỌC (Thêm khóa học.png) ===================== -->
+<?php if ($canEdit): ?>
+<div class="modal fade" id="lmsAddCourseCycleModal" tabindex="-1" aria-labelledby="lmsAddCourseCycleLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold fs-5" id="lmsAddCourseCycleLabel">Thêm khóa học</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <form method="post" action="<?= e(lms_url($alias, 'them-khoa-hoc')) ?>">
+                <div class="modal-body p-4">
+                    <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
+                    <input type="hidden" name="class_id" id="lms-add-cycle-class-id" value="">
+
+                    <?php lms_component('form/input', array(
+                        'name'  => 'current_remaining_sessions',
+                        'id'    => 'lms-add-cycle-current-remaining',
+                        'label' => 'Số buổi còn lại của khóa học hiện tại',
+                        'type'  => 'number',
+                        'value' => '0',
+                        'attrs' => array('min' => 0, 'max' => 10000, 'required' => true),
+                    )); ?>
+
+                    <?php lms_component('form/input', array(
+                        'name'  => 'new_total_sessions',
+                        'id'    => 'lms-add-cycle-new-total',
+                        'label' => 'Số buổi của khóa mới',
+                        'type'  => 'number',
+                        'value' => '',
+                        'attrs' => array('min' => 1, 'max' => 10000, 'required' => true),
+                    )); ?>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <?php lms_component('button', array(
+                            'label'   => 'Cập nhật',
+                            'type'    => 'submit',
+                            'variant' => 'primary',
+                            'size'    => '',
+                            'class'   => 'px-4',
+                        )); ?>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <script>
     (function ($) {
@@ -401,6 +498,18 @@ foreach ($weekdays as $dw => $lbl) {
                 if (!window.confirm('Bạn có chắc muốn xoá lớp học này? Các buổi học đã hoàn thành sẽ được giữ lại làm lịch sử.')) {
                     e.preventDefault();
                 }
+            });
+
+            // ================= Modal Thêm khóa học =================
+            $(document).on('click', '.js-open-add-course-cycle', function () {
+                var classId = $(this).data('class-id') || '';
+                var remaining = $(this).data('remaining');
+                $('#lms-add-cycle-class-id').val(classId);
+                $('#lms-add-cycle-current-remaining').val(remaining !== undefined ? remaining : 0);
+                $('#lms-add-cycle-new-total').val('');
+            });
+            $('#lmsAddCourseCycleModal').on('shown.bs.modal', function () {
+                $('#lms-add-cycle-new-total').trigger('focus');
             });
 
             // ================= Quản lý AJAX Phân trang Modal Điều chỉnh số buổi =================

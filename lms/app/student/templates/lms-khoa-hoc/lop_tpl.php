@@ -90,32 +90,57 @@
                                                 </div>
                                                 <div class="lms-topic-actions-wrap mt-3">
                                                     <?php if ($isCompleted): ?>
-                                                        <span class="btn btn-success btn-sm w-100 fw-bold disabled lms-btn-completed">
-                                                            <i class="fa-solid fa-circle-check me-1"></i> Đã hoàn thành
-                                                        </span>
-                                                    <?php else: ?>
-                                                        <!-- Hiển thị đồng thời 2 nút theo yêu cầu nghiệp vụ -->
+                                                        <?php lms_component('button', array(
+                                                            'label'    => 'Đã hoàn thành',
+                                                            'variant'  => 'success',
+                                                            'size'     => 'sm',
+                                                            'icon'     => 'fa-solid fa-circle-check',
+                                                            'class'    => 'w-100 fw-bold lms-btn-completed',
+                                                            'disabled' => true,
+                                                        )); ?>
+                                                    <?php elseif ($miniReady): ?>
+                                                        <!-- Admin đã mở Minitest cho học sinh gỡ điểm -->
                                                         <div class="d-flex gap-2 w-100">
-                                                            <?php if ($testReady): ?>
-                                                                <a href="<?= e($testUrl) ?>" class="btn btn-lms btn-sm flex-fill">
-                                                                    Nộp test
-                                                                </a>
-                                                            <?php else: ?>
-                                                                <button type="button" class="btn btn-secondary btn-sm flex-fill lms-btn-disabled" disabled
-                                                                        title="<?= !empty($t['has_pending_test']) ? 'Đang chờ Admin duyệt test' : 'Chưa có bài test' ?>">
-                                                                    Nộp test
-                                                                </button>
+                                                            <?php if (!empty($t['test_completed'])): ?>
+                                                                <?php lms_component('button', array(
+                                                                    'href'    => $testUrl,
+                                                                    'label'   => 'Xem Test',
+                                                                    'variant' => 'outline-secondary',
+                                                                    'size'    => 'sm',
+                                                                    'attrs'   => array('title' => 'Xem lại bài test'),
+                                                                )); ?>
                                                             <?php endif; ?>
-
-                                                            <?php if ($miniReady): ?>
-                                                                <a href="<?= e($miniUrl) ?>" class="btn btn-lms btn-sm flex-fill">
-                                                                    Nộp mini test
-                                                                </a>
+                                                            <?php lms_component('button', array(
+                                                                'href'    => $miniUrl,
+                                                                'label'   => 'Nộp mini test',
+                                                                'variant' => 'primary',
+                                                                'size'    => 'sm',
+                                                                'class'   => 'flex-fill',
+                                                            )); ?>
+                                                        </div>
+                                                    <?php else: ?>
+                                                        <!-- Mặc định chỉ hiển thị nộp bài test chính -->
+                                                        <div class="w-100">
+                                                            <?php if ($testReady): ?>
+                                                                <?php lms_component('button', array(
+                                                                    'href'    => $testUrl,
+                                                                    'label'   => 'Nộp test',
+                                                                    'variant' => 'primary',
+                                                                    'size'    => 'sm',
+                                                                    'class'   => 'w-100',
+                                                                )); ?>
                                                             <?php else: ?>
-                                                                <button type="button" class="btn btn-secondary btn-sm flex-fill lms-btn-disabled" disabled
-                                                                        title="Admin chưa duyệt minitest">
-                                                                    Nộp mini test
-                                                                </button>
+                                                                <?php lms_component('button', array(
+                                                                    'type'     => 'button',
+                                                                    'label'    => 'Nộp test',
+                                                                    'variant'  => 'secondary',
+                                                                    'size'     => 'sm',
+                                                                    'class'    => 'w-100 lms-btn-disabled',
+                                                                    'disabled' => true,
+                                                                    'attrs'    => array(
+                                                                        'title' => !empty($t['has_pending_test']) ? 'Đang chờ Admin duyệt test' : 'Chưa có bài test',
+                                                                    ),
+                                                                )); ?>
                                                             <?php endif; ?>
                                                         </div>
                                                     <?php endif; ?>

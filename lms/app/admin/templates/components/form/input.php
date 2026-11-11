@@ -91,11 +91,15 @@ if (!empty($bare) || !empty($no_wrap) || !empty($no_row)) {
 }
 
 lms_component('form/field_row', array(
-    'label'    => $label,
-    'name'     => $name,
-    'id'       => $id,
-    'required' => $required,
-    'control'  => $controlHtml,
-    'hint'     => $hint,
-    'errors'   => isset($errors) ? $errors : array(),
+    'label'       => $label,
+    'name'        => $name,
+    'id'          => $id,
+    'required'    => $required,
+    'control'     => $controlHtml,
+    'hint'        => $hint,
+    'errors'      => isset($errors) ? $errors : array(),
+    'label_col'   => isset($label_col) ? $label_col : null,
+    'control_col' => isset($control_col) ? $control_col : null,
+    'label_align' => isset($label_align) ? $label_align : null,
+    'align'       => isset($align) ? $align : null,
 ));

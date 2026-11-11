@@ -72,8 +72,8 @@ $currentClassType = lms_form_old($_POST, $row, 'class_type', 'one_on_one');
 <form method="post" action="<?= e($formUrl) ?>" class="lms-form" id="lmsClassForm" novalidate>
     <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
 
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-11 col-lg-9 col-xl-8">
+    <div class="row">
+        <div class="col-lg-8">
 
             <!-- ===================== KHỐI 1: THÔNG TIN LỚP HỌC ===================== -->
             
@@ -132,25 +132,35 @@ $currentClassType = lms_form_old($_POST, $row, 'class_type', 'one_on_one');
             ?>
             <!-- Dropdown chọn 1 học viên (khi là 1 kèm 1) -->
             <div id="wrapper-student-single" style="<?= $currentClassType === 'group' ? 'display:none;' : '' ?>">
-                <select class="form-select" id="fld-student-single" name="student_ids[]" <?= $currentClassType === 'group' ? 'disabled' : 'required' ?>>
-                    <option value="">— Chọn học viên —</option>
-                    <?php foreach ($students as $st): ?>
-                        <option value="<?= (int) $st['user_id'] ?>"<?= in_array((int) $st['user_id'], $selStudents, true) ? ' selected' : '' ?>>
-                            <?= e($st['student_code']) ?> - <?= e($st['full_name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <?php lms_component('form/select', array(
+                    'id'          => 'fld-student-single',
+                    'name'        => 'student_ids[]',
+                    'options'     => $studentOptions,
+                    'empty_label' => '— Chọn học viên —',
+                    'value'       => !empty($selStudents) ? (string) $selStudents[0] : '',
+                    'disabled'    => ($currentClassType === 'group'),
+                    'required'    => ($currentClassType !== 'group'),
+                    'bare'        => true,
+                )); ?>
             </div>
 
             <!-- Multi-select chọn nhiều học viên (khi là Đông người) -->
             <div id="wrapper-student-multi" style="<?= $currentClassType !== 'group' ? 'display:none;' : '' ?>">
-                <select class="form-select select2-multiple" id="fld-student-multi" name="student_ids[]" multiple data-placeholder="— Chọn học viên —" style="width: 100%;" <?= $currentClassType === 'group' ? 'required' : 'disabled' ?>>
-                    <?php foreach ($students as $st): ?>
-                        <option value="<?= (int) $st['user_id'] ?>"<?= in_array((int) $st['user_id'], $selStudents, true) ? ' selected' : '' ?>>
-                            <?= e($st['student_code']) ?> - <?= e($st['full_name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <?php lms_component('form/select', array(
+                    'id'       => 'fld-student-multi',
+                    'name'     => 'student_ids[]',
+                    'options'  => $studentOptions,
+                    'value'    => $selStudents,
+                    'class'    => 'select2-multiple',
+                    'disabled' => ($currentClassType !== 'group'),
+                    'required' => ($currentClassType === 'group'),
+                    'attrs'    => array(
+                        'multiple'         => true,
+                        'data-placeholder' => '— Chọn học viên —',
+                        'style'            => 'width: 100%;',
+                    ),
+                    'bare'     => true,
+                )); ?>
                 <div class="text-muted mt-1" style="font-size: 0.78rem;">
                     *Cho phép tìm kiếm và chọn nhiều học viên nếu là lớp đông người.
                 </div>
@@ -232,16 +242,17 @@ $currentClassType = lms_form_old($_POST, $row, 'class_type', 'one_on_one');
             ?>
 
             <!-- 10. Áp dụng từ ngày -->
-            <?php lms_component('form/input', array(
+            <?php lms_component('form/date_picker', array(
                 'name'     => 'start_date',
                 'label'    => 'Áp dụng từ ngày',
-                'type'     => 'date',
                 'default'  => date('Y-m-d'),
                 'required' => true,
                 'id'       => 'fld-start-date',
-                'help'     => $isEditMode
+                'hint'     => $isEditMode
                     ? '*Khi điều chỉnh học phí hoặc % GV nhận, mức mới sẽ áp dụng cho các buổi học từ ngày áp dụng trở đi (các buổi đã dạy trước đó giữ nguyên mức cũ).'
-                    : null,
+                    : '',
+                'row'      => $row,
+                'errors'   => $errors,
             )); ?>
 
             <!-- 11. Ghi chú -->
@@ -306,12 +317,13 @@ $currentClassType = lms_form_old($_POST, $row, 'class_type', 'one_on_one');
                 )); ?>
 
                 <!-- Ngày bắt đầu -->
-                <?php lms_component('form/input', array(
+                <?php lms_component('form/date_picker', array(
                     'name'    => 'cycle_start_date',
                     'label'   => 'Ngày bắt đầu',
-                    'type'    => 'date',
                     'default' => date('Y-m-d'),
                     'id'      => 'fld-cycle-start-date',
+                    'row'     => $row,
+                    'errors'  => $errors,
                 )); ?>
             </div>
 
@@ -319,103 +331,160 @@ $currentClassType = lms_form_old($_POST, $row, 'class_type', 'one_on_one');
             <div class="border-top pt-4 mt-4">
                 <div class="d-flex align-items-baseline justify-content-between mb-3">
                     <h5 class="fw-bold text-dark mb-0">Cài đặt</h5>
-                    <span class="text-muted" style="font-size: 0.85rem;" id="lms-setting-note">
+                    <span class="text-muted small" id="lms-setting-note">
                         mặc định cho lớp 1-1:
                     </span>
                 </div>
 
                 <!-- 1. Hạn giao BTVN -->
-                <div class="row mb-3 align-items-center lms-tf-row">
-                    <label class="col-12 col-sm-4 col-form-label text-sm-end lms-tf-label" for="fld-hw-deadline">
-                        Hạn giao BTVN
-                    </label>
-                    <div class="col-12 col-sm-8 lms-tf-control">
-                        <div class="d-flex flex-wrap align-items-center gap-2">
-                            <!-- Toggle switch -->
-                            <div class="form-check form-switch me-1 mb-0">
-                                <input class="form-check-input" type="checkbox" id="sw-hw-deadline" checked style="cursor: pointer;">
-                            </div>
-                            <!-- Input giờ -->
-                            <div style="width: 110px;">
-                                <input type="time" class="form-control text-center" id="fld-hw-deadline" name="hw_deadline_time"
-                                       value="<?= e(lms_form_old($_POST, $row, 'hw_deadline_time', '12:00')) ?>">
-                            </div>
-                            <span class="text-muted" style="font-size: 0.85rem;">của ngày hôm sau</span>
+                <?php
+                ob_start();
+                ?>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <!-- Toggle switch -->
+                    <div class="form-check form-switch me-1 mb-0">
+                        <input class="form-check-input" type="checkbox" id="sw-hw-deadline" checked style="cursor: pointer;">
+                    </div>
+                    <!-- Input giờ -->
+                    <div style="width: 120px;">
+                        <?php lms_component('form/input', array(
+                            'type'    => 'time',
+                            'id'      => 'fld-hw-deadline',
+                            'name'    => 'hw_deadline_time',
+                            'value'   => lms_form_old($_POST, $row, 'hw_deadline_time', '12:00'),
+                            'class'   => 'text-center',
+                            'bare'    => true,
+                        )); ?>
+                    </div>
+                    <span class="text-muted small">của ngày hôm sau</span>
 
-                            <!-- Phạt GV -->
-                            <div class="ms-auto d-flex align-items-center gap-2">
-                                <span class="text-dark fw-semibold" style="font-size: 0.85rem;">Phạt GV</span>
-                                <div class="input-group input-group-sm" style="width: 90px;">
-                                    <input type="number" class="form-control text-center" name="hw_penalty_ticks" value="1" min="0">
-                                    <span class="input-group-text">tick</span>
-                                </div>
-                            </div>
+                    <!-- Phạt GV -->
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <span class="text-dark fw-semibold small">Phạt GV</span>
+                        <div style="width: 100px;">
+                            <?php lms_component('form/addon_input', array(
+                                'name'     => 'hw_penalty_ticks',
+                                'value'    => lms_form_old($_POST, $row, 'hw_penalty_ticks', '1'),
+                                'suffix'   => 'tick',
+                                'type'     => 'number',
+                                'min'      => 0,
+                                'class'    => 'text-center',
+                                'bare'     => true,
+                            )); ?>
                         </div>
                     </div>
                 </div>
+                <?php
+                $hwDeadlineControl = ob_get_clean();
+                lms_component('form/field_row', array(
+                    'label'       => 'Hạn giao BTVN',
+                    'id'          => 'fld-hw-deadline',
+                    'control'     => $hwDeadlineControl,
+                    'label_col'   => 'col-12 col-sm-4',
+                    'control_col' => 'col-12 col-sm-8',
+                ));
+                ?>
 
                 <!-- 2. Hạn check BTVN -->
-                <div class="row mb-3 align-items-center lms-tf-row">
-                    <label class="col-12 col-sm-4 col-form-label text-sm-end lms-tf-label" for="fld-hw-check">
-                        Hạn check BTVN
-                    </label>
-                    <div class="col-12 col-sm-8 lms-tf-control">
-                        <div class="d-flex flex-wrap align-items-center gap-2">
-                            <!-- Toggle switch -->
-                            <div class="form-check form-switch me-1 mb-0">
-                                <input class="form-check-input" type="checkbox" id="sw-hw-check" checked style="cursor: pointer;">
-                            </div>
-                            <!-- Input số giờ -->
-                            <div style="width: 80px;">
-                                <input type="number" min="0" max="720" class="form-control text-center" id="fld-hw-check" name="hw_check_hours"
-                                       value="<?= e(lms_form_old($_POST, $row, 'hw_check_hours', '0')) ?>">
-                            </div>
-                            <span class="text-muted" style="font-size: 0.85rem;">giờ trước buổi tiếp theo</span>
+                <?php
+                ob_start();
+                ?>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <!-- Toggle switch -->
+                    <div class="form-check form-switch me-1 mb-0">
+                        <input class="form-check-input" type="checkbox" id="sw-hw-check" checked style="cursor: pointer;">
+                    </div>
+                    <!-- Input số giờ -->
+                    <div style="width: 85px;">
+                        <?php lms_component('form/input', array(
+                            'type'    => 'number',
+                            'id'      => 'fld-hw-check',
+                            'name'    => 'hw_check_hours',
+                            'value'   => lms_form_old($_POST, $row, 'hw_check_hours', '0'),
+                            'class'   => 'text-center',
+                            'attrs'   => array('min' => 0, 'max' => 720),
+                            'bare'    => true,
+                        )); ?>
+                    </div>
+                    <span class="text-muted small">giờ trước buổi tiếp theo</span>
 
-                            <!-- Phạt GV -->
-                            <div class="ms-auto d-flex align-items-center gap-2">
-                                <span class="text-dark fw-semibold" style="font-size: 0.85rem;">Phạt GV</span>
-                                <div class="input-group input-group-sm" style="width: 90px;">
-                                    <input type="number" class="form-control text-center" name="hw_check_penalty_ticks" value="1" min="0">
-                                    <span class="input-group-text">tick</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-muted mt-1" style="font-size: 0.78rem;">
-                            *Chỉ áp dụng nếu học sinh có nộp BTVN trước deadline GV giao.
+                    <!-- Phạt GV -->
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <span class="text-dark fw-semibold small">Phạt GV</span>
+                        <div style="width: 100px;">
+                            <?php lms_component('form/addon_input', array(
+                                'name'     => 'hw_check_penalty_ticks',
+                                'value'    => lms_form_old($_POST, $row, 'hw_check_penalty_ticks', '1'),
+                                'suffix'   => 'tick',
+                                'type'     => 'number',
+                                'min'      => 0,
+                                'class'    => 'text-center',
+                                'bare'     => true,
+                            )); ?>
                         </div>
                     </div>
                 </div>
+                <?php
+                $hwCheckControl = ob_get_clean();
+                lms_component('form/field_row', array(
+                    'label'       => 'Hạn check BTVN',
+                    'id'          => 'fld-hw-check',
+                    'control'     => $hwCheckControl,
+                    'hint'        => '*Chỉ áp dụng nếu học sinh có nộp BTVN trước deadline GV giao.',
+                    'label_col'   => 'col-12 col-sm-4',
+                    'control_col' => 'col-12 col-sm-8',
+                ));
+                ?>
 
                 <!-- 3. Hạn chấm test -->
-                <div class="row mb-3 align-items-center lms-tf-row">
-                    <label class="col-12 col-sm-4 col-form-label text-sm-end lms-tf-label" for="fld-test-grace">
-                        Hạn chấm test
-                    </label>
-                    <div class="col-12 col-sm-8 lms-tf-control">
-                        <div class="d-flex flex-wrap align-items-center gap-2">
-                            <!-- Toggle switch -->
-                            <div class="form-check form-switch me-1 mb-0">
-                                <input class="form-check-input" type="checkbox" id="sw-test-grace" checked style="cursor: pointer;">
-                            </div>
-                            <!-- Input số giờ -->
-                            <div style="width: 80px;">
-                                <input type="number" min="0" max="720" class="form-control text-center" id="fld-test-grace" name="test_grace_hours"
-                                       value="<?= e(lms_form_old($_POST, $row, 'test_grace_hours', '72')) ?>">
-                            </div>
-                            <span class="text-muted" style="font-size: 0.85rem;">giờ kể từ khi hs nộp bài</span>
+                <?php
+                ob_start();
+                ?>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                    <!-- Toggle switch -->
+                    <div class="form-check form-switch me-1 mb-0">
+                        <input class="form-check-input" type="checkbox" id="sw-test-grace" checked style="cursor: pointer;">
+                    </div>
+                    <!-- Input số giờ -->
+                    <div style="width: 85px;">
+                        <?php lms_component('form/input', array(
+                            'type'    => 'number',
+                            'id'      => 'fld-test-grace',
+                            'name'    => 'test_grace_hours',
+                            'value'   => lms_form_old($_POST, $row, 'test_grace_hours', '72'),
+                            'class'   => 'text-center',
+                            'attrs'   => array('min' => 0, 'max' => 720),
+                            'bare'    => true,
+                        )); ?>
+                    </div>
+                    <span class="text-muted small">giờ kể từ khi hs nộp bài</span>
 
-                            <!-- Phạt GV -->
-                            <div class="ms-auto d-flex align-items-center gap-2">
-                                <span class="text-dark fw-semibold" style="font-size: 0.85rem;">Phạt GV</span>
-                                <div class="input-group input-group-sm" style="width: 90px;">
-                                    <input type="number" class="form-control text-center" name="test_penalty_ticks" value="1" min="0">
-                                    <span class="input-group-text">tick</span>
-                                </div>
-                            </div>
+                    <!-- Phạt GV -->
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <span class="text-dark fw-semibold small">Phạt GV</span>
+                        <div style="width: 100px;">
+                            <?php lms_component('form/addon_input', array(
+                                'name'     => 'test_penalty_ticks',
+                                'value'    => lms_form_old($_POST, $row, 'test_penalty_ticks', '1'),
+                                'suffix'   => 'tick',
+                                'type'     => 'number',
+                                'min'      => 0,
+                                'class'    => 'text-center',
+                                'bare'     => true,
+                            )); ?>
                         </div>
                     </div>
                 </div>
+                <?php
+                $testGraceControl = ob_get_clean();
+                lms_component('form/field_row', array(
+                    'label'       => 'Hạn chấm test',
+                    'id'          => 'fld-test-grace',
+                    'control'     => $testGraceControl,
+                    'label_col'   => 'col-12 col-sm-4',
+                    'control_col' => 'col-12 col-sm-8',
+                ));
+                ?>
             </div>
 
             <!-- ===================== NÚT THAO TÁC ===================== -->
@@ -423,14 +492,14 @@ $currentClassType = lms_form_old($_POST, $row, 'class_type', 'one_on_one');
                 <?php lms_component('button', array(
                     'label'   => $isEditMode ? 'Lưu thay đổi' : 'Thêm',
                     'type'    => 'submit',
-                    'variant' => 'secondary',
+                    'variant' => 'primary',
                     'size'    => 'md',
                     'class'   => 'px-5 py-2 fw-bold',
                 )); ?>
                 <?php lms_component('button', array(
                     'label'   => 'Huỷ',
                     'href'    => lms_url($alias),
-                    'variant' => 'outline-secondary',
+                    'variant' => 'outline-primary',
                     'class'   => 'px-4 py-2',
                 )); ?>
             </div>

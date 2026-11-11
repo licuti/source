@@ -28,109 +28,110 @@ foreach ($schedules as $sch) {
 }
 ?>
 
-<div class="lms-page-header mb-3">
-    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-        <div class="text-muted small">
-            Lớp: <strong><?= e($row['class_code']) ?></strong> — <?= e($row['name'] ?: 'Lớp học') ?>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-            <?php lms_component('button', array(
-                'href'    => lms_url($alias, 'sua', array('id' => (int) $row['id'])),
-                'label'   => 'Sửa lớp',
-                'icon'    => 'fa-solid fa-pen',
-                'variant' => 'outline-secondary',
-                'size'    => 'sm',
-            )); ?>
-            <?php lms_component('button', array(
-                'href'    => lms_url($alias),
-                'label'   => 'Danh sách lớp',
-                'icon'    => 'fa-solid fa-arrow-left',
-                'variant' => 'outline-secondary',
-                'size'    => 'sm',
-            )); ?>
-        </div>
-    </div>
-</div>
-
 <!-- ===================== KHỐI 1: THÔNG TIN LỚP & CẤU HÌNH LỊCH CỐ ĐỊNH ===================== -->
-<div class="lms-card mb-4">
-    <div class="lms-card-body p-3 p-md-4">
-        <div class="row g-4">
-            <!-- Cột trái: Thông tin lớp học (Readonly) -->
-            <div class="col-12 col-lg-5 border-end-lg pe-lg-4">
-                <div class="row align-items-center mb-3">
-                    <label class="col-12 col-sm-4 col-form-label text-sm-start fw-medium text-dark">
-                        Loại lớp <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-12 col-sm-8">
-                        <input type="text" class="form-control bg-light" value="<?= e($classTypeLabel) ?>" disabled readonly style="color: #4b5563;">
+<div class="mb-4">
+    <div class="row g-4 g-lg-5">
+        <!-- Cột trái: Thông tin lớp học (Readonly) -->
+        <div class="col-12 col-lg-5 pe-lg-3">
+            <?php lms_component('form/input', array(
+                'label'       => 'Loại lớp',
+                'name'        => 'class_type_display',
+                'value'       => $classTypeLabel,
+                'required'    => true,
+                'readonly'    => true,
+                'disabled'    => true,
+                'class'       => 'lms-input-static',
+                'label_col'   => 'col-12 col-sm-4',
+                'control_col' => 'col-12 col-sm-8',
+                'label_align' => 'text-sm-start',
+            )); ?>
+
+            <?php lms_component('form/input', array(
+                'label'       => 'Giáo viên',
+                'name'        => 'teacher_display',
+                'value'       => $teacherLabel ?: 'Chưa phân công',
+                'required'    => true,
+                'readonly'    => true,
+                'disabled'    => true,
+                'class'       => 'lms-input-static',
+                'label_col'   => 'col-12 col-sm-4',
+                'control_col' => 'col-12 col-sm-8',
+                'label_align' => 'text-sm-start',
+            )); ?>
+
+            <?php lms_component('form/input', array(
+                'label'       => 'Học viên',
+                'name'        => 'student_display',
+                'value'       => $studentText,
+                'required'    => true,
+                'readonly'    => true,
+                'disabled'    => true,
+                'class'       => 'lms-input-static',
+                'label_col'   => 'col-12 col-sm-4',
+                'control_col' => 'col-12 col-sm-8',
+                'label_align' => 'text-sm-start',
+                'attrs'       => array('title' => $studentText),
+            )); ?>
+        </div>
+
+        <!-- Cột phải: Cấu hình Lịch cố định & Ngày áp dụng lịch -->
+        <div class="col-12 col-lg-6">
+            <form method="post" action="<?= e(lms_url($alias, 'cap-nhat-lich-co-dinh')) ?>" id="form-update-fixed-schedule">
+                <input type="hidden" name="csrf_token" value="<?= e($csrf) ?>">
+                <input type="hidden" name="id" value="<?= (int) $row['id'] ?>">
+                <input type="hidden" name="week" value="<?= e($weekMonday) ?>">
+
+                <?php
+                $slotsHtml = lms_component_render('form/class_schedule_slots', array(
+                    'id'       => 'lms-fixed-schedules-container',
+                    'rows'     => $fixedRows,
+                    'can_edit' => $canEdit,
+                ));
+                lms_component('form/field_row', array(
+                    'label'       => 'Lịch cố định',
+                    'required'    => true,
+                    'control'     => $slotsHtml,
+                    'label_col'   => 'col-12 col-sm-4',
+                    'control_col' => 'col-12 col-sm-8',
+                    'label_align' => 'text-sm-start',
+                    'align'       => 'start',
+                ));
+                ?>
+
+                <?php
+                ob_start();
+                ?>
+                <div class="d-flex align-items-center gap-3">
+                    <div style="max-width: 220px; flex: 1 1 auto;">
+                        <?php lms_component('form/date_picker', array(
+                            'name'     => 'effective_from',
+                            'value'    => $effectiveFromDate,
+                            'required' => true,
+                            'bare'     => true,
+                        )); ?>
                     </div>
+                    <?php if ($canEdit): ?>
+                        <?php lms_component('button', array(
+                            'type'    => 'submit',
+                            'label'   => 'Lưu',
+                            'variant' => 'primary',
+                            'class'   => '',
+                        )); ?>
+                    <?php endif; ?>
                 </div>
+                <?php
+                $effectiveControl = ob_get_clean();
 
-                <div class="row align-items-center mb-3">
-                    <label class="col-12 col-sm-4 col-form-label text-sm-start fw-medium text-dark">
-                        Giáo viên <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-12 col-sm-8">
-                        <input type="text" class="form-control bg-light" value="<?= e($teacherLabel ?: 'Chưa phân công') ?>" disabled readonly style="color: #4b5563;">
-                    </div>
-                </div>
-
-                <div class="row align-items-center mb-1">
-                    <label class="col-12 col-sm-4 col-form-label text-sm-start fw-medium text-dark">
-                        Học viên <span class="text-danger">*</span>
-                    </label>
-                    <div class="col-12 col-sm-8">
-                        <input type="text" class="form-control bg-light" value="<?= e($studentText) ?>" disabled readonly style="color: #4b5563;" title="<?= e($studentText) ?>">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cột phải: Cấu hình Lịch cố định & Ngày áp dụng lịch -->
-            <div class="col-12 col-lg-7 ps-lg-4">
-                <form method="post" action="<?= e(lms_url($alias, 'cap-nhat-lich-co-dinh')) ?>" id="form-update-fixed-schedule">
-                    <input type="hidden" name="csrf_token" value="<?= e($csrf) ?>">
-                    <input type="hidden" name="id" value="<?= (int) $row['id'] ?>">
-                    <input type="hidden" name="week" value="<?= e($weekMonday) ?>">
-
-                    <div class="row mb-2">
-                        <label class="col-12 col-sm-4 col-form-label fw-medium text-dark">
-                            Lịch cố định <span class="text-danger">*</span>
-                        </label>
-                        <div class="col-12 col-sm-8">
-                            <?php lms_component('form/class_schedule_slots', array(
-                                'id'       => 'lms-fixed-schedules-container',
-                                'rows'     => $fixedRows,
-                                'can_edit' => $canEdit,
-                            )); ?>
-                        </div>
-                    </div>
-
-                    <div class="row align-items-center mt-3">
-                        <label class="col-12 col-sm-4 col-form-label fw-medium text-dark text-nowrap">
-                            Ngày áp dụng lịch <span class="text-danger">*</span>
-                        </label>
-                        <div class="col-12 col-sm-8 d-flex align-items-center gap-3">
-                            <div class="input-group input-group-sm" style="max-width: 215px;">
-                                <span class="input-group-text bg-white text-muted"><i class="fa-regular fa-calendar"></i></span>
-                                <input type="date" class="form-control form-control-sm" name="effective_from" value="<?= e($effectiveFromDate) ?>" required>
-                            </div>
-                            <?php if ($canEdit): ?>
-                                <?php lms_component('button', array(
-                                    'type'    => 'submit',
-                                    'label'   => 'Lưu',
-                                    'variant' => 'primary',
-                                    'size'    => 'sm',
-                                    'class'   => 'px-3 fw-medium',
-                                    'attrs'   => array(
-                                        'style' => 'background-color: #0b3a75; border-color: #0b3a75; min-width: 75px;',
-                                    ),
-                                )); ?>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </form>
-            </div>
+                lms_component('form/field_row', array(
+                    'label'       => 'Ngày áp dụng lịch',
+                    'required'    => true,
+                    'control'     => $effectiveControl,
+                    'label_col'   => 'col-12 col-sm-4',
+                    'control_col' => 'col-12 col-sm-8',
+                    'label_align' => 'text-sm-start',
+                ));
+                ?>
+            </form>
         </div>
     </div>
 </div>
@@ -140,14 +141,14 @@ foreach ($schedules as $sch) {
     <!-- Nút Lùi / Tiến & Tiêu đề Tháng -->
     <div class="d-flex align-items-center gap-2">
         <a href="<?= e(lms_url($alias, 'lich-hoc', array('id' => (int) $row['id'], 'week' => $prevWeek))) ?>"
-           class="btn btn-outline-secondary btn-sm px-2 py-1" title="Tuần trước" style="border-radius: 6px;">
+           class="btn btn-outline-secondary btn-sm px-2 py-1 rounded-2" title="Tuần trước">
             <i class="fa-solid fa-chevron-left"></i>
         </a>
         <a href="<?= e(lms_url($alias, 'lich-hoc', array('id' => (int) $row['id'], 'week' => $nextWeek))) ?>"
-           class="btn btn-outline-secondary btn-sm px-2 py-1" title="Tuần sau" style="border-radius: 6px;">
+           class="btn btn-outline-secondary btn-sm px-2 py-1 rounded-2" title="Tuần sau">
             <i class="fa-solid fa-chevron-right"></i>
         </a>
-        <h4 class="mb-0 ms-2 fw-bold text-dark" style="font-size: 1.25rem;">
+        <h4 class="mb-0 ms-2 fw-bold fs-5">
             Tháng <?= (int) $weekMonth ?> / <?= (int) $weekYear ?>
         </h4>
         <?php if ($weekMonday !== $currWeek): ?>
@@ -156,15 +157,14 @@ foreach ($schedules as $sch) {
                 'label'   => 'Hôm nay',
                 'variant' => 'outline-primary',
                 'size'    => 'sm',
-                'class'   => 'ms-2 py-0 px-2',
-                'attrs'   => array('style' => 'font-size: 0.78rem;'),
+                'class'   => '',
             )); ?>
         <?php endif; ?>
     </div>
 </div>
 
 <!-- ===================== KHỐI 3: LƯỚI LỊCH TUẦN TRỰC QUAN (CALENDAR TIME GRID) ===================== -->
-<div class="lms-card" style="border: 1px solid #e8eaee; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+<div class="lms-card">
     <?php
     $calLanes = lms_cal_lanes_for_rows($calRows);
     lms_component('calendar_week', array(
@@ -180,9 +180,9 @@ foreach ($schedules as $sch) {
         },
         // Mockup: trên là thứ, dưới là ngày/tháng — không lặp lại số thứ
         'head_renderer' => function (array $dInfo) {
-            return '<div class="fw-semibold text-dark" style="font-size: 0.85rem;">' . e($dInfo['label']) . '</div>'
-                . '<div class="fw-bold fs-6 mt-1 ' . ($dInfo['is_today'] ? 'text-primary' : 'text-dark')
-                . '" style="line-height: 1;">' . (int) $dInfo['day'] . '/' . (int) $dInfo['month'] . '</div>';
+            return '<div class="fw-semibold text-dark small">' . e($dInfo['label']) . '</div>'
+                . '<div class="fw-bold fs-6 lh-1 mt-1 ' . ($dInfo['is_today'] ? 'text-primary' : 'text-dark')
+                . '">' . (int) $dInfo['day'] . '/' . (int) $dInfo['month'] . '</div>';
         },
         'cell_class'  => function (array $cell) {
             return empty($cell['sessions']) ? 'lms-cal-cell-empty' : '';
@@ -241,52 +241,35 @@ foreach ($schedules as $sch) {
     ?>
 </div>
 
-<!-- ===================== KHỐI 4: CHÚ THÍCH & HƯỚNG DẪN THAO TÁC ===================== -->
-<div class="row mt-4 g-4 text-dark" style="font-size: 0.88rem;">
-    <!-- Chú thích màu sắc (Legend) -->
-    <div class="col-12 col-md-5">
-        <h6 class="fw-bold mb-3">Chú thích:</h6>
-        <ul class="lms-cal-legend lms-cal-legend--stack">
-            <li><span class="lms-cal-dot lms-cal-upcoming-dot"></span> Buổi học sắp tới</li>
-            <li><span class="lms-cal-dot lms-cal-missing-dot"></span> Buổi học thiếu BTVN (✗)</li>
-            <li><span class="lms-cal-dot lms-cal-finished-dot"></span> Buổi học đã hoàn thành</li>
-            <li><span class="lms-cal-dot lms-cal-cancelled-dot"></span> Buổi học đã nghỉ</li>
-        </ul>
-
-        <div class="mt-4 p-3 bg-light rounded" style="border-left: 3px solid #0b3a75;">
-            <div class="fw-bold mb-1">** Click chọn một buổi, pop up, hiện thông tin:</div>
-            <ul class="mb-0 ps-3">
-                <li>Số giờ học, học phí buổi đó, phần trăm giáo viên nhận, số tiền gv nhận</li>
-                <li>Có nút xoá buổi học</li>
-                <li>Có nút đánh dấu buổi nghỉ</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- Hướng dẫn thao tác thêm/xoá -->
-    <div class="col-12 col-md-7">
-        <div class="p-3 bg-light rounded h-100" style="border-left: 3px solid #ea580c;">
-            <div class="fw-bold mb-2">** Thao tác xoá và thêm buổi:</div>
-            <ul class="mb-3 ps-3">
-                <li><strong>Xoá:</strong> Bấm vào thẻ buổi học trên lưới lịch, popup xuất hiện, lựa chọn Xoá.</li>
-                <li>
-                    <strong>Thêm:</strong> Click vào ô trống khung giờ bất kỳ trên lịch, popup mở ra, điền số giờ học (mặc định lấy theo ô vừa click), số tiền học phí buổi đó, phần trăm GV nhận:
-                    <ul class="mt-1">
-                        <li><strong>QUÁ KHỨ:</strong> Đánh dấu buổi đó là đã hoàn thành (màu hồng) hoặc thiếu BTVN (màu hồng có dấu ✗).</li>
-                        <li><strong>TƯƠNG LAI:</strong> Tự động gán trạng thái Buổi học sắp tới (màu đỏ).</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
+<!-- ===================== KHỐI 4: CHÚ THÍCH ===================== -->
+<div class="mt-4 text-dark">
+    <h6 class="fw-bold mb-3">Chú thích</h6>
+    <ul class="lms-cal-legend lms-cal-legend--stack">
+        <li class="d-flex align-items-center">
+            <span class="lms-cal-dot lms-cal-upcoming-dot me-2"></span>
+            Buổi học sắp tới
+        </li>
+        <li class="d-flex align-items-center">
+            <span class="lms-cal-dot lms-cal-missing-dot me-2 d-inline-flex align-items-center justify-content-center" style="font-size: 10px; color: #dc3545; font-weight: 900;">✕</span>
+            Buổi học thiếu BTVN
+        </li>
+        <li class="d-flex align-items-center">
+            <span class="lms-cal-dot lms-cal-finished-dot me-2"></span>
+            Buổi học đã hoàn thành
+        </li>
+        <li class="d-flex align-items-center">
+            <span class="lms-cal-dot lms-cal-cancelled-dot me-2"></span>
+            Buổi học đã nghỉ
+        </li>
+    </ul>
 </div>
 
 <!-- ===================== MODAL 1: CHI TIẾT BUỔI HỌC ===================== -->
 <div class="modal fade" id="modal-session-detail" tabindex="-1" aria-labelledby="modalSessionDetailLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
-            <div class="modal-header text-white" style="background-color: #0b3a75;">
-                <h5 class="modal-title fw-bold" id="modalSessionDetailLabel">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold fs-5" id="modalSessionDetailLabel">
                     <i class="fa-regular fa-calendar-check me-2"></i>Thông tin chi tiết buổi học
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
@@ -298,7 +281,12 @@ foreach ($schedules as $sch) {
                         <div class="fs-6 fw-bold text-dark" id="md-detail-datetime">—</div>
                     </div>
                     <div>
-                        <span class="badge" id="md-detail-badge" style="font-size: 0.85rem; padding: 6px 10px;">—</span>
+                        <?php lms_component('badge', array(
+                            'label'   => '—',
+                            'variant' => 'secondary',
+                            'class'   => 'badge',
+                            'attrs'   => array('id' => 'md-detail-badge', 'style' => 'font-size: 0.85rem; padding: 6px 10px;'),
+                        )); ?>
                     </div>
                 </div>
 
@@ -358,7 +346,7 @@ foreach ($schedules as $sch) {
                                 'label'   => 'Đánh dấu buổi nghỉ',
                                 'icon'    => 'fa-solid fa-user-xmark',
                                 'variant' => 'warning',
-                                'size'    => 'sm',
+                                'size'    => '',
                                 'class'   => 'btn-outline-warning text-dark',
                             )); ?>
                         </form>
@@ -375,7 +363,7 @@ foreach ($schedules as $sch) {
                                 'label'   => 'Xoá buổi',
                                 'icon'    => 'fa-solid fa-trash',
                                 'variant' => 'outline-danger',
-                                'size'    => 'sm',
+                                'size'    => '',
                             )); ?>
                         </form>
                     <?php endif; ?>
@@ -387,17 +375,14 @@ foreach ($schedules as $sch) {
                         'label'   => 'Báo cáo buổi học',
                         'icon'    => 'fa-solid fa-file-lines',
                         'variant' => 'primary',
-                        'size'    => 'sm',
+                        'size'    => '',
                         'id'      => 'md-detail-link-report',
-                        'attrs'   => array(
-                            'style' => 'background-color: #0b3a75; border-color: #0b3a75;',
-                        ),
                     )); ?>
                     <?php lms_component('button', array(
                         'type'    => 'button',
                         'label'   => 'Đóng',
                         'variant' => 'secondary',
-                        'size'    => 'sm',
+                        'size'    => '',
                         'attrs'   => array(
                             'data-bs-dismiss' => 'modal',
                         ),
@@ -411,14 +396,14 @@ foreach ($schedules as $sch) {
 <!-- ===================== MODAL 2: THÊM BUỔI HỌC MỚI ===================== -->
 <div class="modal fade" id="modal-add-session" tabindex="-1" aria-labelledby="modalAddSessionLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: 0; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
+        <div class="modal-content">
             <form method="post" action="<?= e(lms_url($alias, 'them-buoi-hoc')) ?>" id="form-add-session">
                 <input type="hidden" name="csrf_token" value="<?= e($csrf) ?>">
                 <input type="hidden" name="id" value="<?= (int) $row['id'] ?>">
                 <input type="hidden" name="week" value="<?= e($weekMonday) ?>">
 
-                <div class="modal-header text-white" style="background-color: #ea580c;">
-                    <h5 class="modal-title fw-bold" id="modalAddSessionLabel">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold fs-5" id="modalAddSessionLabel">
                         <i class="fa-solid fa-calendar-plus me-2"></i>Thêm buổi học mới
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
@@ -427,69 +412,131 @@ foreach ($schedules as $sch) {
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label fw-medium text-dark" for="add-session-date">Ngày học <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" id="add-session-date" name="session_date" value="<?= date('Y-m-d') ?>" required>
+                        <?php lms_component('form/date_picker', array(
+                            'id'       => 'add-session-date',
+                            'name'     => 'session_date',
+                            'value'    => date('Y-m-d'),
+                            'required' => true,
+                            'bare'     => true,
+                        )); ?>
                     </div>
 
                     <div class="row g-2 mb-3">
                         <div class="col-6">
                             <label class="form-label fw-medium text-dark" for="add-session-start">Giờ bắt đầu <span class="text-danger">*</span></label>
-                            <input type="time" class="form-control" id="add-session-start" name="start_time" value="17:30" required>
+                            <?php lms_component('form/input', array(
+                                'type'     => 'time',
+                                'id'       => 'add-session-start',
+                                'name'     => 'start_time',
+                                'value'    => '17:30',
+                                'required' => true,
+                                'bare'     => true,
+                            )); ?>
                         </div>
                         <div class="col-6">
                             <label class="form-label fw-medium text-dark" for="add-session-end">Giờ kết thúc <span class="text-danger">*</span></label>
-                            <input type="time" class="form-control" id="add-session-end" name="end_time" value="19:00" required>
+                            <?php lms_component('form/input', array(
+                                'type'     => 'time',
+                                'id'       => 'add-session-end',
+                                'name'     => 'end_time',
+                                'value'    => '19:00',
+                                'required' => true,
+                                'bare'     => true,
+                            )); ?>
                         </div>
                     </div>
 
                     <div class="row g-3 mb-3">
                         <div class="col-6">
-                            <label class="form-label fw-medium text-dark">Số giờ học</label>
-                            <input type="text" class="form-control bg-light" id="add-session-duration" value="1.5 giờ" readonly>
+                            <label class="form-label fw-medium text-dark" for="add-session-duration">Số giờ học</label>
+                            <?php lms_component('form/input', array(
+                                'id'       => 'add-session-duration',
+                                'value'    => '1.5 giờ',
+                                'readonly' => true,
+                                'disabled' => true,
+                                'class'    => 'lms-input-static',
+                                'bare'     => true,
+                            )); ?>
                         </div>
                         <div class="col-6">
                             <label class="form-label fw-medium text-dark" for="add-session-price">Học phí 1 buổi (đ)</label>
-                            <input type="number" class="form-control" id="add-session-price" name="price_per_session" value="<?= e((int)$defaultPrice) ?>" min="0" step="1000">
+                            <?php lms_component('form/input', array(
+                                'type'  => 'number',
+                                'id'    => 'add-session-price',
+                                'name'  => 'price_per_session',
+                                'value' => (int) $defaultPrice,
+                                'bare'  => true,
+                                'attrs' => array('min' => 0, 'step' => 1000),
+                            )); ?>
                         </div>
                         <div class="col-6">
                             <label class="form-label fw-medium text-dark" for="add-session-percent">% GV nhận (%)</label>
-                            <input type="number" class="form-control" id="add-session-percent" name="teacher_percentage" value="<?= e($defaultTeacherPct) ?>" min="0" max="100" step="0.5">
+                            <?php lms_component('form/input', array(
+                                'type'  => 'number',
+                                'id'    => 'add-session-percent',
+                                'name'  => 'teacher_percentage',
+                                'value' => $defaultTeacherPct,
+                                'bare'  => true,
+                                'attrs' => array('min' => 0, 'max' => 100, 'step' => 0.5),
+                            )); ?>
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-medium text-dark">Số tiền GV nhận (đ)</label>
-                            <input type="text" class="form-control bg-light text-success fw-bold" id="add-session-teacher-amount" value="<?= e(number_format($defaultPrice * $defaultTeacherPct / 100, 0, ',', '.')) ?> đ" readonly>
+                            <label class="form-label fw-medium text-dark" for="add-session-teacher-amount">Số tiền GV nhận (đ)</label>
+                            <?php lms_component('form/input', array(
+                                'id'       => 'add-session-teacher-amount',
+                                'value'    => number_format($defaultPrice * $defaultTeacherPct / 100, 0, ',', '.') . ' đ',
+                                'readonly' => true,
+                                'disabled' => true,
+                                'class'    => 'lms-input-static text-success fw-bold',
+                                'bare'     => true,
+                            )); ?>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label fw-medium text-dark" for="add-session-topic">Chuyên đề học</label>
-                        <select class="form-select" id="add-session-topic" name="topic_id">
-                            <option value="">— Chọn chuyên đề (không bắt buộc) —</option>
-                            <?php foreach ($topics as $t): ?>
-                                <option value="<?= (int) $t['id'] ?>"><?= e($t['name']) ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                        <?php
+                        $topicOptions = array();
+                        foreach ($topics as $t) {
+                            $topicOptions[(int) $t['id']] = $t['name'];
+                        }
+                        lms_component('form/select', array(
+                            'id'          => 'add-session-topic',
+                            'name'        => 'topic_id',
+                            'options'     => $topicOptions,
+                            'empty_label' => '— Chọn chuyên đề (không bắt buộc) —',
+                            'value'       => '',
+                            'bare'        => true,
+                        ));
+                        ?>
                     </div>
 
                     <div class="mb-0">
                         <label class="form-label fw-medium text-dark" for="add-session-status">Trạng thái buổi học</label>
-                        <select class="form-select" id="add-session-status" name="status">
-                            <option value="upcoming">Sắp diễn ra (Tương lai - Đỏ)</option>
-                            <option value="finished">Đã hoàn thành (Quá khứ - Hồng)</option>
-                            <option value="missing">Thiếu BTVN / Báo cáo (Quá khứ - Hồng có ✗)</option>
-                            <option value="cancelled">Đã nghỉ học (Xám)</option>
-                        </select>
+                        <?php lms_component('form/select', array(
+                            'id'      => 'add-session-status',
+                            'name'    => 'status',
+                            'options' => array(
+                                'upcoming'  => 'Sắp diễn ra (Tương lai - Đỏ)',
+                                'finished'  => 'Đã hoàn thành (Quá khứ - Hồng)',
+                                'missing'   => 'Thiếu BTVN / Báo cáo (Quá khứ - Hồng có ✗)',
+                                'cancelled' => 'Đã nghỉ học (Xám)',
+                            ),
+                            'value'   => 'upcoming',
+                            'bare'    => true,
+                        )); ?>
                         <div class="form-text text-muted" id="add-session-status-hint">
                             *Nếu ngày chọn ở quá khứ, hệ thống sẽ gợi ý trạng thái Đã hoàn thành hoặc Thiếu BTVN.
                         </div>
                     </div>
                 </div>
 
-                <div class="modal-footer bg-light px-4 py-3">
+                <div class="modal-footer">
                     <?php lms_component('button', array(
                         'type'    => 'button',
                         'label'   => 'Huỷ',
                         'variant' => 'secondary',
-                        'size'    => 'sm',
+                        'size'    => '',
                         'attrs'   => array(
                             'data-bs-dismiss' => 'modal',
                         ),
@@ -499,11 +546,8 @@ foreach ($schedules as $sch) {
                         'label'   => 'Lưu buổi học',
                         'icon'    => 'fa-solid fa-check',
                         'variant' => 'primary',
-                        'size'    => 'sm',
-                        'class'   => 'px-3',
-                        'attrs'   => array(
-                            'style' => 'background-color: #ea580c; border-color: #ea580c;',
-                        ),
+                        'size'    => '',
+                        'class'   => '',
                     )); ?>
                 </div>
             </form>

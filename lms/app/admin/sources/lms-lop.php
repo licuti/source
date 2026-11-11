@@ -84,6 +84,11 @@ switch ($action) {
         lms_lop_adjust_sessions($classSvc);
         break;
 
+    case 'them-khoa-hoc':
+        lms_form_guard($d, $user, $alias, 'edit');
+        lms_lop_add_course_cycle($d);
+        break;
+
     case 'ajax-danh-sach-lop':
         lms_form_guard($d, $user, $alias, 'view');
         lms_lop_ajax_list_classes($d);
@@ -412,7 +417,7 @@ function lms_lop_schedule(\Lms\ClassService $classSvc)
         );
     }
 
-    $title    = 'Lịch học: ' . ($row['name'] !== '' ? $row['name'] : $row['class_code']);
+    $title    = 'Lịch học';
     $template = 'lms-lop/lich-hoc';
 }
 
@@ -752,6 +757,54 @@ function lms_lop_adjust_sessions(\Lms\ClassService $classSvc)
             : (isset($errors['system']) ? $errors['system'] : 'Không thể điều chỉnh số buổi.'));
     }
     header('Location: ' . lms_url($alias, 'sua', array('id' => $id)));
+    exit;
+}
+
+// ===================== Thêm khoá học mới (Popup Thêm khóa học.png) =====================
+
+function lms_lop_add_course_cycle(LmsDb $d)
+{
+    global $alias;
+
+    $classId          = isset($_POST['class_id']) ? (int) $_POST['class_id'] : 0;
+    $currentRemaining = isset($_POST['current_remaining_sessions']) ? trim((string) $_POST['current_remaining_sessions']) : '';
+    $newTotal         = isset($_POST['new_total_sessions']) ? trim((string) $_POST['new_total_sessions']) : '';
+    $redirectTo       = isset($_POST['redirect_to']) ? trim((string) $_POST['redirect_to']) : '';
+
+    $backUrl = lms_url($alias);
+    if ($redirectTo === 'lms-yeu-cau') {
+        $backUrl = lms_url('lms-yeu-cau', '', array('tab' => 'kiem-buoi'));
+    } elseif (!empty($_SERVER['HTTP_REFERER'])) {
+        $ref = (string) $_SERVER['HTTP_REFERER'];
+        $host = isset($_SERVER['HTTP_HOST']) ? (string) $_SERVER['HTTP_HOST'] : '';
+        if ($host !== '' && strpos($ref, $host) !== false) {
+            $backUrl = $ref;
+        }
+    }
+
+    if ($classId <= 0) {
+        lms_flash('error', 'Thiếu ID lớp học.');
+        header('Location: ' . $backUrl);
+        exit;
+    }
+
+    if (!lms_csrf_verify()) {
+        lms_flash('error', 'Phiên làm việc không hợp lệ. Vui lòng tải lại trang và thử lại.');
+        header('Location: ' . $backUrl);
+        exit;
+    }
+
+    $cycleSvc = new \Lms\CourseCycleService($d);
+    $newCycleId = $cycleSvc->addCourseCycleFromPopup($classId, $currentRemaining, $newTotal);
+    if ($newCycleId > 0) {
+        lms_flash('success', 'Đã thêm khóa học mới thành công.');
+    } else {
+        $errors = $cycleSvc->errors();
+        $firstErr = !empty($errors) ? (string) reset($errors) : 'Không thể thêm khóa học mới.';
+        lms_flash('error', $firstErr);
+    }
+
+    header('Location: ' . $backUrl);
     exit;
 }
 

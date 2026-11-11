@@ -296,13 +296,20 @@ class StudentCourseService extends LmsService
             $topics[$i]['best_minitest_score'] = $miniScore;
             $topics[$i]['test_completed'] = $testCompleted;
             $topics[$i]['minitest_completed'] = $miniCompleted;
-            $topics[$i]['has_published_test'] = $testPublished || $miniPublished;
-            $topics[$i]['has_pending_test'] = (!empty($testRows) && !$testPublished) || (!empty($miniRows) && !$miniPublished);
+            $topics[$i]['has_published_test'] = $testPublished;
+            $topics[$i]['has_published_minitest'] = $miniPublished;
+            $topics[$i]['has_pending_test'] = (!empty($testRows) && !$testPublished);
 
             $hasTest = !empty($topic['has_test']);
             $hasMini = !empty($topic['has_minitest']);
             if ($hasTest && $hasMini) {
-                $topics[$i]['is_completed'] = ($testCompleted && $miniCompleted);
+                if ($miniPublished) {
+                    // Admin đã BẬT Minitest (do Test không đạt) -> cần hoàn thành Minitest
+                    $topics[$i]['is_completed'] = $miniCompleted;
+                } else {
+                    // Minitest chưa bật / không bật -> Chỉ cần hoàn thành Test chính
+                    $topics[$i]['is_completed'] = $testCompleted;
+                }
             } elseif ($hasTest) {
                 $topics[$i]['is_completed'] = $testCompleted;
             } elseif ($hasMini) {

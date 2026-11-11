@@ -160,10 +160,14 @@ usort($visibleSessions, function ($a, $b) {
                                     }
                                 }
 
+                                $isMiniPublished = ($miniInfo !== null && isset($miniInfo['status']) && $miniInfo['status'] === 'published');
                                 $isAllCompleted = false;
                                 if ($hasTestFlag && $hasMiniFlag) {
-                                    $isAllCompleted = ($testInfo !== null && !empty($testInfo['graded_at'])
-                                        && $miniInfo !== null && !empty($miniInfo['graded_at']));
+                                    if ($isMiniPublished) {
+                                        $isAllCompleted = ($miniInfo !== null && !empty($miniInfo['graded_at']));
+                                    } else {
+                                        $isAllCompleted = ($testInfo !== null && !empty($testInfo['graded_at']));
+                                    }
                                 } elseif ($hasTestFlag) {
                                     $isAllCompleted = ($testInfo !== null && !empty($testInfo['graded_at']));
                                 } elseif ($hasMiniFlag) {

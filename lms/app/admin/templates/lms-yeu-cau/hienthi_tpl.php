@@ -356,8 +356,14 @@ $paginationParams = array_filter(array(
                             <td class="text-center"><?= e($studied($r['total_sessions'], $r['remaining_sessions'])) ?></td>
                             <td class="text-center"><?= e((string) max(0, (int) $r['remaining_sessions'])) ?></td>
                             <td class="text-center">
-                                <a href="<?= e(lms_url('lms-lop', 'sua', array('id' => (int) $r['id']))) ?>#khoa-hoc"
-                                   class="d-block mb-1 lms-action-link-edit">Thêm khoá học</a>
+                                <?php if ($canEdit): ?>
+                                    <a href="#"
+                                       class="d-block mb-1 lms-action-link-edit js-open-add-course-cycle"
+                                       data-bs-toggle="modal"
+                                       data-bs-target="#lmsAddCourseCycleModal"
+                                       data-class-id="<?= (int) $r['id'] ?>"
+                                       data-remaining="<?= max(0, (int) $r['remaining_sessions']) ?>">Thêm khoá học</a>
+                                <?php endif; ?>
                                 <?php if ($canDelete): ?>
                                     <a href="<?= e(lms_url('lms-lop', 'xoa', array('id' => (int) $r['id']))) ?>"
                                        class="d-block lms-action-link lms-confirm-delete"
@@ -379,6 +385,54 @@ $paginationParams = array_filter(array(
     'params'      => $paginationParams,
 )); ?>
 
+<?php if ($tab === 'kiem-buoi' && $canEdit): ?>
+<div class="modal fade" id="lmsAddCourseCycleModal" tabindex="-1" aria-labelledby="lmsAddCourseCycleLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold fs-5" id="lmsAddCourseCycleLabel">Thêm khóa học</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <form method="post" action="<?= e(lms_url('lms-lop', 'them-khoa-hoc')) ?>">
+                <div class="modal-body p-4">
+                    <input type="hidden" name="csrf_token" value="<?= e(lms_csrf_token()) ?>">
+                    <input type="hidden" name="class_id" id="lms-add-cycle-class-id" value="">
+                    <input type="hidden" name="redirect_to" value="lms-yeu-cau">
+
+                    <?php lms_component('form/input', array(
+                        'name'  => 'current_remaining_sessions',
+                        'id'    => 'lms-add-cycle-current-remaining',
+                        'label' => 'Số buổi còn lại của khóa học hiện tại',
+                        'type'  => 'number',
+                        'value' => '0',
+                        'attrs' => array('min' => 0, 'max' => 10000, 'required' => true),
+                    )); ?>
+
+                    <?php lms_component('form/input', array(
+                        'name'  => 'new_total_sessions',
+                        'id'    => 'lms-add-cycle-new-total',
+                        'label' => 'Số buổi của khóa mới',
+                        'type'  => 'number',
+                        'value' => '',
+                        'attrs' => array('min' => 1, 'max' => 10000, 'required' => true),
+                    )); ?>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <?php lms_component('button', array(
+                            'label'   => 'Cập nhật',
+                            'type'    => 'submit',
+                            'variant' => 'primary',
+                            'size'    => '',
+                            'class'   => 'px-4',
+                        )); ?>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <script>
 document.querySelectorAll('.lms-confirm-delete').forEach(function (el) {
     el.addEventListener('click', function (ev) {
@@ -388,4 +442,31 @@ document.querySelectorAll('.lms-confirm-delete').forEach(function (el) {
         }
     });
 });
+if (window.jQuery) {
+    jQuery(function ($) {
+        $(document).on('click', '.js-open-add-course-cycle', function () {
+            var cid = $(this).data('class-id') || '';
+            var rem = $(this).data('remaining');
+            $('#lms-add-cycle-class-id').val(cid);
+            $('#lms-add-cycle-current-remaining').val(rem !== undefined ? rem : 0);
+            $('#lms-add-cycle-new-total').val('');
+        });
+        $('#lmsAddCourseCycleModal').on('shown.bs.modal', function () {
+            $('#lms-add-cycle-new-total').trigger('focus');
+        });
+    });
+} else {
+    document.querySelectorAll('.js-open-add-course-cycle').forEach(function (el) {
+        el.addEventListener('click', function () {
+            var cid = el.getAttribute('data-class-id') || '';
+            var rem = el.getAttribute('data-remaining');
+            var cidInput = document.getElementById('lms-add-cycle-class-id');
+            var remInput = document.getElementById('lms-add-cycle-current-remaining');
+            var newInput = document.getElementById('lms-add-cycle-new-total');
+            if (cidInput) cidInput.value = cid;
+            if (remInput) remInput.value = rem !== null ? rem : '0';
+            if (newInput) newInput.value = '';
+        });
+    });
+}
 </script>

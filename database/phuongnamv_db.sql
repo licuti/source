@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 10, 2026 at 10:25 AM
+-- Generation Time: Nov 11, 2026 at 10:24 AM
 -- Server version: 5.7.44
 -- PHP Version: 8.2.33
 
@@ -2717,7 +2717,15 @@ INSERT INTO `db_lms_audit_logs` (`id`, `actor_user_id`, `actor_type`, `action`, 
 (202, NULL, 'admin', 'pay_service_fee_batch', 'payment_batches', 22, NULL, '{\"batch_code\":\"PAY-202611-0022\",\"group_code\":\"GRP-202611-AC4D84\",\"teacher_id\":35,\"date_from\":\"2026-08-20\",\"date_to\":\"2026-11-30\",\"gross_amount\":200000,\"deduction_amount\":0,\"net_amount\":200000,\"tx_count\":1}', NULL, NULL, '2026-11-10 11:49:14'),
 (203, NULL, 'admin', 'add_adjustment', 'transactions', 136, NULL, '{\"teacher_id\":35,\"period_month\":\"2026-12\",\"transaction_date\":\"2026-12-10\",\"type\":\"bonus\",\"amount\":6000000,\"reason\":\"Thưởng doanh số tháng 12\",\"idempotency_key\":null}', NULL, NULL, '2026-11-10 11:49:14'),
 (204, NULL, 'system_cron', 'record_tax', 'transactions', 137, NULL, '{\"teacher_id\":35,\"period_month\":\"2026-12\",\"amount\":-600000}', NULL, NULL, '2026-11-10 11:49:14'),
-(205, NULL, 'admin', 'pay_service_fee_batch', 'payment_batches', 23, NULL, '{\"batch_code\":\"PAY-202611-0023\",\"group_code\":\"GRP-202611-AC6147\",\"teacher_id\":35,\"date_from\":\"2026-12-10\",\"date_to\":\"2026-12-31\",\"gross_amount\":6000000,\"deduction_amount\":600000,\"net_amount\":5400000,\"tx_count\":2}', NULL, NULL, '2026-11-10 11:49:14');
+(205, NULL, 'admin', 'pay_service_fee_batch', 'payment_batches', 23, NULL, '{\"batch_code\":\"PAY-202611-0023\",\"group_code\":\"GRP-202611-AC6147\",\"teacher_id\":35,\"date_from\":\"2026-12-10\",\"date_to\":\"2026-12-31\",\"gross_amount\":6000000,\"deduction_amount\":600000,\"net_amount\":5400000,\"tx_count\":2}', NULL, NULL, '2026-11-10 11:49:14'),
+(206, 1, 'admin', 'add_course_cycle', 'course_cycles', 46, '{\"id\":40,\"class_id\":35,\"cycle_no\":1,\"name\":\"Khóa 1\",\"status\":\"active\",\"teacher_id\":2,\"price_per_session\":\"320000.00\",\"teacher_percentage\":null,\"hw_deadline_time\":\"12:00:00\",\"hw_check_hours\":24,\"test_grace_hours\":72,\"start_date\":\"2026-10-21\",\"expected_end_date\":\"2026-12-13\",\"total_sessions\":16,\"remaining_sessions\":16,\"closed_at\":null,\"created_at\":\"2026-11-02 09:17:15\",\"updated_at\":\"2026-11-11 09:36:17\"}', '{\"class_id\":35,\"cycle_no\":2,\"name\":\"Khóa 2\",\"status\":\"active\",\"teacher_id\":2,\"price_per_session\":\"320000.00\",\"teacher_percentage\":null,\"hw_deadline_time\":\"12:00:00\",\"hw_check_hours\":24,\"test_grace_hours\":72,\"start_date\":\"2026-12-16\",\"expected_end_date\":\"2027-02-21\",\"total_sessions\":20,\"remaining_sessions\":20}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-11 09:57:29'),
+(207, 1, 'admin', 'add_course_cycle', 'course_cycles', 47, '{\"id\":7,\"class_id\":9,\"cycle_no\":2,\"name\":\"Khóa 2\",\"status\":\"active\",\"teacher_id\":10,\"price_per_session\":\"360000.00\",\"teacher_percentage\":null,\"hw_deadline_time\":null,\"hw_check_hours\":24,\"test_grace_hours\":72,\"start_date\":\"2026-10-13\",\"expected_end_date\":\"2026-12-12\",\"total_sessions\":30,\"remaining_sessions\":11,\"closed_at\":null,\"created_at\":\"2026-10-30 05:11:46\",\"updated_at\":\"2026-10-30 12:11:46\"}', '{\"class_id\":9,\"cycle_no\":3,\"name\":\"Khóa 3\",\"status\":\"active\",\"teacher_id\":10,\"price_per_session\":\"400000.00\",\"teacher_percentage\":null,\"hw_deadline_time\":null,\"hw_check_hours\":24,\"test_grace_hours\":72,\"start_date\":\"2026-10-16\",\"expected_end_date\":\"2027-01-23\",\"total_sessions\":30,\"remaining_sessions\":30}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-11 09:59:09'),
+(208, 1, 'admin', 'publish_test', 'tests', 11, '{\"id\":11,\"class_id\":3,\"cycle_id\":38,\"topic_id\":30,\"test_type\":\"minitest\",\"title\":\"Reading Part 1 - Minitest\",\"test_file_url\":\"test\\/202610\\/mini-test.pdf\",\"deadline\":\"2026-11-25 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":null,\"status\":\"draft\",\"created_by\":4,\"created_at\":\"2026-11-09 09:10:02\",\"updated_at\":\"2026-11-09 09:10:02\"}', '{\"id\":11,\"class_id\":3,\"cycle_id\":38,\"topic_id\":30,\"test_type\":\"minitest\",\"title\":\"Reading Part 1 - Minitest\",\"test_file_url\":\"test\\/202610\\/mini-test.pdf\",\"deadline\":\"2026-11-25 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":null,\"status\":\"published\",\"created_by\":4,\"created_at\":\"2026-11-09 09:10:02\",\"updated_at\":\"2026-11-11 13:06:05\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-11 13:06:05'),
+(209, NULL, 'admin', 'enable_minitest', 'tests', 9, '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"draft\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:29:31\"}', '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"published\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:30:19\"}', NULL, NULL, '2026-11-11 16:30:19'),
+(210, NULL, 'admin', 'disable_minitest', 'tests', 9, '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"published\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:30:19\"}', '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"draft\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:30:19\"}', NULL, NULL, '2026-11-11 16:30:19'),
+(211, 1, 'admin', 'enable_minitest', 'tests', 9, '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"draft\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:30:19\"}', '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"published\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:31:31\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-11 16:31:31'),
+(212, 1, 'admin', 'enable_minitest', 'tests', 9, '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"draft\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:34:56\"}', '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"published\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 17:17:02\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-11 17:17:02'),
+(213, 1, 'admin', 'disable_minitest', 'tests', 9, '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"published\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 17:17:02\"}', '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"draft\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 17:17:38\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-11 17:17:38');
 
 -- --------------------------------------------------------
 
@@ -2761,7 +2769,7 @@ INSERT INTO `db_lms_classes` (`id`, `class_code`, `program_id`, `subject_id`, `t
 (6, 'CLS11-SEED06', 2, 1, 2, 'one_on_one', 'Toán 1-1', '400000.00', NULL, 30, 0, NULL, 24, 72, 'active', '2026-10-10', NULL, '2026-10-30 05:11:12', '2026-10-30 23:49:36', NULL),
 (7, 'TE011', 3, 2, 3, 'one_on_one', 'Anh 1-1', '290000.00', NULL, 28, 0, NULL, 24, 72, 'active', '2026-10-04', NULL, '2026-10-30 05:11:46', '2026-11-06 11:54:40', NULL),
 (8, 'CLSGR012', 4, 3, 4, 'group', 'Online Luyện Đề', '310000.00', NULL, 30, 0, NULL, 24, 72, 'active', '2026-09-07', NULL, '2026-10-30 05:11:46', '2026-11-06 11:54:40', NULL),
-(9, 'TE013', 5, 4, 10, 'one_on_one', 'Chứng chỉ KET 1-1', '400000.00', NULL, 30, 0, NULL, 24, 72, 'active', '2026-10-13', NULL, '2026-10-30 05:11:46', '2026-11-06 11:54:40', NULL),
+(9, 'TE013', 5, 4, 10, 'one_on_one', 'Chứng chỉ KET 1-1', '400000.00', NULL, 31, 30, NULL, 24, 72, 'active', '2026-10-13', '2027-01-23', '2026-10-30 05:11:46', '2026-11-11 09:59:09', NULL),
 (10, 'CLSGR014', 6, 5, 11, 'group', 'Online Tổng Ôn', '350000.00', '45.00', 27, 9, '12:00:00', 24, 72, 'active', '2026-09-03', NULL, '2026-10-30 05:11:46', '2026-11-06 11:54:40', NULL),
 (11, 'CLSGR015', 2, 6, 13, 'group', 'Toán Nâng Cao 9', '320000.00', NULL, 23, 5, NULL, 24, 72, 'active', '2026-10-05', NULL, '2026-10-30 05:11:46', '2026-10-30 17:19:26', NULL),
 (12, 'TE016', 3, 7, 14, 'one_on_one', 'Tiếng Anh Giao Tiếp', '390000.00', NULL, 17, 0, NULL, 24, 72, 'active', '2026-10-11', NULL, '2026-10-30 05:11:46', '2026-11-06 11:54:40', NULL),
@@ -2786,7 +2794,7 @@ INSERT INTO `db_lms_classes` (`id`, `class_code`, `program_id`, `subject_id`, `t
 (31, 'CLS11-FC993A', 1, 9, 10, 'one_on_one', 'Toán Thực Chiến 286', '550000.00', '45.00', 24, 0, '12:00:00', 0, 72, 'active', '2026-10-30', NULL, '2026-10-30 14:50:26', '2026-11-06 11:54:40', '2026-10-30 07:56:32'),
 (33, 'CLSGR-906BA8', 1, 9, 10, 'group', 'Lớp Nhóm Ôn Thi 400', '350000.00', '40.00', 30, 0, '12:00:00', 24, 72, 'active', '2026-10-30', NULL, '2026-10-30 14:51:04', '2026-11-06 11:54:40', '2026-10-30 07:56:05'),
 (34, 'CLSGR-140DCA', 1, 10, 2, 'group', 'Toán Nhóm 7A - Ôn thi giữa kỳ', '300000.00', NULL, 16, 9, '12:00:00', 24, 72, 'active', '2026-10-19', NULL, '2026-11-02 09:17:15', '2026-11-06 11:54:40', NULL),
-(35, 'CLSGR-90C450', 3, 12, 2, 'group', 'Tiếng Anh Nhóm 8 - Giao tiếp', '320000.00', NULL, 16, 8, '12:00:00', 24, 72, 'active', '2026-10-21', NULL, '2026-11-02 09:17:15', '2026-11-06 11:54:40', NULL),
+(35, 'CLSGR-90C450', 3, 12, 2, 'group', 'Tiếng Anh Nhóm 8 - Giao tiếp', '320000.00', NULL, 36, 36, '12:00:00', 24, 72, 'active', '2026-10-21', '2027-02-21', '2026-11-02 09:17:15', '2026-11-11 09:57:29', NULL),
 (36, 'CLSGR-3333D0', 1, 2, 3, 'group', 'Toán Nhóm 10 - Luyện đề', '280000.00', NULL, 20, 8, '18:00:00', 24, 72, 'active', '2026-10-20', NULL, '2026-11-02 09:17:15', '2026-11-06 11:54:40', NULL),
 (37, 'CLSGR-8E245C', 6, 8, 3, 'group', 'Văn Nhóm 9 - Nghị luận', '250000.00', NULL, 12, 8, '18:00:00', 24, 72, 'active', '2026-10-20', NULL, '2026-11-02 09:17:15', '2026-11-06 11:54:40', NULL),
 (38, 'CLSGR-E4DB53', 3, 3, 4, 'group', 'Tiếng Anh Nhóm 9B - Luyện KET', '300000.00', NULL, 24, 8, '12:00:00', 24, 72, 'active', '2026-10-20', NULL, '2026-11-02 09:17:15', '2026-11-06 11:54:40', NULL);
@@ -2961,7 +2969,7 @@ INSERT INTO `db_lms_course_cycles` (`id`, `class_id`, `cycle_no`, `name`, `statu
 (4, 7, 1, 'Khóa 1', 'active', 3, '410000.00', NULL, NULL, 24, 72, '2026-10-04', '2026-12-18', 28, 23, NULL, '2026-10-30 05:11:46', '2026-10-30 12:11:46'),
 (5, 8, 1, 'Khóa 1', 'active', 4, '290000.00', NULL, NULL, 24, 72, '2026-09-07', '2026-11-21', 30, 12, NULL, '2026-10-30 05:11:46', '2026-10-30 12:11:46'),
 (6, 9, 1, 'Khóa 1', 'closed', 10, '340000.00', NULL, NULL, 24, 72, '2026-08-14', '2026-10-08', 15, 0, '2026-10-08 20:00:00', '2026-08-14 08:00:00', '2026-10-30 12:11:46'),
-(7, 9, 2, 'Khóa 2', 'active', 10, '360000.00', NULL, NULL, 24, 72, '2026-10-13', '2026-12-12', 30, 11, NULL, '2026-10-30 05:11:46', '2026-10-30 12:11:46'),
+(7, 9, 2, 'Khóa 2', 'completed', 10, '360000.00', NULL, NULL, 24, 72, '2026-10-13', '2026-10-13', 0, 0, '2026-11-11 02:59:09', '2026-10-30 05:11:46', '2026-11-11 09:59:09'),
 (8, 10, 1, 'Khóa 1', 'active', 11, '350000.00', '45.00', '12:00:00', 24, 72, '2026-09-03', '2026-11-17', 27, 20, NULL, '2026-10-30 05:11:46', '2026-10-30 15:28:17'),
 (9, 11, 1, 'Khóa 1', 'active', 13, '430000.00', NULL, NULL, 24, 72, '2026-10-05', '2026-12-19', 23, 7, NULL, '2026-10-30 05:11:46', '2026-10-30 12:11:46'),
 (10, 12, 1, 'Khóa 1', 'closed', 14, '440000.00', NULL, NULL, 24, 72, '2026-08-12', '2026-10-06', 15, 0, '2026-10-06 20:00:00', '2026-08-12 08:00:00', '2026-10-30 12:11:46'),
@@ -2993,13 +3001,15 @@ INSERT INTO `db_lms_course_cycles` (`id`, `class_id`, `cycle_no`, `name`, `statu
 (36, 31, 1, 'Khóa 1', 'active', 10, '550000.00', '45.00', '12:00:00', 0, 72, '2026-10-30', NULL, 24, 24, NULL, '2026-10-30 14:50:26', '2026-10-30 14:50:26'),
 (37, 33, 1, 'Khóa 1', 'active', 10, '350000.00', '40.00', '12:00:00', 24, 72, '2026-10-30', NULL, 30, 30, NULL, '2026-10-30 14:51:04', '2026-10-30 14:51:04'),
 (38, 3, 1, 'Khóa 1', 'active', 4, '350000.00', '70.00', NULL, 24, 72, '2026-10-01', NULL, 24, 18, NULL, '2026-11-02 09:05:29', '2026-11-02 09:05:29'),
-(39, 34, 1, 'Khóa 1', 'active', 2, '300000.00', NULL, '12:00:00', 24, 72, '2026-10-19', NULL, 16, 16, NULL, '2026-11-02 09:17:15', '2026-11-02 09:17:15'),
-(40, 35, 1, 'Khóa 1', 'active', 2, '320000.00', NULL, '12:00:00', 24, 72, '2026-10-21', NULL, 16, 16, NULL, '2026-11-02 09:17:15', '2026-11-02 09:17:15'),
-(41, 36, 1, 'Khóa 1', 'active', 3, '280000.00', NULL, '18:00:00', 24, 72, '2026-10-20', NULL, 20, 20, NULL, '2026-11-02 09:17:15', '2026-11-02 09:17:15'),
-(42, 37, 1, 'Khóa 1', 'active', 3, '250000.00', NULL, '18:00:00', 24, 72, '2026-10-20', NULL, 12, 12, NULL, '2026-11-02 09:17:15', '2026-11-02 09:17:15'),
-(43, 38, 1, 'Khóa 1', 'active', 4, '300000.00', NULL, '12:00:00', 24, 72, '2026-10-20', NULL, 24, 24, NULL, '2026-11-02 09:17:15', '2026-11-02 09:17:15'),
-(44, 5, 1, 'Khóa 1', 'active', 3, '450000.00', '70.00', NULL, 24, 72, '2026-10-01', NULL, 20, 0, NULL, '2026-11-03 16:29:06', '2026-11-03 16:29:06'),
-(45, 4, 1, 'Khóa 1', 'active', 2, '500000.00', '75.00', NULL, 24, 72, '2026-10-05', NULL, 16, 10, NULL, '2026-11-03 16:35:50', '2026-11-03 16:35:50');
+(39, 34, 1, 'Khóa 1', 'active', 2, '300000.00', NULL, '12:00:00', 24, 72, '2026-10-19', '2026-12-12', 16, 16, NULL, '2026-11-02 09:17:15', '2026-11-11 09:36:17'),
+(40, 35, 1, 'Khóa 1', 'completed', 2, '320000.00', NULL, '12:00:00', 24, 72, '2026-10-21', '2026-12-13', 16, 16, '2026-11-11 02:57:29', '2026-11-02 09:17:15', '2026-11-11 09:57:29'),
+(41, 36, 1, 'Khóa 1', 'active', 3, '280000.00', NULL, '18:00:00', 24, 72, '2026-10-20', '2026-12-24', 20, 20, NULL, '2026-11-02 09:17:15', '2026-11-11 09:36:17'),
+(42, 37, 1, 'Khóa 1', 'active', 3, '250000.00', NULL, '18:00:00', 24, 72, '2026-10-20', '2026-11-28', 12, 12, NULL, '2026-11-02 09:17:15', '2026-11-11 09:36:17'),
+(43, 38, 1, 'Khóa 1', 'active', 4, '300000.00', NULL, '12:00:00', 24, 72, '2026-10-20', '2027-01-08', 24, 24, NULL, '2026-11-02 09:17:15', '2026-11-11 09:36:17'),
+(44, 5, 1, 'Khóa 1', 'active', 3, '450000.00', '70.00', NULL, 24, 72, '2026-10-01', '2026-12-08', 20, 0, NULL, '2026-11-03 16:29:06', '2026-11-11 09:36:17'),
+(45, 4, 1, 'Khóa 1', 'active', 2, '500000.00', '75.00', NULL, 24, 72, '2026-10-05', NULL, 16, 10, NULL, '2026-11-03 16:35:50', '2026-11-03 16:35:50'),
+(46, 35, 2, 'Khóa 2', 'active', 2, '320000.00', NULL, '12:00:00', 24, 72, '2026-12-16', '2027-02-21', 20, 20, NULL, '2026-11-11 09:57:29', '2026-11-11 09:57:29'),
+(47, 9, 3, 'Khóa 3', 'active', 10, '400000.00', NULL, NULL, 24, 72, '2026-10-16', '2027-01-23', 30, 30, NULL, '2026-11-11 09:59:09', '2026-11-11 09:59:09');
 
 -- --------------------------------------------------------
 
@@ -3341,7 +3351,11 @@ INSERT INTO `db_lms_cycle_schedules` (`id`, `cycle_id`, `day_of_week`, `start_ti
 (69, 29, 5, '19:00:00', '20:30:00', '2026-09-18', NULL),
 (70, 32, 4, '19:00:00', '20:30:00', '2026-09-13', NULL),
 (71, 35, 3, '19:30:00', '21:00:00', '2026-10-09', NULL),
-(72, 35, 6, '19:30:00', '21:00:00', '2026-10-09', NULL);
+(72, 35, 6, '19:30:00', '21:00:00', '2026-10-09', NULL),
+(73, 46, 4, '18:00:00', '19:30:00', '2026-10-21', NULL),
+(74, 46, 8, '08:00:00', '09:30:00', '2026-10-21', NULL),
+(75, 47, 6, '08:00:00', '09:30:00', '2026-10-13', NULL),
+(76, 47, 7, '08:00:00', '09:30:00', '2026-10-13', NULL);
 
 -- --------------------------------------------------------
 
@@ -3416,7 +3430,10 @@ INSERT INTO `db_lms_cycle_students` (`id`, `cycle_id`, `student_id`, `status`, `
 (25, 43, 6, 'active', '2026-11-02 09:17:15', NULL, NULL),
 (26, 43, 8, 'active', '2026-11-02 09:17:15', NULL, NULL),
 (27, 44, 5, 'active', '2026-11-03 16:29:06', NULL, NULL),
-(28, 45, 6, 'active', '2026-11-03 16:35:50', NULL, NULL);
+(28, 45, 6, 'active', '2026-11-03 16:35:50', NULL, NULL),
+(29, 46, 7, 'active', '2026-11-11 09:57:29', NULL, NULL),
+(30, 46, 8, 'active', '2026-11-11 09:57:29', NULL, NULL),
+(31, 46, 9, 'active', '2026-11-11 09:57:29', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3503,7 +3520,13 @@ INSERT INTO `db_lms_cycle_student_topics` (`id`, `cycle_id`, `student_id`, `topi
 (96, 40, 9, 30, 'unlocked', '2026-11-03 06:35:07', NULL, 'seed demo group'),
 (97, 40, 9, 31, 'locked', NULL, NULL, NULL),
 (98, 1, 5, 34, 'unlocked', '2026-11-03 07:01:43', NULL, 'seed demo Gui test'),
-(100, 1, 5, 35, 'unlocked', '2026-11-03 02:24:43', 2, 'Mở khóa theo lộ trình học');
+(100, 1, 5, 35, 'unlocked', '2026-11-03 02:24:43', 2, 'Mở khóa theo lộ trình học'),
+(101, 46, 7, 30, 'unlocked', '2026-11-03 06:35:07', NULL, 'seed demo group'),
+(102, 46, 7, 31, 'locked', NULL, NULL, NULL),
+(103, 46, 8, 30, 'unlocked', '2026-11-03 06:35:07', NULL, 'seed demo group'),
+(104, 46, 8, 31, 'locked', NULL, NULL, NULL),
+(105, 46, 9, 30, 'unlocked', '2026-11-03 06:35:07', NULL, 'seed demo group'),
+(106, 46, 9, 31, 'locked', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -3556,7 +3579,10 @@ INSERT INTO `db_lms_cycle_topics` (`id`, `cycle_id`, `topic_id`, `order_index`, 
 (42, 40, 30, 0, 2, 1, 1),
 (43, 40, 31, 1, 2, 1, 0),
 (44, 1, 34, 2, 2, 1, 1),
-(45, 1, 35, 3, 2, 1, 1);
+(45, 1, 35, 3, 2, 1, 1),
+(46, 46, 30, 0, 2, 1, 1),
+(47, 46, 31, 1, 2, 1, 1),
+(48, 47, 3, 0, NULL, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -4233,7 +4259,24 @@ INSERT INTO `db_lms_sessions` (`id`, `class_id`, `cycle_id`, `teacher_id`, `topi
 (208, 1, 1, 2, NULL, NULL, '2026-11-24', '17:30:00', '19:00:00', '400000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-05 14:50:50', '2026-11-09 13:45:25'),
 (209, 1, 1, 2, NULL, NULL, '2026-11-24', '19:00:00', '20:30:00', '400000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-05 14:50:50', '2026-11-09 13:45:25'),
 (210, 1, 1, 2, NULL, NULL, '2026-11-26', '17:30:00', '19:00:00', '400000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-05 14:50:50', '2026-11-09 13:45:25'),
-(211, 1, 1, 2, NULL, NULL, '2026-11-26', '19:00:00', '20:30:00', '400000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-05 14:50:50', '2026-11-09 13:45:25');
+(211, 1, 1, 2, NULL, NULL, '2026-11-26', '19:00:00', '20:30:00', '400000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-05 14:50:50', '2026-11-09 13:45:25'),
+(212, 35, 46, 2, NULL, NULL, '2026-12-16', '18:00:00', '19:30:00', '320000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:57:29', '2026-11-11 09:57:29'),
+(213, 35, 46, 2, NULL, NULL, '2026-12-20', '08:00:00', '09:30:00', '320000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:57:29', '2026-11-11 09:57:29'),
+(214, 35, 46, 2, NULL, NULL, '2026-12-23', '18:00:00', '19:30:00', '320000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:57:29', '2026-11-11 09:57:29'),
+(215, 35, 46, 2, NULL, NULL, '2026-12-27', '08:00:00', '09:30:00', '320000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:57:29', '2026-11-11 09:57:29'),
+(216, 35, 46, 2, NULL, NULL, '2026-12-30', '18:00:00', '19:30:00', '320000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:57:29', '2026-11-11 09:57:29'),
+(217, 35, 46, 2, NULL, NULL, '2027-01-03', '08:00:00', '09:30:00', '320000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:57:29', '2026-11-11 09:57:29'),
+(218, 35, 46, 2, NULL, NULL, '2027-01-06', '18:00:00', '19:30:00', '320000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:57:29', '2026-11-11 09:57:29'),
+(219, 35, 46, 2, NULL, NULL, '2027-01-10', '08:00:00', '09:30:00', '320000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:57:29', '2026-11-11 09:57:29'),
+(220, 35, 46, 2, NULL, NULL, '2027-01-13', '18:00:00', '19:30:00', '320000.00', '48.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:57:29', '2026-11-11 09:57:29'),
+(221, 9, 47, 10, NULL, NULL, '2026-11-13', '08:00:00', '09:30:00', '400000.00', '45.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:59:09', '2026-11-11 09:59:09'),
+(222, 9, 47, 10, NULL, NULL, '2026-11-14', '08:00:00', '09:30:00', '400000.00', '45.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:59:09', '2026-11-11 09:59:09'),
+(223, 9, 47, 10, NULL, NULL, '2026-11-20', '08:00:00', '09:30:00', '400000.00', '45.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:59:09', '2026-11-11 09:59:09'),
+(224, 9, 47, 10, NULL, NULL, '2026-11-21', '08:00:00', '09:30:00', '400000.00', '45.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:59:09', '2026-11-11 09:59:09'),
+(225, 9, 47, 10, NULL, NULL, '2026-11-27', '08:00:00', '09:30:00', '400000.00', '45.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:59:09', '2026-11-11 09:59:09'),
+(226, 9, 47, 10, NULL, NULL, '2026-11-28', '08:00:00', '09:30:00', '400000.00', '45.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:59:09', '2026-11-11 09:59:09'),
+(227, 9, 47, 10, NULL, NULL, '2026-12-04', '08:00:00', '09:30:00', '400000.00', '45.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:59:09', '2026-11-11 09:59:09'),
+(228, 9, 47, 10, NULL, NULL, '2026-12-05', '08:00:00', '09:30:00', '400000.00', '45.00', NULL, NULL, NULL, NULL, 'upcoming', 0, NULL, '2026-11-11 09:59:09', '2026-11-11 09:59:09');
 
 -- --------------------------------------------------------
 
@@ -4765,9 +4808,9 @@ INSERT INTO `db_lms_tests` (`id`, `class_id`, `cycle_id`, `topic_id`, `test_type
 (6, 1, 1, 25, 'minitest', 'How to calculate - Minitest', 'test/202610/mini-test.pdf', '2026-11-08 23:47:50', '20.00', NULL, NULL, 'published', 1, '2026-10-30 23:04:00', '2026-11-03 11:56:27'),
 (7, 1, 1, 26, 'test', 'Model Intermediate - Test (draft)', 'test/202610/model-intermediate-test.pdf', '2026-11-20 23:59:00', '20.00', NULL, NULL, 'draft', 2, '2026-11-03 11:56:27', '2026-11-04 16:55:08'),
 (8, 1, 1, 34, 'test', '[DEMO] Model Intermediate 2 - Bài test chờ chấm', 'test/202610/model-intermediate-2-test.pdf', '2026-11-30 23:59:00', '20.00', NULL, 'test/202610/model-intermediate-2-grading-template.pdf', 'published', 2, '2026-11-05 01:09:49', '2026-11-07 10:36:42'),
-(9, 1, 1, 34, 'minitest', '[DEMO] Model Intermediate 2 - Minitest chờ chấm', 'test/202610/model-intermediate-2-minitest.pdf', '2026-11-30 23:59:00', '20.00', NULL, 'test/202610/model-intermediate-2-grading-template.pdf', 'published', 2, '2026-11-07 03:36:42', '2026-11-07 03:36:42'),
+(9, 1, 1, 34, 'minitest', '[DEMO] Model Intermediate 2 - Minitest chờ chấm', 'test/202610/model-intermediate-2-minitest.pdf', '2026-11-30 23:59:00', '20.00', NULL, 'test/202610/model-intermediate-2-grading-template.pdf', 'draft', 2, '2026-11-07 03:36:42', '2026-11-11 17:17:38'),
 (10, 1, 1, 26, 'minitest', 'Model Intermediate - Minitest (draft)', 'test/202610/mini-test.pdf', '2026-11-20 23:59:00', '20.00', NULL, NULL, 'draft', 2, '2026-11-09 09:10:02', '2026-11-09 09:10:02'),
-(11, 3, 38, 30, 'minitest', 'Reading Part 1 - Minitest', 'test/202610/mini-test.pdf', '2026-11-25 23:59:00', '20.00', NULL, NULL, 'draft', 4, '2026-11-09 09:10:02', '2026-11-09 09:10:02'),
+(11, 3, 38, 30, 'minitest', 'Reading Part 1 - Minitest', 'test/202610/mini-test.pdf', '2026-11-25 23:59:00', '20.00', NULL, NULL, 'published', 4, '2026-11-09 09:10:02', '2026-11-11 13:06:05'),
 (12, 2, 2, 1, 'test', 'Ratio - Bài test chuyên đề', 'test/202610/how-to-calculate.pdf', '2026-11-06 23:47:50', '20.00', NULL, NULL, 'published', 3, '2026-11-09 09:10:02', '2026-11-09 09:10:02');
 
 -- --------------------------------------------------------
@@ -5014,11 +5057,11 @@ CREATE TABLE `db_lms_users` (
 --
 
 INSERT INTO `db_lms_users` (`id`, `username`, `password`, `email`, `phone`, `role`, `status`, `last_login_at`, `last_login_ip`, `remember_token`, `remember_token_expires_at`, `failed_login_count`, `locked_until`, `password_changed_at`, `must_change_password`, `created_at`, `updated_at`) VALUES
-(1, 'admin', '$2y$10$39KsPnCEaog6Grj25ButDu.987oS4RYuFtCepZTsXvueKeNXgSgia', NULL, NULL, 'admin', 'active', '2026-11-10 07:15:09', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-10 14:15:09'),
-(2, 'gv01', '$2y$10$KnkIEYVnLZJbKpKPbPEFPO46v4bL1SVp4rWTg0.djkqD6XxwuHtmG', 'an.te001@masterstudy.vn', '0901234567', 'teacher', 'active', '2026-11-10 09:39:08', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-10 16:39:08'),
+(1, 'admin', '$2y$10$39KsPnCEaog6Grj25ButDu.987oS4RYuFtCepZTsXvueKeNXgSgia', NULL, NULL, 'admin', 'active', '2026-11-11 10:00:17', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-11 17:00:17'),
+(2, 'gv01', '$2y$10$KnkIEYVnLZJbKpKPbPEFPO46v4bL1SVp4rWTg0.djkqD6XxwuHtmG', 'an.te001@masterstudy.vn', '0901234567', 'teacher', 'active', '2026-11-11 09:04:24', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-11 16:04:24'),
 (3, 'gv02', '$2y$10$kIzh1fA6lLzPAIdKQgAOHOWKuq0U8K0JbTjBUK.49kaQRYnQ6oM9e', 'binh.te002@masterstudy.vn', '0912345678', 'teacher', 'active', '2026-11-04 17:39:32', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-05 00:39:32'),
 (4, 'gv03', '$2y$10$DYaFqerMFPgy39MfEe9cyekOgZSGwWYiEYw.yLnBU8i/qT57T/M1W', 'cuong.te003@masterstudy.vn', '0923456789', 'teacher', 'active', '2026-11-03 04:58:00', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-05 00:11:23'),
-(5, 'hv01', '$2y$10$8Lwp0JAoqaB1Jr37F4saDOMJPnK3JUteko3MqoxJhQ0CQKRm5aUhS', 'hv01@demo.local', NULL, 'student', 'active', '2026-11-09 04:45:55', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-09 11:45:55'),
+(5, 'hv01', '$2y$10$0.WwrzJDIuIq0JgcibpHG.ZfZ2ltpnp3ekCsZSpQEaIbLjoctnMgq', 'hv01@demo.local', NULL, 'student', 'active', '2026-11-11 09:33:24', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-11 16:33:24'),
 (6, 'hv02', '$2y$10$Cs/50Xs6pXzObbUc6xOx5e1afiXknxJNfkVTpnlpZebonbjVDnRBa', 'hv02@demo.local', NULL, 'student', 'active', '2026-11-04 16:12:55', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-05 00:11:23'),
 (7, 'hv03', '$2y$10$vHAL.SnwZgeQTxQOncgvQuZF717Y/qHy/wd5rc6q6c/3F3uAanP/u', 'hv03@demo.local', NULL, 'student', 'active', '2026-10-15 02:45:31', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-05 00:11:23'),
 (8, 'hv04', '$2y$10$Y.nS1S.D5k9j7t2sSvOwue7OpEzpzlCsYfPWuZuc3r8snEPhTETO2', 'hv04@demo.local', NULL, 'student', 'active', '2026-10-15 02:45:31', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-05 00:11:23'),
@@ -18635,7 +18678,7 @@ ALTER TABLE `db_lienhe`
 -- AUTO_INCREMENT for table `db_lms_audit_logs`
 --
 ALTER TABLE `db_lms_audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=206;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=214;
 
 --
 -- AUTO_INCREMENT for table `db_lms_classes`
@@ -18659,7 +18702,7 @@ ALTER TABLE `db_lms_class_topics`
 -- AUTO_INCREMENT for table `db_lms_course_cycles`
 --
 ALTER TABLE `db_lms_course_cycles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `db_lms_cron_runs`
@@ -18671,25 +18714,25 @@ ALTER TABLE `db_lms_cron_runs`
 -- AUTO_INCREMENT for table `db_lms_cycle_schedules`
 --
 ALTER TABLE `db_lms_cycle_schedules`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT for table `db_lms_cycle_students`
 --
 ALTER TABLE `db_lms_cycle_students`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `db_lms_cycle_student_topics`
 --
 ALTER TABLE `db_lms_cycle_student_topics`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=101;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- AUTO_INCREMENT for table `db_lms_cycle_topics`
 --
 ALTER TABLE `db_lms_cycle_topics`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `db_lms_library_files`
@@ -18761,7 +18804,7 @@ ALTER TABLE `db_lms_schedules`
 -- AUTO_INCREMENT for table `db_lms_sessions`
 --
 ALTER TABLE `db_lms_sessions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=212;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=229;
 
 --
 -- AUTO_INCREMENT for table `db_lms_session_students`
