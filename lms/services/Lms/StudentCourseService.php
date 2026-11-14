@@ -417,7 +417,7 @@ class StudentCourseService extends LmsService
             . ' left join db_lms_session_students ss'
             . ' on ss.session_id = s.id and ss.student_id = ?'
             . ' where s.class_id = ?'
-            . ' and (json_contains(s.topic_ids, cast(? as json)) or s.topic_id = ?)'
+            . ' and ((case when s.topic_ids is not null and s.topic_ids != \'\' and json_valid(s.topic_ids) then json_contains(s.topic_ids, cast(? as char)) else 0 end = 1) or s.topic_id = ?)'
             . ($this->resolveActiveCycleId($classId) > 0 ? ' and (s.cycle_id = ? or s.cycle_id is null)' : '')
             . ' order by s.session_date, s.start_time',
             $this->resolveActiveCycleId($classId) > 0

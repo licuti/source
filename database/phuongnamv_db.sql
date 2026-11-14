@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 11, 2026 at 10:24 AM
+-- Generation Time: Nov 12, 2026 at 07:24 AM
 -- Server version: 5.7.44
 -- PHP Version: 8.2.33
 
@@ -2725,7 +2725,9 @@ INSERT INTO `db_lms_audit_logs` (`id`, `actor_user_id`, `actor_type`, `action`, 
 (210, NULL, 'admin', 'disable_minitest', 'tests', 9, '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"published\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:30:19\"}', '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"draft\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:30:19\"}', NULL, NULL, '2026-11-11 16:30:19'),
 (211, 1, 'admin', 'enable_minitest', 'tests', 9, '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"draft\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:30:19\"}', '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"published\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:31:31\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-11 16:31:31'),
 (212, 1, 'admin', 'enable_minitest', 'tests', 9, '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"draft\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 16:34:56\"}', '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"published\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 17:17:02\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-11 17:17:02'),
-(213, 1, 'admin', 'disable_minitest', 'tests', 9, '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"published\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 17:17:02\"}', '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"draft\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 17:17:38\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-11 17:17:38');
+(213, 1, 'admin', 'disable_minitest', 'tests', 9, '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"published\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 17:17:02\"}', '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"draft\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 17:17:38\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-11 17:17:38'),
+(214, 1, 'admin', 'enable_minitest', 'tests', 9, '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"draft\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-11 17:17:38\"}', '{\"id\":9,\"class_id\":1,\"cycle_id\":1,\"topic_id\":34,\"test_type\":\"minitest\",\"title\":\"[DEMO] Model Intermediate 2 - Minitest chờ chấm\",\"test_file_url\":\"test\\/202610\\/model-intermediate-2-minitest.pdf\",\"deadline\":\"2026-11-30 23:59:00\",\"max_score\":\"20.00\",\"review_score\":null,\"lesson_summary_url\":\"test\\/202610\\/model-intermediate-2-grading-template.pdf\",\"status\":\"published\",\"created_by\":2,\"created_at\":\"2026-11-07 03:36:42\",\"updated_at\":\"2026-11-12 08:55:24\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36', '2026-11-12 08:55:24'),
+(215, NULL, 'user', 'create_class', 'classes', 39, NULL, '{\"program_id\":1,\"subject_id\":15,\"new_subject_name\":\"Test Subject Demo\",\"teacher_id\":10,\"class_type\":\"one_on_one\",\"name\":\"Lop Test Moi\",\"price_per_session\":500000,\"teacher_percentage\":50,\"total_sessions\":10,\"start_date\":\"2026-11-12\",\"student_ids\":[5],\"schedules\":[{\"day\":2,\"start\":\"17:00\",\"end\":\"18:30\"}]}', NULL, NULL, '2026-11-12 13:37:29');
 
 -- --------------------------------------------------------
 
@@ -3771,7 +3773,9 @@ INSERT INTO `db_lms_notifications` (`id`, `user_id`, `type`, `title`, `message`,
 (23, 8, 'test_available', 'Toán Nhóm - Lớp 9-12', 'Đã có bài test chuyên đề Ratio', '/lms/student/lms-khoa-hoc/lop?class_id=2', 0, NULL, '2026-11-03 08:48:18'),
 (24, 9, 'homework_assigned', 'Tiếng Anh Nhóm 8 - Giao tiếp', 'Giáo viên đã giao BTVN cho buổi học 04/11/2026', '/lms/student/lms-lich-hoc/buoi?id=161', 0, NULL, '2026-11-03 08:50:18'),
 (25, 9, 'homework_graded', 'Tiếng Anh Nhóm 8 - Giao tiếp', 'Giáo viên đã chấm BTVN cho buổi học 04/11/2026', '/lms/student/lms-lich-hoc/buoi?id=161', 0, NULL, '2026-11-03 08:49:18'),
-(26, 9, 'test_available', 'Tiếng Anh Nhóm 8 - Giao tiếp', 'Đã có bài test chuyên đề Reading Part 1', '/lms/student/lms-khoa-hoc/lop?class_id=35', 0, NULL, '2026-11-03 08:48:18');
+(26, 9, 'test_available', 'Tiếng Anh Nhóm 8 - Giao tiếp', 'Đã có bài test chuyên đề Reading Part 1', '/lms/student/lms-khoa-hoc/lop?class_id=35', 0, NULL, '2026-11-03 08:48:18'),
+(27, 5, 'test_minitest', 'Mở bài Minitest: Model Intermediate 2', 'Admin đã mở bài Minitest chuyên đề \"Model Intermediate 2\" tại lớp CLS11-DCA77D. Hãy vào nộp bài trước hạn!', '/lms/student/lms-khoa-hoc/chuyen-de?class_id=1&topic_id=34#section-minitest', 0, NULL, '2026-11-12 08:55:24'),
+(28, 2, 'test_minitest', 'Đã mở Minitest: Model Intermediate 2', 'Admin đã mở bài Minitest chuyên đề \"Model Intermediate 2\" cho ST001 - Phạm Duy Kiên (Lớp CLS11-DCA77D).', '/lms/teacher/lms-hoc-vien-cua-toi/chi-tiet?class_id=1&student_id=5', 0, NULL, '2026-11-12 08:55:24');
 
 -- --------------------------------------------------------
 
@@ -4808,7 +4812,7 @@ INSERT INTO `db_lms_tests` (`id`, `class_id`, `cycle_id`, `topic_id`, `test_type
 (6, 1, 1, 25, 'minitest', 'How to calculate - Minitest', 'test/202610/mini-test.pdf', '2026-11-08 23:47:50', '20.00', NULL, NULL, 'published', 1, '2026-10-30 23:04:00', '2026-11-03 11:56:27'),
 (7, 1, 1, 26, 'test', 'Model Intermediate - Test (draft)', 'test/202610/model-intermediate-test.pdf', '2026-11-20 23:59:00', '20.00', NULL, NULL, 'draft', 2, '2026-11-03 11:56:27', '2026-11-04 16:55:08'),
 (8, 1, 1, 34, 'test', '[DEMO] Model Intermediate 2 - Bài test chờ chấm', 'test/202610/model-intermediate-2-test.pdf', '2026-11-30 23:59:00', '20.00', NULL, 'test/202610/model-intermediate-2-grading-template.pdf', 'published', 2, '2026-11-05 01:09:49', '2026-11-07 10:36:42'),
-(9, 1, 1, 34, 'minitest', '[DEMO] Model Intermediate 2 - Minitest chờ chấm', 'test/202610/model-intermediate-2-minitest.pdf', '2026-11-30 23:59:00', '20.00', NULL, 'test/202610/model-intermediate-2-grading-template.pdf', 'draft', 2, '2026-11-07 03:36:42', '2026-11-11 17:17:38'),
+(9, 1, 1, 34, 'minitest', '[DEMO] Model Intermediate 2 - Minitest chờ chấm', 'test/202610/model-intermediate-2-minitest.pdf', '2026-11-30 23:59:00', '20.00', NULL, 'test/202610/model-intermediate-2-grading-template.pdf', 'published', 2, '2026-11-07 03:36:42', '2026-11-12 08:55:24'),
 (10, 1, 1, 26, 'minitest', 'Model Intermediate - Minitest (draft)', 'test/202610/mini-test.pdf', '2026-11-20 23:59:00', '20.00', NULL, NULL, 'draft', 2, '2026-11-09 09:10:02', '2026-11-09 09:10:02'),
 (11, 3, 38, 30, 'minitest', 'Reading Part 1 - Minitest', 'test/202610/mini-test.pdf', '2026-11-25 23:59:00', '20.00', NULL, NULL, 'published', 4, '2026-11-09 09:10:02', '2026-11-11 13:06:05'),
 (12, 2, 2, 1, 'test', 'Ratio - Bài test chuyên đề', 'test/202610/how-to-calculate.pdf', '2026-11-06 23:47:50', '20.00', NULL, NULL, 'published', 3, '2026-11-09 09:10:02', '2026-11-09 09:10:02');
@@ -5057,8 +5061,8 @@ CREATE TABLE `db_lms_users` (
 --
 
 INSERT INTO `db_lms_users` (`id`, `username`, `password`, `email`, `phone`, `role`, `status`, `last_login_at`, `last_login_ip`, `remember_token`, `remember_token_expires_at`, `failed_login_count`, `locked_until`, `password_changed_at`, `must_change_password`, `created_at`, `updated_at`) VALUES
-(1, 'admin', '$2y$10$39KsPnCEaog6Grj25ButDu.987oS4RYuFtCepZTsXvueKeNXgSgia', NULL, NULL, 'admin', 'active', '2026-11-11 10:00:17', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-11 17:00:17'),
-(2, 'gv01', '$2y$10$KnkIEYVnLZJbKpKPbPEFPO46v4bL1SVp4rWTg0.djkqD6XxwuHtmG', 'an.te001@masterstudy.vn', '0901234567', 'teacher', 'active', '2026-11-11 09:04:24', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-11 16:04:24'),
+(1, 'admin', '$2y$10$39KsPnCEaog6Grj25ButDu.987oS4RYuFtCepZTsXvueKeNXgSgia', NULL, NULL, 'admin', 'active', '2026-11-12 06:18:13', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-12 13:18:13'),
+(2, 'gv01', '$2y$10$KnkIEYVnLZJbKpKPbPEFPO46v4bL1SVp4rWTg0.djkqD6XxwuHtmG', 'an.te001@masterstudy.vn', '0901234567', 'teacher', 'active', '2026-11-12 01:57:02', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-12 08:57:02'),
 (3, 'gv02', '$2y$10$kIzh1fA6lLzPAIdKQgAOHOWKuq0U8K0JbTjBUK.49kaQRYnQ6oM9e', 'binh.te002@masterstudy.vn', '0912345678', 'teacher', 'active', '2026-11-04 17:39:32', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-05 00:39:32'),
 (4, 'gv03', '$2y$10$DYaFqerMFPgy39MfEe9cyekOgZSGwWYiEYw.yLnBU8i/qT57T/M1W', 'cuong.te003@masterstudy.vn', '0923456789', 'teacher', 'active', '2026-11-03 04:58:00', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-05 00:11:23'),
 (5, 'hv01', '$2y$10$0.WwrzJDIuIq0JgcibpHG.ZfZ2ltpnp3ekCsZSpQEaIbLjoctnMgq', 'hv01@demo.local', NULL, 'student', 'active', '2026-11-11 09:33:24', NULL, NULL, NULL, 0, NULL, NULL, 0, '2026-10-13 17:35:09', '2026-11-11 16:33:24'),
@@ -18678,19 +18682,19 @@ ALTER TABLE `db_lienhe`
 -- AUTO_INCREMENT for table `db_lms_audit_logs`
 --
 ALTER TABLE `db_lms_audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=214;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=216;
 
 --
 -- AUTO_INCREMENT for table `db_lms_classes`
 --
 ALTER TABLE `db_lms_classes`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `db_lms_class_students`
 --
 ALTER TABLE `db_lms_class_students`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `db_lms_class_topics`
@@ -18702,7 +18706,7 @@ ALTER TABLE `db_lms_class_topics`
 -- AUTO_INCREMENT for table `db_lms_course_cycles`
 --
 ALTER TABLE `db_lms_course_cycles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `db_lms_cron_runs`
@@ -18714,13 +18718,13 @@ ALTER TABLE `db_lms_cron_runs`
 -- AUTO_INCREMENT for table `db_lms_cycle_schedules`
 --
 ALTER TABLE `db_lms_cycle_schedules`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
 
 --
 -- AUTO_INCREMENT for table `db_lms_cycle_students`
 --
 ALTER TABLE `db_lms_cycle_students`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `db_lms_cycle_student_topics`
@@ -18756,7 +18760,7 @@ ALTER TABLE `db_lms_monthly_reviews`
 -- AUTO_INCREMENT for table `db_lms_notifications`
 --
 ALTER TABLE `db_lms_notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `db_lms_password_reset_otps`
@@ -18798,25 +18802,25 @@ ALTER TABLE `db_lms_role_permissions`
 -- AUTO_INCREMENT for table `db_lms_schedules`
 --
 ALTER TABLE `db_lms_schedules`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `db_lms_sessions`
 --
 ALTER TABLE `db_lms_sessions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=229;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=233;
 
 --
 -- AUTO_INCREMENT for table `db_lms_session_students`
 --
 ALTER TABLE `db_lms_session_students`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=309;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=313;
 
 --
 -- AUTO_INCREMENT for table `db_lms_subjects`
 --
 ALTER TABLE `db_lms_subjects`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `db_lms_teacher_free_slots`

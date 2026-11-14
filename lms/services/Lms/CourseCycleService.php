@@ -853,7 +853,7 @@ class CourseCycleService extends LmsService
                 . ' t.name, t.subject_id, sub.name as subject_name,'
                 . ' (select count(*) from db_lms_sessions s where s.cycle_id = ct.cycle_id'
                 . '    and s.status = ? and s.session_date <= ?'
-                . '    and (json_contains(s.topic_ids, cast(ct.topic_id as json)) or s.topic_id = ct.topic_id)) as done_sessions'
+                . '    and ((case when s.topic_ids is not null and s.topic_ids != \'\' and json_valid(s.topic_ids) then json_contains(s.topic_ids, cast(ct.topic_id as char)) else 0 end = 1) or s.topic_id = ct.topic_id)) as done_sessions'
                 . ' from db_lms_cycle_topics ct'
                 . ' join db_lms_topics t on t.id = ct.topic_id'
                 . ' left join db_lms_subjects sub on sub.id = t.subject_id'
@@ -1052,30 +1052,71 @@ class CourseCycleService extends LmsService
             return array();
         }
         $cycle = $this->getCycle($cycleId, $classId);
-        $topics = $this->db->safeFetch(
-            'select ct.topic_id, ct.order_index, ct.max_sessions, ct.has_test, ct.has_minitest,'
-            . ' t.name, t.content, t.test_file_url, t.minitest_file_url, t.subject_id, sub.name as subject_name, cst.status as unlock_status, cst.unlocked_at,'
-            . ' (select count(*) from db_lms_sessions s where s.cycle_id = ct.cycle_id'
-            . '    and s.status = ? and s.session_date <= ?'
-            . '    and (json_contains(s.topic_ids, cast(ct.topic_id as json)) or s.topic_id = ct.topic_id)) as done_sessions'
-            . ' from db_lms_cycle_topics ct join db_lms_topics t on t.id = ct.topic_id'
-            . ' left join db_lms_subjects sub on sub.id = t.subject_id'
-            . ' join db_lms_cycle_student_topics cst on cst.cycle_id = ct.cycle_id'
-            . ' and cst.topic_id = ct.topic_id and cst.student_id = ?'
-            . ' where ct.cycle_id = ? order by ct.order_index, ct.id',
-            array('finished', date('Y-m-d'), $studentId, $cycleId)
-        );
-        $tests = $this->db->safeFetch(
-            'select te.id, te.topic_id, te.test_type, te.title, te.test_file_url, te.deadline, te.status, te.max_score,'
-            . ' ts.id as submission_id, ts.submission_files, ts.submitted_at, ts.submission_status, ts.score_x, ts.score_y_percent, ts.graded_at, ts.teacher_feedback_files,'
-            . ' t.test_file_url as topic_test_file_url, t.minitest_file_url as topic_minitest_file_url'
-            . ' from db_lms_tests te'
-            . ' join db_lms_topics t on t.id = te.topic_id'
-            . ' left join db_lms_test_submissions ts'
-            . ' on ts.test_id = te.id and ts.student_id = ? where te.cycle_id = ?'
-            . ' order by te.topic_id, te.test_type, te.deadline, te.id',
-            array($studentId, $cycleId)
-        );
+        try {
+            $topics = $this->db->safeFetch(
+                'select ct.topic_id, ct.order_index, ct.max_sessions, ct.has_test, ct.has_minitest,'
+                . ' t.name, t.content, t.test_file_url, t.minitest_file_url, t.subject_id, sub.name as subject_name, cst.status as unlock_status, cst.unlocked_at,'
+                . ' (select count(*) from db_lms_sessions s where s.cycle_id = ct.cycle_id'
+                . '    and s.status = ? and s.session_date <= ?'
+                . '    and ((case when s.topic_ids is not null and s.topic_ids != \'\' and json_valid(s.topic_ids) then json_contains(s.topic_ids, cast(ct.topic_id as char)) else 0 end = 1) or s.topic_id = ct.topic_id)) as done_sessions'
+                . ' from db_lms_cycle_topics ct join db_lms_topics t on t.id = ct.topic_id'
+                . ' left join db_lms_subjects sub on sub.id = t.subject_id'
+                . ' join db_lms_cycle_student_topics cst on cst.cycle_id = ct.cycle_id'
+                . ' and cst.topic_id = ct.topic_id and cst.student_id = ?'
+                . ' where ct.cycle_id = ? order by ct.order_index, ct.id',
+                array('finished', date('Y-m-d'), $studentId, $cycleId)
+            );
+        } catch (\Exception $e) {
+            error_log('[LMS teacherCourseDetail topics error] ' . $e->getMessage());
+            // Fallback nếu hosting chưa migrate các cột test_file_url/minitest_file_url trong db_lms_topics
+            $topics = $this->db->safeFetch(
+                'select ct.topic_id, ct.order_index, ct.max_sessions, ct.has_test, ct.has_minitest,'
+                . ' t.name, t.subject_id, sub.name as subject_name, cst.status as unlock_status, cst.unlocked_at,'
+                . ' (select count(*) from db_lms_sessions s where s.cycle_id = ct.cycle_id'
+                . '    and s.status = ? and s.session_date <= ?'
+                . '    and ((case when s.topic_ids is not null and s.topic_ids != \'\' and json_valid(s.topic_ids) then json_contains(s.topic_ids, cast(ct.topic_id as char)) else 0 end = 1) or s.topic_id = ct.topic_id)) as done_sessions'
+                . ' from db_lms_cycle_topics ct join db_lms_topics t on t.id = ct.topic_id'
+                . ' left join db_lms_subjects sub on sub.id = t.subject_id'
+                . ' join db_lms_cycle_student_topics cst on cst.cycle_id = ct.cycle_id'
+                . ' and cst.topic_id = ct.topic_id and cst.student_id = ?'
+                . ' where ct.cycle_id = ? order by ct.order_index, ct.id',
+                array('finished', date('Y-m-d'), $studentId, $cycleId)
+            );
+            foreach ($topics as $k => $top) {
+                $topics[$k]['content'] = isset($top['content']) ? $top['content'] : '';
+                $topics[$k]['test_file_url'] = '';
+                $topics[$k]['minitest_file_url'] = '';
+            }
+        }
+        try {
+            $tests = $this->db->safeFetch(
+                'select te.id, te.topic_id, te.test_type, te.title, te.test_file_url, te.deadline, te.status, te.max_score,'
+                . ' ts.id as submission_id, ts.submission_files, ts.submitted_at, ts.submission_status, ts.score_x, ts.score_y_percent, ts.graded_at, ts.teacher_feedback_files,'
+                . ' t.test_file_url as topic_test_file_url, t.minitest_file_url as topic_minitest_file_url'
+                . ' from db_lms_tests te'
+                . ' join db_lms_topics t on t.id = te.topic_id'
+                . ' left join db_lms_test_submissions ts'
+                . ' on ts.test_id = te.id and ts.student_id = ? where te.cycle_id = ?'
+                . ' order by te.topic_id, te.test_type, te.deadline, te.id',
+                array($studentId, $cycleId)
+            );
+        } catch (\Exception $e) {
+            error_log('[LMS teacherCourseDetail tests error] ' . $e->getMessage());
+            $tests = $this->db->safeFetch(
+                'select te.id, te.topic_id, te.test_type, te.title, te.test_file_url, te.deadline, te.status, te.max_score,'
+                . ' ts.id as submission_id, ts.submission_files, ts.submitted_at, ts.submission_status, ts.score_x, ts.score_y_percent, ts.graded_at, ts.teacher_feedback_files'
+                . ' from db_lms_tests te'
+                . ' join db_lms_topics t on t.id = te.topic_id'
+                . ' left join db_lms_test_submissions ts'
+                . ' on ts.test_id = te.id and ts.student_id = ? where te.cycle_id = ?'
+                . ' order by te.topic_id, te.test_type, te.deadline, te.id',
+                array($studentId, $cycleId)
+            );
+            foreach ($tests as $k => $te) {
+                $tests[$k]['topic_test_file_url'] = '';
+                $tests[$k]['topic_minitest_file_url'] = '';
+            }
+        }
         foreach ($tests as $i => $tRow) {
             if (empty($tRow['test_file_url'])) {
                 $tests[$i]['test_file_url'] = (string) $tRow['test_type'] === 'minitest'

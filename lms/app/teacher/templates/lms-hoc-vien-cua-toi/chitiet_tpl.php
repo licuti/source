@@ -2,6 +2,7 @@
 $csrf = lms_csrf_token();
 $detailClass = $detail['class'];
 $detailStudent = $detail['student'];
+$cycleId = !empty($detail['cycle']['id']) ? (int) $detail['cycle']['id'] : 0;
 $weekdays = \Lms\UserService::WEEKDAYS;
 $schedules = isset($detail['schedules']) && is_array($detail['schedules']) ? $detail['schedules'] : array();
 $defaultSlotLabel = !empty($schedules)
@@ -177,7 +178,7 @@ usort($visibleSessions, function ($a, $b) {
                                 $chamUrl = lms_url('lms-hoc-vien-cua-toi', 'cham-test', array(
                                     'class_id' => (int) $detailClass['id'],
                                     'student_id' => (int) $detailStudent['user_id'],
-                                    'cycle_id' => (int) $detail['cycle']['id'],
+                                    'cycle_id' => $cycleId,
                                     'topic_id' => $topicId,
                                 ));
                                 $doneText = $topic['max_sessions'] === null
@@ -510,7 +511,7 @@ usort($visibleSessions, function ($a, $b) {
                     <input type="hidden" name="csrf_token" value="<?= e($csrf) ?>">
                     <input type="hidden" name="class_id" value="<?= e((string) $detailClass['id']) ?>">
                     <input type="hidden" name="student_id" value="<?= e((string) $detailStudent['user_id']) ?>">
-                    <input type="hidden" name="cycle_id" value="<?= e((string) $detail['cycle']['id']) ?>">
+                    <input type="hidden" name="cycle_id" value="<?= e((string) $cycleId) ?>">
                     <input type="hidden" name="topic_id" id="lmsSendTestTopicId" value="">
                     <div class="mb-3">
                         <label class="form-label fw-semibold">Điểm Review<span class="text-danger">*</span></label>
@@ -567,7 +568,7 @@ usort($visibleSessions, function ($a, $b) {
                     <input type="hidden" name="csrf_token" value="<?= e($csrf) ?>">
                     <input type="hidden" name="class_id" value="<?= e((string) $detailClass['id']) ?>">
                     <input type="hidden" name="student_id" value="<?= e((string) $detailStudent['user_id']) ?>">
-                    <input type="hidden" name="cycle_id" value="<?= e((string) $detail['cycle']['id']) ?>">
+                    <input type="hidden" name="cycle_id" value="<?= e((string) $cycleId) ?>">
                     <input type="hidden" name="topic_id" id="lmsAddSessionTopicId" value="">
                     <input type="hidden" name="topic_name" id="lmsAddSessionTopicName" value="">
                     <div class="mb-3">

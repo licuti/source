@@ -43,14 +43,12 @@ foreach ($programs as $p) {
 }
 
 $subjectOptions = array();
-foreach ($subjects as $s) {
-    $subjectOptions[(int) $s['id']] = array(
-        'label' => (string) $s['name'],
-        'attrs' => array(
-            'data-program-id' => (int) $s['program_id'],
-        ),
-    );
+if (!empty($subjects) && is_array($subjects)) {
+    foreach ($subjects as $s) {
+        $subjectOptions[(string) $s['id']] = (string) $s['name'];
+    }
 }
+$subjectOptions['__new__'] = '+ Thêm loại chuyên đề mới';
 
 $teacherOptions = array();
 foreach ($teachers as $t) {
@@ -88,14 +86,35 @@ $currentClassType = lms_form_old($_POST, $row, 'class_type', 'one_on_one');
             )); ?>
 
             <!-- 2. Danh mục chính (không dùng để giới hạn chuyên đề) -->
+            <?php
+            $selectedSubject = function_exists('lms_form_old')
+                ? (string) lms_form_old($_POST, $row, 'subject_id', '')
+                : (isset($row['subject_id']) ? (string) $row['subject_id'] : '');
+            ?>
             <?php lms_component('form/select', array(
                 'name'        => 'subject_id',
                 'label'       => 'Danh mục chính',
                 'options'     => $subjectOptions,
                 'empty_label' => '— Chọn danh mục chính —',
+                'value'       => $selectedSubject,
                 'required'    => true,
                 'id'          => 'fld-subject',
+                'row'         => $row,
+                'errors'      => $errors,
             )); ?>
+
+            <!-- Ô nhập tên danh mục mới (ẩn/hiện tự động khi chọn "+ Thêm loại chuyên đề mới") -->
+            <div id="newSubjectRowWrap" style="<?= $selectedSubject === '__new__' ? '' : 'display: none;' ?>">
+                <?php lms_component('form/input', array(
+                    'name'        => 'new_subject_name',
+                    'id'          => 'fld-new-subject-name',
+                    'label'       => 'Loại chuyên đề mới',
+                    'placeholder' => 'Nhập tên danh mục mới (VD: Math Problems, Reading...)',
+                    'required'    => $selectedSubject === '__new__',
+                    'row'         => $row,
+                    'errors'      => $errors,
+                )); ?>
+            </div>
 
             <!-- 3. Loại lớp -->
             <?php lms_component('form/select', array(
@@ -514,54 +533,37 @@ $currentClassType = lms_form_old($_POST, $row, 'class_type', 'one_on_one');
             'use strict';
         var teacherFees = <?= json_encode($teacherFee) ?>;
 
-        // ---------- 1. Lọc môn học theo nhóm chương trình ----------
-        var $program = $('#fld-program');
+        // ---------- 1. Toggle thêm loại chuyên đề mới (không lọc theo Nhóm chương trình) ----------
         var $subject = $('#fld-subject');
-        var allSubjectOptions = [];
-        var initialSubjectVal = String($subject.val() || '');
-        $subject.find('option').each(function () {
-            if ($(this).attr('value') !== '') {
-                allSubjectOptions.push({
-                    value: String($(this).attr('value')),
-                    text: $(this).text().trim(),
-                    programId: String($(this).attr('data-program-id') || '')
-                });
-            }
-        });
+        var $newSubjectWrap = $('#newSubjectRowWrap');
+        var $newSubjectInput = $('#fld-new-subject-name');
 
-        var isSubjectInitial = true;
-
-        function filterSubjects() {
-            var pid = String($program.val() || '');
-            var curVal = isSubjectInitial ? initialSubjectVal : String($subject.val() || '');
-            var newHtml = '<option value="">— Chọn chương trình học —</option>';
-            var hasCurVal = false;
-
-            $.each(allSubjectOptions, function (i, opt) {
-                // Lần đầu load: nếu môn của lớp trong DB lệch nhóm chương trình thì vẫn bảo lưu để hiển thị đúng
-                var keepCur = (isSubjectInitial && initialSubjectVal !== '' && opt.value === initialSubjectVal);
-                if (pid === '' || opt.programId === '' || opt.programId === pid || keepCur) {
-                    var isSel = (opt.value === curVal);
-                    if (isSel) hasCurVal = true;
-                    newHtml += '<option value="' + opt.value + '" data-program-id="' + opt.programId + '"' + (isSel ? ' selected' : '') + '>'
-                        + opt.text + '</option>';
-                }
-            });
-
-            isSubjectInitial = false;
-            $subject.html(newHtml);
-            if (hasCurVal) {
-                $subject.val(curVal);
+        function toggleNewSubject() {
+            var isNew = ($subject.val() === '__new__');
+            if (isNew) {
+                $newSubjectWrap.show();
+                $newSubjectInput.prop('required', true);
             } else {
-                var $firstValid = $subject.find('option[value!=""]').first();
-                $subject.val($firstValid.length ? $firstValid.val() : '');
+                $newSubjectWrap.hide();
+                $newSubjectInput.prop('required', false);
             }
         }
 
-        $program.on('change', function () {
-            filterSubjects();
+        $subject.on('change', function () {
+            toggleNewSubject();
+            if ($subject.val() === '__new__') {
+                $newSubjectInput.focus();
+            }
         });
-        filterSubjects();
+        if ($.fn.select2) {
+            $subject.on('change.select2', function () {
+                toggleNewSubject();
+                if ($subject.val() === '__new__') {
+                    $newSubjectInput.focus();
+                }
+            });
+        }
+        toggleNewSubject();
 
         // ---------- 3. Chọn chuyên đề (không giới hạn theo Danh mục) ----------
         var $topics = $('#fld-topics');

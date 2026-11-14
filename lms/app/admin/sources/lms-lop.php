@@ -190,7 +190,7 @@ function lms_lop_programs(LmsDb $d)
 function lms_lop_subjects(LmsDb $d)
 {
     return $d->safeFetch(
-        'select id, program_id, name from db_lms_subjects order by program_id, name'
+        'select id, program_id, name from db_lms_subjects order by name, id'
     );
 }
 

@@ -65,6 +65,11 @@ class ClassService extends LmsService
             }
         }
 
+        $subjectId = $this->resolveSubjectId($data);
+        if ($subjectId === false) {
+            return null;
+        }
+
         $teacher = $this->db->safeFetchOne(
             'select user_id, status, max_classes from db_lms_teachers where user_id = ? limit 1',
             array((int) $data['teacher_id'])
@@ -81,11 +86,6 @@ class ClassService extends LmsService
         $program = $this->db->safeFetchOne('select id from db_lms_programs where id = ? limit 1', array((int) $data['program_id']));
         if (empty($program)) {
             $this->addError('program_id', 'Chương trình không tồn tại.');
-            return null;
-        }
-        $subject = $this->db->safeFetchOne('select id from db_lms_subjects where id = ? limit 1', array((int) $data['subject_id']));
-        if (empty($subject)) {
-            $this->addError('subject_id', 'Môn học không tồn tại.');
             return null;
         }
 
@@ -234,6 +234,11 @@ class ClassService extends LmsService
             }
         }
 
+        $subjectId = $this->resolveSubjectId($data);
+        if ($subjectId === false) {
+            return false;
+        }
+
         $teacherId = (int) $data['teacher_id'];
         $teacher = $this->db->safeFetchOne(
             'select user_id, status, max_classes, service_fee_percentage from db_lms_teachers where user_id = ? limit 1',
@@ -251,11 +256,6 @@ class ClassService extends LmsService
         $program = $this->db->safeFetchOne('select id from db_lms_programs where id = ? limit 1', array((int) $data['program_id']));
         if (empty($program)) {
             $this->addError('program_id', 'Chương trình không tồn tại.');
-            return false;
-        }
-        $subject = $this->db->safeFetchOne('select id from db_lms_subjects where id = ? limit 1', array((int) $data['subject_id']));
-        if (empty($subject)) {
-            $this->addError('subject_id', 'Môn học không tồn tại.');
             return false;
         }
 
@@ -1159,6 +1159,66 @@ class ClassService extends LmsService
         foreach ($sessions as $s) {
             $this->sessions->ensureSessionStudents((int) $s['id']);
         }
+    }
+
+    /**
+     * Giải quyết subject_id (nếu chọn __new__ thì kiểm tra/thêm mới vào db_lms_subjects).
+     *
+     * @param array $data
+     * @return int|false ID danh mục chính hợp lệ, hoặc false nếu lỗi (đã ghi vào addError)
+     */
+    protected function resolveSubjectId(array &$data)
+    {
+        $rawSubject = isset($data['subject_id']) ? trim((string) $data['subject_id']) : '';
+        if ($rawSubject === '__new__') {
+            $newName = isset($data['new_subject_name']) ? trim((string) $data['new_subject_name']) : '';
+            if ($newName === '') {
+                $this->addError('new_subject_name', 'Vui lòng nhập tên loại chuyên đề mới.');
+                return false;
+            }
+            if (mb_strlen($newName, 'UTF-8') > 100) {
+                $this->addError('new_subject_name', 'Tên loại chuyên đề mới không được vượt quá 100 ký tự.');
+                return false;
+            }
+
+            // Kiểm tra xem đã tồn tại chưa
+            $exist = $this->db->safeFetchOne(
+                'select id from db_lms_subjects where name = ? limit 1',
+                array($newName)
+            );
+            if (!empty($exist['id'])) {
+                $data['subject_id'] = (int) $exist['id'];
+                return (int) $exist['id'];
+            }
+
+            // Tạo danh mục mới
+            $programId = !empty($data['program_id']) ? (int) $data['program_id'] : 1;
+            $ok = $this->db->insert('db_lms_subjects', array(
+                'program_id' => $programId,
+                'name'       => $newName,
+                'created_at' => $this->now(),
+            ));
+            if (!$ok) {
+                $this->addError('subject_id', 'Không thể tạo loại chuyên đề mới.');
+                return false;
+            }
+            $newId = (int) $this->db->insertId;
+            $data['subject_id'] = $newId;
+            return $newId;
+        }
+
+        $sid = (int) $rawSubject;
+        if ($sid <= 0) {
+            $this->addError('subject_id', 'Vui lòng chọn danh mục chính.');
+            return false;
+        }
+        $subject = $this->db->safeFetchOne('select id from db_lms_subjects where id = ? limit 1', array($sid));
+        if (empty($subject)) {
+            $this->addError('subject_id', 'Danh mục chính không tồn tại.');
+            return false;
+        }
+        $data['subject_id'] = $sid;
+        return $sid;
     }
 
     /**

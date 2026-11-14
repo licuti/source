@@ -135,8 +135,8 @@ Sử dụng các shared form components (`form/select`, `form/input`, `form/fiel
 **Khối 1 — Thông tin lớp học:**
 | Trường | Bắt buộc | Component / ID | Mô tả & Logic JS |
 |---|---|---|---|
-| Nhóm chương trình | * | `form/select` (`#fld-program`, `name="program_id"`) | Nạp từ `db_lms_programs`. Khi đổi sẽ tự động lọc lại dropdown Chương trình học và Chuyên đề. |
-| Chương trình học | * | `form/select` (`#fld-subject`, `name="subject_id"`) | Nạp từ `db_lms_subjects` (gắn `data-program-id`). |
+| Nhóm chương trình | * | `form/select` (`#fld-program`, `name="program_id"`) | Nạp từ `db_lms_programs`. Hoàn toàn độc lập với Danh mục chính. |
+| Danh mục chính | * | `form/select` (`#fld-subject`, `name="subject_id"`) | Nạp từ `db_lms_subjects` (độc lập với Nhóm chương trình). Hỗ trợ option `+ Thêm loại chuyên đề mới` (value `__new__`) mở ô nhập Loại chuyên đề mới (`#fld-new-subject-name`, `name="new_subject_name"`) tương tự như Quản lý lộ trình. |
 | Loại lớp | * | `form/select` (`#fld-class-type`, `name="class_type"`) | `1 kèm 1` (`one_on_one`) / `Đông người` (`group`). Tự động chuyển đổi chế độ chọn học viên (1 HV vs nhiều HV) và đổi giá trị mặc định Hạn check BTVN (`0` giờ cho 1-1, `24` giờ cho đông người). |
 | Mã lớp | * | `form/input` (`#fld-name`, `name="name"`) | Nhập mã/tên hiển thị lớp (VD: `Toán 227`). |
 | Chọn giáo viên | * | `form/select` (`#fld-teacher`, `name="teacher_id"`) | Danh sách GV active (`Mã GV - Họ tên`). Khi chọn GV sẽ tự động điền `% GV nhận` theo `service_fee_percentage` mặc định của GV đó. |
